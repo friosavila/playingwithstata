@@ -1,7 +1,496 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="format-detection" content="telephone=no">
+<title>To cluster or not?</title>
+<style>
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px; line-height: 1.428;
+  margin: 0 auto; padding: 0 15px;
+}
+h1, h2, h3, h4, h5, h6 { margin: 20px 0 10px; }
+h1 { font-size: 28px; } h2 { font-size: 24px; }
+h3 { font-size: 18px; } h4 { font-size: 16px; }
+h5 { font-size: 14px; } h6 { font-size: 12px; }
+a { color: #337AB7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; height: auto; }
+ul, ol { padding-left: 30px; }
+pre, code, samp {
+  font-size: 13px;
+  font-family: Courier, monospace;
+}
+code, samp {
+  background-color: #F5F5F5;
+  border-radius: 3px; padding: 3px;
+}
+pre code, pre samp {
+  white-space: pre; background: transparent;
+  border: none; padding: 0;
+}
+pre {
+  line-height: 1.33; background-color: #F5F5F5;
+  border: 1px solid #CCCCCC; border-radius: 3px;
+  padding: 8px; overflow: auto;
+}
+</style>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']]
+    }
+  };
+</script>
+  <script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.js"></script><style>
+.stlog { color: #000000; background-color: #F0F3F9; }
+.stres { color: #324F58; }
+.stinp { font-weight: bold; color: #000000; }
+.stcmd .stcmt { font-style: italic; opacity: 0.5; }
+.stoom, .stcnp { font-style: italic; }
+@media screen { .stcnp { display: none; }}
+</style>
+</head>
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+<h1> To cluster or not to cluster </h1>
+<h2> is that the question? </h2>
+
+So before I start with my considerations on clustering, I think it deserves clarification that I am not an expert on the topic. And there are interesting papers on the literature that has clear advice on when to and when not to cluster standard errors. (see Abadie et al 2017)
+
+<br><br>
+
+Very recently, in fact (At the time of writing this, it is March 12, 2021), Prof. Wooldridge provided some strong advice on the use of clusters, suggesting that at the very least, one should provide robust standard errors. This is an option that is available in most econometric (including my favorite...Stata).
+
+<br><br>
+
+So what I am going to do here is something different. Rather than trying to provide you with math-heavy material justifying and proving when one "cluster" data, I'll provide simulation evidence on a very specific question:
+
+<br><br>
+<b>What happens when you do not cluster, but you should? </b>
+<br><br>
+
+Because the simulation evidence here is limited (to the assumptions of the Data generating process), some of the conclusions may be limited. 
+
+<br><br>
+Never the less, I believe you can use this evidence to learn three things. 
+<ul>
+<li>How to use simulations to analyze a particular strategy given the assumptions of your data.</li>
+<li>How to interpret simulation results.</li>
+<li>And of course, what happens when you do not cluster your data, when you should.</li>
+</ul>
+
+Ok so lets start.
+<br><br>
+<h2>Simulation Setup</h2>
+
+When thinking about clustering standard errors, the most important example that comes to mind is panel data.
+
+<br><br>
+Panel data is a special type of data that micro and macroeconomist have access to. The most important characteristic of panel data is that you have a set of individuals $i$ that are followed across time $t$. Because this data provides a picture of information across individuals, but also across time, it is possible to control for individual unobserved characteristics, as long as they are fixed across time for each individual. 
+
+<br><br>
+This structure, however, is not unique to panel data as described before. You can have a similar structure if you collect, say data for family members (the $i$) and their families (the $t$), or counties (the $i$) and states (the $i$). 
+
+<br><br>
+Furthermore, despite the recent discussion regarding the identification of models with multiple fixed effects, you can consider even more complex data structures. For example, the one used in Abowd et al (2008), where individuals are followed across time (standard panel) but are observed transitioning across firms, which become a third dimension of the fixed effects.
+
+<br><br>
+
+So back to the problem. Let’s consider a very simple panel structure where the DGP is defined as:
+
+$$ y_{it} = a_0 + a_1 x_{it} + a_2 z_{it} + e_i + v_{it} \quad (1) $$
+
+Where $e_i$ are individual unobserved (but time fixed factors), and $v_{it}$ are idiosyncratic errors that are different across individuals and time (also unobserved). 
+
+<br><br>
+
+To keep things simple, I will assume that both errors are uncorrelated with explanatory variables, $x_{it}$ and $z_{it}$, so we can treat them as exogenous. We can assume that $x$ varies across time, but that $z$ is time-fixed. For simplicity, I'll assume a balanced dataset, so that all N individuals are observed for T periods. Under this structure, we can simulate the data as follows:
+<pre id="stlog-1" class="stlog"><samp><span class="stinp">. <span class="stcmt">* Consider 100 individuals:</span></span>
+<span class="stinp">. set obs 100</span>
+number of observations (_N) was 0, now 100
+<span class="stinp">. <span class="stcmt">* For which I'll create an identifier.</span></span>
+<span class="stinp">. gen id=_n</span>
+<span class="stinp">. <span class="stcmt">* And I will assume that each individual is observed for 10 periods</span></span>
+<span class="stinp">. expand 10</span>
+(900 observations created)
+<span class="stinp">. <span class="stcmt">* Lets assume that X and Z are independent from each other.</span></span>
+<span class="stinp">. <span class="stcmt">* but that both are "normal"</span></span>
+<span class="stinp">. gen x = rnormal()</span>
+<span class="stinp">. gen z = rnormal()</span>
+<span class="stinp">. <span class="stcmt">* And Z is fixed for each individual</span></span>
+<span class="stinp">. bysort id:replace z=z[1]</span>
+(900 real changes made)
+<span class="stinp">. <span class="stcmt">* I use the same code for the unobserved factors. </span></span>
+<span class="stinp">. gen e = rnormal()</span>
+<span class="stinp">. gen v = rnormal()</span>
+<span class="stinp">. <span class="stcmt">* And Z is fixed for each individual</span></span>
+<span class="stinp">. bysort id:replace e=e[1]</span>
+(900 real changes made)
+<span class="stinp">. <span class="stcmt">* Finally, we construct our dependent variable Y</span></span>
+<span class="stinp">. gen y=1+x+z+e+v</span>
+</samp></pre>
+For this simple DGP, we will contrast the results from 5 different estimation procedures:
+<ul>
+<li>Simple OLS</li>
+<li>OLS with Robust standard errors</li>
+<li>OLS with clustered standard errors</li>
+<li>Panel with Random effects</li>
+<li>Panel with Fixed effects</li>
+</ul>
+
+You may notice that options 1, 2, and 3 do not control for the individual fixed effect explicitly. Whereas option 5, try to control for this effect more explicitly. Options 4 also control time unobserved effects but through the construction of the standard error. And option 3 doesn't instead assume that errors within-person will be correlated (it is after all fixed).
+
+<br><br>
+
+Something you may also notice. Because $x$ and $z$ are exogenous independents of the errors, any strategy will provide you with unbiased estimates. However, not all estimations will obtain correct standard errors.
+
+<br><br>
+
+But, how can we see that? how can we know that coefficients will be unbiased, but standard errors may be incorrect?. 
+<br>
+We make multiple simulations and summarize the results!
+<br><br>
+So we turn to more programming. What I need to do is create a program that simulates the data (as before), and estimates the model desired model (from the list before). 
+<br>
+Second, I need to repeat the process a large number of times (usually tens of thousands), collect results from each estimation, and make the assessment. 
+<br><br>
+Let's start with the program, recycling the code I had before (without the comments)
+<pre id="stlog-2" class="stlog"><samp><span class="stinp">. <span class="stcmt">* I'm writing this as an "eclass" estimator, so it is easy to collect the estimation results.</span></span>
+<span class="stinp">. program panel_re, eclass</span>
+  1<span class="stinp">. <span class="stcmt">* a new line. "clear" to start from a clean dataset each time the program is called:</span></span>
+<span class="stinp">.         clear</span>
+  2<span class="stinp">.         set obs 100</span>
+  3<span class="stinp">.         gen id=_n</span>
+  4<span class="stinp">.         expand 10</span>
+  5<span class="stinp">.         gen x = rnormal()</span>
+  6<span class="stinp">.         gen z = rnormal()</span>
+  7<span class="stinp">.         sort id, stable</span>
+  8<span class="stinp">.         by id:replace z=z[1]</span>
+  9<span class="stinp">.         gen e = rnormal()</span>
+ 10<span class="stinp">.         gen v = rnormal()</span>
+ 11<span class="stinp">.         by id:replace e=e[1]</span>
+ 12<span class="stinp">.         gen y=1+x+z+e+v</span>
+<span class="stinp">* here I estimate the model</span></span>
+<span class="stinp">* I will use two "locals": 1 and 2. </span></span>
+<span class="stinp">* This will be used as place holders for the model</span></span>
+<span class="stinp">* and options for the estimation.</span></span>
+<span class="stinp">* I'll also set this data as panel data (it will be needed for some cases)</span></span>
+ 13<span class="stinp">.         xtset id</span>
+ 14<span class="stinp">.         `1' y x z, `2'</span>
+ 15<span class="stinp">.         <span class="stcmt">** and that is it! </span></span>
+<span class="stinp">. end</span>
+</samp></pre>
+Alright, the structure of the program is done, including the two placeholders "1" and "2". Which I have to provide from the command line. For example, if I would like to run the simulation, using a simple OLS model, with cluster standard errors, I could do the following:
+<pre id="stlog-3" class="stlog"><samp><span class="stinp">. <span class="stcmt">*panel_re reg  cluster(id)</span></span>
+<span class="stinp">. <span class="stcmt">*          ^       ^</span></span>
+<span class="stinp">. <span class="stcmt">*          |       |</span></span>
+<span class="stinp">. <span class="stcmt">*         '1'     '2'</span></span>
+<span class="stinp">. <span class="stcmt">*Here reg will be argument 1</span></span>
+<span class="stinp">. <span class="stcmt">*and cluster(id) argument 2</span></span>
+<span class="stinp">. panel_re reg  cluster(id)</span>
+number of observations (_N) was 0, now 100
+(900 observations created)
+(900 real changes made)
+(900 real changes made)
+       panel variable:  <span class="stres">id (balanced)</span>
+
+Linear regression                               Number of obs     = <span class="stres">     1,000</span>
+<span class="stres">                                                </span>F(2, 99)          =  <span class="stres">   355.71</span>
+<span class="stres">                                                </span>Prob &gt; F          = <span class="stres">    0.0000</span>
+<span class="stres">                                                </span>R-squared         = <span class="stres">    0.4973</span>
+<span class="stres">                                                </span>Root MSE          =    <span class="stres"> 1.4754</span>
+
+                                   (Std. Err. adjusted for <span class="stres">100</span> clusters in id)
+------------------------------------------------------------------------------
+             |               Robust
+           y |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+           x |<span class="stres">   1.033408   .0409937    25.21   0.000     .9520676    1.114748</span>
+           z |<span class="stres">   .9983844   .0895856    11.14   0.000     .8206271    1.176142</span>
+       _cons |<span class="stres">   .9965414   .1162236     8.57   0.000     .7659286    1.227154</span>
+------------------------------------------------------------------------------
+</samp></pre>
+Next step, actually performing the simulations.
+<br>
+<h2>Robust, cluster, FE, etc</h2>
+Ok so now that the program has been set up, we can implement the simulation a few times, to see what would happen if clusters are used or ignored when estimating this model.
+<br> 
+While it is usually recommended to run 10000 iterations to properly assess the results, I'll only use 100 iterations, as that would be enough to see patterns. You are, of course, welcome to use more repetitions, and see what happens. 
+<br><br>
+For the simulations, we will use the Stata command -simulate-, which makes this type of analysis simple. And I'll use a seed(101) to make the exercise replicable. 
+<br><br>
+So let me start with the simple OLS regression with simple standard errors. I'll gather both the point estimates and the standard errors, from each replication:
+<pre id="stlog-4" class="stlog"><samp><span class="stinp">. simulate _b _se, reps(100) seed(101):panel_re reg  </span>
+
+      command:  panel_re reg
+
+Simulations (<span class="stres">100</span>)
+----+--- 1 ---+--- 2 ---+--- 3 ---+--- 4 ---+--- 5 
+..................................................    50
+..................................................   100
+
+<span class="stinp">. sum, sep(3)</span>
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        _b_x |<span class="stres">        100    1.000355    .0381124   .8919857   1.085083</span>
+        _b_z |<span class="stres">        100    .9876579    .0994754   .7406453     1.2002</span>
+     _b_cons |<span class="stres">        100    .9984308    .1107775   .7436068   1.238203</span>
+-------------+---------------------------------------------------------
+       _se_x |<span class="stres">        100    .0444944    .0023557   .0397996   .0505446</span>
+       _se_z |<span class="stres">        100    .0454697    .0039679   .0382312   .0611115</span>
+    _se_cons |<span class="stres">        100    .0446636    .0022492   .0396397   .0515558</span>
+</samp></pre>
+The first thing to see from here is that, as expected, OLS provides unbiased estimators. The coefficients for $x$ and $z$ are almost identical to the population coefficients of 1. Similarly with the constant.
+<br><br> 
+For the standard errors, we now have two estimates. One based on the simulations (we should consider as the correct ones) (_b), and one that is the average of the simulated ones (_se). 
+<br><br> 
+What I get from these results is that the standard errors for $x$, the time-varying variables, seem to be estimated correctly. We see this because the "average" standard errors for x (<b>_se_x</b>) are close to the standard deviation for <b>_b_x</b>.
+<br>
+This, however, does not happen with the time constant variable $z$, or the constant. In this case, OLS provides an standard error estimate that is half of the simulation based one.
+<br> 
+Why is that bad? 
+<br> Because we wouldnt be able to do proper statistical inference from this model. 
+<br> For example, If you assess how often do we reject the null hypothesis $H_0:\beta_z =1$, we will find that we do this "too often". 
+<br> You can see that doing the following:
+<pre id="stlog-5" class="stlog"><samp><span class="stinp">. gen is_bx_1 = !inrange(1,_b_x-_se_x*1.96,_b_x+_se_x*1.96)</span>
+
+<span class="stinp">. gen is_bz_1 = !inrange(1,_b_z-_se_z*1.96,_b_z+_se_z*1.96)</span>
+
+<span class="stinp">. gen is_bc_1 = !inrange(1,_b_c-_se_c*1.96,_b_c+_se_c*1.96)</span>
+
+<span class="stinp">. sum is*</span>
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+     is_bx_1 |<span class="stres">        100         .02    .1407053          0          1</span>
+     is_bz_1 |<span class="stres">        100         .43    .4975699          0          1</span>
+     is_bc_1 |<span class="stres">        100         .42     .496045          0          1</span>
+</samp></pre>
+So using OLS, we reject the Null for $x$ 2% of the time (just what you would expect), but we do reject the null 43% and 42% of the time for $z$ and the constant.
+<br><br>
+What about if we use robust standard errors?
+<br> It would probably have no impact. Since the model is based on homoskedastic standard errors, but it wouldnt hurt to try:
+<pre id="stlog-6" class="stlog"><samp><span class="stinp">. simulate _b _se, reps(100) seed(101):panel_re reg robust </span>
+
+      command:  panel_re reg robust
+
+Simulations (<span class="stres">100</span>)
+----+--- 1 ---+--- 2 ---+--- 3 ---+--- 4 ---+--- 5 
+..................................................    50
+..................................................   100
+
+<span class="stinp">. gen is_bx_1 = !inrange(1,_b_x-_se_x*1.96,_b_x+_se_x*1.96)</span>
+<span class="stinp">. gen is_bz_1 = !inrange(1,_b_z-_se_z*1.96,_b_z+_se_z*1.96)</span>
+<span class="stinp">. gen is_bc_1 = !inrange(1,_b_c-_se_c*1.96,_b_c+_se_c*1.96)</span>
+<span class="stinp">. sum, sep(3)</span>
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        _b_x |<span class="stres">        100    1.000355    .0381124   .8919857   1.085083</span>
+        _b_z |<span class="stres">        100    .9876579    .0994754   .7406453     1.2002</span>
+     _b_cons |<span class="stres">        100    .9984308    .1107775   .7436068   1.238203</span>
+-------------+---------------------------------------------------------
+       _se_x |<span class="stres">        100    .0444072    .0027773   .0391417    .052421</span>
+       _se_z |<span class="stres">        100    .0453708    .0049049   .0347456    .064886</span>
+    _se_cons |<span class="stres">        100     .044696     .002205   .0396771   .0515227</span>
+-------------+---------------------------------------------------------
+     is_bx_1 |<span class="stres">        100         .02    .1407053          0          1</span>
+     is_bz_1 |<span class="stres">        100          .4     .492366          0          1</span>
+     is_bc_1 |<span class="stres">        100         .42     .496045          0          1</span>
+</samp></pre>
+The case of $x$ is just the same as before, with about the same level of Null hypothesis rejection for the coefficient Z or the constant.
+
+<br><br>
+
+The next one could be regress, with cluster standard errors. This should consider account for that fixed unobserved effect:
+<pre id="stlog-7" class="stlog"><samp><span class="stinp">. simulate _b _se, reps(100) seed(101):panel_re reg cluster(id) </span>
+
+      command:  panel_re reg cluster(id)
+
+Simulations (<span class="stres">100</span>)
+----+--- 1 ---+--- 2 ---+--- 3 ---+--- 4 ---+--- 5 
+..................................................    50
+..................................................   100
+
+<span class="stinp">. gen is_bx_1 = !inrange(1,_b_x-_se_x*1.96,_b_x+_se_x*1.96)</span>
+<span class="stinp">. gen is_bz_1 = !inrange(1,_b_z-_se_z*1.96,_b_z+_se_z*1.96)</span>
+<span class="stinp">. gen is_bc_1 = !inrange(1,_b_c-_se_c*1.96,_b_c+_se_c*1.96)</span>
+<span class="stinp">. sum, sep(3)</span>
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        _b_x |<span class="stres">        100    1.000355    .0381124   .8919857   1.085083</span>
+        _b_z |<span class="stres">        100    .9876579    .0994754   .7406453     1.2002</span>
+     _b_cons |<span class="stres">        100    .9984308    .1107775   .7436068   1.238203</span>
+-------------+---------------------------------------------------------
+       _se_x |<span class="stres">        100    .0441533    .0051071   .0332627   .0670466</span>
+       _se_z |<span class="stres">        100    .1049323    .0155818   .0745955   .1655501</span>
+    _se_cons |<span class="stres">        100    .1045397    .0085235   .0841128   .1316457</span>
+-------------+---------------------------------------------------------
+     is_bx_1 |<span class="stres">        100         .04    .1969464          0          1</span>
+     is_bz_1 |<span class="stres">        100         .05    .2190429          0          1</span>
+     is_bc_1 |<span class="stres">        100         .06    .2386833          0          1</span>
+</samp></pre>
+Now, we are talking. Average Standard errors for $z$ and the constant are about the same magnitude as the simulation-based ones (the benchmark).
+<br>
+Furthermore, now all rejection rates are just as expected, around 5%.
+<br><br> 
+What if instead we control for those individual effects explicitly. We can do that using Panel FE:
+<pre id="stlog-8" class="stlog"><samp><span class="stinp">. simulate _b _se, reps(100) seed(101):panel_re xtreg fe </span>
+
+      command:  panel_re xtreg fe
+
+Simulations (<span class="stres">100</span>)
+----+--- 1 ---+--- 2 ---+--- 3 ---+--- 4 ---+--- 5 
+..................................................    50
+..................................................   100
+
+<span class="stinp">. gen is_bx_1 = !inrange(1,_b_x-_se_x*1.96,_b_x+_se_x*1.96)</span>
+<span class="stinp">. gen is_bc_1 = !inrange(1,_b_c-_se_c*1.96,_b_c+_se_c*1.96)</span>
+<span class="stinp">. sum, sep(3)</span>
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        _b_x |<span class="stres">        100    .9956048     .029711   .9376439   1.062583</span>
+      _sim_2 |<span class="stres">        100           0           0          0          0</span>
+     _b_cons |<span class="stres">        100    .9955147    .1434849   .6446086   1.326498</span>
+-------------+---------------------------------------------------------
+       _se_x |<span class="stres">        100    .0333269    .0011717   .0301809   .0364448</span>
+      _sim_5 |<span class="stres">        100           0           0          0          0</span>
+    _se_cons |<span class="stres">        100    .0316341     .000825   .0287964   .0339852</span>
+-------------+---------------------------------------------------------
+     is_bx_1 |<span class="stres">        100           0           0          0          0</span>
+     is_bc_1 |<span class="stres">        100         .68    .4688262          0          1</span>
+</samp></pre>
+So things now look different. Because we $z$ is time-constant we cannot estimate this coefficient when explicitly including individual fixed effects makes in the model.
+<br><br>
+It is slightly surprising that we never reject the Null of $H_0:\beta_x=1$!. While some of this is due to the limited number of repetitions, if I repeat the exercise with more repetitions (say 1000), I do observe a less than 5% rejection rate. It is also important to notice standard errors for the panel FE estimator are somewhat smaller compared to the OLS clustered standard errors.
+<br>
+This can be considered as a gain in efficiency for the estimation of $\beta_x$.
+<br><br>
+Unfortunately, there is <b> No free lunch </b>!. While it seems we can estimate $\beta_x$ more efficiently, we can no longer say the same for the constant. In fact, the simulation-based standard errors increase, and the rejection rate of the null increases as well.
+<br><br>
+Finally, to finish this popurri of methodologies, we can use a Panel Random effects model:
+<pre id="stlog-9" class="stlog"><samp><span class="stinp">. simulate _b _se, reps(100) seed(101):panel_re xtreg re </span>
+
+      command:  panel_re xtreg re
+
+Simulations (<span class="stres">100</span>)
+----+--- 1 ---+--- 2 ---+--- 3 ---+--- 4 ---+--- 5 
+..................................................    50
+..................................................   100
+
+<span class="stinp">. gen is_bx_1 = !inrange(1,_b_x-_se_x*1.96,_b_x+_se_x*1.96)</span>
+<span class="stinp">. gen is_bz_1 = !inrange(1,_b_z-_se_z*1.96,_b_z+_se_z*1.96)</span>
+<span class="stinp">. gen is_bc_1 = !inrange(1,_b_c-_se_c*1.96,_b_c+_se_c*1.96)</span>
+<span class="stinp">. sum, sep(3)</span>
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        _b_x |<span class="stres">        100    .9961247    .0289081   .9367011   1.064042</span>
+        _b_z |<span class="stres">        100    .9877817    .0993992   .7413588   1.199385</span>
+     _b_cons |<span class="stres">        100    .9984448    .1109847   .7435786   1.240776</span>
+-------------+---------------------------------------------------------
+       _se_x |<span class="stres">        100    .0331599     .001161    .030052   .0362103</span>
+       _se_z |<span class="stres">        100    .1067879    .0120344   .0871601   .1579433</span>
+    _se_cons |<span class="stres">        100    .1048667    .0087699   .0846491   .1327749</span>
+-------------+---------------------------------------------------------
+     is_bx_1 |<span class="stres">        100           0           0          0          0</span>
+     is_bz_1 |<span class="stres">        100         .03    .1714466          0          1</span>
+     is_bc_1 |<span class="stres">        100         .06    .2386833          0          1</span>
+</samp></pre>
+And this seems to be a model that, under the strict assumptions of the DGP, is the best across all strategies.
+<br><br>
+<ul>
+<li>Standard errors for $\beta_x$ are just as small as those based on the FE estimator. </li>
+<li>We are still able to obtain estimates for the time fixed variable $z$. With standard errors of similar magnitude as OLS with clustered standard errors. </li>
+<li>And we can also get correct rejection rates for the constant!</li>
+</ul>
+Alright, so there is still one more contender, a sixth methodology known as correlated random-effects model.
+<br><br>
+To be fair, this model is not necessary here, because we know the time fixed errors are uncorrelated with other characteristics. But that is unknown when analyzing real data. 
+<br><br>
+To apply this method, however, I'll need to modify my simulation program slightly:
+<pre id="stlog-10" class="stlog"><samp><span class="stinp">. program panel_cre, eclass</span>
+  1<span class="stinp">.         clear</span>
+  2<span class="stinp">.         set obs 100</span>
+  3<span class="stinp">.         gen id=_n</span>
+  4<span class="stinp">.         expand 10</span>
+  5<span class="stinp">.         gen x = rnormal()</span>
+  6<span class="stinp">.         gen z = rnormal()</span>
+  7<span class="stinp">.         sort id, stable</span>
+  8<span class="stinp">.         by id:replace z=z[1]</span>
+  9<span class="stinp">.         gen e = rnormal()</span>
+ 10<span class="stinp">.         gen v = rnormal()</span>
+ 11<span class="stinp">.         by id:replace e=e[1]</span>
+ 12<span class="stinp">.         gen y=1+x+z+e+v</span>
+ 13<span class="stinp">.         xtset id</span>
+ 14<span class="stinp">.         by id:egen m_x=mean(x)  <span class="stcmt">// &lt;-- Here we estimate the within person mean characteristic</span></span>
+ 15<span class="stinp">.         xtreg y x z m_x, re   <span class="stcmt">// and control for it in the RE effects model.</span></span>
+ 16<span class="stinp">. end</span>
+
+<span class="stinp">. simulate _b _se, reps(100) seed(101):panel_cre </span>
+
+      command:  panel_cre
+
+Simulations (<span class="stres">100</span>)
+----+--- 1 ---+--- 2 ---+--- 3 ---+--- 4 ---+--- 5 
+..................................................    50
+..................................................   100
+
+<span class="stinp">. gen is_bx_1 = !inrange(1,_b_x-_se_x*1.96,_b_x+_se_x*1.96)</span>
+
+<span class="stinp">. gen is_bz_1 = !inrange(1,_b_z-_se_z*1.96,_b_z+_se_z*1.96)</span>
+
+<span class="stinp">. gen is_bc_1 = !inrange(1,_b_c-_se_c*1.96,_b_c+_se_c*1.96)</span>
+
+<span class="stinp">. sum, sep(4)</span>
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        _b_x |<span class="stres">        100    .9956048     .029711   .9376439   1.062583</span>
+        _b_z |<span class="stres">        100    .9863926    .1006587   .7307997   1.207344</span>
+      _b_m_x |<span class="stres">        100     .051984    .3436732  -.6213726   1.080986</span>
+     _b_cons |<span class="stres">        100    .9982991    .1093144   .7438877   1.214026</span>
+-------------+---------------------------------------------------------
+       _se_x |<span class="stres">        100    .0333269    .0011717   .0301809   .0364448</span>
+       _se_z |<span class="stres">        100    .1072043    .0120987    .087363   .1584293</span>
+     _se_m_x |<span class="stres">        100    .3380803    .0343612   .2572779   .4165666</span>
+    _se_cons |<span class="stres">        100    .1055241    .0090165   .0849954   .1330222</span>
+-------------+---------------------------------------------------------
+     is_bx_1 |<span class="stres">        100           0           0          0          0</span>
+     is_bz_1 |<span class="stres">        100         .04    .1969464          0          1</span>
+     is_bc_1 |<span class="stres">        100         .06    .2386833          0          1</span>
+</samp></pre>
+And the last estimation strategy also performs well. Its rejection rate is comparable to both the panel FE estimator and the random FE estimator. 
+<br>
+The something to be noted, however, is that it will perform well only if you use a random effect model, or if you use clustered standard errors (when using OLS). Otherwise, results will be just as bad as the simple OLS approach. 
+<br><br>
+And of course, it will be better than RE if $e$ is correlated with any of the explanatory variables in the model.
+
+<h2>Conclusions</h2>
+So to cluster or not to cluster?<br>
+I started with this question to motivate the decision to use clustered standard errors when estimating a model when you suspect there are unobserved factors that are fixed in one particular dimension. 
+<br><br>
+From the empirical approach, I have shown that if you have access to panel data, and you believe there are individual unobserved effects that are fixed in time, it could be a mistake not to report cluster standard errors. Even -robust- will not do much. You will be overconfident, at least for those variables that are fixed across time.
+<br><br>
+In cases like this, you will do much better by either controlling for fixed effects explicitly (for example using panel FE estimator), or implicitly (random effects), or at the very least correcting standard errors for their presence (clustered standard errors).
+<br><br>
+These conclusions are by no means exhaustive. However, they are a good starting point to build different simulation settings to test to what extent would a change of a particular assumption would have on your results, and how could a particular estimation methodology handle that problem.
+<br><br>
+If you are interested in a more in-deep discussion of when to (or not to) use clustered standard errors, you may find the work of Abadie et al (2017) interesting. See citation below.
+<br><br>
+And as always, comments are welcome.
+<h2>References</h2>
+Alberto Abadie & Susan Athey & Guido W. Imbens & Jeffrey Wooldridge, 2017. "When Should You Adjust Standard Errors for Clustering?," NBER Working Papers 24003, National Bureau of Economic Research, Inc.
+<br><br> 
+Abowd, J. M., F. Kramarz, and S. Woodcock. 2008. Econometric analyses of linked employer-employee data. In The Econometrics of Panel Data: Fundamentals and Recent Developments in Theory and Practice, ed. L. M´aty´as and P. Sevestre, 3rd ed., 727–760. Berlin: Springer. 
 </body>
 </html>
