@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>MathJax example</title>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+  <style>
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px; line-height: 1.428;
+  margin: 0 auto; padding: 0 15px;
+}
+h1, h2, h3, h4, h5, h6 { margin: 20px 0 10px; }
+h1 { font-size: 28px; } h2 { font-size: 24px; }
+h3 { font-size: 18px; } h4 { font-size: 16px; }
+h5 { font-size: 14px; } h6 { font-size: 12px; }
+a { color: #337AB7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; height: auto; }
+ul, ol { padding-left: 30px; }
+pre, code, samp {
+  font-size: 13px;
+  font-family: Courier, monospace;
+}
+code, samp {
+  background-color: #F5F5F5;
+  border-radius: 3px; padding: 3px;
+}
+pre code, pre samp {
+  white-space: pre; background: transparent;
+  border: none; padding: 0;
+}
+pre {
+  line-height: 1.33; background-color: #F5F5F5;
+  border: 1px solid #CCCCCC; border-radius: 3px;
+  padding: 8px; overflow: auto;
+}
+.stlog { color: #000000; background-color: #F0F3F9; }
+.stres { color: #324F58; }
+.stinp { font-weight: bold; color: #000000; }
+.stcmd .stcmt { font-style: italic; opacity: 0.5; }
+.stoom, .stcnp { font-style: italic; }
+@media screen { .stcnp { display: none; }}
+</style>
+  </head>
+
+<body>
+<h1>Margins and -ml-</h1>
+<h1>The Probit model</h1>
+<h2>Introduction</h2>
+<p> Previously, I have shown how to use -margins- after -ml-. I motivated 
+the excercise, as an example for the estimation of nonlinear models.
+</p>
+<p> The model, however, was not itself non-linear. It was, in fact, a
+linear regression model estimated using mle. This was done by impossing the assumption of normality
+on the errors of the model.
+</p>
+<p> On the bright side, the outcome of interest: the standard deviation of the error and the outcome
+ in actual scale (not its log) was nonlinear.
+</p>
+<p> This time, I'll be making a similar excercise, using a more common nonlinear model: the probit model.
+</p>
+
+<p> As in the previous example, I'll walk you through the setting up the ml program and the prediction program.
+</p>
+
+<h2>The Setup</h2>
+<p> First thing first. Unless you already have this program saved somewhere in your accesible ado files (most likely the "ado/personal" folder),
+make sure to have the following program in memory. 
+</p>
+<pre id="stlog-1" class="stlog"><samp><span class="stinp">. program adde, eclass</span>
+  1<span class="stinp">.         ereturn `0'</span>
+  2<span class="stinp">. end</span>
+</samp></pre>
+<p> So, lets start. 
+</p>
+
+<p> The probit model is a nonlinear model that can be used when your dependent variable is a binary variable (0 - 1), and when your intention
+is to model what is the "probability of success (y=1)" given a set of characteristics. \( P(y=1|X) \)
+</p>
+
+<p> From the technical point of view, you can think about the probit model in two ways.
+</p>
+
+<ul>
+  <li>1: You are trying to estimate the expected probability of success \( E(Y=1|X) \), using a nonlinear function \( \Phi() \) 
+  that represent the cummulative density function of the standard normal distribution:
+</ul>  
+<p>  $$ E(y=1|X) = P(y=1|X) = \Phi (X\beta) $$ </p>
+<ul>  
+  <li>2. You assume that there is some latent variable \( y^* \), which you never observe, is the combination of observed characteristics \( X\beta \)
+  and an unobserved error \( e_i \). This latent variable is used to determine the outcome you observe.
+</ul>
+<p>
+  $$ y^* = X\beta + e_i $$
+  $$ y^*>0 \rightarrow y=1$$
+  $$ y^*<=0 \rightarrow y=0$$
+  $$ y^* = X\beta + e_i $$
+</p>
+<p>
+There is of course the added constraint that, for this to be a probit model you assume \( e_i \sim N(0,1) \) follows a standard normal distribution.
+Under this assumption, determining the probability of success \( P(y=1|X) \) is equivalent to determining the probability 
+that \( P(y^*>0|x) \).
+</p>
+
+<p>
+Using either approach, the likelihood of a single observation will be equal to (this will be important for the MLE):
+$$ L_i = \Phi(X\beta) \quad if y = 1 (success) $$ 
+$$ L_i = 1-\Phi(X\beta) \quad if y = 0 (failure) $$ 
+One must remember that we will be using the LOG of this expression for the MLE program.
+
+And of course, we also have the outcome of interest:
+$$ P(y=1|X) = \Phi(X\beta) $$
+where, again, the \( \Phi \) is the cumulative distribution function (CDF) for a standard normal.
+</p>
+
+<h2>Probit MLE</h2>
+<p>First things first, we need to write the LogLikelihood function for the probit model. </p>
+<pre id="stlog-2" class="stlog"><samp><span class="stinp">. <span class="stcmt">***/</span></span>
+<span class="stinp">. program myprobit</span>
+  1<span class="stinp">.         args lnf xb </span>
+  2<span class="stinp">.         local p1 normal(`xb')</span>
+  3<span class="stinp">.         local p0 normal(-`xb')</span>
+  4<span class="stinp">.         local y $ML_y1</span>
+  5<span class="stinp">.         qui:replace `lnf' = log(`p1') if `y'==1</span>
+  6<span class="stinp">.         qui:replace `lnf' = log(`p0') if `y'==0</span>
+  7<span class="stinp">. end</span>
+</samp></pre>
+<p> Notice that this program has only 2 arguments. The variable that will store the LogLikelihood "lnf", 
+and the variable that will capture the observed component of the latent index. "xb".
+</p>
+
+<p> To make this text easier to read, I use some locals to identify different components for my LL.
+</p>
+<ul>  
+  <li>1. p1 and p0 are the probabilities of success and failure.</li>
+  <li>2. y will be the dummy dependent variable, which can only have 2 values. 0 or 1 </li>
+</ul>
+
+<p> Now just need to write the "predict" program:
+</p>
+<pre id="stlog-3" class="stlog"><samp><span class="stinp">. program myprobit_p</span>
+  1<span class="stinp">.         syntax newvarname [if] [in] , [ pr odds *]</span>
+  2<span class="stinp">.         if "`pr'`odds'" =="" {</span>
+  3<span class="stinp">.             ml_p `0'</span>
+  4<span class="stinp">.         }</span>
+  5<span class="stinp">.         marksample touse, novarlist</span>
+  6<span class="stinp">.         if "`pr'" !=""  {</span>
+  7<span class="stinp">.             tempvar xb</span>
+  8<span class="stinp">.             _predict double `xb' , eq(#1)</span>
+  9<span class="stinp">.                 gen `typlist' `varlist' = normal(`xb') if `touse'</span>
+ 10<span class="stinp">.                 label var `varlist' "P(y=1|X)"</span>
+ 11<span class="stinp">.         }       </span>
+ 12<span class="stinp">.         else if "`odds'" !=""  {</span>
+ 13<span class="stinp">.             tempvar xb</span>
+ 14<span class="stinp">.             _predict double `xb' , eq(#1)</span>
+ 15<span class="stinp">.                 gen `typlist' `varlist' = normal(`xb')/normal(-`xb') if `touse'</span>
+ 16<span class="stinp">.                 label var `varlist' "P(y=1|X)/P(y=0|X)"</span>
+ 17<span class="stinp">.         }       </span>
+ 18<span class="stinp">. end</span>
+</samp></pre>
+<p> This program,-myprobit_p-, will have two options. </p>
+<ul>  
+  <li> "pr" will get the predicted probability conditional on X. </li>
+  <li> "odds" will estimate the Odds ratio (yes odds for a probit!) </li>
+  $$odds(y=1|X) = \frac{P(y=1|X)}{P(y=0|X)}$$
+</ul>
+
+<h2> The estimation </h2>
+<p> All right. With all this information in hand, we can now estimate our probit model. </p>
+<p> To keep things reproducible, I will use a dataset from the Stata help file: </p>
+<pre id="stlog-4" class="stlog"><samp><span class="stinp">. webuse union, clear</span>
+(NLS Women 14-24 in 1968)
+</samp></pre>
+<p> Now lets estimate the model using -ml-. Here we will indicate the "method" (lf) and the program that defines the Log likelihood.
+</p>
+<pre id="stlog-5" class="stlog"><samp><span class="stinp">. ml model lf myprobit (union = age grade not_smsa south##c.year) , maximize</span>
+
+initial:       log likelihood = <span class="stres">-18160.456</span>
+alternative:   log likelihood = <span class="stres">-14355.672</span>
+rescale:       log likelihood = <span class="stres">-14220.454</span>
+Iteration 0:   log likelihood = <span class="stres">-14220.454</span>  
+Iteration 1:   log likelihood = <span class="stres">-13547.574</span>  
+Iteration 2:   log likelihood = <span class="stres">-13544.385</span>  
+Iteration 3:   log likelihood = <span class="stres">-13544.385</span>  
+
+<span class="stinp">. ml display</span>
+
+                                                Number of obs     = <span class="stres">    26,200</span>
+                                                Wald chi2(<span class="stres">6</span>)      = <span class="stres">    618.81</span>
+Log likelihood = <span class="stres">-13544.385</span>                     Prob &gt; chi2       = <span class="stres">    0.0000</span>
+
+------------------------------------------------------------------------------
+       union |      Coef.   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |<span class="stres">   .0118481   .0029072     4.08   0.000     .0061502     .017546</span>
+       grade |<span class="stres">   .0267365   .0036689     7.29   0.000     .0195457    .0339273</span>
+    not_smsa |<span class="stres">  -.1293525   .0202595    -6.38   0.000    -.1690604   -.0896445</span>
+     1.south |<span class="stres">  -.8281078   .2472219    -3.35   0.001    -1.312654   -.3435619</span>
+        year |<span class="stres">  -.0080931   .0033469    -2.42   0.016    -.0146529   -.0015333</span>
+             |
+south#c.year |
+          1  |<span class="stres">    .005737   .0030917     1.86   0.064    -.0003226    .0117965</span>
+             |
+       _cons |<span class="stres">  -.6542487   .2007777    -3.26   0.001    -1.047766   -.2607316</span>
+------------------------------------------------------------------------------
+</samp></pre>
+<p> You can compare the results with the standard -probit-. </p>
+<p> Next, we need to "add" our predction program to e().</p>
+<pre id="stlog-6" class="stlog"><samp><span class="stinp">. adde local predict myprobit_p</span>
+</samp></pre>
+<p> And thats it. We can now estimate the marginal effects for the probit, assuming our outcome of interest is </p>
+<pre id="stlog-7" class="stlog"><samp><span class="stinp">. margins, dydx(*) predict(pr)  </span>
+
+Average marginal effects                        Number of obs     = <span class="stres">    26,200</span>
+Model VCE    : <span class="stres">OIM</span>
+
+Expression   : <span class="stres">P(y=1|X), predict(pr)</span>
+dy/dx w.r.t. : <span class="stres">age grade not_smsa 1.south year</span>
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |<span class="stres">    .003442    .000844     4.08   0.000     .0017878    .0050963</span>
+       grade |<span class="stres">   .0077673   .0010639     7.30   0.000     .0056822    .0098525</span>
+    not_smsa |<span class="stres">  -.0375788   .0058753    -6.40   0.000    -.0490941   -.0260634</span>
+     1.south |<span class="stres">  -.1054928   .0050851   -20.75   0.000    -.1154594   -.0955261</span>
+        year |<span class="stres">  -.0017906   .0009195    -1.95   0.051    -.0035928    .0000115</span>
+------------------------------------------------------------------------------
+Note: dy/dx for factor levels is the discrete change from the base level.
+
+<span class="stinp">. margins, dydx(*) predict(odds)  </span>
+
+Average marginal effects                        Number of obs     = <span class="stres">    26,200</span>
+Model VCE    : <span class="stres">OIM</span>
+
+Expression   : <span class="stres">P(y=1|X)/P(y=0|X), predict(odds)</span>
+dy/dx w.r.t. : <span class="stres">age grade not_smsa 1.south year</span>
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |<span class="stres">   .0059585    .001467     4.06   0.000     .0030832    .0088338</span>
+       grade |<span class="stres">    .013446   .0018647     7.21   0.000     .0097913    .0171007</span>
+    not_smsa |<span class="stres">  -.0650526   .0102657    -6.34   0.000     -.085173   -.0449322</span>
+     1.south |<span class="stres">  -.1720679   .0084276   -20.42   0.000    -.1885856   -.1555501</span>
+        year |<span class="stres">  -.0032757    .001598    -2.05   0.040    -.0064076   -.0001438</span>
+------------------------------------------------------------------------------
+Note: dy/dx for factor levels is the discrete change from the base level.
+
+<span class="stinp">. margins south,  predict(odds)  </span>
+
+Predictive margins                              Number of obs     = <span class="stres">    26,200</span>
+Model VCE    : <span class="stres">OIM</span>
+
+Expression   : <span class="stres">P(y=1|X)/P(y=0|X), predict(odds)</span>
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |     Margin   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       south |
+          0  |<span class="stres">   .3626616   .0066416    54.60   0.000     .3496442     .375679</span>
+          1  |<span class="stres">   .1905937   .0051289    37.16   0.000     .1805412    .2006462</span>
+------------------------------------------------------------------------------
+</samp></pre>
+<p> 
+So how do we interpret the results?. Here one possibility:
+</p>
+<p> 
+People Living in the sourth are, in average, 10% less likely to belong to a union.
+</p>
+<p> 
+or, Living in the south reduces the odds of belonging to a union in 0.172 points (from 0.3627 to 0.1906).
+</p>
+<p> 
+Thanks for reading.
+</p>
+</body>
