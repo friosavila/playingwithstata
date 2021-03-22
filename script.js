@@ -21,6 +21,14 @@
     }
 }());
 
+//for mathjax
+			window.MathJax = {
+				tex: {
+				inlineMath: [['$', '$'], ['\\(', '\\)']]
+				}
+			};
+			<script id="MathJax-script" asyncsrc="https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.js"></script>
+					
 // Place any jQuery/helper plugins in here.
 
 $(document).ready(function(){
