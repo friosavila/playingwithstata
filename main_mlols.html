@@ -12,6 +12,15 @@
         <link rel="stylesheet" href="style.css">
         <script src="js/vendor/modernizr-2.8.3.min.js"></script>
 		<script>
+			window.MathJax = {
+			  tex: {
+				inlineMath: [['$', '$'], ['\\(', '\\)']]
+			  }
+			};
+		  </script>
+		<script id="MathJax-script" async
+					src="https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.js"></script>
+		<script>
 			function includeHTML() {
 			  var z, i, elmnt, file, xhttp;
 			  /*loop through a collection of all HTML elements:*/
@@ -42,37 +51,41 @@
 			</script>
     </head>
     <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
 		<div class="wrapAll clearfix">
 			<div class="sidebar">
 				<div class="logo">
 					<a href="/"><img src='img/WeeMee.jpg' alt="logo"></a>
 				</div>
 				<div class="navigation">
-					<ul>
-						<li><a href="index.html">Home</a></li>
-						<li><a href="#">Featured content</a></li>
-					</ul>
-				</div>
-
-			
+					<div w3-include-html="contents.html"></div> 
+					<script>
+					includeHTML();
+					</script>
+				</div>			
 			</div>
 			<div class="mainsection">
 				<div class="headerLinks">
-					
+					<!-- Para dar comentarios -->
 				</div>
 				<div class="tabs clearfix">
 					
 				
 				</div>
 				<div class="article">
-					<div w3-include-html="ml_ols.html"></div> 
+					<div w3-include-html="raw_articles\ml_ols.html"></div> 
 					<script>
 					includeHTML();
-					</script>
+					</script>		
 				</div>
 				<div class="pagefooter">
 					Template by <a href="http://html5-templates.com/" target="_blank" rel="nofollow">HTML5 Templates</a> <!-- Please leave this link unchanged -->
 				</div>
+			
+			
 			</div>		
 		</div>
 		
@@ -82,7 +95,7 @@
         <script src="script.js"></script>
 		<script>
 			includeHTML();
-		</script>
+			</script>
 
     </body>
 </html>
