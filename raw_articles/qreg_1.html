@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="format-detection" content="telephone=no">
+<title>QREG I:Linear Reg</title>
+<style>
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px; line-height: 1.428;
+  margin: 0 auto; padding: 0 15px;
+}
+h1, h2, h3, h4, h5, h6 { margin: 20px 0 10px; }
+h1 { font-size: 28px; } h2 { font-size: 24px; }
+h3 { font-size: 18px; } h4 { font-size: 16px; }
+h5 { font-size: 14px; } h6 { font-size: 12px; }
+a { color: #337AB7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; height: auto; }
+ul, ol { padding-left: 30px; }
+pre, code, samp {
+  font-size: 13px;
+  font-family: Courier, monospace;
+}
+code, samp {
+  background-color: #F5F5F5;
+  border-radius: 3px; padding: 3px;
+}
+pre code, pre samp {
+  white-space: pre; background: transparent;
+  border: none; padding: 0;
+}
+pre {
+  line-height: 1.33; background-color: #F5F5F5;
+  border: 1px solid #CCCCCC; border-radius: 3px;
+  padding: 8px; overflow: auto;
+}
+</style>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']]
+  }
+};
+</script>
+  <script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.js"></script>
+          <style>
+.stlog { color: #000000; background-color: #F0F3F9; }
+.stres { color: #324F58; }
+.stinp { font-weight: bold; color: #000000; }
+.stcmd .stcmt { font-style: italic; opacity: 0.5; }
+.stoom, .stcnp { font-style: italic; }
+@media screen { .stcnp { display: none; }}
+</style>
+</head>
+<body>
+<h1>Quantile regressions I</h1>
+<h2>Introduction</h2>
+<br><br>
+Today I will talk about a topic that always seems to bring confusion with regards to what it estimates, and how to interpret those estimates: Quantile regressions. 
+<br><br>
+Yes, I probably won't be the first person talking about this. There is a relatively large literature that has attempted to cover and explain what Quantile regression does and it doesn't. (see the references below). 
+<br><br>
+My coauthor (Michelle Maroto) and I, have even taken our attempt in providing some light on the topic, discussing what they measure and how we believe they should be interpreted. You can find this paper <a href="https://osf.io/preprints/socarxiv/znj38/">here</a> 
+<br><br>
+What I decided to is to provide a more informal description of what quantile regressions do, and don't, in the hopes of clarifying their nature. 
+<br><br>
+Since this may be quite a long topic to address at once, I'll divide the discussion into at least three parts. Today, I will concentrate on some of the required concepts on the more familiar framework: the Linear Regression model (LR). But first... 
+<br><br>
+
+<h2>Quantile regression models...?</h2>
+
+So something you may or may not be aware of, is that there are various models and estimation approaches that have been conceptualized under the umbrella of quantile regression models. I won't attempt to cover all of them here. But I'll concentrate on three types of QREG models, which could be considered the "main" ones, and that are at the center of the discussion, and confusion, of what they do. 
+
+<br><br>
+
+These models are Conditional Quantile Regressions (CQREG) (Koenker and Bassett 1978), Unconditional Quantile Regressions (UQREG) (Firpo Fortin and Lemieux 2009), and Quantile treatment effects (Firpo 2007) (QTE). 
+
+<br><br>
+There are, of course, other flairs of these models. Generalized quantile regressions, parametric quantile regressions, Censored quantile regressions, non-parametric quantile regressions, quantile regressions with fixed effects, etc. But, as I mentioned before, CQREG, UQREG, and QTE, are the ones at the center of most discussions
+
+<br><br>
+In my paper with Michelle, we cover these three models, but under the framework of fixed effects, covering some advances that have been proposed for their estimation. But the ideas we discuss are still relevant for the standard versions of these three models. 
+<br><br>
+
+Alright, so what is the difference across these models? what makes a CQREG different from a UQREG model, or a QTE model (which I'm trying to rename as a Partial conditional model or PCQREG). 
+
+
+<br><br>
+<center><b>Joke: the difference is one letter! C vs U vs P !!</b></center>
+<br><br>
+
+All Jokes apart, the difference between CQREG, UQREG, and QTE has to do with the nature of the type of change we are interested in measuring on the <strong>dependent variable</strong>. 
+<br><br>
+
+This may seem obvious to emphasize that we are measuring the impact across the distribution of the dependent variable, but it is quite often that one hears students trying to interpret QREG as if they are capturing variation with respect to the distribution of independent variables. This is not the case.
+
+<br><br>
+The fact is that QREG models are trying to measure something with respect to the distribution of the dependent variable, not the independent ones.
+
+<br><br>
+What about the type of change? 
+<br><br>
+
+The distinction between <b>unconditional</b> and <b>conditional</b>, and not to mention
+<b>partial conditional</b> effects, is less obvious, which may have contributed to the confusion. 
+
+<br><br>
+To be able to explain these concepts, I need to take a step back and explain them in a more familiar framework. The <b>Linear regression model (LR) </b>. 
+
+<h2>What can a Linear Regression model tells us?</h2>
+
+Lets start with the setup. 
+<br><br>
+Assume that you are interested in analyzing how your independent variables $x$ relate/explain/cause your dependent variable $y$. You, however, also acknowledge that there are other factors, $v$, that may affect $y$. At this point you start with a model that looks like this:
+
+$$y=f(x,v) \quad (1)$$
+
+<br><br>
+
+Let's now make the strong assumption that the relationship between these variables can be written as a linear function. Specifically, let's assume that the data generating process (DGP) is :
+
+$$y=b_0+b_1*x+b_2*x^2+v*(a_0+a_1*x) \quad (2)$$
+
+Now, to be able to interpret the model in a causal way, lets assume that the error $v$ is completely independent of $x$ such that:
+
+$$E(v|x)=0 ; Var(v|x) = c $$
+
+So this "basic model" is more advance than the univariate model one is accustomed to seeing in an "introductory" econometrics book. First, the model is linear in coefficients, but not with respect to the explanatory variables. Second, the observed factor $x$ and unobserved $v$ interact with each other to determine $y$. Since we never really see $v$, you could consider that is model is in fact heteroskedastic.
+
+Now, for my own clarification, let me rewrite this for the individual:
+$$y_i=b_0+b_1*x_i+b_2*x^2_i+v_i*(a_0+a_1*x_i) \quad (3)$$
+
+<br><br>
+Alright, now that we have defined the DGP, we can play create/simulate data that follow this process, and you can use it to see what would happen if you use standard methods. 
+<br><br>
+While we do not need to set up any additional assumptions on the distribution of $x$ or the error $v$ for some of the interpretations I talk about blow, they are necessary to simulate the data, and provide some visualizations. Those details are provided below.
+<pre id="stlog-1" class="stlog"><samp><span class="stinp">. <span class="stcmt">* Lets create a sample of 250 observations</span></span>
+<span class="stinp">. clear</span>
+<span class="stinp">. <span class="stcmt">* I will set the seed in case you want to replicate this</span></span>
+<span class="stinp">. set seed 102</span>
+<span class="stinp">. set obs 250</span>
+<span class="stinp">. <span class="stcmt">* I will use a CHI2 for X and normal for v. But set the first 4 observations </span></span>
+<span class="stinp">. <span class="stcmt">* at specific values for convinience.</span></span>
+<span class="stinp">. <span class="stcmt">* I ll also make those larger than zero equal to missing, </span></span>
+<span class="stinp">. <span class="stcmt">* to have good looking graphs</span></span>
+<span class="stinp">. gen x = rchi2(3)/2</span>
+<span class="stinp">. replace x=. if x&gt;5</span>
+<span class="stinp">. replace x=.75 in 1</span>
+<span class="stinp">. replace x=2   in 2/3</span>
+<span class="stinp">. replace x=4   in 4</span>
+<span class="stinp">. replace x=4.5 in 5</span>
+<span class="stinp">. <span class="stcmt">* To keep things simple, assume the errors -v- are normally distributed</span></span>
+<span class="stinp">. gen v = rnormal()*.5</span>
+<span class="stinp">. <span class="stcmt">* With all of this, we can simulate the data as follows:</span></span>
+<span class="stinp">. gen y = 5 + 3*x -0.5*x^2+ v * (1+x)</span>
+<span class="stinp">. <span class="stcmt">* This will be for the graphs. </span></span>
+<span class="stinp">. gen id = _n</span>
+<span class="stinp">. <span class="stcmt">* lets see the data looks:</span></span>
+<span class="stinp">. set scheme s1color</span>
+<span class="stinp">. two (scatter y x       , color(navy%20)) <span class="stcmt">/// </span>
+&gt;         (scatter y x in 1/5, color(navy%80) mlabel(id) mlabcolor(black)), <span class="stcmt">///</span>
+&gt;          ytitle("Outcome y") xtitle("Independent var X") legend(off)</span>
+<span class="stinp">. graph export qr_fig1.png        </span>
+</samp></pre>
+<img src = "https://i.imgur.com/vOMnI5L.png">
+<br><br>
+On this figure, you can appreciate how the simulated sample looks, including the fact that heteroskedasticity is observed. Following the DGP, the relationship between $X$ and $y$ is nonlinear, and for convenience, I tagged 5 points as an example of random observations in this sample. 
+<br><br>
+
+Now that we have a sample, we could start analyzing it, estimating a LR using Ordinary Least Squares (OLS). Of course, we may also need to either report robust standard error, or apply Generalized Least-squares, Feasible Generalized Least Squares, or use other more advanced methods to simultaneously model heteroskedasticity.
+<br><br>
+So how do we interpret this model? 
+<br><br>
+Since I know how the data was created, I will use this information to make interpretations. There will be no need to estimate the underlying model.
+<br>
+Since we have access to all the DGP, including the unobserved factors $v$, I consider that there are 3 different ways to interpret the results.
+
+<h3> Interpretation 1: Individual effects...For me! </h3>
+
+The first way to interpret the results above is to do it for every single person/observation in the data. 
+
+This is, however, a type of interpretation you will rarely see done because it requires that we know every piece of information of the DGP. This includes not only the characteristics $x$, but also the unobservables $v$ (or if the model is homoskedastic).
+
+<br><br>
+The question we could answer in this case would be:
+
+<br>
+<b>How does $y$ change for individual $i$ when there is a change in $x$ ? </b>
+<br>
+
+One way to obtain this is to treat $x$ is a continuous variable. Thus, we can use equation (3) to obtain the partial derivative with respect to $x$, which will give us the marginal effect of $x$ on $y$ for person $i$:
+
+$$\frac{\partial y_i}{\partial x_{i,1}}=b_1+2*b_2*x_i + v_i * a_1 \quad (4) $$
+
+Couple of things to notice here:
+
+<ul>
+<li>The interpretation as an effect for an individual is only possible if we can observe the unobserved $v_i$. However, it could also be done if the model were homoskedastic. $a_1=0$.</li>
+
+<li>The effect is not constant, and depends on $x_{i}$, and on $v_i$. </li>
+
+<li>This is a local (linear) approximation for the effect of $x$ on $y$. If the change in $x$ is large, this approximation may be very different from the change in $y$ predicted by the model. However, in most cases, this approximation is considered good enough (mostly because we do not know better). </li>
+</ul>
+
+While I'll use partial derivates to easily estimate the marginal effects for different interpretations, I'll plot the effects based on the DGP prediction. For instance, the outcome for person $i$ if $x$ increases in $dx$ units is:
+$$y'_i=b_0+b_1*(x_i+dx)+b_2*(x_i+dx)^2+v_i*(a_0+a_1*(x_i+dx)) \quad (5)$$
+In fact, assuming $dx=1$, I can plot this for the 5 observations I isolated before. In the background, you can also see what is going on with the rest of the observations in the sample:
+<pre id="stlog-2" class="stlog"><samp><span class="stinp">. <span class="stcmt">** Firt Some data cleaning</span></span>
+<span class="stinp">. gen dx=1</span>
+
+<span class="stinp">. gen xdx=x+dx</span>
+(10 missing values generated)
+
+<span class="stinp">. gen xdxr=x+dx+0.1</span>
+(10 missing values generated)
+
+<span class="stinp">. gen y_dy = 5 + 3*(xdx) -0.5*(xdx)^2+ v * (1+(xdx))</span>
+(10 missing values generated)
+
+<span class="stinp">. <span class="stcmt">** and the plot </span></span>
+<span class="stinp">. two (scatter y    x  in 1/5, mlabel(id) mlabcolor(black) mlabpos(12) color(navy%80)  ) <span class="stcmt">///</span>
+&gt;     (scatter y_dy xdx in 1/5,  mlabcolor(black) mlabpos(12) ms(d) color(maroon%80) ) <span class="stcmt">///</span>
+&gt;         (pcarrow  y x y_dy xdx in 1/5, color(black%40)) <span class="stcmt">///</span>
+&gt;         (rcap y y_dy xdxr in 1/5, color(black%40) ) <span class="stcmt">///</span>
+&gt;         (scatter y    x            , color(navy%10)  ) <span class="stcmt">///</span>
+&gt;         (scatter y_dy xdx          , color(maroon%10) ms(d) ) , <span class="stcmt">///</span>
+&gt;         ytitle("Outcome y") xtitle("Indep var X") xlabels(0/5) <span class="stcmt">///</span>
+&gt;         legend(order(1 "f(x,v)" 2 "f(x+dx,v)" 4 "{&amp;Delta}y") col(3))             </span>
+
+<span class="stinp">. graph export qr_fig2.png        </span>
+(file qr_fig2.png written in PNG format)
+</samp></pre>
+<img src = "https://i.imgur.com/3AD8Xtz.png">
+<br><br>
+<br><br>
+And the interpretion? 
+<br><br>
+As one can see, the change in $y$ experience by different observations depends on the value of their characteristics $x$. And they seem to closely follow the overall trend (not yet shown). 
+<br><br>
+If one looks at observations 2 and 3, however, one would notice that both have the same $x$ but different $v$, which is why their changes in $y$ are different. This could be interpreted as a kind of unobserved heterogeneity. In other words, the effect of a 1 unit change in $x$ is specific to each person.
+<br><br>
+If one is interested in the exact magnitud of the effects (or wants to compare them the the 
+partial derivative approximation, I provide an example below.
+<pre id="stlog-3" class="stlog"><samp><span class="stinp">. <span class="stcmt">** First the approximation:</span></span>
+<span class="stinp">. gen mfx_aprox=3-x+v</span>
+(10 missing values generated)
+
+<span class="stinp">. label var mfx_aprox "LL approximation"</span>
+<span class="stinp">. <span class="stcmt">** and the exact change can be found as the difference between y_dy</span></span>
+<span class="stinp">. <span class="stcmt">** and y (divided by dx).</span></span>
+<span class="stinp">. gen mfx_exact=(y_dy-y)</span>
+<span class="stinp">. label var mfx_exact "Exact effect"</span>
+<span class="stinp">. <span class="stcmt">**</span></span>
+<span class="stinp">. list x v mfx_aprox mfx_exact in 1/5, sep(0) </span>
+
+     +-----------------------------------------+
+     | <span class="stres">  x           v   mfx_aprox   mfx_exact </span>|
+     |-----------------------------------------|
+  1. | <span class="stres">.75    .5645621    2.814562    2.314562 </span>|
+  2. | <span class="stres">  2    .1400093    1.140009    .6400089 </span>|
+  3. | <span class="stres">  2   -.1684819    .8315181    .3315182 </span>|
+  4. | <span class="stres">  4    .0549622   -.9450378   -1.445037 </span>|
+  5. | <span class="stres">4.5   -.5240271   -2.024027   -2.524027 </span>|
+     +-----------------------------------------+
+</samp></pre>
+For observation 1, a 1 unit increase in $x$ will increase 1 in 2.315 units. For observations 2 and 3, the same change will increase 2's outcome in 0.64 units, and only increase 3's outcome in 0.33 units. All because they have different unobserved $v$.
+
+<br> <br> 
+<h2>Interpretation 2: Conditional effects...For people like me</h2>
+The first interpretation is interesting because it shows that the same "policy" applied to people with the same observed  characteristics $x$ may produce different 
+results because of unobserved heterogeneity $v$.
+<br> <br> 
+The approach, however, is not useful because $v$ is never observed. Thus we cannot interpret the effects for any particular individual.
+<br> <br> 
+The Second type of interpretation is something more practical. Rather than trying to quantify $v$, the second approach takes the unobservables out of the equation!
+<br> <br> 
+ How?...by averaging them out.
+<br><br>
+Consider again the DGP.
+$$y_i=b_0+b_1*x_i+b_2*x^2_i+v_i*(a_0+a_1*x_i)$$
+
+If we take expectations conditional on $x_i$ to be a specific value, we would have:
+
+$$E(y_i|x_i=X)=b_0+b_1*X+b_2*X^2+E(v_i|x_i=X)*(a_0+a_1*X) $$
+
+Using the zero conditional mean assumption, $E(v_i|x_i=X)=0$, the expression we are left with is something more familiar:
+
+$$E(y_i|X)=b_0+b_1*X+b_2*X^2 \quad (6)$$
+
+This is why, when talking about LR models, one is mostly concern about using the correct model specification for the <b>conditional mean</b>. 
+
+<br><br>
+
+So how does this affect the interpretation?
+<br>
+
+If we take the same approach as for the first interpretation, we can obtain the partial derivative of equation (6) with respect to $X$ (not $x_i$), to find the "average/expected" impact that a 1 unit increase in $X$ will have on $y$.
+
+$$\frac{\partial E(y_i|X)}{\partial X}=b_1+2*b_2*X \quad (7) $$
+
+One should note that equation (7) could also be obtained by averaging the individual marginal effects described in equation (4). 
+<br><br>
+How do these new effects look?
+<br>
+In the code below, I obtain obtain the current expected mean of the outcome, conditional on $X$ as well as what the conditional means would look like if we apply the 1 unit change in $X$.
+<pre id="stlog-4" class="stlog"><samp><span class="stinp">. <span class="stcmt">* E(y|X)</span></span>
+<span class="stinp">. gen yy    = 5 + 3*x -0.5*x^2</span>
+(10 missing values generated)
+
+<span class="stinp">. <span class="stcmt">* E(y'|(X+dx))</span></span>
+<span class="stinp">. gen yy_dy = 5 + 3*(x+dx) -0.5*(x+dx)^2</span>
+(10 missing values generated)
+
+<span class="stinp">. <span class="stcmt">* And the figure:</span></span>
+<span class="stinp">. two (scatter y    x   in 1/5, color(navy%25)  ) <span class="stcmt">///</span>
+&gt;     (scatter y_dy xdx in 1/5, ms(d) color(maroon%25) ) <span class="stcmt">///</span>
+&gt;         (pcarrow y x y_dy xdx in 1/5, color(black%40)) <span class="stcmt">///</span>
+&gt;         (function 5 + 3*x -0.5*x^2 , range(0 6) color(black%60) ) <span class="stcmt">///</span>
+&gt;         (scatter y    x            , color(navy%10)  ) <span class="stcmt">///</span>
+&gt;         (scatter y_dy xdx          , color(maroon%10) ms(d) )  <span class="stcmt">///</span>
+&gt;         (scatter yy    x         if inlist(id,1,3,4,5)  , mlabel(id) mlabcol(black) mlabpos(12) color(navy%80) ) ///</span>
+&gt;         (scatter yy_dy xdx       if inlist(id,1,3,4,5)  , mlabel(id) mlabcol(black) mlabpos(6) color(maroon%80) ms(d) ), ///</span>
+&gt;         ytitle("Outcome y") xtitle("Indep var X") xlabels(0/5) <span class="stcmt">///</span>
+&gt;         legend(order(1 "f(x,v)" 2 "f(x+dx,v)" 4 "E(y|X)") col(3))</span>
+
+<span class="stinp">. graph export qr_fig3.png        </span>
+(file qr_fig3.png written in PNG format)
+</samp></pre>
+<img src = "https://i.imgur.com/0wfTrw5.png">
+<br><br>
+So what are the practical consequence of this?. 
+<br><br>
+As you can see in the figure above, all the expected means, before and after the change, fall on the same "line". The conditional mean function. And the interpretation changes slightly.
+<br><br>
+If the first way of interpreting the results applied to "me" (any particular observation), the second way of interpreting the regression coefficients applies to people "like" me.
+
+<br><br>
+
+This means that the effects do not apply to any particular observation, but what could happen in, average, to observations that share the same characteristics as "me". This is the nature of the Conditional effect. 
+<br><br>
+
+For example, conditional on setting characteristics $X=2$, we <b>expect</b> a person to experience a change in $y$ of 0.5. This happens, for example, for observations 2 and 3. (2 is ommitted).
+<br><br>
+In other words, interpretation 2 refers to an expected effect among all people with identical observed characteristics $X$, or refers to a change we would observe on the conditional average for that group.
+
+<br><br>
+One could also say, if a person with $X=2$ experiences an increase of one unit in $X$, their outcome $y$ is expected to increase by 0.5 units. 
+<br><br>
+It would be equally valid to say: If one compares two groups of individuals with exactly the same characteristics, except that one has an $X=2$ and the other with $X=3$ the average outcome $y$ of the second group will be 0.5 unit higher.
+<br>
+
+<br><br>
+So just to reiterate. This second type of interpretation requires thinking in terms of groups (defined by their characteristics), not in terms of individuals perse. Although you can also think about what, on average, would happen to individuals with the same observed characteristics $x$.
+
+<h2>Interpretation 3: Unconditional effects...For all people!</h2>
+<h3>Not only for me, or for people like me</h3>
+The Second type of interpretation is the one we are most familiar with. Since that is what most textbooks imply. It may also be the one you are most interested in since is the closest you can get to measure the impact at the "micro" level. 
+
+<br><br>
+The third type of interpretation can be considered more of a "macro" level interpretation. It may be more practical from the point of view of a policymaker (for example), who is interested in understanding how the population average outcome $y$ would change due to a policy that changed $X$ for everyone. 
+<br><br>
+<b>For example: How will the poverty rate in Bolivia change if the number of years of education in the population increase on average in 1 year.? </b>
+<br><br> 
+
+The thought experiment associated with this question requires a different way of thinking about the concept of change. 
+
+<br><br>
+To clarify this point. Consider the DGP again:
+$$y_i=b_0+b_1*x_i+b_2*x^2_i+v_i*(a_0+a_1*x_i)$$
+Or better yet the conditional expectation form:
+$$E(y_i|X)=b_0+b_1*X+b_2*X^2$$
+
+If we are interested in the unconditional effect on the mean, we first should write this equation in terms of  unconditional means: 
+
+$$E(E(y_i|X))=b_0+b_1*E(x_i)+b_2*E(x_i^2)$$
+$$E(y_i)=b_0+b_1*E(x_i)+b_2*E(x_i^2)$$
+
+To simplify this further, lets also remember that:
+$$Var(x_i) = E(x_i^2)-E(x_i)^2 \rightarrow E(x_i^2)=Var(x_i)+E(x_i)^2 $$
+With this, the unconditional means outcome equation can be written as:
+
+$$E(y_i)=b_0+b_1*E(x_i)+b_2*E(x_i)^2+b_2*Var(x_i) \quad (8)$$
+
+So what does this tell us? 
+<br><br>
+1. The unconditional mean of $y$ for the population will depend on the unconditional mean of $x$, $E(x_i)$.
+<br>
+2. The unconditional mean of $y$ for the population will also depend on the unconditional variance of $x$, $var(x_i)$.
+<br>
+3. We can only predict the unconditional mean of $y$, if we also know some of the distribution properties of $x$.
+<br>
+
+This is where we need a very precise thought experiment. Unless we want to make things complicated, we would need a change in all $X's$ that affects $E(X_i)$, but not the variance. For example, if every observation experiences that 1 unit increase in $X$. 
+<br><br>
+
+This is what is Firpo, Fortin, and Lemieux (2000) called a "location shift" effect: The distribution changes "location", but not shape.
+
+<br>
+Because of this, I will only show the unconditional marginal effect with respect to $E(x_i)$.
+
+$$\frac{\partial E(y_i)}{\partial E(x_i)}=b_1+2*b_2*E(x_i) \quad (9) $$
+
+So something you may have noticed here. I could have more easily shown that the unconditional effect could be derived by "averaging" the conditional effects (eq 7) or averaging the unconditional effects (eq 4).
+
+<br> <br> 
+However, in doing so we wouldn't have noticed that other moments of $X$ (the variance) could also affect the unconditional mean of $y$. Furthermore, this equivalence between individual, conditional and unconditional effects does not translate when we start talking about more complex models.
+
+<br><br>
+So what about the estimation? 
+<br><br>
+Not much else needs to be done here since we already provided all the pieces needed to implement and analyze this thought experiment, and we just need to report the average changes. 
+<br><br>
+The one thing to notice, however.
+<br>
+1. Interpretation 1 suggests individual marginal effects are unique to each individual, because of the observed $x$ and unobserved heterogeneity $v$.
+<br>
+2. Interpretation 2 suggests conditional marginal effects (on the mean) change because of observed heterogeneity only $x$.
+<br>
+3. Interpretation 3 says that unconditional marginal effects (on the mean) are constant because they correspond to the population as a whole.
+<br><br>
+Below I show you how I obtain the results and construct the plot:
+<pre id="stlog-5" class="stlog"><samp><span class="stinp">. <span class="stcmt">** Average of X</span></span>
+<span class="stinp">. <span class="stcmt">** since 2*X~Chi(3)</span></span>
+<span class="stinp">. <span class="stcmt">** E(X)=0.5*k =1.5</span></span>
+<span class="stinp">. <span class="stcmt">** Var(X)=0.5*k=1.5</span></span>
+<span class="stinp">. <span class="stcmt">** Thus E(y)=5 + 3*E(x) -0.5*E(x)^2-0.5*Var(X)</span></span>
+<span class="stinp">. <span class="stcmt">** E(Y ) = 7.625</span></span>
+<span class="stinp">. <span class="stcmt">** E(Y') = 8.625</span></span>
+<span class="stinp">. </span>
+<span class="stinp">. two (scatter y    x   , color(navy%15)  ) <span class="stcmt">///</span>
+&gt;     (scatter y_dy xdx , ms(d) color(maroon%15) ) <span class="stcmt">///</span>
+&gt;         (function 5 + 3*x -0.5*x^2 , range(0 6) color(black%60) ) <span class="stcmt">///</span>
+&gt;         (scatteri 7.625 1.5 "Before",mcolor(navy ) msize(small) mlabcolor(black) ) <span class="stcmt">///</span>
+&gt;         (scatteri 8.625 2.5 "After", mcolor(maroon) msize(small) mlabcolor(black) ) <span class="stcmt">///</span>
+&gt;         (pcarrowi 7.625 1.5 8.625 2.5, color(black)), <span class="stcmt">///</span>
+&gt;         xline(1.5, lcolor(navy%50)) xline(2.5, lcolor(maroon%50)) <span class="stcmt">///</span>
+&gt;         yline(7.625, lcolor(navy%50)) yline(8.625, lcolor(maroon%50)) ylabel( 0(5)15 7.625 8.625, angle(0)) ///</span>
+&gt;         legend(order(1 "f(x,v)" 2 "f(x+dx,v)" 4 "E(y)" 5 "E(y')") col(4))       <span class="stcmt">///</span>
+&gt;         ytitle("Outcome y") xtitle("Indep var X") </span>
+
+<span class="stinp">. graph export qr_fig4.png</span>
+(file qr_fig4.png written in PNG format)
+</samp></pre>
+<img src = "https://i.imgur.com/5BAsUCY.png">
+<br><br>
+In this figure, I'm plotting the familiar information, with the "blue" dots showing the data before the change in $X$, and red dots for after the change.
+<br><br>
+Notice that the point $(E(y), E(X))$ does not fall on the "conditional mean" line. However, the change is parallel to it. 
+<br><br>
+So what about the interpretation?
+<br>
+If $x$ for every observation increases in 1 unit, so that the $E(x)$ increases in 1 unit, but the variance remains consant. The unconditional mean of $y$ ($E(y)$) will increase in 1 unit, from 7.625 to 8.625.
+<br><br>
+
+<h2>Conclusion</h2>
+So today I presented a different way to think about individual, conditional, and unconditional marginal effects, all within the framework of linear regression models. 
+<br><br>
+The main message is that the differences across these interpretations depend on who we will be referring to when making the interpretations. Mathematically, the marginal effects could be characterized as follows:
+<br><br>
+$$ Individual: \frac{\partial y_i}{\partial x_i} $$
+$$ Conditional: \frac{\partial E(y_i|X)}{\partial X} $$
+$$ Unconditional: \frac{\partial E(y_i)}{\partial E(x_i)} $$
+<br><br>
+What is left? There are a couple of things left, that I want to discuss before talking about quantile regressions. Both are strongly related.
+<br><br>
+The first one has to do with the idea of "partial conditional" interpretations. This is better known as treatment effects. For this, 
+I will need to make the model more complex, by adding a second "observed" characteristics.
+<br><br>
+The second one has to do with the interpretation of "categorical" variables, in particular Dummies. Their interpretation is what marks the difference between unconditional effects and treatment effects.
+<br><br>
+
+But, that will be for the next time. Thank you for reading.
+<br>
+And as always, comments are welcome. 
+</body>
+</html>

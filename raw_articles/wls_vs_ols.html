@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="format-detection" content="telephone=no">
+<title>OLS vs WLS coefficients</title>
+<style>
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px; line-height: 1.428;
+  margin: 0 auto; padding: 0 15px;
+}
+h1, h2, h3, h4, h5, h6 { margin: 20px 0 10px; }
+h1 { font-size: 28px; } h2 { font-size: 24px; }
+h3 { font-size: 18px; } h4 { font-size: 16px; }
+h5 { font-size: 14px; } h6 { font-size: 12px; }
+a { color: #337AB7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; height: auto; }
+ul, ol { padding-left: 30px; }
+pre, code, samp {
+  font-size: 13px;
+  font-family: Courier, monospace;
+}
+code, samp {
+  background-color: #F5F5F5;
+  border-radius: 3px; padding: 3px;
+}
+pre code, pre samp {
+  white-space: pre; background: transparent;
+  border: none; padding: 0;
+}
+pre {
+  line-height: 1.33; background-color: #F5F5F5;
+  border: 1px solid #CCCCCC; border-radius: 3px;
+  padding: 8px; overflow: auto;
+}
+</style>
+<style>
+.stlog { color: #000000; background-color: #F0F3F9; }
+.stres { color: #324F58; }
+.stinp { font-weight: bold; color: #000000; }
+.stcmd .stcmt { font-style: italic; opacity: 0.5; }
+.stoom, .stcnp { font-style: italic; }
+@media screen { .stcnp { display: none; }}
+</style>
+</head>
+<body>
+<h1>OLS vs WLS: Dealing with heteroskedasticity</h1>
+<h2>Introduction</h2>
+<p>As you may know, one common strategy to deal with heteroskedasticity
+in linear regression models (LRM)
+is to apply Weighted Least Squares (WLS), or perhaps more precisely,
+Feasible Least Squares.
+<br><br>
+The idea is that if you believe the variance of your residuals are heteroskedastic, 
+you may do better (be more efficient), if you account for this heteroskedasticity 
+when estimating the model coefficients and standard errors.
+<br><br>
+The efficiency is gained by giving more weight to parts of the data that would
+show less dispersion, and less weights to less precise data.
+<br><br>
+Most of the time, you will find that your OLS and WLS coefficients are comparable,
+with possibly smaller standard errors with WLS. The question, however, is what happens
+when the coefficients are different.
+<br><br>
+A recent Tweet by Prof Wooldridge reminds us that if the model specification is correct,
+both OLS and WLS are consistent, but WLS is efficient. However, if the model specification 
+is incorrect, OLS and WLS may be different, and neither will be correct.
+<br><br>
+This raises a simple question. How do we test if OLS and WLS coefficients are equal to each other?
+<h2>Options</h2>
+I will start by saying I do not know. But I have a few guesses of how this could be done, which 
+I will show you here. Of course, to do this exercise we need some data. 
+<br><br>
+I will use data that is available online, and that accompanies the Stata command
+-oaxaca- (by Ben Jann). I ll drop observations without wages
+</p>
+<pre id="stlog-1" class="stlog"><samp><span class="stinp">. use http://fmwww.bc.edu/RePEc/bocode/o/oaxaca.dta, clear</span>
+(Excerpt from the Swiss Labor Market Survey 1998)
+
+<span class="stinp">. keep if lnwage!=.</span>
+(213 observations deleted)
+</samp></pre>
+<p>
+Let's first start estimating a simple linear regression, and test for heteroskedasticity. 
+For fun I ll use the manual and "canned" approach:
+</p>
+<pre id="stlog-2" class="stlog"><samp><span class="stinp">. reg lnwage educ exper tenure female age agesq</span>
+
+      Source |       SS           df       MS      Number of obs   =<span class="stres">     1,434</span>
+-------------+----------------------------------   F(6, 1427)      = <span class="stres">   123.27</span>
+       Model | <span class="stres"> 137.953858         6  22.9923096   </span>Prob &gt; F        =<span class="stres">    0.0000</span>
+    Residual | <span class="stres"> 266.165946     1,427  .186521336   </span>R-squared       =<span class="stres">    0.3414</span>
+-------------+----------------------------------   Adj R-squared   =<span class="stres">    0.3386</span>
+       Total | <span class="stres"> 404.119804     1,433  .282009633   </span>Root MSE        =   <span class="stres"> .43188</span>
+
+------------------------------------------------------------------------------
+      lnwage |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        educ |<span class="stres">   .0632923   .0050407    12.56   0.000     .0534043    .0731803</span>
+       exper |<span class="stres">  -.0002496   .0018009    -0.14   0.890    -.0037824    .0032831</span>
+      tenure |<span class="stres">   .0062977   .0018946     3.32   0.001     .0025811    .0100142</span>
+      female |<span class="stres">  -.1508285   .0240651    -6.27   0.000    -.1980353   -.1036217</span>
+         age |<span class="stres">   .1117635   .0076373    14.63   0.000      .096782     .126745</span>
+       agesq |<span class="stres">  -.0012397   .0000941   -13.17   0.000    -.0014243    -.001055</span>
+       _cons |<span class="stres">   .3332218   .1432946     2.33   0.020     .0521312    .6143125</span>
+------------------------------------------------------------------------------
+
+<span class="stinp">. estat hett,   iid rhs</span>
+
+Breusch-Pagan / Cook-Weisberg test for heteroskedasticity 
+         Ho: Constant variance
+         Variables: educ exper tenure female age agesq
+
+         chi2(<span class="stres">6</span>)      =<span class="stres">    78.98</span>
+         Prob &gt; chi2  =<span class="stres">   0.0000</span>
+
+<span class="stinp">. predict resid, resid</span>
+
+<span class="stinp">. gen resid2=resid^2</span>
+
+<span class="stinp">. regress resid2 educ exper tenure female age agesq</span>
+
+      Source |       SS           df       MS      Number of obs   =<span class="stres">     1,434</span>
+-------------+----------------------------------   F(6, 1427)      = <span class="stres">    13.86</span>
+       Model | <span class="stres"> 20.9491241         6  3.49152069   </span>Prob &gt; F        =<span class="stres">    0.0000</span>
+    Residual | <span class="stres">  359.40398     1,427  .251859832   </span>R-squared       =<span class="stres">    0.0551</span>
+-------------+----------------------------------   Adj R-squared   =<span class="stres">    0.0511</span>
+       Total | <span class="stres"> 380.353104     1,433  .265424357   </span>Root MSE        =   <span class="stres"> .50186</span>
+
+------------------------------------------------------------------------------
+      resid2 |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        educ |<span class="stres">  -.0097796   .0058574    -1.67   0.095    -.0212696    .0017105</span>
+       exper |<span class="stres">  -.0069945   .0020927    -3.34   0.001    -.0110996   -.0028893</span>
+      tenure |<span class="stres">  -.0027569   .0022016    -1.25   0.211    -.0070756    .0015619</span>
+      female |<span class="stres">   .1163298   .0279642     4.16   0.000     .0614744    .1711852</span>
+         age |<span class="stres">  -.0466518   .0088747    -5.26   0.000    -.0640606   -.0292429</span>
+       agesq |<span class="stres">   .0006592   .0001094     6.03   0.000     .0004447    .0008738</span>
+       _cons |<span class="stres">   1.093889   .1665118     6.57   0.000     .7672553    1.420524</span>
+------------------------------------------------------------------------------
+
+<span class="stinp">. display "Chi2: `=e(N)*e(r2)'"</span>
+<span class="stres">Chi2: 78.98198718788628</span>
+</samp></pre>
+<p>
+This clearly shows we have a problem of heteroskedasticity. 
+Thus, to account for this problem, we estimate a model using FGLS.
+<br><br>
+In other words, we try to model heteroskedasticty first, 
+and obtain a prediction for the conditional heteroskedasticity.
+</p>
+<pre id="stlog-3" class="stlog"><samp><span class="stinp">. gen logresid2=log(resid2)</span>
+
+<span class="stinp">. regress logresid2 educ exper tenure female age agesq</span>
+
+      Source |       SS           df       MS      Number of obs   =<span class="stres">     1,434</span>
+-------------+----------------------------------   F(6, 1427)      = <span class="stres">    17.75</span>
+       Model | <span class="stres"> 557.714322         6   92.952387   </span>Prob &gt; F        =<span class="stres">    0.0000</span>
+    Residual | <span class="stres"> 7473.81329     1,427  5.23743048   </span>R-squared       =<span class="stres">    0.0694</span>
+-------------+----------------------------------   Adj R-squared   =<span class="stres">    0.0655</span>
+       Total | <span class="stres"> 8031.52761     1,433  5.60469477   </span>Root MSE        =   <span class="stres"> 2.2885</span>
+
+------------------------------------------------------------------------------
+   logresid2 |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        educ |<span class="stres">  -.0099415   .0267107    -0.37   0.710     -.062338     .042455</span>
+       exper |<span class="stres">   -.033365   .0095431    -3.50   0.000    -.0520851   -.0146449</span>
+      tenure |<span class="stres">  -.0081768   .0100396    -0.81   0.416    -.0278708    .0115172</span>
+      female |<span class="stres">   .6484603   .1275212     5.09   0.000     .3983111    .8986095</span>
+         age |<span class="stres">  -.2660638   .0404701    -6.57   0.000     -.345451   -.1866765</span>
+       agesq |<span class="stres">   .0036293   .0004988     7.28   0.000     .0026509    .0046078</span>
+       _cons |<span class="stres">   1.285756   .7593196     1.69   0.091    -.2037467    2.775258</span>
+------------------------------------------------------------------------------
+
+<span class="stinp">. predictnl h_x=exp(xb())</span>
+</samp></pre>
+<p>
+And re-estimate the model using WLS, or using transformed data:
+</p>
+<pre id="stlog-4" class="stlog"><samp><span class="stinp">. qui:reg lnwage educ exper tenure female age agesq </span>
+
+<span class="stinp">. est sto mols</span>
+
+<span class="stinp">. qui:reg lnwage educ exper tenure female age agesq [aw=1/h_x]</span>
+
+<span class="stinp">. est sto mwls</span>
+
+<span class="stinp">. foreach i in lnwage educ exper tenure female age agesq  {</span>
+  2<span class="stinp">.         gen `i'w=`i'*sqrt(1/h_x)</span>
+  3<span class="stinp">. }</span>
+
+<span class="stinp">. gen one =sqrt(1/h_x)</span>
+
+<span class="stinp">. qui:reg lnwagew educw experw tenurew femalew agew agesqw one, nocons</span>
+
+<span class="stinp">. est sto mtls</span>
+
+<span class="stinp">. esttab mols mwls mtls,se nogaps b(4) mtitle(ols wls tls)</span>
+
+------------------------------------------------------------
+                      (1)             (2)             (3)   
+                      ols             wls             tls   
+------------------------------------------------------------
+educ        <span class="stres">       0.0633***       0.0558***                </span>
+            <span class="stres">     </span>(<span class="stres">0.0050</span>)<span class="stres">        </span>(<span class="stres">0.0044</span>)<span class="stres">                   </span>
+exper       <span class="stres">      -0.0002         -0.0015                   </span>
+            <span class="stres">     </span>(<span class="stres">0.0018</span>)<span class="stres">        </span>(<span class="stres">0.0017</span>)<span class="stres">                   </span>
+tenure      <span class="stres">       0.0063***       0.0033*                  </span>
+            <span class="stres">     </span>(<span class="stres">0.0019</span>)<span class="stres">        </span>(<span class="stres">0.0015</span>)<span class="stres">                   </span>
+female      <span class="stres">      -0.1508***      -0.1537***                </span>
+            <span class="stres">     </span>(<span class="stres">0.0241</span>)<span class="stres">        </span>(<span class="stres">0.0218</span>)<span class="stres">                   </span>
+age         <span class="stres">       0.1118***       0.0976***                </span>
+            <span class="stres">     </span>(<span class="stres">0.0076</span>)<span class="stres">        </span>(<span class="stres">0.0082</span>)<span class="stres">                   </span>
+agesq       <span class="stres">      -0.0012***      -0.0011***                </span>
+            <span class="stres">     </span>(<span class="stres">0.0001</span>)<span class="stres">        </span>(<span class="stres">0.0001</span>)<span class="stres">                   </span>
+educw       <span class="stres">                                       0.0558***</span>
+            <span class="stres">                                     </span>(<span class="stres">0.0044</span>)<span class="stres">   </span>
+experw      <span class="stres">                                      -0.0015   </span>
+            <span class="stres">                                     </span>(<span class="stres">0.0017</span>)<span class="stres">   </span>
+tenurew     <span class="stres">                                       0.0033*  </span>
+            <span class="stres">                                     </span>(<span class="stres">0.0015</span>)<span class="stres">   </span>
+femalew     <span class="stres">                                      -0.1537***</span>
+            <span class="stres">                                     </span>(<span class="stres">0.0218</span>)<span class="stres">   </span>
+agew        <span class="stres">                                       0.0976***</span>
+            <span class="stres">                                     </span>(<span class="stres">0.0082</span>)<span class="stres">   </span>
+agesqw      <span class="stres">                                      -0.0011***</span>
+            <span class="stres">                                     </span>(<span class="stres">0.0001</span>)<span class="stres">   </span>
+one         <span class="stres">                                       0.7189***</span>
+            <span class="stres">                                     </span>(<span class="stres">0.1615</span>)<span class="stres">   </span>
+_cons       <span class="stres">       0.3332*         0.7189***                </span>
+            <span class="stres">     </span>(<span class="stres">0.1433</span>)<span class="stres">        </span>(<span class="stres">0.1615</span>)<span class="stres">                   </span>
+------------------------------------------------------------
+N           <span class="stres">         1434            1434            1434   </span>
+------------------------------------------------------------
+Standard errors in parentheses
+* p&lt;0.05, ** p&lt;0.01, *** p&lt;0.001
+</samp></pre>
+<p>
+And as we know, the WLS and the one using transformed data, provide exactly the same results.
+<br><br>
+Now, if you look into columns 1 and 2 of the above table, you will see some differences in coefficients.
+Those differences seem small, but are they statistically different? In other words:
+<br><br>
+How do we compare WLS vs OLS coefficients?
+<br><br>
+One option that was suggested is using a Hausman test, where ols will be considered consistent,
+and wls efficient:
+</p>
+<pre id="stlog-5" class="stlog"><samp><span class="stinp">. hausman mols mwls</span>
+
+                 ---- Coefficients ----
+             |      (b)          (B)            (b-B)     sqrt(diag(V_b-V_B))
+             |      mols         mwls        Difference          S.E.
+-------------+----------------------------------------------------------------
+        educ |<span class="stres">    .0632923     .0557789        .0075134        .0024064</span>
+       exper |<span class="stres">   -.0002496    -.0014931        .0012435        .0006326</span>
+      tenure |<span class="stres">    .0062977     .0032773        .0030204        .0011022</span>
+      female |<span class="stres">   -.1508285    -.1536601        .0028316        .0101524</span>
+         age |<span class="stres">    .1117635     .0975919        .0141716               .</span>
+       agesq |<span class="stres">   -.0012397    -.0010556       -.0001841               .</span>
+------------------------------------------------------------------------------
+                         b = consistent under Ho and Ha; obtained from regress
+          B = inconsistent under Ha, efficient under Ho; obtained from regress
+
+    Test:  Ho:  difference in coefficients not systematic
+
+                  chi2(<span class="stres">6</span>) = (b-B)'[(V_b-V_B)^(-1)](b-B)
+                          =<span class="stres">   -10.54</span>    chi2&lt;0 ==&gt; model fitted on these
+                                        data fails to meet the asymptotic
+                                        assumptions of the Hausman test;
+                                        see suest for a generalized test
+</samp></pre>
+<p>
+But this seems to violate the assumptions behind the test, which is why it is providing an unexpected
+chi2 statistic. 
+<br><br>
+Following the output suggestion, we could try -suest-, and obtain simultaneous coefficients,
+but it will provide an error because of the different weighting schemes.
+</p>
+<pre id="stlog-6" class="stlog"><samp><span class="stinp">. suest mols mwls</span>
+inconsistent weighting types
+r(322);
+</samp></pre>
+<p> We could, of course
+Estimate the standard OLS with the WLS that uses the transformed data simultaneously:
+</p>
+<pre id="stlog-7" class="stlog"><samp><span class="stinp">. suest mols mtls </span>
+
+Simultaneous results for mols, mtls
+
+                                                Number of obs     = <span class="stres">     1,434</span>
+
+------------------------------------------------------------------------------
+             |               Robust
+             |      Coef.   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+<span class="stres">mols_mean    </span>|
+        educ |<span class="stres">   .0632923   .0055389    11.43   0.000     .0524362    .0741485</span>
+       exper |<span class="stres">  -.0002496   .0018166    -0.14   0.891      -.00381    .0033108</span>
+      tenure |<span class="stres">   .0062977   .0017927     3.51   0.000      .002784    .0098114</span>
+      female |<span class="stres">  -.1508285    .023121    -6.52   0.000    -.1961449   -.1055121</span>
+         age |<span class="stres">   .1117635   .0100211    11.15   0.000     .0921226    .1314044</span>
+       agesq |<span class="stres">  -.0012397   .0001238   -10.01   0.000    -.0014824   -.0009969</span>
+       _cons |<span class="stres">   .3332218   .1985962     1.68   0.093    -.0560195    .7224632</span>
+-------------+----------------------------------------------------------------
+<span class="stres">mols_lnvar   </span>|
+       _cons |<span class="stres">   -1.67921   .0729404   -23.02   0.000     -1.82217   -1.536249</span>
+-------------+----------------------------------------------------------------
+<span class="stres">mtls_mean    </span>|
+       educw |<span class="stres">   .0557789   .0051134    10.91   0.000     .0457569     .065801</span>
+      experw |<span class="stres">  -.0014931   .0016149    -0.92   0.355    -.0046583     .001672</span>
+     tenurew |<span class="stres">   .0032773   .0016189     2.02   0.043     .0001043    .0064502</span>
+     femalew |<span class="stres">  -.1536601   .0216294    -7.10   0.000     -.196053   -.1112673</span>
+        agew |<span class="stres">   .0975919   .0083043    11.75   0.000     .0813158    .1138679</span>
+      agesqw |<span class="stres">  -.0010556   .0001005   -10.50   0.000    -.0012526   -.0008585</span>
+         one |<span class="stres">   .7188607   .1612016     4.46   0.000     .4029114     1.03481</span>
+-------------+----------------------------------------------------------------
+<span class="stres">mtls_lnvar   </span>|
+       _cons |<span class="stres">   1.580521   .0658601    24.00   0.000     1.451437    1.709604</span>
+------------------------------------------------------------------------------
+
+<span class="stinp">. test ([mols_mean]educ=[mtls_mean]educw) ([mols_mean]exper=[mtls_mean]experw) <span class="stcmt">///</span>
+&gt;         ([mols_mean]tenure=[mtls_mean]tenurew) ([mols_mean]female=[mtls_mean]femalew) <span class="stcmt">///</span>
+&gt;         ([mols_mean]age=[mtls_mean]agew) ([mols_mean]agesq=[mtls_mean]agesqw) <span class="stcmt">///</span>
+&gt;         ([mols_mean]_cons=[mtls_mean]one)  </span>
+
+ ( 1)  <span class="stres">[mols_mean]educ - [mtls_mean]educw = 0</span>
+<span class="stres"> </span>( 2)<span class="stres">  [mols_mean]exper - [mtls_mean]experw = 0</span>
+<span class="stres"> </span>( 3)<span class="stres">  [mols_mean]tenure - [mtls_mean]tenurew = 0</span>
+<span class="stres"> </span>( 4)<span class="stres">  [mols_mean]female - [mtls_mean]femalew = 0</span>
+<span class="stres"> </span>( 5)<span class="stres">  [mols_mean]age - [mtls_mean]agew = 0</span>
+<span class="stres"> </span>( 6)<span class="stres">  [mols_mean]agesq - [mtls_mean]agesqw = 0</span>
+<span class="stres"> </span>( 7)<span class="stres">  [mols_mean]_cons - [mtls_mean]one = 0</span>
+
+           chi2(  7) =<span class="stres">   32.11</span>
+         Prob &gt; chi2 =  <span class="stres">  0.0000</span>
+</samp></pre>
+<p>
+This approach suggests that the differences between OLS and WLS are different from each other. But let's 
+continue.
+<br><br>
+Then we have a strategy suggested by <a href="https://twitter.com/Alan_AWeiss">Alan</a>, which redirected me to a strategy proposed by Justin McCrary. This can be found 
+<a href="https://eml.berkeley.edu/~webfac/mccrary/250c_s11/notes5A.pdf">Here</a> .
+<br><br>
+This strategy suggests estimating an auxiliary regression, with the
+original and transformed variables data, and test if the transformed variables are statistically different from zero.
+<br><br>
+Here the transformation is slightly different from the previous one:
+</p>
+<pre id="stlog-8" class="stlog"><samp><span class="stinp">. foreach i in   educ exper tenure female age agesq  {</span>
+  2<span class="stinp">.         gen `i'z=`i'*(1/h_x)</span>
+  3<span class="stinp">. }</span>
+
+<span class="stinp">. gen onez =(1/h_x)</span>
+
+<span class="stinp">. </span>
+<span class="stinp">. reg lnwage educ exper tenure female age agesq  educz experz tenurez femalez agez agesqz onez, robust</span>
+
+Linear regression                               Number of obs     = <span class="stres">     1,434</span>
+<span class="stres">                                                </span>F(13, 1420)       =  <span class="stres">    50.98</span>
+<span class="stres">                                                </span>Prob &gt; F          = <span class="stres">    0.0000</span>
+<span class="stres">                                                </span>R-squared         = <span class="stres">    0.3554</span>
+<span class="stres">                                                </span>Root MSE          =    <span class="stres"> .42829</span>
+
+------------------------------------------------------------------------------
+             |               Robust
+      lnwage |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        educ |<span class="stres">   .0844527   .0135289     6.24   0.000     .0579139    .1109915</span>
+       exper |<span class="stres">   .0061548   .0135858     0.45   0.651    -.0204956    .0328053</span>
+      tenure |<span class="stres">   .0153234   .0060056     2.55   0.011     .0035425    .0271043</span>
+      female |<span class="stres">  -.1162305    .232304    -0.50   0.617    -.5719263    .3394653</span>
+         age |<span class="stres">   .1480491   .0908262     1.63   0.103    -.0301189     .326217</span>
+       agesq |<span class="stres">  -.0017282   .0012511    -1.38   0.167    -.0041825     .000726</span>
+       educz |<span class="stres">  -.0006218   .0003432    -1.81   0.070     -.001295    .0000514</span>
+      experz |<span class="stres">  -.0000361   .0003262    -0.11   0.912    -.0006759    .0006037</span>
+     tenurez |<span class="stres">  -.0001932   .0000879    -2.20   0.028    -.0003657   -.0000207</span>
+     femalez |<span class="stres">  -.0034715   .0074404    -0.47   0.641    -.0180669    .0111239</span>
+        agez |<span class="stres">  -.0007484   .0028858    -0.26   0.795    -.0064093    .0049125</span>
+      agesqz |<span class="stres">   8.19e-06   .0000385     0.21   0.831    -.0000673    .0000837</span>
+        onez |<span class="stres">   .0231248   .0740897     0.31   0.755    -.1222122    .1684617</span>
+       _cons |<span class="stres">  -.5641893   .9176907    -0.61   0.539    -2.364364    1.235986</span>
+------------------------------------------------------------------------------
+
+<span class="stinp">. est sto mcry</span>
+
+<span class="stinp">. test educz  experz  tenurez  femalez  agez  agesqz onez</span>
+
+ ( 1)  <span class="stres">educz = 0</span>
+<span class="stres"> </span>( 2)<span class="stres">  experz = 0</span>
+<span class="stres"> </span>( 3)<span class="stres">  tenurez = 0</span>
+<span class="stres"> </span>( 4)<span class="stres">  femalez = 0</span>
+<span class="stres"> </span>( 5)<span class="stres">  agez = 0</span>
+<span class="stres"> </span>( 6)<span class="stres">  agesqz = 0</span>
+<span class="stres"> </span>( 7)<span class="stres">  onez = 0</span>
+
+       F(  7,  1420) =<span class="stres">    5.05</span>
+            Prob &gt; F =<span class="stres">    0.0000</span>
+</samp></pre>
+<p>This approach also suggest that WLS and OLS coefficients may be different. The statistic, however, its 
+quite smaller than the -suest- approach.
+<br><br>
+Then, we have an strategy that would use "cloned" data. This is the general procedure:
+<ul>
+<li>1. Create ids for each observation in the data</li>
+<li>2. duplicate all data and Identify original from Clone</li>
+<li>3. Create correct weights, 1 for the original and 1/h(X) for clonned </li>
+<li>4. Estimate model with interactions, and perhaps clustering (because data is duplicated)</li>
+<li>5. Test for those differences </li>
+</ul>
+<pre id="stlog-9" class="stlog"><samp><span class="stinp">. gen id=_n</span>
+
+<span class="stinp">. expand 2, gen(clone)</span>
+(1,434 observations created)
+
+<span class="stinp">. gen wgt=1 if clone==0</span>
+(1,434 missing values generated)
+
+<span class="stinp">. replace wgt=(1/h_x) if clone==1</span>
+(1,434 real changes made)
+
+<span class="stinp">. </span>
+<span class="stinp">. reg lnwage c.(educ exper tenure female age agesq)##i.clone [w=wgt], cluster(id)</span>
+(analytic weights assumed)
+(sum of wgt is 54,732.3570792675)
+
+Linear regression                               Number of obs     = <span class="stres">     2,868</span>
+<span class="stres">                                                </span>F(13, 1433)       =  <span class="stres">    48.47</span>
+<span class="stres">                                                </span>Prob &gt; F          = <span class="stres">    0.0000</span>
+<span class="stres">                                                </span>R-squared         = <span class="stres">    0.2875</span>
+<span class="stres">                                                </span>Root MSE          =    <span class="stres"> .36353</span>
+
+                                   (Std. Err. adjusted for <span class="stres">1,434</span> clusters in id)
+--------------------------------------------------------------------------------
+               |               Robust
+        lnwage |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+---------------+----------------------------------------------------------------
+          educ |<span class="stres">   .0632923   .0055515    11.40   0.000     .0524023    .0741823</span>
+         exper |<span class="stres">  -.0002496   .0018207    -0.14   0.891    -.0038211    .0033219</span>
+        tenure |<span class="stres">   .0062977   .0017968     3.50   0.000      .002773    .0098223</span>
+        female |<span class="stres">  -.1508285   .0231736    -6.51   0.000    -.1962864   -.1053706</span>
+           age |<span class="stres">   .1117635   .0100438    11.13   0.000     .0920613    .1314657</span>
+         agesq |<span class="stres">  -.0012397   .0001241    -9.99   0.000    -.0014832   -.0009962</span>
+       1.clone |<span class="stres">   .3856386   .1029495     3.75   0.000     .1836907    .5875865</span>
+               |
+  clone#c.educ |
+            1  |<span class="stres">  -.0075134   .0029883    -2.51   0.012    -.0133752   -.0016515</span>
+               |
+ clone#c.exper |
+            1  |<span class="stres">  -.0012435   .0010555    -1.18   0.239    -.0033141    .0008271</span>
+               |
+clone#c.tenure |
+            1  |<span class="stres">  -.0030204   .0010812    -2.79   0.005    -.0051412   -.0008996</span>
+               |
+clone#c.female |
+            1  |<span class="stres">  -.0028316   .0113549    -0.25   0.803    -.0251057    .0194425</span>
+               |
+   clone#c.age |
+            1  |<span class="stres">  -.0141716   .0053047    -2.67   0.008    -.0245774   -.0037659</span>
+               |
+ clone#c.agesq |
+            1  |<span class="stres">   .0001841   .0000692     2.66   0.008     .0000484    .0003199</span>
+               |
+         _cons |<span class="stres">   .3332218    .199048     1.67   0.094    -.0572348    .7236785</span>
+--------------------------------------------------------------------------------
+
+<span class="stinp">. test 1.clone#c.educ  1.clone#c.exper 1.clone#c.tenure 1.clone#c.female 1.clone#c.age 1.clone#c.agesq 1.clone</span>
+
+ ( 1)  <span class="stres">1.clone#c.educ = 0</span>
+<span class="stres"> </span>( 2)<span class="stres">  1.clone#c.exper = 0</span>
+<span class="stres"> </span>( 3)<span class="stres">  1.clone#c.tenure = 0</span>
+<span class="stres"> </span>( 4)<span class="stres">  1.clone#c.female = 0</span>
+<span class="stres"> </span>( 5)<span class="stres">  1.clone#c.age = 0</span>
+<span class="stres"> </span>( 6)<span class="stres">  1.clone#c.agesq = 0</span>
+<span class="stres"> </span>( 7)<span class="stres">  1.clone = 0</span>
+
+       F(  7,  1433) =<span class="stres">    4.57</span>
+            Prob &gt; F =<span class="stres">    0.0000</span>
+</samp></pre>
+<p>
+This approach is almost identical to the suest approach I described before. 
+And it also suggests that WLS and OLS coefficients may be different, and the
+<br><br>
+Other less conventional methods involve, for example, the use of simulation methods, 
+specifically bootstrap. But here, we would also have two options.
+<br><br>
+1. Should WLS weights be treated as exogenous and fix? 
+<br>
+2. or Should they be treated as endogenous for the estimation of the variance-covariance matrix
+<br><br>
+So Let's try both:
+</p>
+<pre id="stlog-10" class="stlog"><samp><span class="stinp">. keep if clone==0</span>
+(1,434 observations deleted)
+
+<span class="stinp">. </span>
+<span class="stinp">. program bs_wls_ols, eclass</span>
+  1<span class="stinp">.         reg lnwage educ exper tenure female age agesq </span>
+  2<span class="stinp">.         matrix b1=e(b)</span>
+  3<span class="stinp">.         capture drop lres</span>
+  4<span class="stinp">.         predictnl lres=log((lnwage-xb())^2) </span>
+  5<span class="stinp">.         reg lres educ exper tenure female age agesq</span>
+  6<span class="stinp">.         capture drop nwgt</span>
+  7<span class="stinp">.         predictnl nwgt=1/exp(xb())</span>
+  8<span class="stinp">.         <span class="stcmt">** two steps assuming Weights change</span></span>
+<span class="stinp">.         reg lnwage educ exper tenure female age agesq  [w=nwgt]</span>
+  9<span class="stinp">.         matrix b2=e(b)</span>
+ 10<span class="stinp">.         <span class="stcmt">** two steps assuming Weights do not change</span></span>
+<span class="stinp">.         reg lnwage educ exper tenure female age agesq  [w=1/h_x]</span>
+ 11<span class="stinp">.         matrix b3=e(b)</span>
+ 12<span class="stinp">.         <span class="stcmt">** Finally the differences</span></span>
+<span class="stinp">.         matrix db2=b1-b2</span>
+ 13<span class="stinp">.         matrix db3=b1-b3</span>
+ 14<span class="stinp">.         <span class="stcmt">** putting all together:</span></span>
+<span class="stinp">.         matrix coleq b2= wols_dw</span>
+ 15<span class="stinp">.         matrix coleq b3= wols_fw</span>
+ 16<span class="stinp">.         matrix coleq db2= dwols_dw</span>
+ 17<span class="stinp">.         matrix coleq db3= dwols_fw</span>
+ 18<span class="stinp">.         matrix b=b2,b3,db2,db3</span>
+ 19<span class="stinp">.         ereturn post b</span>
+ 20<span class="stinp">. end</span>
+
+<span class="stinp">. </span>
+<span class="stinp">. bootstrap, reps(500) seed(10) nodots: bs_wls_ols</span>
+
+warning: Because <span class="stres">bs_wls_ols</span> is not an estimation command or does not set <span class="stres">e(sample)</span>, <span class="stres">bootstrap</span> has no way to determine which observations
+         are used in calculating the statistics and so assumes that all observations are used. This means that no observations will be
+         excluded from the resampling because of missing values or other reasons.
+
+         If the assumption is not true, press Break, save the data, and drop the observations that are to be excluded. Be sure that the
+         dataset in memory contains only the relevant data.
+
+Bootstrap results                               Number of obs     = <span class="stres">     1,434</span>
+                                                Replications      = <span class="stres">       500</span>
+
+------------------------------------------------------------------------------
+             |   Observed   Bootstrap                         Normal-based
+             |      Coef.   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+<span class="stres">wols_dw      </span>|
+        educ |<span class="stres">   .0557789   .0052471    10.63   0.000     .0454948    .0660631</span>
+       exper |<span class="stres">  -.0014931   .0016966    -0.88   0.379    -.0048185    .0018322</span>
+      tenure |<span class="stres">   .0032773   .0015997     2.05   0.040     .0001418    .0064127</span>
+      female |<span class="stres">  -.1536601   .0249396    -6.16   0.000    -.2025408   -.1047795</span>
+         age |<span class="stres">   .0975919   .0076928    12.69   0.000     .0825143    .1126694</span>
+       agesq |<span class="stres">  -.0010556   .0000949   -11.12   0.000    -.0012416   -.0008695</span>
+       _cons |<span class="stres">   .7188605     .14182     5.07   0.000     .4408984    .9968225</span>
+-------------+----------------------------------------------------------------
+<span class="stres">wols_fw      </span>|
+        educ |<span class="stres">   .0557789   .0049635    11.24   0.000     .0460507    .0655072</span>
+       exper |<span class="stres">  -.0014931   .0015841    -0.94   0.346    -.0045978    .0016116</span>
+      tenure |<span class="stres">   .0032773   .0015943     2.06   0.040     .0001524    .0064021</span>
+      female |<span class="stres">  -.1536601   .0220556    -6.97   0.000    -.1968883    -.110432</span>
+         age |<span class="stres">   .0975919   .0084292    11.58   0.000      .081071    .1141128</span>
+       agesq |<span class="stres">  -.0010556   .0001011   -10.44   0.000    -.0012537   -.0008574</span>
+       _cons |<span class="stres">   .7188605   .1625665     4.42   0.000     .4002361    1.037485</span>
+-------------+----------------------------------------------------------------
+<span class="stres">dwols_dw     </span>|
+        educ |<span class="stres">   .0075134   .0037221     2.02   0.044     .0002183    .0148085</span>
+       exper |<span class="stres">   .0012435   .0011646     1.07   0.286     -.001039    .0035261</span>
+      tenure |<span class="stres">   .0030204   .0012056     2.51   0.012     .0006576    .0053833</span>
+      female |<span class="stres">   .0028316   .0130083     0.22   0.828    -.0226643    .0283275</span>
+         age |<span class="stres">   .0141716   .0079227     1.79   0.074    -.0013566    .0296999</span>
+       agesq |<span class="stres">  -.0001841   .0000976    -1.89   0.059    -.0003754    7.16e-06</span>
+       _cons |<span class="stres">  -.3856386   .1633829    -2.36   0.018    -.7058632    -.065414</span>
+-------------+----------------------------------------------------------------
+<span class="stres">dwols_fw     </span>|
+        educ |<span class="stres">   .0075134   .0030341     2.48   0.013     .0015666    .0134602</span>
+       exper |<span class="stres">   .0012435   .0010892     1.14   0.254    -.0008913    .0033783</span>
+      tenure |<span class="stres">   .0030204   .0010329     2.92   0.003     .0009959     .005045</span>
+      female |<span class="stres">   .0028316    .011126     0.25   0.799     -.018975    .0246383</span>
+         age |<span class="stres">   .0141716   .0052768     2.69   0.007     .0038292    .0245141</span>
+       agesq |<span class="stres">  -.0001841    .000067    -2.75   0.006    -.0003155   -.0000527</span>
+       _cons |<span class="stres">  -.3856386   .1033199    -3.73   0.000     -.588142   -.1831353</span>
+------------------------------------------------------------------------------
+</samp></pre>
+<p>
+A few things to notice here.
+<ul>
+<li>1. Taking the WLS weights as given has only minor impacts on the standard errors estimators
+for WLS.
+</li>
+<li>2. When weights are taken as fixed, Bootstrap standard errors are close to Robust standard for WLS.
+errors. (see the Suest option above).
+</li>
+<li>3. And, as you see next, in both cases one can conclude that WLS and OLS coefficients are different. Specially when 
+considering weights as fixed.
+</li>
+</ul>
+</p>
+<pre id="stlog-11" class="stlog"><samp><span class="stinp">. test [dwols_fw]educ  [dwols_fw]exper [dwols_fw]tenure [dwols_fw]female [dwols_fw]age [dwols_fw]agesq</span>
+
+ ( 1)  <span class="stres">[dwols_fw]educ = 0</span>
+<span class="stres"> </span>( 2)<span class="stres">  [dwols_fw]exper = 0</span>
+<span class="stres"> </span>( 3)<span class="stres">  [dwols_fw]tenure = 0</span>
+<span class="stres"> </span>( 4)<span class="stres">  [dwols_fw]female = 0</span>
+<span class="stres"> </span>( 5)<span class="stres">  [dwols_fw]age = 0</span>
+<span class="stres"> </span>( 6)<span class="stres">  [dwols_fw]agesq = 0</span>
+
+           chi2(  6) =<span class="stres">   29.33</span>
+         Prob &gt; chi2 =  <span class="stres">  0.0001</span>
+
+<span class="stinp">. test [dwols_dw]educ  [dwols_dw]exper [dwols_dw]tenure [dwols_dw]female [dwols_dw]age [dwols_dw]agesq</span>
+
+ ( 1)  <span class="stres">[dwols_dw]educ = 0</span>
+<span class="stres"> </span>( 2)<span class="stres">  [dwols_dw]exper = 0</span>
+<span class="stres"> </span>( 3)<span class="stres">  [dwols_dw]tenure = 0</span>
+<span class="stres"> </span>( 4)<span class="stres">  [dwols_dw]female = 0</span>
+<span class="stres"> </span>( 5)<span class="stres">  [dwols_dw]age = 0</span>
+<span class="stres"> </span>( 6)<span class="stres">  [dwols_dw]agesq = 0</span>
+
+           chi2(  6) =<span class="stres">   14.46</span>
+         Prob &gt; chi2 =  <span class="stres">  0.0249</span>
+</samp></pre>
+<p>
+And finally, we can also try estimating both equations simultaneously, using -ml-, 
+adding weights to the objective function manually:
+</p>
+<pre id="stlog-12" class="stlog"><samp><span class="stinp">. program myolswls1</span>
+  1<span class="stinp">.         args lnf xb1 xb2</span>
+  2<span class="stinp">.         qui: {</span>
+  3<span class="stinp">.                 <span class="stcmt">* OLS regression:</span></span>
+<span class="stinp">.                 replace `lnf' = -($ML_y1-`xb1')^2</span>
+  4<span class="stinp">.                 <span class="stcmt">* WLS where weights are added "manually"</span></span>
+<span class="stinp">.                 replace `lnf' = `lnf'-(1/h_x)*($ML_y2-`xb2')^2</span>
+  5<span class="stinp">.         }</span>
+  6<span class="stinp">. end</span>
+
+<span class="stinp">. ml model lf myolswls1 (ols:lnwage = educ exper tenure female age agesq) <span class="stcmt">///</span>
+&gt;                                      (wls:lnwage = educ exper tenure female age agesq)  , robust maximize</span>
+
+initial:       log pseudolikelihood = <span class="stres">-659054.43</span>
+alternative:   log pseudolikelihood = <span class="stres">-484273.57</span>
+rescale:       log pseudolikelihood = <span class="stres">-27060.519</span>
+rescale eq:    log pseudolikelihood = <span class="stres">-27060.519</span>
+Iteration 0:   log pseudolikelihood = <span class="stres">-27060.519</span>  
+Iteration 1:   log pseudolikelihood = <span class="stres">-7200.3363</span>  
+Iteration 2:   log pseudolikelihood = <span class="stres">-7197.7961</span>  
+Iteration 3:   log pseudolikelihood = <span class="stres">-7197.7961</span>  
+
+<span class="stinp">. ml display</span>
+
+                                                Number of obs     = <span class="stres">     1,434</span>
+                                                Wald chi2(<span class="stres">6</span>)      = <span class="stres">    506.14</span>
+Log pseudolikelihood = <span class="stres">-7197.7961</span>               Prob &gt; chi2       = <span class="stres">    0.0000</span>
+
+------------------------------------------------------------------------------
+             |               Robust
+             |      Coef.   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+<span class="stres">ols          </span>|
+        educ |<span class="stres">   .0632923   .0055389    11.43   0.000     .0524362    .0741485</span>
+       exper |<span class="stres">  -.0002496   .0018166    -0.14   0.891      -.00381    .0033108</span>
+      tenure |<span class="stres">   .0062977   .0017927     3.51   0.000      .002784    .0098114</span>
+      female |<span class="stres">  -.1508285    .023121    -6.52   0.000    -.1961449   -.1055121</span>
+         age |<span class="stres">   .1117635   .0100211    11.15   0.000     .0921226    .1314044</span>
+       agesq |<span class="stres">  -.0012397   .0001238   -10.01   0.000    -.0014824   -.0009969</span>
+       _cons |<span class="stres">   .3332218   .1985962     1.68   0.093    -.0560195    .7224632</span>
+-------------+----------------------------------------------------------------
+<span class="stres">wls          </span>|
+        educ |<span class="stres">   .0557789   .0051134    10.91   0.000     .0457569     .065801</span>
+       exper |<span class="stres">  -.0014931   .0016149    -0.92   0.355    -.0046583     .001672</span>
+      tenure |<span class="stres">   .0032773   .0016189     2.02   0.043     .0001043    .0064502</span>
+      female |<span class="stres">  -.1536601   .0216294    -7.10   0.000     -.196053   -.1112673</span>
+         age |<span class="stres">   .0975919   .0083043    11.75   0.000     .0813158    .1138679</span>
+       agesq |<span class="stres">  -.0010556   .0001005   -10.50   0.000    -.0012526   -.0008585</span>
+       _cons |<span class="stres">   .7188605   .1612016     4.46   0.000     .4029112     1.03481</span>
+------------------------------------------------------------------------------
+</samp></pre>
+<p>
+But this adds nothing else to the above tests, because the results are similar to the -suest- approach.
+</p>
+<pre id="stlog-13" class="stlog"><samp><span class="stinp">. test [ols=wls]</span>
+
+ ( 1)  <span class="stres">[ols]educ - [wls]educ = 0</span>
+<span class="stres"> </span>( 2)<span class="stres">  [ols]exper - [wls]exper = 0</span>
+<span class="stres"> </span>( 3)<span class="stres">  [ols]tenure - [wls]tenure = 0</span>
+<span class="stres"> </span>( 4)<span class="stres">  [ols]female - [wls]female = 0</span>
+<span class="stres"> </span>( 5)<span class="stres">  [ols]age - [wls]age = 0</span>
+<span class="stres"> </span>( 6)<span class="stres">  [ols]agesq - [wls]agesq = 0</span>
+
+           chi2(  6) =<span class="stres">   30.39</span>
+         Prob &gt; chi2 =  <span class="stres">  0.0000</span>
+</samp></pre>
+<h2>Conclusion</h2>
+<p>
+So how do we test if WLS and OLS coefficients are statistically different from each other??
+<br> <br> 
+My conclusion is, I do not know. 
+<br> <br> 
+And unfortunately, I have not seen any procedures or suggestions of tests for this 
+in any of the books I have at hand.
+Nevertheless, After trying a few possible procedures, they all indicate that OLS and WLS coefficients,
+in the current example, are different. 
+<br> <br> 
+In fact, all tests rely on "duplicating" the data, or in effect estimating WLS and OLS simultaneously, lead to the same conclusions. I wonder, however, if there are other (better)
+ procedures to run this simple test.
+<br> <br> 
+Comments welcome 
+<br> <br> 
+</p>
+</body>
+</html>
