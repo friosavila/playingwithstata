@@ -1,0 +1,98 @@
+<!doctype html>
+<html class="no-js" lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Wikipedia Template</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="canonical" href="http://html5-templates.com/" />
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <!-- Place favicon.ico in the root directory -->
+        <link rel="stylesheet" href="style.css">
+        <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+		<script>
+			function includeHTML() {
+			  var z, i, elmnt, file, xhttp;
+			  /*loop through a collection of all HTML elements:*/
+			  z = document.getElementsByTagName("*");
+			  for (i = 0; i < z.length; i++) {
+				elmnt = z[i];
+				/*search for elements with a certain atrribute:*/
+				file = elmnt.getAttribute("w3-include-html");
+				if (file) {
+				  /*make an HTTP request using the attribute value as the file name:*/
+				  xhttp = new XMLHttpRequest();
+				  xhttp.onreadystatechange = function() {
+					if (this.readyState == 4) {
+					  if (this.status == 200) {elmnt.innerHTML = this.responseText;}
+					  if (this.status == 404) {elmnt.innerHTML = "Page not found.";}
+					  /*remove the attribute, and call this function once more:*/
+					  elmnt.removeAttribute("w3-include-html");
+					  includeHTML();
+					}
+				  }      
+				  xhttp.open("GET", file, true);
+				  xhttp.send();
+				  /*exit the function:*/
+				  return;
+				}
+			  }
+			};
+			</script>
+    </head>
+    <body>
+		<div class="wrapAll clearfix">
+			<div class="sidebar">
+				<div class="logo">
+					<a href="/"><img src='img/WeeMee.jpg' alt="logo"></a>
+				</div>
+				<div class="navigation">
+					<h3>Contents</h3>
+					<ul>
+						<li><a href="main_mlols.html">OLS using -ml-</a></li>
+						<li><a href="main_mlprobit.html">Probit using -ml-</a></li>
+						<li><a href="#">Featured content</a></li>
+					</ul>
+				</div>			
+			</div>
+			<div class="mainsection">
+				<div class="headerLinks">
+					
+				</div>
+				<div class="tabs clearfix">					
+				
+				</div>
+				<div class="article">
+					<h1>Playing with Stata</h1>
+					<b>Random topics, and interesting questions (at least to me) using my tool of Choice Stata!</b>
+					<br><br>
+					Welcome, and thanks for joining me.  As you will read in this "blog" (a description I'm not too fond of)/site, I cover series of random topics of questions in applied econometrics using my favorite tool Stata!.
+					<br><br>
+					That being said. This website is multipurpose. 
+					<br><br>
+					I started it to answer random questions of "how to" do things in Stata, that I had troubles with at some point. Spread the knowledge if you may. However it will also be used as a teaching tool for some simple and not-so-simple topics and strategies I teach in econometrics class.
+					<br><br>
+					Finally, I will also use it as a platform to share my research, whenever possible, and pertinent. 
+					<br><br>
+					Feel free to drop me a line, comment or question.	
+					<p><a href="mailto:friosa@gmail.com" target="_top">Send Mail</a></p>
+					Or follow me on tweeter:
+					<a href="https://twitter.com/friosavila?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">@friosavila</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>			
+				</div>
+				<div class="pagefooter">
+					Template by <a href="http://html5-templates.com/" target="_blank" rel="nofollow">HTML5 Templates</a> <!-- Please leave this link unchanged -->
+				</div>
+			</div>		
+		</div>
+		
+		
+        <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.12.0.min.js"><\/script>')</script>
+        <script src="script.js"></script>
+		<script>
+			includeHTML();
+		</script>
+
+    </body>
+</html>
