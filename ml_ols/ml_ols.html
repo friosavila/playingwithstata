@@ -1,0 +1,367 @@
+ 
+<head>
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>MathJax example</title>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <title>Margins after -ml-</title>
+   <style>
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px; line-height: 1.428;
+  margin: 0 auto; padding: 0 15px;
+}
+h1, h2, h3, h4, h5, h6 { margin: 20px 0 10px; }
+h1 { font-size: 28px; } h2 { font-size: 24px; }
+h3 { font-size: 18px; } h4 { font-size: 16px; }
+h5 { font-size: 14px; } h6 { font-size: 12px; }
+a { color: #337AB7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; height: auto; }
+ul, ol { padding-left: 30px; }
+pre, code, samp {
+  font-size: 13px;
+  font-family: Courier, monospace;
+}
+code, samp {
+  background-color: #F5F5F5;
+  border-radius: 3px; padding: 3px;
+}
+pre code, pre samp {
+  white-space: pre; background: transparent;
+  border: none; padding: 0;
+}
+pre {
+  line-height: 1.33; background-color: #F5F5F5;
+  border: 1px solid #CCCCCC; border-radius: 3px;
+  padding: 8px; overflow: auto;
+}
+</style>
+  <style>
+.stlog { color: #000000; background-color: #F0F3F9; }
+.stres { color: #324F58; }
+.stinp { font-weight: bold; color: #000000; }
+.stcmd .stcmt { font-style: italic; opacity: 0.5; }
+.stoom, .stcnp { font-style: italic; }
+@media screen { .stcnp { display: none; }}
+</style>
+</head>
+  
+  
+<body>
+<h1>Margins and -ml-</h1>
+<h1>Linear Regression</h1>
+<h2>Introduction</h2>
+<p> Stata has a very useful command that can be used for the estimation of almost any linear and nonlinear models
+using maximum likelihood. This command is -ml-.
+</p>
+<p> Properly speaking, this command can be used to obtain any M-type estimator, however, I'll concentrate on maximum likelihood models.
+</p>
+<p> In this small tutorial, I'll provide a small example of how to use -ml- in combination with -margins- to estimate marginal effects
+of any model of interest, as long as creates identifies the outcome of interest.
+</p>
+
+<h2>The Setup</h2>
+<p> There are many ways that one can use margins to obtain "correct" marginal effects after the estimation of MLE models. Typical examples use 
+-margins- option "expression". I find using that a bit complicated when the outcome of interest is complex, so I prefer doing it the way 
+Stata does it. Creating a small program that defines the outcome of interest.
+</p>
+ 
+<p> If one looks at the information stored in -e()- by all official Stata commands (and most community-contributed commands), 
+you will find there is something stored in e(predict). This "something" is a program that defines the outcome(s) of interest 
+that one can later use for other purposes. Perhaps the most common being obtaining model predictions or marginal effects.
+</p>
+
+<p> So, in order to use -margins- with -ml-, we need the ability to modify the information stored in e(predict), and redirect -margins- to 
+a command of our own design.
+</p>
+
+<p> In order to so, I like to have the following program:
+</p>
+<pre id="stlog-1" class="stlog"><samp><span class="stinp">. program adde, eclass</span>
+  1<span class="stinp">.         ereturn `0'</span>
+  2<span class="stinp">. end</span>
+</samp></pre>
+<p> This is perhaps the simplest program you will ever write, and yet, the most flexible. It basically "adds" any information you want
+to e(). 
+</p>
+<p> For example, say that you estimate a simple OLS model, using the dataset auto, and you add some info to e(). Specifically, I'll add
+a local named "tag" or e(tag) that will say "This is a very simple regression".
+</p>
+<pre id="stlog-2" class="stlog"><samp><span class="stinp">. sysuse auto, clear</span>
+(1978 Automobile Data)
+
+<span class="stinp">. reg price mpg</span>
+
+      Source |       SS           df       MS      Number of obs   =<span class="stres">        74</span>
+-------------+----------------------------------   F(1, 72)        = <span class="stres">    20.26</span>
+       Model | <span class="stres">  139449474         1   139449474   </span>Prob &gt; F        =<span class="stres">    0.0000</span>
+    Residual | <span class="stres">  495615923        72  6883554.48   </span>R-squared       =<span class="stres">    0.2196</span>
+-------------+----------------------------------   Adj R-squared   =<span class="stres">    0.2087</span>
+       Total | <span class="stres">  635065396        73  8699525.97   </span>Root MSE        =   <span class="stres"> 2623.7</span>
+
+------------------------------------------------------------------------------
+       price |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         mpg |<span class="stres">  -238.8943   53.07669    -4.50   0.000    -344.7008   -133.0879</span>
+       _cons |<span class="stres">   11253.06   1170.813     9.61   0.000     8919.088    13587.03</span>
+------------------------------------------------------------------------------
+
+<span class="stinp">. adde local tag "This is a very simple regression"</span>
+</samp></pre>
+<p> You can see that this was added to e() by typing -ereturn list-. You will also see that -regress- stores information in e(predict) about a program 
+named -regres_p-, which is used by -margins- and -predict-
+</p>
+<pre id="stlog-3" class="stlog"><samp><span class="stinp">. ereturn list</span>
+
+scalars:
+                  e(N) =  <span class="stres">74</span>
+<span class="stres">               </span>e(df_m) =  <span class="stres">1</span>
+<span class="stres">               </span>e(df_r) =  <span class="stres">72</span>
+<span class="stres">                  </span>e(F) =  <span class="stres">20.25835256291883</span>
+<span class="stres">                 </span>e(r2) =  <span class="stres">.2195828561874974</span>
+<span class="stres">               </span>e(rmse) =  <span class="stres">2623.652888667586</span>
+<span class="stres">                </span>e(mss) =  <span class="stres">139449473.5462301</span>
+<span class="stres">                </span>e(rss) =  <span class="stres">495615922.5753915</span>
+<span class="stres">               </span>e(r2_a) =  <span class="stres">.2087437291901015</span>
+<span class="stres">                 </span>e(ll) =  <span class="stres">-686.5395809065244</span>
+<span class="stres">               </span>e(ll_0) =  <span class="stres">-695.7128688987767</span>
+<span class="stres">               </span>e(rank) =  <span class="stres">2</span>
+
+macros:
+                e(tag) : "<span class="stres">This is a very simple regression</span>"
+            e(cmdline) : "<span class="stres">regress price mpg</span>"
+              e(title) : "<span class="stres">Linear regression</span>"
+          e(marginsok) : "<span class="stres">XB default</span>"
+                e(vce) : "<span class="stres">ols</span>"
+             e(depvar) : "<span class="stres">price</span>"
+                e(cmd) : "<span class="stres">regress</span>"
+         e(properties) : "<span class="stres">b V</span>"
+            e(predict) : "<span class="stres">regres_p</span>"
+              e(model) : "<span class="stres">ols</span>"
+          e(estat_cmd) : "<span class="stres">regress_estat</span>"
+
+matrices:
+                  e(b) : <span class="stres"> 1 x 2</span>
+<span class="stres">                  </span>e(V) : <span class="stres"> 2 x 2</span>
+
+functions:
+             e(sample)   
+</samp></pre>
+<h2>MLE estimator</h2>
+<p> As I mentioned before, -ml- is a very useful stata command that allows you to obtain MLE estimators give that you define the appropriate objective function.
+</p>
+<p> -ml- has many different options, (lf, df0, df1, df2, etc), each requiring you to define the objective function (usually the log-likelihood function), 
+its gradient, or its Hessian. For all purposes, however, I find  -lf- (the simplest one) to be the only one you may ever need.
+</p>
+<p> When you use -ml- with -lf- estimator, you just need to declare the loglikelihood function contributed by each observation in the sample. 
+</p>
+<p> In order to ground this concept, lets assume that we want to estimate a simple linear regression using MLE. For this we need to assume that either the error follows a normal distribution,
+or that the outcome follows a conditionally normal distribution:
+$$ y_i  =  x_i \beta + \varepsilon_i$$
+$$ y_i  \sim  N(x_i \beta, \sigma ) $$ 
+or
+$$ \varepsilon_i  \sim  N(0, \sigma ) $$
+</p> 
+
+<p>This implies that the (Log)likelihood of a single observation is equal to:
+
+$$ L_i = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{1}{2} (\frac{y_i-x_i \beta}{\sigma} )^2 } $$
+$$ LL_i = -log(\sigma)-\frac{1}{2} log(2\pi) -\frac{1}{2} (\frac{y_i-x_i \beta}{\sigma} )^2 $$
+
+So we just need to write a program that defines this log-likelihood function. This is straight forward:
+</p>
+
+<pre id="stlog-4" class="stlog"><samp><span class="stinp">. program myols_mle</span>
+  1<span class="stinp">.         args lnf xb lnsigma</span>
+  2<span class="stinp">.         local sigma exp(`lnsigma')</span>
+  3<span class="stinp">.         qui:replace `lnf' = log(normalden($ML_y1,`xb',`sigma'))</span>
+  4<span class="stinp">. end</span>
+</samp></pre>
+<p> Notice that this program has 3 arguments. 
+</p>
+
+<ul>
+  <li>lnf: Will store the LL for each observation</li>
+  <li>xb: Will store the linear combination for all \( x_i \beta \) </li>
+  <li>lnsigma: Will store the  \( log (\sigma) \)   </li>
+</ul>
+
+<p> Notice here that we are not estimating \(\sigma \) directly because it is numerically more stable to estimate its log. 
+</p>
+
+<p> Now the interesting part. Create our "predict" program:
+</p>
+<pre id="stlog-5" class="stlog"><samp><span class="stinp">. program myols_mle_p</span>
+  1<span class="stinp">.         syntax newvarname [if] [in] , [ mean sigma emean *]</span>
+  2<span class="stinp">.         if "`mean'`sigma'`emean'" =="" {</span>
+  3<span class="stinp">.             ml_p `0'</span>
+  4<span class="stinp">.         }</span>
+  5<span class="stinp">.         marksample touse, novarlist</span>
+  6<span class="stinp">.         if "`mean'" !=""  {</span>
+  7<span class="stinp">.             tempvar xb</span>
+  8<span class="stinp">.             _predict double `xb' , eq(#1)</span>
+  9<span class="stinp">.                 gen `typlist' `varlist' = `xb' if `touse'</span>
+ 10<span class="stinp">.                 label var `varlist' "E(y|X)"</span>
+ 11<span class="stinp">.         }</span>
+ 12<span class="stinp">.         else if "`sigma'" !=""  {</span>
+ 13<span class="stinp">.             tempvar xb</span>
+ 14<span class="stinp">.             _predict double `xb' , eq(#2)</span>
+ 15<span class="stinp">.                 gen `typlist' `varlist' = exp(`xb') if `touse'</span>
+ 16<span class="stinp">.                 label var `varlist' "E(sigma|X)"</span>
+ 17<span class="stinp">.         }</span>
+ 18<span class="stinp">.         else if "`emean'"!="" {</span>
+ 19<span class="stinp">.             tempvar xb lns</span>
+ 20<span class="stinp">.                 _predict double `xb' , eq(#1)</span>
+ 21<span class="stinp">.                 _predict double `lns' , eq(#2)</span>
+ 22<span class="stinp">.                 local sigma (exp(`lns'))</span>
+ 23<span class="stinp">.                 gen `typlist' `varlist' = exp(`xb')*exp(0.5*`sigma'^2) if `t
+&gt; ouse'</span>
+ 24<span class="stinp">.                 label var `varlist' "E(exp(Y)|X)"</span>
+ 25<span class="stinp">.         }</span>
+ 26<span class="stinp">. end</span>
+</samp></pre>
+<p> This program, here named -myols_mle_p-, can be used to estimate 3 things: </p>
+<ul>
+  <li>mean: This is the standard outcome. Just looking into the linear combination of X and betas </li>
+  <li>sigma: When this option is used, you will obtain  \( \sigma \) . </li>
+  <li>emean: And this will be something new. -emean- could be used if, say, your outcome of interest was "wages", 
+  but you were modeling "log(wages)" </li>
+</ul>
+
+<p> For the last case, -emean-, we are using the expected value for a log normal distribution:
+$$ log(y_i) \sim N(\mu_y,\sigma_y) $$
+$$ E(y_i) = e^{\mu_y}*e^{\frac{1}{2}\sigma^2}$$
+<h2>The Estimation</h2>
+</p>
+<p>Alright Lets see how it works:
+</p>
+<p>First, lets load the data:
+</p>
+<pre id="stlog-6" class="stlog"><samp><span class="stinp">. use http://fmwww.bc.edu/RePEc/bocode/o/oaxaca.dta, clear</span>
+(Excerpt from the Swiss Labor Market Survey 1998)
+</samp></pre>
+<p>Then, estimate the model using -ml-. For this we specify that the "model" will be estimated using "lf" approach, 
+and that the Log-likelihood is defined by the program -myols_mle-.
+</p>
+<p>Afterwards, we declare which variables will be used to model the conditional mean, and just for fun the conditional 
+standard errors. Both parameters will be modelled as functions of education, experience, and gender. This allows for a specific type of heteroskedasticity. 
+</p>
+
+<p>This is the model we will be estimating
+</p>
+$$y_i = \beta_0 + \beta_1 educ + \beta_2 exper + \beta_3 female + \varepsilon_i$$
+$$\varepsilon_i \sim N(0,\sigma(x)^2)$$
+$$log(\sigma(x))=\gamma_0 + \gamma_1 educ + \gamma_2 exper + \gamma_3 female $$
+<pre id="stlog-7" class="stlog"><samp><span class="stinp">. ml model lf myols_mle (lnwage = educ exper i.female) (lnsigma:= educ exper i.fe
+&gt; male), maximize</span>
+
+initial:       log likelihood = <span class="stres">-9602.9223</span>
+alternative:   log likelihood = <span class="stres">-4263.0081</span>
+rescale:       log likelihood = <span class="stres">-3318.4554</span>
+rescale eq:    log likelihood = <span class="stres"> -1777.883</span>
+Iteration 0:   log likelihood = <span class="stres"> -1777.883</span>  (not concave)
+Iteration 1:   log likelihood = <span class="stres">-1241.2179</span>  
+Iteration 2:   log likelihood = <span class="stres">-1029.3117</span>  
+Iteration 3:   log likelihood = <span class="stres">-876.30431</span>  
+Iteration 4:   log likelihood = <span class="stres">-871.21438</span>  
+Iteration 5:   log likelihood = <span class="stres">-871.18998</span>  
+Iteration 6:   log likelihood = <span class="stres">-871.18998</span>  
+
+<span class="stinp">. ml display</span>
+
+                                                Number of obs     = <span class="stres">     1,434</span>
+                                                Wald chi2(<span class="stres">3</span>)      = <span class="stres">    371.53</span>
+Log likelihood = <span class="stres">-871.18998</span>                     Prob &gt; chi2       = <span class="stres">    0.0000</span>
+
+------------------------------------------------------------------------------
+      lnwage |      Coef.   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+<span class="stres">eq1          </span>|
+        educ |<span class="stres">   .0736371   .0045872    16.05   0.000     .0646464    .0826278</span>
+       exper |<span class="stres">   .0105825   .0010551    10.03   0.000     .0085147    .0126504</span>
+    1.female |<span class="stres">  -.1118167    .024106    -4.64   0.000    -.1590636   -.0645698</span>
+       _cons |<span class="stres">   2.430164   .0641158    37.90   0.000     2.304499    2.555828</span>
+-------------+----------------------------------------------------------------
+<span class="stres">lnsigma      </span>|
+        educ |<span class="stres">  -.0356134   .0067794    -5.25   0.000    -.0489008   -.0223259</span>
+       exper |<span class="stres">  -.0165439   .0016363   -10.11   0.000     -.019751   -.0133368</span>
+    1.female |<span class="stres">   .2066704   .0382432     5.40   0.000     .1317152    .2816256</span>
+       _cons |<span class="stres">  -.2813734   .0910696    -3.09   0.002    -.4598665   -.1028802</span>
+------------------------------------------------------------------------------
+</samp></pre>
+<p> You can compare the results with the standard -regress- outcome, or -hetregress- if you want to compare the results allowing for heteroskedastic errors </p>
+<p> Now, if we want to use our predict command, we need to "add" it to e()
+</p>
+<pre id="stlog-8" class="stlog"><samp><span class="stinp">. adde local predict myols_mle_p</span>
+</samp></pre>
+<p> And that is pretty much it. We can now use margins to estimate the effect of education, experience and gender on
+log of wages (trivial), on the standard errors, or on wages</p>
+<pre id="stlog-9" class="stlog"><samp><span class="stinp">. margins, dydx(*) predict(mean)  </span>
+
+Average marginal effects                        Number of obs     = <span class="stres">     1,434</span>
+Model VCE    : <span class="stres">OIM</span>
+
+Expression   : <span class="stres">E(y|X), predict(mean)</span>
+dy/dx w.r.t. : <span class="stres">educ exper 1.female</span>
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        educ |<span class="stres">   .0736371   .0045872    16.05   0.000     .0646464    .0826278</span>
+       exper |<span class="stres">   .0105825   .0010551    10.03   0.000     .0085147    .0126504</span>
+    1.female |<span class="stres">  -.1118167    .024106    -4.64   0.000    -.1590636   -.0645698</span>
+------------------------------------------------------------------------------
+Note: dy/dx for factor levels is the discrete change from the base level.
+
+<span class="stinp">. margins, dydx(*) predict(sigma)  </span>
+
+Average marginal effects                        Number of obs     = <span class="stres">     1,434</span>
+Model VCE    : <span class="stres">OIM</span>
+
+Expression   : <span class="stres">E(sigma|X), predict(sigma)</span>
+dy/dx w.r.t. : <span class="stres">educ exper 1.female</span>
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        educ |<span class="stres">  -.0161816   .0031133    -5.20   0.000    -.0222836   -.0100796</span>
+       exper |<span class="stres">   -.007517    .000774    -9.71   0.000    -.0090341       -.006</span>
+    1.female |<span class="stres">   .0938119   .0175522     5.34   0.000     .0594102    .1282136</span>
+------------------------------------------------------------------------------
+Note: dy/dx for factor levels is the discrete change from the base level.
+
+<span class="stinp">. margins, dydx(*) predict(emean)  </span>
+
+Average marginal effects                        Number of obs     = <span class="stres">     1,434</span>
+Model VCE    : <span class="stres">OIM</span>
+
+Expression   : <span class="stres">E(exp(Y)|X), predict(emean)</span>
+dy/dx w.r.t. : <span class="stres">educ exper 1.female</span>
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        educ |<span class="stres">   2.175891    .169221    12.86   0.000     1.844224    2.507558</span>
+       exper |<span class="stres">    .236423   .0394785     5.99   0.000     .1590466    .3137995</span>
+    1.female |<span class="stres">   -2.27482   .8226334    -2.77   0.006    -3.887152   -.6624884</span>
+------------------------------------------------------------------------------
+Note: dy/dx for factor levels is the discrete change from the base level.
+</samp></pre>
+<p> 
+So how do we interpret the results?. Here one possibility:
+</p>
+<p> 
+Each additional year of education increases wages by 7.4%, however, as education increases the dispersion of wages decreases. In terms of actual dollar change,
+on average, that additional year of education translates into a 2.17$  per hour increase.
+</p>
+</body>
+
+

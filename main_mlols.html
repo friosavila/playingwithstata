@@ -42,20 +42,14 @@
 			</script>
     </head>
     <body>
-        <!--[if lt IE 8]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-
 		<div class="wrapAll clearfix">
 			<div class="sidebar">
 				<div class="logo">
 					<a href="/"><img src='img/WeeMee.jpg' alt="logo"></a>
 				</div>
 				<div class="navigation">
-					<h3>Contents</h3>
 					<ul>
-						<li><a href="main_mlols.html">OLS using -ml-</a></li>
-						<li><a href="main_mlprobit.html">Probit using -ml-</a></li>
+						<li><a href="index.html">Home</a></li>
 						<li><a href="#">Featured content</a></li>
 					</ul>
 				</div>
@@ -64,34 +58,37 @@
 			</div>
 			<div class="mainsection">
 				<div class="headerLinks">
-					<!-- Para dar comentarios -->
+					<span class="user">Not logged in</span> <a href="#">Talk</a> <a href="#">Contributions</a> <a href="#">Create account</a> <a href="#">Log in</a>
 				</div>
 				<div class="tabs clearfix">
-					
+					<div class="tabsLeft">
+						<ul>
+							<li><a href="#" class="active">Article</a></li>
+							<li><a href="#">Talk</a></li>						
+						</ul>
+					</div>
+					<div id="simpleSearch">
+						<input type="text" name="searchInput" id="searchInput" placeholder="Search Wikipedia" size="12" />
+						<div id="submitSearch"></div>
+					</div>
+					<div class="tabsRight">
+						<ul>
+							<li><a href="#" class="active">Read</a></li>
+							<li><a href="#">View source</a></li>						
+							<li><a href="#">View history</a></li>						
+						</ul>
+					</div>
 				
 				</div>
 				<div class="article">
-					<h1>Playing with Stata</h1>
-					<b>Random topics, and interesting questions (at least to me) using my tool of Choice Stata!</b>
-					<br><br>
-					Welcome, and thanks for joining me.  As you will read in this "blog" (a description I'm not too fond of)/site, I cover series of random topics of questions in applied econometrics using my favorite tool Stata!.
-					<br><br>
-					That being said. This website is multipurpose. 
-					<br><br>
-					I started it to answer random questions of "how to" do things in Stata, that I had troubles with at some point. Spread the knowledge if you may. However it will also be used as a teaching tool for some simple and not-so-simple topics and strategies I teach in econometrics class.
-					<br><br>
-					Finally, I will also use it as a platform to share my research, whenever possible, and pertinent. 
-					<br><br>
-					Feel free to drop me a line, comment or question.	
-					<p><a href="mailto:friosa@gmail.com" target="_top">Send Mail</a></p>
-					Or follow me on tweeter:
-					<a href="https://twitter.com/friosavila?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">@friosavila</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>			
+					<div w3-include-html="ml_ols.html"></div> 
+					<script>
+					includeHTML();
+					</script>
 				</div>
 				<div class="pagefooter">
-					This page was last edited on 29.07.2017 | Template by <a href="http://html5-templates.com/" target="_blank" rel="nofollow">HTML5 Templates</a> <!-- Please leave this link unchanged -->
+					Template by <a href="http://html5-templates.com/" target="_blank" rel="nofollow">HTML5 Templates</a> <!-- Please leave this link unchanged -->
 				</div>
-			
-			
 			</div>		
 		</div>
 		
@@ -101,7 +98,7 @@
         <script src="script.js"></script>
 		<script>
 			includeHTML();
-			</script>
+		</script>
 
     </body>
 </html>
