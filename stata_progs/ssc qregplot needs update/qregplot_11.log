@@ -1,0 +1,22 @@
+<span class="stinp">. xtqreg wage age education married, i(county)</span>
+
+
+
+                              MM-QR regression results
+Number of obs = <span class="stres">1343</span>
+.5 Quantile regression
+------------------------------------------------------------------------------
+             |      Coef.   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |<span class="stres">   .1748125   .0216853     8.06   0.000     .1323101    .2173149</span>
+   education |<span class="stres">   .9529188   .0529128    18.01   0.000     .8492117    1.056626</span>
+     married |<span class="stres">   .2178976    .399123     0.55   0.585    -.5643691    1.000164</span>
+------------------------------------------------------------------------------
+
+
+<span class="stinp">. qregplot age education , estore(e_xtqreg) q(5(5)95) seed(101) label raopt( color(%30)) grcopt( col(1) ysize(7) xsize(5) name(xtqreg1, repl
+&gt; ace))</span>
+
+<span class="stinp">. graph export qfig8.png, replace</span>
+(note: file qfig8.png not found)
+(file qfig8.png written in PNG format)

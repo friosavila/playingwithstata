@@ -1,0 +1,35 @@
+<span class="stinp">. xi: ivqreg2 wage age education married i.county</span>
+i.county          _Icounty_0-9        (naturally coded; _Icounty_0 omitted)
+Note: no instruments were specified; restricted quantile regression will be performed
+
+
+
+                              MM-QR regression results
+
+Number of obs = <span class="stres">1343</span>
+GMM criterion Q(b) = <span class="stres">1.264e-31</span>
+.5 Restricted quantile regression
+------------------------------------------------------------------------------
+        wage |      Coef.   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |<span class="stres">   .1737718   .0216349     8.03   0.000     .1313681    .2161754</span>
+   education |<span class="stres">   .9524857   .0529837    17.98   0.000     .8486395    1.056332</span>
+     married |<span class="stres">   .1824978   .3998947     0.46   0.648    -.6012813     .966277</span>
+  _Icounty_1 |<span class="stres">  -1.475285   .7300324    -2.02   0.043    -2.906123   -.0444483</span>
+  _Icounty_2 |<span class="stres">  -1.793507   .7634103    -2.35   0.019    -3.289764   -.2972507</span>
+  _Icounty_3 |<span class="stres">  -2.402503   .7278441    -3.30   0.001    -3.829051   -.9759545</span>
+  _Icounty_4 |<span class="stres">  -2.851273   .7405346    -3.85   0.000    -4.302694   -1.399851</span>
+  _Icounty_5 |<span class="stres">  -1.516901   .7552965    -2.01   0.045    -2.997255   -.0365472</span>
+  _Icounty_6 |<span class="stres">  -2.008482   .8079585    -2.49   0.013    -3.592051   -.4249124</span>
+  _Icounty_7 |<span class="stres">  -2.013439   .8127911    -2.48   0.013     -3.60648   -.4203977</span>
+  _Icounty_8 |<span class="stres">   -3.28465   .8267361    -3.97   0.000    -4.905023   -1.664277</span>
+  _Icounty_9 |<span class="stres">  -2.636399   .8617105    -3.06   0.002    -4.325321   -.9474775</span>
+       _cons |<span class="stres">   6.253716   1.017537     6.15   0.000      4.25938    8.248052</span>
+------------------------------------------------------------------------------
+
+
+<span class="stinp">. qregplot age education , estore(e_ivqreg2) q(5(5)95)  label raopt( color(%30)) grcopt( col(1) ysize(7) xsize(5) name(ivqreg1, replace))</span>
+
+<span class="stinp">. graph export qfig9.png, replace</span>
+(note: file qfig9.png not found)
+(file qfig9.png written in PNG format)

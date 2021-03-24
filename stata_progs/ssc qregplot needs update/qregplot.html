@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="format-detection" content="telephone=no">
+<title>Fun with quantile regressions</title>
+<style>
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px; line-height: 1.428;
+  margin: 0 auto; padding: 0 15px;
+}
+h1, h2, h3, h4, h5, h6 { margin: 20px 0 10px; }
+h1 { font-size: 28px; } h2 { font-size: 24px; }
+h3 { font-size: 18px; } h4 { font-size: 16px; }
+h5 { font-size: 14px; } h6 { font-size: 12px; }
+a { color: #337AB7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; height: auto; }
+ul, ol { padding-left: 30px; }
+pre, code, samp {
+  font-size: 13px;
+  font-family: Courier, monospace;
+}
+code, samp {
+  background-color: #F5F5F5;
+  border-radius: 3px; padding: 3px;
+}
+pre code, pre samp {
+  white-space: pre; background: transparent;
+  border: none; padding: 0;
+}
+pre {
+  line-height: 1.33; background-color: #F5F5F5;
+  border: 1px solid #CCCCCC; border-radius: 3px;
+  padding: 8px; overflow: auto;
+}
+</style>
+<style>
+.stlog { color: #000000; background-color: #F0F3F9; }
+.stres { color: #324F58; }
+.stinp { font-weight: bold; color: #000000; }
+.stcmd .stcmt { font-style: italic; opacity: 0.5; }
+.stoom, .stcnp { font-style: italic; }
+@media screen { .stcnp { display: none; }}
+</style>
+</head>
+<body>
+<h1> -qregplot- : plotting quantile coefficients </h1>
+<p> This page aims to show how to use qregplot, as a tool for plotting 
+coefficients from quantile regression, which could have been obtained from 
+many quantile type commands. I'll show you some examples for each.
+<br><br>
+So this page can be considered as an extended version of the qregplot help file.
+<h2>The Setup</h2>
+<p>To work with the following examples, you will need to either or install the following:</p>
+</p>
+<pre id="stlog-1" class="stlog"><samp><span class="stinp">. ssc install qregplot, replace</span>
+checking <span class="stres">qregplot</span> consistency and verifying not already installed...
+all files already exist and are up to date.
+
+<span class="stinp">. ssc install mmqreg, replace</span>
+checking <span class="stres">mmqreg</span> consistency and verifying not already installed...
+all files already exist and are up to date.
+
+<span class="stinp">. ssc install qrprocess, replace</span>
+checking <span class="stres">qrprocess</span> consistency and verifying not already installed...
+all files already exist and are up to date.
+
+<span class="stinp">. ssc install ivqreg2, replace</span>
+checking <span class="stres">ivqreg2</span> consistency and verifying not already installed...
+all files already exist and are up to date.
+
+<span class="stinp">. ssc install qreg2, replace</span>
+checking <span class="stres">qreg2</span> consistency and verifying not already installed...
+all files already exist and are up to date.
+
+<span class="stinp">. ssc install xtqreg, replace</span>
+checking <span class="stres">xtqreg</span> consistency and verifying not already installed...
+all files already exist and are up to date.
+</samp></pre>
+<p> and, for the data, we will use a very small dataset, available from Stata datasets examples:</p>
+</p>
+<pre id="stlog-2" class="stlog"><samp><span class="stinp">. webuse womenwk, clear</span>
+
+<span class="stinp">. set scheme s2color</span>
+</samp></pre>
+<p> So lets start. Say that you want to estimate a model, where wages are a function of age education,  marital status, and 
+county of residence.
+<br><br>
+Furthermore, lets say that we are interested in conditional quantile regressions. 
+</p>
+<pre id="stlog-3" class="stlog"><samp><span class="stinp">. qreg wage age education married i.county</span>
+Iteration  1:  WLS sum of weighted deviations = <span class="stres"> 2882.0578</span>
+
+Iteration  1: sum of abs. weighted deviations = <span class="stres"> 2881.6394</span>
+note:  alternate solutions exist
+Iteration  2: sum of abs. weighted deviations = <span class="stres"> 2880.7377</span>
+Iteration  3: sum of abs. weighted deviations = <span class="stres"> 2880.6178</span>
+Iteration  4: sum of abs. weighted deviations = <span class="stres"> 2879.5666</span>
+Iteration  5: sum of abs. weighted deviations = <span class="stres"> 2879.3427</span>
+Iteration  6: sum of abs. weighted deviations = <span class="stres">  2878.958</span>
+Iteration  7: sum of abs. weighted deviations = <span class="stres"> 2878.8413</span>
+Iteration  8: sum of abs. weighted deviations = <span class="stres"> 2878.8092</span>
+Iteration  9: sum of abs. weighted deviations = <span class="stres"> 2878.6626</span>
+Iteration 10: sum of abs. weighted deviations = <span class="stres"> 2878.4107</span>
+note:  alternate solutions exist
+Iteration 11: sum of abs. weighted deviations = <span class="stres">  2878.352</span>
+Iteration 12: sum of abs. weighted deviations = <span class="stres"> 2878.2839</span>
+Iteration 13: sum of abs. weighted deviations = <span class="stres"> 2878.2243</span>
+Iteration 14: sum of abs. weighted deviations = <span class="stres"> 2878.2232</span>
+Iteration 15: sum of abs. weighted deviations = <span class="stres"> 2878.1574</span>
+Iteration 16: sum of abs. weighted deviations = <span class="stres"> 2878.1558</span>
+Iteration 17: sum of abs. weighted deviations = <span class="stres"> 2878.1395</span>
+Iteration 18: sum of abs. weighted deviations = <span class="stres"> 2878.1377</span>
+
+Median regression                                   Number of obs = <span class="stres">     1,343</span>
+  Raw sum of deviations<span class="stres"> 3394.897</span> (about <span class="stres">23.511223</span>)
+  Min sum of deviations<span class="stres"> 2878.138                    </span>Pseudo R2     = <span class="stres">    0.1522</span>
+
+------------------------------------------------------------------------------
+        wage |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |<span class="stres">   .1910125   .0279023     6.85   0.000     .1362752    .2457498</span>
+   education |<span class="stres">   .9196805   .0698232    13.17   0.000     .7827049    1.056656</span>
+     married |<span class="stres">    -.23724   .5409577    -0.44   0.661    -1.298463    .8239834</span>
+             |
+      county |
+          1  |<span class="stres">  -2.047806   1.025437    -2.00   0.046    -4.059456   -.0361563</span>
+          2  |<span class="stres">   -2.53552   1.027812    -2.47   0.014    -4.551829   -.5192117</span>
+          3  |<span class="stres">  -2.915096   1.042238    -2.80   0.005    -4.959705   -.8704865</span>
+          4  |<span class="stres">  -3.315867   1.044933    -3.17   0.002    -5.365764    -1.26597</span>
+          5  |<span class="stres">  -1.505194   1.055567    -1.43   0.154    -3.575951    .5655644</span>
+          6  |<span class="stres">  -2.539745   1.084961    -2.34   0.019    -4.668167   -.4113222</span>
+          7  |<span class="stres">  -2.373452   1.102168    -2.15   0.031    -4.535629    -.211274</span>
+          8  |<span class="stres">  -3.471071   1.133828    -3.06   0.002    -5.695357   -1.246786</span>
+          9  |<span class="stres">  -2.857953   1.143551    -2.50   0.013    -5.101313   -.6145929</span>
+             |
+       _cons |<span class="stres">   6.752149   1.369943     4.93   0.000     4.064664    9.439635</span>
+------------------------------------------------------------------------------
+</samp></pre>
+<p>
+Now we simply want to plot the coefficients across the distribution for all coefficients but the county dummies.
+Because I know I may have to re-edit the graphs, I'll save the coefficients into e_qreg.
+</p>
+<pre id="stlog-4" class="stlog"><samp><span class="stinp">. qregplot age education married , estore(e_qreg) q(5(5)95)</span>
+
+<span class="stinp">. graph export qfig1.png, replace</span>
+(file qfig1.png written in PNG format)
+</samp></pre>
+<img src =
+ "https://i.imgur.com/kQMeOfu.png"
+>
+<p>This is a good start, but I would like to use variable labels for titles in each figure. But I dont want to re-estimate them all.
+ What I can do is plot "from" the stored coefficients.
+</p>
+<pre id="stlog-5" class="stlog"><samp><span class="stinp">. qregplot age education married , from(e_qreg) q(5(5)95) label</span>
+(results e_qreg are active now)
+
+<span class="stinp">. graph export qfig2.png, replace</span>
+(file qfig2.png written in PNG format)
+</samp></pre>
+<img src = 
+"https://i.imgur.com/xNseNfy.png">
+<p>Not quite there yet, I would like the CI to be softer, so I ll use rarea options:
+</p>
+<pre id="stlog-6" class="stlog"><samp><span class="stinp">. qregplot age education married , from(e_qreg) q(5(5)95) label raopt( color(%30))</span>
+(results e_qreg are active now)
+
+<span class="stinp">. graph export qfig3.png, replace</span>
+(file qfig3.png written in PNG format)
+</samp></pre>
+<img src = "https://i.imgur.com/i5FJ9y7.png">
+<p>
+Finally, say that I want to see this, but in 3 rows. This would be a graph combine option :
+</p>
+<pre id="stlog-7" class="stlog"><samp><span class="stinp">. qregplot age education married , from(e_qreg) q(5(5)95) label raopt( color(%30))
+&gt;  grcopt( col(1) ysize(10) xsize(5))</span>
+(results e_qreg are active now)
+
+<span class="stinp">. graph export qfig4.png, replace</span>
+(file qfig4.png written in PNG format)
+</samp></pre>
+<img src = "https://i.imgur.com/QfWHdPF.png">
+<p>
+I like this figure the best, So I ll store it in memory for later use. I will also concentrate on age and education. and drop married.
+</p>
+<pre id="stlog-8" class="stlog"><samp><span class="stinp">. qregplot age education , from(e_qreg) q(5(5)95) label raopt( color(%30)) grcopt(
+&gt;  col(1) ysize(7) xsize(5) name(qreg1, replace))</span>
+(results e_qreg are active now)
+
+<span class="stinp">. graph export qfig5.png, replace</span>
+(file qfig5.png written in PNG format)
+</samp></pre>
+<img src = "https://i.imgur.com/NFZZsT5.png">
+<p>
+Now, suppouse you are not sure about standard errors for -qreg-, and decide to instead restimate the model using bsqreg,
+and will get ready for "plotting".
+<br><br>
+The good thing is you do not need to specify quantiles at this point, but you need to indicate number of reps(#). Here I will use 50.
+Also, for consistency, I ll use the same seed for each iteration.
+<br><br>
+Other than that, I ll use the same graphic options as before:
+</p>
+<pre id="stlog-9" class="stlog"><samp><span class="stinp">. bsqreg wage age education married i.county, reps(50)</span>
+(fitting base model)
+
+Bootstrap replications (<span class="stres">50</span>)
+----+--- 1 ---+--- 2 ---+--- 3 ---+--- 4 ---+--- 5 
+..................................................    50
+
+Median regression, bootstrap(<span class="stres">50</span>) SEs                Number of obs = <span class="stres">     1,343</span>
+  Raw sum of deviations<span class="stres"> 3394.897</span> (about <span class="stres">23.511223</span>)
+  Min sum of deviations<span class="stres"> 2878.138                    </span>Pseudo R2     = <span class="stres">    0.1522</span>
+
+------------------------------------------------------------------------------
+        wage |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |<span class="stres">   .1910125   .0287462     6.64   0.000     .1346197    .2474054</span>
+   education |<span class="stres">   .9196805   .0770224    11.94   0.000     .7685818    1.070779</span>
+     married |<span class="stres">    -.23724   .6064891    -0.39   0.696     -1.42702    .9525395</span>
+             |
+      county |
+          1  |<span class="stres">  -2.047806   1.572708    -1.30   0.193    -5.133064    1.037452</span>
+          2  |<span class="stres">   -2.53552   1.304409    -1.94   0.052    -5.094444    .0234036</span>
+          3  |<span class="stres">  -2.915096   1.352302    -2.16   0.031    -5.567973   -.2622187</span>
+          4  |<span class="stres">  -3.315867   1.406572    -2.36   0.019    -6.075208   -.5565261</span>
+          5  |<span class="stres">  -1.505194   1.539992    -0.98   0.329    -4.526271    1.515884</span>
+          6  |<span class="stres">  -2.539745   1.632024    -1.56   0.120    -5.741366    .6618768</span>
+          7  |<span class="stres">  -2.373452   1.396117    -1.70   0.089    -5.112283     .365379</span>
+          8  |<span class="stres">  -3.471071   1.467409    -2.37   0.018     -6.34976   -.5923819</span>
+          9  |<span class="stres">  -2.857953   1.642356    -1.74   0.082    -6.079844    .3639389</span>
+             |
+       _cons |<span class="stres">   6.752149   1.654891     4.08   0.000     3.505669     9.99863</span>
+------------------------------------------------------------------------------
+
+<span class="stinp">. qregplot age education , estore(e_bsqreg) q(5(5)95) seed(101) label raopt( color
+&gt; (%30)) grcopt( col(1) ysize(7) xsize(5) name(bsqreg1, replace))</span>
+
+<span class="stinp">. graph export qfig6.png, replace</span>
+(file qfig6.png written in PNG format)
+</samp></pre>
+<img src = "https://i.imgur.com/GrmFozk.png">
+<p>
+Once again you grow concern about the assumptions required for the standard errors or if 50 iterations is enough. But what are alternatives?
+<br><br>
+One option is for you to apply -qreg2- which provides "Heteroskedasticity robust standard errors" 
+</p>
+<pre id="stlog-10" class="stlog"><samp><span class="stinp">. qreg2 wage age education married i.county, </span>
+
+Median regression
+R-squared = <span class="stres">.26371107</span>
+Number of obs = <span class="stres">1343</span>
+Objective function = <span class="stres">2.1430661</span>
+
+                     Heteroskedasticity robust standard errors
+------------------------------------------------------------------------------
+        wage |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |<span class="stres">   .1910125    .030997     6.16   0.000     .1302042    .2518209</span>
+   education |<span class="stres">   .9196805   .0760262    12.10   0.000     .7705362    1.068825</span>
+     married |<span class="stres">    -.23724   .5815003    -0.41   0.683    -1.377998    .9035178</span>
+             |
+      county |
+          1  |<span class="stres">  -2.047806   1.201217    -1.70   0.088    -4.404292    .3086801</span>
+          2  |<span class="stres">   -2.53552   1.185086    -2.14   0.033    -4.860362   -.2106785</span>
+          3  |<span class="stres">  -2.915096   1.126806    -2.59   0.010    -5.125606   -.7045859</span>
+          4  |<span class="stres">  -3.315867   1.175865    -2.82   0.005    -5.622619   -1.009115</span>
+          5  |<span class="stres">  -1.505194   1.203101    -1.25   0.211    -3.865376    .8549893</span>
+          6  |<span class="stres">  -2.539745   1.274159    -1.99   0.046    -5.039325   -.0401641</span>
+          7  |<span class="stres">  -2.373452   1.271166    -1.87   0.062     -4.86716    .1202565</span>
+          8  |<span class="stres">  -3.471071   1.313158    -2.64   0.008    -6.047159   -.8949836</span>
+          9  |<span class="stres">  -2.857953   1.337014    -2.14   0.033    -5.480838   -.2350673</span>
+             |
+       _cons |<span class="stres">   6.752149   1.469769     4.59   0.000     3.868832    9.635467</span>
+------------------------------------------------------------------------------
+
+Machado-Santos Silva test for heteroskedasticity
+         Ho: Constant variance
+         Variables: <span class="stres">Fitted values of wage and its squares</span>
+
+         chi2(<span class="stres">2</span>)      =  <span class="stres"> 0.854</span>
+         Prob &gt; chi2  =  <span class="stres"> 0.652</span>
+
+<span class="stinp">. qregplot age education , estore(e_qreg2) q(5(5)95) seed(101) label raopt( color(%30)) grcopt( col(1) ysize(7) xsize(5) name(qreg2_1, repla
+&gt; ce))</span>
+
+<span class="stinp">. graph export qfig7.png, replace</span>
+(note: file qfig7.png not found)
+(file qfig7.png written in PNG format)
+</samp></pre>
+<img src = "https://i.imgur.com/WIkitkD.png">
+<p>
+Now a different question pops into your mind. You read that qunitile regressions some times violate the 
+monotonicity assumption. And that an alternative to deal with this is to estimate them via momements. 
+<br><br>
+One option for that is -xtqreg-. However, for this to work, you will need to use county as your "panel id"
+</p>
+<pre id="stlog-11" class="stlog"><samp><span class="stinp">. xtqreg wage age education married, i(county)</span>
+
+
+
+                              MM-QR regression results
+Number of obs = <span class="stres">1343</span>
+.5 Quantile regression
+------------------------------------------------------------------------------
+             |      Coef.   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |<span class="stres">   .1748125   .0216853     8.06   0.000     .1323101    .2173149</span>
+   education |<span class="stres">   .9529188   .0529128    18.01   0.000     .8492117    1.056626</span>
+     married |<span class="stres">   .2178976    .399123     0.55   0.585    -.5643691    1.000164</span>
+------------------------------------------------------------------------------
+
+
+<span class="stinp">. qregplot age education , estore(e_xtqreg) q(5(5)95) seed(101) label raopt( color(%30)) grcopt( col(1) ysize(7) xsize(5) name(xtqreg1, repl
+&gt; ace))</span>
+
+<span class="stinp">. graph export qfig8.png, replace</span>
+(note: file qfig8.png not found)
+(file qfig8.png written in PNG format)
+</samp></pre>
+<img src = "https://i.imgur.com/RLRvWdu.png">
+<p>
+Of course, you may not be sure about using xtqreg, and assume "county" is your panel id. 
+So, you could use either mmqreg or ivqreg2. Both are also based on quantile via moments, but ivqreg2 could
+also help dealing with endogeneity. I ll show you the resuls based on ivqreg.
+<br>
+The main caveat of using ivqreg2, is that it doesnt allow for factor notation yet. This can be fixed using "xi:".
+</p>
+<pre id="stlog-12" class="stlog"><samp><span class="stinp">. xi: ivqreg2 wage age education married i.county</span>
+i.county          _Icounty_0-9        (naturally coded; _Icounty_0 omitted)
+Note: no instruments were specified; restricted quantile regression will be performed
+
+
+
+                              MM-QR regression results
+
+Number of obs = <span class="stres">1343</span>
+GMM criterion Q(b) = <span class="stres">1.264e-31</span>
+.5 Restricted quantile regression
+------------------------------------------------------------------------------
+        wage |      Coef.   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |<span class="stres">   .1737718   .0216349     8.03   0.000     .1313681    .2161754</span>
+   education |<span class="stres">   .9524857   .0529837    17.98   0.000     .8486395    1.056332</span>
+     married |<span class="stres">   .1824978   .3998947     0.46   0.648    -.6012813     .966277</span>
+  _Icounty_1 |<span class="stres">  -1.475285   .7300324    -2.02   0.043    -2.906123   -.0444483</span>
+  _Icounty_2 |<span class="stres">  -1.793507   .7634103    -2.35   0.019    -3.289764   -.2972507</span>
+  _Icounty_3 |<span class="stres">  -2.402503   .7278441    -3.30   0.001    -3.829051   -.9759545</span>
+  _Icounty_4 |<span class="stres">  -2.851273   .7405346    -3.85   0.000    -4.302694   -1.399851</span>
+  _Icounty_5 |<span class="stres">  -1.516901   .7552965    -2.01   0.045    -2.997255   -.0365472</span>
+  _Icounty_6 |<span class="stres">  -2.008482   .8079585    -2.49   0.013    -3.592051   -.4249124</span>
+  _Icounty_7 |<span class="stres">  -2.013439   .8127911    -2.48   0.013     -3.60648   -.4203977</span>
+  _Icounty_8 |<span class="stres">   -3.28465   .8267361    -3.97   0.000    -4.905023   -1.664277</span>
+  _Icounty_9 |<span class="stres">  -2.636399   .8617105    -3.06   0.002    -4.325321   -.9474775</span>
+       _cons |<span class="stres">   6.253716   1.017537     6.15   0.000      4.25938    8.248052</span>
+------------------------------------------------------------------------------
+
+
+<span class="stinp">. qregplot age education , estore(e_ivqreg2) q(5(5)95)  label raopt( color(%30)) grcopt( col(1) ysize(7) xsize(5) name(ivqreg1, replace))</span>
+
+<span class="stinp">. graph export qfig9.png, replace</span>
+(note: file qfig9.png not found)
+(file qfig9.png written in PNG format)
+</samp></pre>
+<img src = "https://i.imgur.com/MQnd947.png">
+<p>
+If you had a problem of endogeneity, you could also use ivqreg to address such problem, and qregplot for looking at those coefficients.
+<br><br>
+Finally, say you were not interested in conditional quantiles, but unconditional quantiles (Long story behind this that will be covered 
+at some other point). You can use qregplot for plotting those too!
+<br>
+Different from other plots, however, you need to explicitly add at least one quantile for qregplot to identify what is what you are doing.
+</p>
+<pre id="stlog-13" class="stlog"><samp><span class="stinp">. rifhdreg wage age education married i.county, rif(q(10))</span>
+
+      Source |       SS           df       MS      Number of obs   =<span class="stres">     1,343</span>
+-------------+----------------------------------   F(12, 1330)     = <span class="stres">     8.39</span>
+       Model | <span class="stres">  8892.4386        12   741.03655   </span>Prob &gt; F        =<span class="stres">    0.0000</span>
+    Residual | <span class="stres"> 117516.433     1,330  88.3582203   </span>R-squared       =<span class="stres">    0.0703</span>
+-------------+----------------------------------   Adj R-squared   =<span class="stres">    0.0620</span>
+       Total | <span class="stres"> 126408.872     1,342  94.1943901   </span>Root MSE        =   <span class="stres"> 9.3999</span>
+
+------------------------------------------------------------------------------
+        wage |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |<span class="stres">   .1462815   .0369892     3.95   0.000     .0737179    .2188451</span>
+   education |<span class="stres">   .7157397   .0925625     7.73   0.000     .5341552    .8973242</span>
+     married |<span class="stres">  -.0384236   .7171313    -0.05   0.957    -1.445255    1.368408</span>
+             |
+      county |
+          1  |<span class="stres">    -2.8278    1.35939    -2.08   0.038    -5.494583   -.1610163</span>
+          2  |<span class="stres">  -3.662329   1.362539    -2.69   0.007    -6.335288   -.9893699</span>
+          3  |<span class="stres">  -2.425599   1.381663    -1.76   0.079    -5.136076    .2848783</span>
+          4  |<span class="stres">  -4.021551   1.385236    -2.90   0.004    -6.739037   -1.304064</span>
+          5  |<span class="stres">   -1.91362   1.399333    -1.37   0.172    -4.658761    .8315209</span>
+          6  |<span class="stres">  -2.645693   1.438301    -1.84   0.066    -5.467278    .1758925</span>
+          7  |<span class="stres">  -2.226753   1.461111    -1.52   0.128    -5.093086     .639581</span>
+          8  |<span class="stres">  -4.237178   1.503081    -2.82   0.005    -7.185846    -1.28851</span>
+          9  |<span class="stres">  -3.910545   1.515971    -2.58   0.010    -6.884499   -.9365905</span>
+             |
+       _cons |<span class="stres">   3.487083   1.816092     1.92   0.055    -.0756348    7.049801</span>
+------------------------------------------------------------------------------
+Distributional Statistic: q(10)
+Sample Mean    RIF q(10) : <span class="stres"> 15.706</span>
+
+<span class="stinp">. qregplot age education , estore(e_rifhdreg) q(5(5)95)  label raopt( color(%30)) grcopt( col(1) ysize(7) xsize(5) name(rif1, replace))</span>
+
+<span class="stinp">. graph export qfig10.png, replace</span>
+(note: file qfig10.png not found)
+(file qfig10.png written in PNG format)
+</samp></pre>
+<img src = "https://i.imgur.com/4XVkl1p.png">
+<p> So one last thing that has been usually done. Compare coefficients side by side.
+Since all data has already been stored, doing the coefficients should be an easy task.
+<br>
+Perhaps the only caveat, we need to do this for a single variable at a time. So i ll show it for education:
+</p>
+<pre id="stlog-14" class="stlog"><samp><span class="stinp">. <span class="stcmt">* qreg</span></span>
+<span class="stinp">. set graph off</span>
+
+<span class="stinp">. qregplot education , from(e_qreg) raopt( color(%30)) twopt(name(qreg2, replace) title("Conditional Quantile Regresson"))</span>
+(results e_qreg are active now)
+
+<span class="stinp">. <span class="stcmt">* mmqreg via ivqreg</span></span>
+<span class="stinp">. qregplot education , from(e_ivqreg2) raopt( color(%30)) twopt(name(ivqreg22, replace) title("MM-Quantile Regresson"))</span>
+(results e_ivqreg2 are active now)
+
+<span class="stinp">. <span class="stcmt">* mmqreg via rifhdreg</span></span>
+<span class="stinp">. qregplot education , from(e_rifhdreg) raopt( color(%30)) twopt(name(rif2, replace) title("Unconditional Quantile Regresson"))</span>
+(results e_rifhdreg are active now)
+
+<span class="stinp">. set graph on</span>
+
+<span class="stinp">.  </span>
+<span class="stinp">. graph combine qreg2 ivqreg22 rif2, col(3) xsize(10) ysize(4) ycommon</span>
+
+<span class="stinp">. graph export qfig11.png, replace</span>
+(note: file qfig11.png not found)
+(file qfig11.png written in PNG format)
+</samp></pre>
+<img src = "https://i.imgur.com/q7HVgOt.png">
+
+<p>
+There you have it. one command -qregplot- Many posibilities!.
+And if you are reproducing this difigures, you can use "from()" options to twik  all coefficients
+<br><br>
+Comments welcome!
+</p>
+</body>
+</html>

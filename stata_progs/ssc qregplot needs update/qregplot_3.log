@@ -1,0 +1,48 @@
+<span class="stinp">. qreg wage age education married i.county</span>
+Iteration  1:  WLS sum of weighted deviations = <span class="stres"> 2882.0578</span>
+
+Iteration  1: sum of abs. weighted deviations = <span class="stres"> 2881.6394</span>
+note:  alternate solutions exist
+Iteration  2: sum of abs. weighted deviations = <span class="stres"> 2880.7377</span>
+Iteration  3: sum of abs. weighted deviations = <span class="stres"> 2880.6178</span>
+Iteration  4: sum of abs. weighted deviations = <span class="stres"> 2879.5666</span>
+Iteration  5: sum of abs. weighted deviations = <span class="stres"> 2879.3427</span>
+Iteration  6: sum of abs. weighted deviations = <span class="stres">  2878.958</span>
+Iteration  7: sum of abs. weighted deviations = <span class="stres"> 2878.8413</span>
+Iteration  8: sum of abs. weighted deviations = <span class="stres"> 2878.8092</span>
+Iteration  9: sum of abs. weighted deviations = <span class="stres"> 2878.6626</span>
+Iteration 10: sum of abs. weighted deviations = <span class="stres"> 2878.4107</span>
+note:  alternate solutions exist
+Iteration 11: sum of abs. weighted deviations = <span class="stres">  2878.352</span>
+Iteration 12: sum of abs. weighted deviations = <span class="stres"> 2878.2839</span>
+Iteration 13: sum of abs. weighted deviations = <span class="stres"> 2878.2243</span>
+Iteration 14: sum of abs. weighted deviations = <span class="stres"> 2878.2232</span>
+Iteration 15: sum of abs. weighted deviations = <span class="stres"> 2878.1574</span>
+Iteration 16: sum of abs. weighted deviations = <span class="stres"> 2878.1558</span>
+Iteration 17: sum of abs. weighted deviations = <span class="stres"> 2878.1395</span>
+Iteration 18: sum of abs. weighted deviations = <span class="stres"> 2878.1377</span>
+
+Median regression                                   Number of obs = <span class="stres">     1,343</span>
+  Raw sum of deviations<span class="stres"> 3394.897</span> (about <span class="stres">23.511223</span>)
+  Min sum of deviations<span class="stres"> 2878.138                    </span>Pseudo R2     = <span class="stres">    0.1522</span>
+
+------------------------------------------------------------------------------
+        wage |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |<span class="stres">   .1910125   .0279023     6.85   0.000     .1362752    .2457498</span>
+   education |<span class="stres">   .9196805   .0698232    13.17   0.000     .7827049    1.056656</span>
+     married |<span class="stres">    -.23724   .5409577    -0.44   0.661    -1.298463    .8239834</span>
+             |
+      county |
+          1  |<span class="stres">  -2.047806   1.025437    -2.00   0.046    -4.059456   -.0361563</span>
+          2  |<span class="stres">   -2.53552   1.027812    -2.47   0.014    -4.551829   -.5192117</span>
+          3  |<span class="stres">  -2.915096   1.042238    -2.80   0.005    -4.959705   -.8704865</span>
+          4  |<span class="stres">  -3.315867   1.044933    -3.17   0.002    -5.365764    -1.26597</span>
+          5  |<span class="stres">  -1.505194   1.055567    -1.43   0.154    -3.575951    .5655644</span>
+          6  |<span class="stres">  -2.539745   1.084961    -2.34   0.019    -4.668167   -.4113222</span>
+          7  |<span class="stres">  -2.373452   1.102168    -2.15   0.031    -4.535629    -.211274</span>
+          8  |<span class="stres">  -3.471071   1.133828    -3.06   0.002    -5.695357   -1.246786</span>
+          9  |<span class="stres">  -2.857953   1.143551    -2.50   0.013    -5.101313   -.6145929</span>
+             |
+       _cons |<span class="stres">   6.752149   1.369943     4.93   0.000     4.064664    9.439635</span>
+------------------------------------------------------------------------------

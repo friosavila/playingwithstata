@@ -1,0 +1,42 @@
+<span class="stinp">. qreg2 wage age education married i.county, </span>
+
+Median regression
+R-squared = <span class="stres">.26371107</span>
+Number of obs = <span class="stres">1343</span>
+Objective function = <span class="stres">2.1430661</span>
+
+                     Heteroskedasticity robust standard errors
+------------------------------------------------------------------------------
+        wage |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         age |<span class="stres">   .1910125    .030997     6.16   0.000     .1302042    .2518209</span>
+   education |<span class="stres">   .9196805   .0760262    12.10   0.000     .7705362    1.068825</span>
+     married |<span class="stres">    -.23724   .5815003    -0.41   0.683    -1.377998    .9035178</span>
+             |
+      county |
+          1  |<span class="stres">  -2.047806   1.201217    -1.70   0.088    -4.404292    .3086801</span>
+          2  |<span class="stres">   -2.53552   1.185086    -2.14   0.033    -4.860362   -.2106785</span>
+          3  |<span class="stres">  -2.915096   1.126806    -2.59   0.010    -5.125606   -.7045859</span>
+          4  |<span class="stres">  -3.315867   1.175865    -2.82   0.005    -5.622619   -1.009115</span>
+          5  |<span class="stres">  -1.505194   1.203101    -1.25   0.211    -3.865376    .8549893</span>
+          6  |<span class="stres">  -2.539745   1.274159    -1.99   0.046    -5.039325   -.0401641</span>
+          7  |<span class="stres">  -2.373452   1.271166    -1.87   0.062     -4.86716    .1202565</span>
+          8  |<span class="stres">  -3.471071   1.313158    -2.64   0.008    -6.047159   -.8949836</span>
+          9  |<span class="stres">  -2.857953   1.337014    -2.14   0.033    -5.480838   -.2350673</span>
+             |
+       _cons |<span class="stres">   6.752149   1.469769     4.59   0.000     3.868832    9.635467</span>
+------------------------------------------------------------------------------
+
+Machado-Santos Silva test for heteroskedasticity
+         Ho: Constant variance
+         Variables: <span class="stres">Fitted values of wage and its squares</span>
+
+         chi2(<span class="stres">2</span>)      =  <span class="stres"> 0.854</span>
+         Prob &gt; chi2  =  <span class="stres"> 0.652</span>
+
+<span class="stinp">. qregplot age education , estore(e_qreg2) q(5(5)95) seed(101) label raopt( color(%30)) grcopt( col(1) ysize(7) xsize(5) name(qreg2_1, repla
+&gt; ce))</span>
+
+<span class="stinp">. graph export qfig7.png, replace</span>
+(note: file qfig7.png not found)
+(file qfig7.png written in PNG format)
