@@ -41,7 +41,7 @@ program twfe_data
 	
 	// Treatment heterogeneity
 	
-	gen het_t = runiform(-.5,.5)*$trhet
+	gen het_t = runiform(-$trhet , $trhet )
 	
 	// Individual trend heterogeneity
 	
@@ -105,31 +105,30 @@ capture program drop twfe_setup
 program twfe_setup
 	global ids    100   // # of Individuals
 	global time    10   // # of time periods
-	global tsize    4   // size of treatment
-	global out_time 2   // Over and "under periods
-	global noise    2   // Size of Noise (in sd)
-	global trhet    1   // if 0 Homogenous, if 1 heterogenous
-	global trnd     1   // if 0 no trend, 1 grows with trend
-	global xtrend   0.5 // Common trend 
-	global itrend   0.5 // individual trend?
+	global tsize    4   // size of treatment (after 10 periods if trnd=1 or a jump of 4.
+	global out_time 2   // Over and "under periods" To have always treated and never treated
+	global noise    2   // Size of Noise (in sd) Idiosyncratic noise
+	global trhet    .5  // Treatment heterogeneity by individual. tsize * (1+ u(-z,z) )  So each individual has a random effect
+	global trnd     0   // 0 or 1. If 0, effect is a one time shock. Otherwise, it grows (in average) in tsize/10 each period
+	global xtrend   0.5 // Common trend for all individuals. y = 1+x1+x2+x3+0.5*time
+	global itrend   0.5 // individual trend. It generates heteroneity around the common trend. (1+ runiform(-$itrend , $itrend)) 
 end 
 	
 ////////////////////////////////////////////////////////////////////////////////
-capture program drop twfex
-program twfex
+    set seed 110
 	twfe_setup
 	twfe_data	 
- 	// TWFE REG
-	reghdfe y x1 x2 x3  i.treat##c.event0  , abs(id id#c.time      ) 
- 
-end
-simulate, reps(100):twfex
-ss
+	// True effects 
 	reg tte treat##c.event0  
- 	// Event analysis
+ 	// TWFE REG
+	reghdfe y x1 x2 x3  i.treat , abs(id time) 
+	// as Event study
 	reghdfe y x1 x2 x3 ib$time.event , abs(id  )
-	margins, dydx(event) noestimcheck plot(yline(0))
+	*margins, dydx(event) noestimcheck plot(yline(0))
 	
-	
+	// flexible estimation 
+	reghdfe y x1 x2 x3  i.treat##c.event1  , abs(id id#c.time time     ) 
+		// True effects 
+	reg tte treat##c.event0  
 	
 	
