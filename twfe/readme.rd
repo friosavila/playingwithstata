@@ -58,8 +58,8 @@ Given the information above, The data (without treatment) is created as follows:
 
 y0_it = 1+ x1_i + x2_it + x3_it +   b_c * t   +     b_i * t     + u_i + v_it * $noise
                                  \___________/  \_____________/    |   \_____________/
-								   									Common         Individual     ind.    Idiosyncratic 
-					 				 									trend		       	trend       effect       error
+								   Common         Individual     ind.    Idiosyncratic 
+									trend		    trend       effect       error
 
 	u_i  ~ N(0,1)
 	
@@ -92,12 +92,12 @@ following periods:
 
 			          Observed periods
            ########################################
-t' -1		0		1		2		3		4		5		6		7		8		9		10	11	12   <--- Observed time line 
-t   1		2		3		4		5		6		7		8		9		10	11	12	13	14   <--- For reference of TRUE timing
+t' -1	0	1	2	3	4	5	6	7	8	9	10	11	12   <--- Observed time line 
+t   1	2	3	4	5	6	7	8	9	10	11	12	13	14   <--- For reference of TRUE timing
    ######                                          ########
-   Before										   											After 
-   data is									       									data is
-   observed  									   										observed
+   Before										   After 
+   data is									       data is
+   observed  									   observed
 
 If an observation is treated at t'<1  then it appears always treated
 if an observation is treated at t'>10 then it appears never  treated
