@@ -80,8 +80,8 @@ program twfe_data
 		
 	// Extra effect for early treatment
 	gen     tch_early = 1
-	replace tch_early = 1 +       0.5/(wtreat+$out_time)  if $tch_early == 2
-	replace tch_early = 1 + 0.5 - 0.5/(wtreat+$out_time)  if $tch_early == 3 
+	replace tch_early = 1 +       0.5/(wtreat+$out_time)  if $tch_early == 1
+	replace tch_early = 1 + 0.5 - 0.5/(wtreat+$out_time)  if $tch_early == 2 
 	
 	// The problem is that we do not see all. If WTR is less than 1 , it was alreays terated. and larger than 10 never terated (in the data)
 	
@@ -130,7 +130,7 @@ program twfe_setup
 	
 	// Treatment Calibration
 	// Treatent Size
-	global tsize_0   2   
+	global tsize_0   1   
 	global tsize_1   2   
 
 	// Treatment Heterogeneity
@@ -138,8 +138,8 @@ program twfe_setup
 	global trhet1    0
 	
 	// Treatment change across time
-	global tch_type     1   	
-	global tch_early    0    
+	global tch_type     0   	
+	global tch_early    1    
 
 end 
 
@@ -181,8 +181,9 @@ end
 	twfe_label
 	
 	xtset id event0 
-	xtline y y0 if avg_treat>.2 & avg_treat<.8
-	
+	*xtline y y0 if avg_treat>.3 & avg_treat<.7
+	scatter tte event0
+	ddd
 	
 	// True effects 
 	reg tte treat#c.event0_r  
