@@ -421,7 +421,7 @@ IV. Final Data Creation and Data Structure
 	
 	
 	// True effects 
-	reg tte treat##i.event0_r  
+	reg tte treat#c.event0_r  
  	// TWFE REG
 	reghdfe y x1 x2 x3  i.treat , abs(id time) 
 	// as Event study
