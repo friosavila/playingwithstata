@@ -56,10 +56,10 @@ can be modified using $noise. The final error has a distribution N(0,$noise)
 
 Given the information above, The data (without treatment) is created as follows:
 
-y0_it = 1+ x1_i + x2_it + x3_it +   b_c * t   +     b_i * t     + u_i + v_it * $noise
-                                 \___________/  \_____________/    |   \_____________/
-								   Common         Individual     ind.    Idiosyncratic 
-									trend		    trend       effect       error
+	y0_it = 1+ x1_i + x2_it + x3_it +   b_c * t   +     b_i * t     + u_i + v_it * $noise
+                           	        \___________/  \_____________/    |   \_____________/
+				 	   Common         Individual     ind.    Idiosyncratic 
+				   	   trend	    trend       effect       error
 
 	u_i  ~ N(0,1)
 	
@@ -90,14 +90,14 @@ one can use global "out_time". This should be an integer >=0.
 For example if $out_time = 2, then observation "i" could be treated in any of the 
 following periods:
 
-			          Observed periods
-           ########################################
-t' -1	0	1	2	3	4	5	6	7	8	9	10	11	12   <--- Observed time line 
-t   1	2	3	4	5	6	7	8	9	10	11	12	13	14   <--- For reference of TRUE timing
-   ######                                          ########
-   Before										   After 
-   data is									       data is
-   observed  									   observed
+			          			Observed periods
+           		##########################################################################
+	t' -1	0	1	2	3	4	5	6	7	8	9	10	11	12   <--- Observed time line 
+	t   1	2	3	4	5	6	7	8	9	10	11	12	13	14   <--- For reference of TRUE timing
+   	######                                          						########
+   	Before										   		After 
+   	data is									       			data is
+   	observed  									   		observed
 
 If an observation is treated at t'<1  then it appears always treated
 if an observation is treated at t'>10 then it appears never  treated
@@ -114,8 +114,8 @@ Treatment size (how much outcome increases) is constructed assuming two componen
 
 	 TTE   =     TEFF0  +   TEFF1
 	\____/      \_____/    \______/
-	Total T      Eff0		 Eff1
-    effect
+	Total T      Eff0	 Eff1
+    	effect
 
 	global
 	------
@@ -134,9 +134,9 @@ Treatment size (how much outcome increases) is constructed assuming two componen
 	Treatment effects for individuals:
 	
 	 TTE_i   =  het0_i  *  TEFF0  +  het1_i  *  TEFF1
-    \_____/    \______/   \_____/   \______/   \_____/
+    	\_____/    \______/   \_____/   \______/   \_____/
 	Total T      Ind.       Eff0	  Ind.	     Eff1
-    effect      heter0               heter1
+    	effect      heter0               heter1
 	for i
 	
 	The factors "het0_i" and "het1_i" are used to induce heterogeneity on the treatment effects.
@@ -157,9 +157,9 @@ Treatment size (how much outcome increases) is constructed assuming two componen
 	Treatment effects across time:
 	
 	 TTE_it   =  het0_i  *  TEFF0  +  het1_i  *  TEFF1  * het1_it *  het2_it
-    \______/    \______/   \_____/   \______/   \_____/  \______/   \______/ 
+    	\______/    \______/   \_____/   \______/   \_____/  \______/   \______/ 
 	Total T       Ind.       Eff0	  Ind.	     Eff1      time      time
-    effect       heter0               heter1              heter1    heter2
+    	effect       heter0               heter1              heter1    heter2
 	
 	Two parameters are used to determine heterogeneity.
 	This affect het1_t and het2_t.
