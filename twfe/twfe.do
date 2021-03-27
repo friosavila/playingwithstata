@@ -69,6 +69,8 @@ program twfe_data
 	// Defining TRUE timing for event
 	
 	gen event0 = time - (wtreat-1)
+	qui:sum event0
+	gen event0_r = event0 +1-r(min)
 	
 	// Changes in tsize2 effect (that grows or shrinks with time)
 	
@@ -147,7 +149,7 @@ capture program drop twfe_label
 program twfe_label
 	order 	id time x1 x2 x3 ui  v_it ///
 			wtreat wtreat_c treat ///
-			event0 event1 event ///
+			event0 event0_r event1 event ///
 			y0 y tte avg_treat 
 			
 	label var id        "Individual id"
@@ -161,6 +163,7 @@ program twfe_label
 	label var wtreat_c  "Censored: When was Observation treated"
 	label var treat     "=1 if observation is treated. (wtreat>=time)"
 	label var event0    "True Event time variable."
+	label var event0_r  "True Event time variable. Rescaled"
 	label var event1    "Censored Event time variable. Due to Out time-window wtreat"
 	label var event     "Censored Rescaled. For use with Factor variables"	
 	label var y0        "Outcome assuming no treatment"	
@@ -416,9 +419,9 @@ IV. Final Data Creation and Data Structure
 	xtset id event0 
 	xtline y y0 if avg_treat>.2 & avg_treat<.8
 	
-	ss
+	
 	// True effects 
-	reg tte treat##c.event0  
+	reg tte treat##i.event0_r  
  	// TWFE REG
 	reghdfe y x1 x2 x3  i.treat , abs(id time) 
 	// as Event study
