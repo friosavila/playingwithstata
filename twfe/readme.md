@@ -208,13 +208,13 @@ Two parameters are used to determine heterogeneity. This affect het1_t and het2_
 	
 	1  	Effect is larger for Units treated earlier (includes Out of time window treatment)  
 	
-	-> het2_it = 1 + ( 0.5 / t0 ) 
+	-> het2_it = 0.5 + ( 1 / t0 ) 
 	
 	where t0 is the time when unit "i" was treated
 	
 	2  	Effect is larger for Units treated later (includes Out of time window treatment)  
 	
-	-> het2_it = 1 + ( 0.5 - 0.5 / t0 ) 
+	-> het2_it = 1 + ( 0.5 - 1 / t0 ) 
 	
 	where t0 is the time when unit "i" was treated
 	
