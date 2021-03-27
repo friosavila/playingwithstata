@@ -75,12 +75,12 @@ program twfe_data
 	// Changes in tsize2 effect (that grows or shrinks with time)
 	
 	gen     tch_type = 1 
-	replace tch_type = (1-1/(event0+.1)) * (event0>0) if $tch_type == 1  // increasing
-	replace tch_type = (  1/     event0) * (event0>0) if $tch_type == 2  // Decreasing
+	replace tch_type = (1-1/(event0+.1)) * (event0>0) if event0> 0 & $tch_type == 1  // increasing
+	replace tch_type = (  1/     event0) * (event0>0) if event0> 0 & $tch_type == 2  // Decreasing
 		
 	// Extra effect for early treatment
 	gen     tch_early = 1
-	replace tch_early = 0.5 +       1/(wtreat+$out_time)  if $tch_early == 1
+	replace tch_early = 0.5 +         1/(wtreat+$out_time)  if $tch_early == 1
 	replace tch_early = 1   + 0.5 - 1  /(wtreat+$out_time)  if $tch_early == 2 
 	
 	// The problem is that we do not see all. If WTR is less than 1 , it was alreays terated. and larger than 10 never terated (in the data)
@@ -120,26 +120,26 @@ program twfe_setup
 
 	// Common and Individual trends
 	global xtrend   0.5 // common
-	global itrend   0.0 // SHould be a positive number. If 0 no individual trend
+	global itrend   0.5 // SHould be a positive number. If 0 no individual trend
 
 	// Size of Idiosyncratic error
-	global noise    2   // Size of Noise (in sd) Idiosyncratic noise
+	global noise    3   // Size of Noise (in sd) Idiosyncratic noise
 	
 	// Calibratio for always treated vs never treated (periods before and after
 	global out_time 1   // Needs to be INT >= 0
 	
 	// Treatment Calibration
 	// Treatent Size
-	global tsize_0   0   
+	global tsize_0   1   
 	global tsize_1   2   
 
 	// Treatment Heterogeneity
-	global trhet0  	 0
-	global trhet1    0
+	global trhet0  	 0.5
+	global trhet1    0.5
 	
 	// Treatment change across time
-	global tch_type     0   	
-	global tch_early    1    
+	global tch_type     1     	
+	global tch_early    0
 
 end 
 
@@ -175,27 +175,6 @@ program twfe_label
 	label var tch_early "Aux variable"
 end
 
-    set seed 110
-	twfe_setup
-	twfe_data	 
-	twfe_label
-	
-	xtset id event0 
-	*xtline y y0 if avg_treat>.3 & avg_treat<.7
-	scatter tte event0
-	ddd
-	
-	// True effects 
-	reg tte treat#c.event0_r  
- 	// TWFE REG
-	reghdfe y x1 x2 x3  i.treat , abs(id time) 
-	// as Event study
-	reghdfe y x1 x2 x3 ib$time.event , abs(id  )
-	*margins, dydx(event) noestimcheck plot(yline(0))
-	
-	// flexible estimation 
-	reghdfe y x1 x2 x3  i.treat##c.event1  , abs(id id#c.time time     ) 
-		// True effects 
-	reg tte treat##c.event0  
+  
 	
 	
