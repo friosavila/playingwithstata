@@ -130,8 +130,7 @@ Treatment size (how much outcome increases) is constructed assuming two componen
 2. Treatment Heterogeneity across individual (i)
 ------------------------------------------------
 	
-	The following parameters can be used to modify the heterogeneity of the
-	Treatment effects for individuals:
+The following parameters can be used to modify the heterogeneity of the	treatment effects for individuals:
 	
 	 TTE_i   =  het0_i  *  TEFF0  +  het1_i  *  TEFF1
     	\_____/    \______/   \_____/   \______/   \_____/
@@ -139,9 +138,9 @@ Treatment size (how much outcome increases) is constructed assuming two componen
     	effect      heter0               heter1
 	for i
 	
-	The factors "het0_i" and "het1_i" are used to induce heterogeneity on the treatment effects.
+The factors "het0_i" and "het1_i" are used to induce heterogeneity on the treatment effects.
 	
-	This heterogeneity is obtained using a random draw from a uniform distributions as follows:
+This heterogeneity is obtained using a random draw from a uniform distributions as follows:
 	
 	het0_i = 1 + het0_i		where het0_i~runiform(-$trhet0, $trhet0)
 	het1_i = 1 + het1_i		where het1_i~runiform(-$trhet1, $trhet1)
@@ -153,16 +152,14 @@ Treatment size (how much outcome increases) is constructed assuming two componen
 3. Treatment Heterogeneity across time (t)
 ------------------------------------------	
 
-	The following parameters can be used to modify the heterogeneity of the
-	Treatment effects across time:
+The following parameters can be used to modify the heterogeneity of the treatment effects across time:
 	
 	 TTE_it   =  het0_i  *  TEFF0  +  het1_i  *  TEFF1  * het1_it *  het2_it
     	\______/    \______/   \_____/   \______/   \_____/  \______/   \______/ 
 	Total T       Ind.       Eff0	  Ind.	     Eff1      time      time
     	effect       heter0               heter1              heter1    heter2
 	
-	Two parameters are used to determine heterogeneity.
-	This affect het1_t and het2_t.
+Two parameters are used to determine heterogeneity. This affect het1_t and het2_t.
 	
 	HET1_IT:
 	
