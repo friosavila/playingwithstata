@@ -34,8 +34,13 @@ program twfe_data
 		
 	// Defining Treatment Timing (when)
 	
-	gen wtreat = ceil( runiform(0-$out_time, $time + $out_time ) )
-	
+	if $time_dd == 0 {
+		gen wtreat = ceil( runiform(0-$out_time, $time + $out_time ) )
+	}
+	else {
+		gen 	wtreat = $time+1   //never treated
+		replace wtreat = $time_dd  if runiform()<.5
+	}
 	// anything under 1 is always treated, and over 10 never treated
 	
 	// Treatment heterogeneity
@@ -127,8 +132,12 @@ program twfe_setup
 	// Size of Idiosyncratic error
 	global noise    3   // Size of Noise (in sd) Idiosyncratic noise
 	
+	// Requesting Standard Design. 1 time Treatment at period $time_dd
+	
+	global time_dd  0   // If 0, then design is similar to event studies
+						// Otherwise Treatment at Time_dd to 50% of the sample
 	// Calibratio for always treated vs never treated (periods before and after
-	global out_time 1   // Needs to be INT >= 0
+	global out_time 1    
 	
 	// Treatment Calibration
 	// Treatent Size

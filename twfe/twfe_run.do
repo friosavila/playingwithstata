@@ -1,8 +1,9 @@
 capture program drop twfe_setup
+** Standard DD with Panel data
 program twfe_setup
 	// Data size
 	global ids    100   // # of Individuals
-	global time    11   // # of time periods
+	global time    10   // # of time periods
 
 	// Common and Individual trends
 	global xtrend   0.5 // common
@@ -11,8 +12,9 @@ program twfe_setup
 	// Size of Idiosyncratic error
 	global noise    2   // Size of Noise (in sd) Idiosyncratic noise
 	
+	global time_dd  0
 	// Calibratio for always treated vs never treated (periods before and after
-	global out_time -5  // Needs to be INT >= -($time-1)/2
+	global out_time 2  // Needs to be INT >= -($time-1)/2
 	
 	// Treatment Calibration
 	// Treatent Size
@@ -28,6 +30,8 @@ program twfe_setup
 	global tch_early    0
 
 end 
+
+
 ss
 program sim1, eclass
   	twfe_setup

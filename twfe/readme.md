@@ -80,6 +80,11 @@ Given the information above, The data (without treatment) is created as follows:
 II. Treatment Timing
 ====================
 
+1. staggered design
+-------------------
+
+Use $time_dd ==0  for Staggered design. Then consider the following:
+
 Treatment period is choosen at random using a uniform distribution. For example
 if we consider a $time length of 10 periods, observation "i" has 10% probability
 of being treated at period 1, 2, 3,..., 10.
@@ -103,6 +108,12 @@ If an observation is treated at t'<1  then it appears always treated
 if an observation is treated at t'>10 then it appears never  treated
 
 If $out_time = ($time/2), This can create the more usual DD structure, when $time is odd.
+
+2. Standard DD design
+---------------------
+
+if $time_dd !=0, simulated data will be like Standard DD. 50% units are treated at $time_dd
+
 	
 III. Definition of Treatment Status and Treatment effect 
 =======================================================

@@ -7,6 +7,14 @@ twfe_data : Simulates data based on Defined parameters
 
 This Notes Provides some information of How TWFE_SETUP works	
 	
+
+NOTES. This Script has 2 programs for simulations of TWFE scenarios
+Programs
+twfe_setup: Program used to define parameters for data simulation. 	
+twfe_data : Simulates data based on Defined parameters
+
+This Notes Provides some information of How TWFE_SETUP works	
+	
 I. 	Baseline: Outcome Without treatment 
 =======================================
 	
@@ -57,10 +65,10 @@ can be modified using $noise. The final error has a distribution N(0,$noise)
 
 Given the information above, The data (without treatment) is created as follows:
 
-y0_it = 1+ x1_i + x2_it + x3_it +   b_c * t   +     b_i * t     + u_i + v_it * $noise
-                                 \___________/  \_____________/    |   \_____________/
-								   Common         Individual     ind.    Idiosyncratic 
-									trend		    trend       effect       error
+	y0_it = 1+ x1_i + x2_it + x3_it +   b_c * t   +     b_i * t     + u_i + v_it * $noise
+                           	        \___________/  \_____________/    |   \_____________/
+				 	   Common         Individual     ind.    Idiosyncratic 
+				   	   trend	    trend       effect       error
 
 	u_i  ~ N(0,1)
 	
@@ -81,6 +89,11 @@ y0_it = 1+ x1_i + x2_it + x3_it +   b_c * t   +     b_i * t     + u_i + v_it * $
 II. Treatment Timing
 ====================
 
+1. staggered design
+-------------------
+
+Use $time_dd ==0  for Staggered design. Then consider the following:
+
 Treatment period is choosen at random using a uniform distribution. For example
 if we consider a $time length of 10 periods, observation "i" has 10% probability
 of being treated at period 1, 2, 3,..., 10.
@@ -91,19 +104,25 @@ one can use global "out_time". This should be an integer >=0.
 For example if $out_time = 2, then observation "i" could be treated in any of the 
 following periods:
 
-			          Observed periods
-           ########################################
-t' -1	0	1	2	3	4	5	6	7	8	9	10	11	12   <--- Observed time line 
-t   1	2	3	4	5	6	7	8	9	10	11	12	13	14   <--- For reference of TRUE timing
-   ######                                          ########
-   Before										   After 
-   data is									       data is
-   observed  									   observed
+			          			Observed periods
+           		##########################################################################
+	t' -1	0	1	2	3	4	5	6	7	8	9	10	11	12   <--- Observed time line 
+	t   1	2	3	4	5	6	7	8	9	10	11	12	13	14   <--- For reference of TRUE timing
+   	######                                          						########
+   	Before										   		After 
+   	data is									       			data is
+   	observed  									   		observed
 
 If an observation is treated at t'<1  then it appears always treated
 if an observation is treated at t'>10 then it appears never  treated
 
 If $out_time = ($time/2), This can create the more usual DD structure, when $time is odd.
+
+2. Standard DD design
+---------------------
+
+if $time_dd !=0, simulated data will be like Standard DD. 50% units are treated at $time_dd
+
 	
 III. Definition of Treatment Status and Treatment effect 
 =======================================================
@@ -117,8 +136,8 @@ Treatment size (how much outcome increases) is constructed assuming two componen
 
 	 TTE   =     TEFF0  +   TEFF1
 	\____/      \_____/    \______/
-	Total T      Eff0		 Eff1
-    effect
+	Total T      Eff0	 Eff1
+    	effect
 
 	global
 	------
@@ -133,18 +152,17 @@ Treatment size (how much outcome increases) is constructed assuming two componen
 2. Treatment Heterogeneity across individual (i)
 ------------------------------------------------
 	
-	The following parameters can be used to modify the heterogeneity of the
-	Treatment effects for individuals:
+The following parameters can be used to modify the heterogeneity of the	treatment effects for individuals:
 	
 	 TTE_i   =  het0_i  *  TEFF0  +  het1_i  *  TEFF1
-    \_____/    \______/   \_____/   \______/   \_____/
+    	\_____/    \______/   \_____/   \______/   \_____/
 	Total T      Ind.       Eff0	  Ind.	     Eff1
-    effect      heter0               heter1
+    	effect      heter0               heter1
 	for i
 	
-	The factors "het0_i" and "het1_i" are used to induce heterogeneity on the treatment effects.
+The factors "het0_i" and "het1_i" are used to induce heterogeneity on the treatment effects.
 	
-	This heterogeneity is obtained using a random draw from a uniform distributions as follows:
+This heterogeneity is obtained using a random draw from a uniform distributions as follows:
 	
 	het0_i = 1 + het0_i		where het0_i~runiform(-$trhet0, $trhet0)
 	het1_i = 1 + het1_i		where het1_i~runiform(-$trhet1, $trhet1)
@@ -156,16 +174,14 @@ Treatment size (how much outcome increases) is constructed assuming two componen
 3. Treatment Heterogeneity across time (t)
 ------------------------------------------	
 
-	The following parameters can be used to modify the heterogeneity of the
-	Treatment effects across time:
+The following parameters can be used to modify the heterogeneity of the treatment effects across time:
 	
 	 TTE_it   =  het0_i  *  TEFF0  +  het1_i  *  TEFF1  * het1_it *  het2_it
-    \______/    \______/   \_____/   \______/   \_____/  \______/   \______/ 
+    	\______/    \______/   \_____/   \______/   \_____/  \______/   \______/ 
 	Total T       Ind.       Eff0	  Ind.	     Eff1      time      time
-    effect       heter0               heter1              heter1    heter2
+    	effect       heter0               heter1              heter1    heter2
 	
-	Two parameters are used to determine heterogeneity.
-	This affect het1_t and het2_t.
+Two parameters are used to determine heterogeneity. This affect het1_t and het2_t.
 	
 	HET1_IT:
 	
@@ -232,5 +248,8 @@ IV. Final Data Creation and Data Structure
 	treat
 	y_it = y0_it +  TTE_it * treat_it
 	where treat_it=1 if observation i is treated at time t
+	
+*******************************************************************************/
+
 	
 *******************************************************************************/
