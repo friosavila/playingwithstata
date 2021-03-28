@@ -82,7 +82,8 @@ program twfe_data
 	gen     tch_early = 1
 	replace tch_early = 0.5 +         1/(wtreat+$out_time)  if $tch_early == 1
 	replace tch_early = 1   + 0.5 - 1  /(wtreat+$out_time)  if $tch_early == 2 
-	
+
+
 	// The problem is that we do not see all. If WTR is less than 1 , it was alreays terated. and larger than 10 never terated (in the data)
 	
 	gen     wtreat_c = wtreat 
@@ -109,6 +110,7 @@ program twfe_data
 	
 	// gen True treat
 	gen tte = y - y0
+
 end	
 /// Other Stuff Weights and Residualized outcome
 /// basic setup

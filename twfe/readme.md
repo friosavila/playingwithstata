@@ -101,6 +101,8 @@ following periods:
 
 If an observation is treated at t'<1  then it appears always treated
 if an observation is treated at t'>10 then it appears never  treated
+
+If $out_time = ($time/2), This can create the more usual DD structure, when $time is odd.
 	
 III. Definition of Treatment Status and Treatment effect 
 =======================================================
