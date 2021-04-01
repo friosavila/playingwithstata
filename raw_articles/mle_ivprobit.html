@@ -10,7 +10,7 @@
 html { -webkit-text-size-adjust: 100%; }
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 14px; line-height: 1.428;
+  font-size: 16px; line-height: 1.428;
   margin: 0 auto; padding: 0 15px;
 }
 h1, h2, h3, h4, h5, h6 { margin: 20px 0 10px; }
@@ -22,7 +22,7 @@ a:hover { text-decoration: underline; }
 img { max-width: 100%; height: auto; }
 ul, ol { padding-left: 30px; }
 pre, code, samp {
-  font-size: 13px;
+  font-size: 14px;
   font-family: Courier, monospace;
 }
 code, samp {
@@ -36,7 +36,7 @@ pre code, pre samp {
 pre {
   line-height: 1.33; background-color: #F5F5F5;
   border: 1px solid #CCCCCC; border-radius: 3px;
-  padding: 8px; overflow: auto;
+  padding: 9px; overflow: auto;
 }
 </style>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -63,11 +63,10 @@ instrumental variable probit.
 <p> I call this infamous, because it has been subject of multiple threads on Statalist, because of the consistency (or lack there off) regarding estimated marginal effects.
 you can read some of the latest discussion here.
 </p>
-<p> The bottom line is that through different Stata versions, margins produced different versions of "marginal effects" for this model. All of them correct, 
-but correct from a computational point of view. 
+<p> The bottom line is that through different Stata versions, margins produced different versions of "marginal effects" for this model. All of them correct, but correct from a computational point of view. 
 </p>
 
-<p> Based on own assessment, corroborated by discussions with colleagues this is the summary of what Stata would do:
+<p> Based on my own assessment, corroborated by discussions with colleagues this is the summary of what Stata would do:
 </p>
 
 <ul>
@@ -79,7 +78,7 @@ it contradicts common sense. This has been discussed extensibly by Prof Wooldrid
 </li>
 </ul>
 
-<p> So, without further ado, let me present you my own version of how to estimate an ivprobit model, and how the predict program could be setup, and why we had so many
+<p> So, without further ado, let me present you my own version of how to estimate an ivprobit model, and how the predict program could be set up, and why we had so many
 types of marginal effects lurking around.
 </p>
 
@@ -99,19 +98,19 @@ to estimate the "probability of success (y=1)" given a set of characteristics. \
 but you have some continuous and endogenous explanatory variable.
 </p>
 
-<p> Econometrics 101. If a variable is endogenous , we cannot estimate the model and interpret the 
+<p> Econometrics 101. If a variable is endogenous, we cannot estimate the model and interpret the 
 results as causal effects,
  because changes in the endogenous variable may happen at the same time as 
- changes in unobserved commponents. Thus, if the outcome changes, we do not know if it is
+ changes in unobserved components. Thus, if the outcome changes, we do not know if it is
  because the endogenous variable changed, or because the unobservables changed. (they are, after all, correlated).
 </p>
 
-<p> In this case, one option we have to deal with the unobserved confunders is to use instruments to either 
+<p> In this case, one option we have to deal with the unobserved confounders is to use instruments to either 
 isolate exogenous variation of the variable of interest (using the 2sls approach for example) or obtain an approximation 
 of the endogenous component that we can control for (Control function approach). 
 </p>
 
-<p> IV-probit is in fact the application of the later. A control function approach.
+<p> IV-probit is in fact the application of the latter. A control function approach.
 </p>
 
 <p> Formally, IVprobit model can be written as follows:
@@ -139,8 +138,8 @@ So how do we estimate this model? by parts!
 
 <p>
 First, equation (1) can be estimated directly, because it is a function of exogenous 
-variables only. Thus, we could estimated that equation
-using standard OLS (as ivprobit-two step does), or via MLE assuming the normality of the errors \( u_2 \).
+variables only. Thus, we could estimate that equation
+using standard OLS (as ivprobit-two-step does), or via MLE assuming the normality of the errors \( u_2 \).
 </p>
 
 <p>
@@ -178,7 +177,7 @@ model using standard probit model.
 
 <p>
 So what is the difference between using one equation or the other?. I would argue none,
-as long as you know how estimate the standard errors from the system.
+as long as you know how to estimate the standard errors from the system.
 </p>
 
 <h2>The actual estimation</h2>
@@ -199,11 +198,11 @@ of all coefficients.
 <br><br>
 Many textbooks would say it is a "simple" application of a delta method, or, use of bootstrap, 
 but the fact of the matter is that you need some way to account that \( \hat{u}_2 \) is 
-a variable that is measured with error, when you estimate equation (5).
+a variable that is measured with error when you estimate equation (5).
 </p>
 
 <p>
-The second method is to estimate equations (1) and (4) simulatenously using full information maximum likelihood.
+The second method is to estimate equations (1) and (4) simultaneously using full information maximum likelihood.
 This imposes the assumption that the errors follow a bivariate normal distribution, and allows you to 
 obtain estimates for the structural parameters in equation (2), in addition to the "linked" parameters
 \( \sigma_2 \) and \( \rho \). 
@@ -217,18 +216,17 @@ $$ L^2_i=\Phi \left( \frac{ z_1 \beta_1 + y_2 \beta_2 + \rho \frac{y_2 -z_1 \del
 $$ L^2_i=1-\Phi \left( \frac{ z_1 \beta_1 + y_2 \beta_2 + \rho \frac{y_2 -z_1 \delta_1 - z_2 \delta_2}{\sigma_2}}
 {\sqrt{1-\rho^2}} \right) \quad if \quad y_1 ==0 (7d)$$
 Notice that instead of "plugging in" \( \hat{u}_2 \) in the second equation, we plug \( y_2 -z_1 \delta_1 - z_2 \delta_2 \).
-This allows to implicitly account for the measurment erros of the first stage.
+This allows to implicitly account for the measurement errors of the first stage.
 </p>
 <p>
-There is a third option, which I call "two-step-mle". I call it two stage, because the ivprobit will be estimated
-using equations (1) and (5). However, I call it MLE, because both equations are estimated simultaneously using MLE:
+There is a third option, which I call "two-step-mle". I call it two-stage because the ivprobit will be estimated using equations (1) and (5). However, I call it MLE, because both equations are estimated simultaneously using MLE:
 $$ L_i = L^1_i * L^2_i \quad (8a)$$
 $$ L^1_i=\phi \left( y_2,z_1 \delta_1 + z_2 \delta_2, \sigma_2 \right) \quad (8b)$$
 $$ L^2_i=\Phi \left(  z_1 \beta^r_1 + y_2 \beta^r_2 + \theta \frac {y_2 -z_1 \delta_1 - z_2 \delta_2}{\sigma_2} \right) \quad (8c)$$
 The main difference with the standard FIML, is that only rescaled coefficients are are estimated, and that the
 link between both equation is not \( \rho \), but \( \theta \). 
 <br><br>
-However, for this simplified example, both equations identify the exactly the same model. 
+However, for this simplified example, both equations identify exactly the same model. 
 <br><br> Compared to the usual two-step approach, however, because the model is estimated simultaneously, the
 standard errors of all coefficients can be correctly estimated, without further calculations (no delta method nor bootstrap).
 <br><br>
@@ -242,10 +240,10 @@ $$\beta_1 = \beta^r_1 * {\sqrt{1-\rho^2}} = \frac{\beta^r_1}{\sqrt{1+\theta^2}} 
 
 <h2>The Log Likelihood function.</h2>
 
-<p> While I have shown that using FIML and two-step-ml will provide virtually the same results, I ll stick with the two-step approach,
-as it allows me to derive marginal effects telling the story of what happened to -margins- though different Stata versions. 
+<p> While I have shown that using FIML and two-step-ml will provide virtually the same results, I'll stick with the two-step approach,
+as it allows me to derive marginal effects telling the story of what happened to -margins-  through different Stata versions. 
 <br><br>
-The following program defines this the log likelihood function for the IV probit, using the two step approach (equation 8), using the following
+The following program defines this the log-likelihood function for the IV probit, using the two-step approach (equation 8), using the following
 walk-through for the specification:
 </p>
 
@@ -277,13 +275,11 @@ walk-through for the specification:
 </samp></pre>
 <h2>The predict program</h2>
 <p> 
-So finally, the part that will be a bit more controversial. The prediction of probability of success!.
+So finally, the part that will be a bit more controversial. The prediction of the probability of success!.
 <br><br>
-The reason why this is controntroversial is because  there are two candidates have been suggestes to identify 
-this expression. 
+The reason why this is controversial is because there are two candidates have been suggested to identify this expression. 
 <br><br>
-The first candidate relates to the structural equation (2). Basically, if we are able to estimate the unscaled coefficients, 
-the predicted outcome could be identified by:
+The first candidate relates to the structural equation (2). Basically, if we can estimate the unscaled coefficients, the predicted outcome could be identified by:
 $$ P(y_1=1| z_1 , y_2) = \Phi \left( z_1 \beta_1 + y_2 \beta_2  \right) $$
 or if one prefers the version based on rescaled coefficients:
 $$ P(y_1=1| z_1 , y_2) = \Phi \left( z_1 \beta^r_1 * {\sqrt{1-\rho^2}} + y_2 \beta^r_2 * {\sqrt{1-\rho^2}} \right) $$
@@ -482,7 +478,7 @@ Where the results are exactly the same.
 <h2>A Story of marginal effects </h2>
 
 <p>
-Let me now walk you though the Story of marginal effects with ivprobit. 
+Let me now walk you through the Story of marginal effects with ivprobit. 
 <br></br>
 Back in Stata 13, marginal effects for IV probit were estimated using the structural equation coeffients:
 $$ P(y_1=1| z_1 , y_2) = \Phi \left( z_1 \beta_1 + y_2 \beta_2  \right) $$
@@ -573,8 +569,8 @@ So, from the technical point of view, this partial derivatives are correct, sinc
 and indirect partial effects. A kind of total derivative, rather than partial derivatives. 	
 <br><br>
 The problem, however, is that this assumes we could actually observe how the unobserved component \( u_2 \) changes when other variables
-change. Standard regression analysis, however, would say that this unobserved components should be considered as fixed, and instead one should
-estimate marginal effects averaging over the unobserved factors. Thus, the second term on each on of the above derivatives, should be zero.
+change. Standard regression analysis, however, would say that these unobserved components should be considered as fixed, and instead one should
+estimate marginal effects averaging over the unobserved factors. Thus, the second term on each one of the above derivatives should be zero.
 <br><br>
 Nevertheless, lets replicate this. First, if you are using Stata 16, the following behaivor may no longer be replicable:
 </p>
@@ -624,25 +620,20 @@ dy/dx w.r.t. : <span class="stres">fem_educ kids other_inc male_educ</span>
    male_educ |<span class="stres">  -.0194406   .0074886    -2.60   0.009    -.0341181   -.0047631</span>
 ------------------------------------------------------------------------------
 </samp></pre>
-So what do we see here? First, that the Stata 14, 15 and early 16 versions were estimating a partial effect
-that inadvertedly accounted for a second order effect (through the first stage regression). This would normally have a small
-effect on the exogenous variables, but will have a noticible effect on the endogenous variable of interest.
+So what do we see here? First, that the Stata 14, 15, and early 16 versions were estimating a partial effect that inadvertently accounted for a second-order effect (through the first stage regression). This would normally have a small
+effect on the exogenous variables but will have a noticeable effect on the endogenous variable of interest.
 <br><br>
-Some people would even report negative marginal effects even when the estimated coefficient was possitive.
+Some people would even report negative marginal effects even when the estimated coefficient was positive.
 <br><br>
-We also see the odd outcome that the instrument, here male_educ, would also appear in the output, capturing only a second order effect
+We also see the odd outcome that the instrument, here male_educ, would also appear in the output, capturing only a second-order effect
 on the outcome of interest.
 <br><br>
-Just as a side note, you could also try estimating this without the "nochain" option. If you do that, you will find
-that effects for the endogenous variable "improve". This will happen because the second order effect would not be estimated for the endogenous variable, but 
-only for the exogenous variables.
-So finally we arrive to the corrected marginal effects for Stata version 16. 
+Just as a side note, you could also try estimating this without the "nochain" option. If you do that, you will find that the effects for the endogenous variable "improve". This will happen because the second-order effect would not be estimated for the endogenous variable, but only for the exogenous variables.
+So finally we arrive at the corrected marginal effects for Stata version 16. 
 <br><br>
-After a very interesting discussion in Statalist, where Prof Wooldridge intervene, it was said that the way Stata (and margins) was estimating 
-marginal effects was incorrect. As I show here, that was the case because partial derivatives were being estimated through the first and second equations.
+After a very interesting discussion in Statalist, where Prof Wooldridge intervenes, it was said that the way Stata (and margins) was estimating marginal effects was incorrect. As I show here, that was the case because partial derivatives were being estimated through the first and second equations.
 <br><br>
-What Prof. Wooldridge suggested was to take a step back, and estimate marginal effects using a manual two-step approach, obtaining 
-standard errors via bootstrap. This implies using equation (11) to estimate the partial effects.
+What Prof. Wooldridge suggested was to take a step back, and estimate marginal effects using a manual two-step approach, obtaining standard errors via bootstrap. This implies using equation (11) to estimate the partial effects.
 <br><br>
 How does this make a difference? 
 <br> This makes a difference because we will be making the explicit assumption that \( \hat{u}_2 \) does not change when \( y_2, z_1 \quad or \quad z_2 \) changes.
@@ -741,7 +732,7 @@ dy/dx w.r.t. : <span class="stres">other_inc fem_educ kids</span>
         kids |<span class="stres">  -.0557355   .0144233    -3.86   0.000    -.0840047   -.0274664</span>
 ------------------------------------------------------------------------------
 </samp></pre>
-<p>So you can see that the two step approach, and the built-in approach
+<p>So you can see that the two-step approach and the built-in approach
 now provide the same marginal effects. And since the official command 
 estimates all coefficients simultaneously, the standard errors can be taken as correct...Let me get back to this point later.
 <br><br>
@@ -795,7 +786,7 @@ dy/dx w.r.t. : <span class="stres">fem_educ kids other_inc</span>
 ------------------------------------------------------------------------------
 </samp></pre>
 <p>
-And done. we have been able to reproduced the second version, two-step, marginal effects
+And done. we have been able to reproduce the second version, two-step, marginal effects
 for the instrumental variable probit model, that follows the two-step approach advocated by Prof. Wooldridge.
 Furthermore, this also reproduces what ivprobit currently does!
 <br><br>
@@ -803,8 +794,7 @@ There is only one last perky detail. If you look at the marginal effect
 standard errors I produce with the myivprobit command, and compare it with the marginal effects
 the ivprobit command produces, you will notice they are different. 
 <br><br>
-Im still uncertain why this may be happening, and Im currently discussing with people at Stata about the "correct"
-way to obtain standard errors, but here are the clift notes:
+I'm still uncertain why this may be happening, and I'm currently discussing with people at Stata about the "correct" way to obtain standard errors, but here are the cliff notes:
 </p>
 <p>
  Recall that IVprobit uses the following formula to estimate marginal effects with respect to \(y_2 \) is: </li>
@@ -814,7 +804,7 @@ $$ \frac{\partial P(y=1|.)}{\partial y_2} =
 	\frac{\rho}{\sqrt{1-\rho^2}} \frac{\hat{u}_2}{\sigma_2} \right)* \left( \frac{\beta_2}{\sqrt{1-\rho^2}}  \right)  $$
 My own version of predict uses the same formula, but modified for the two-step approach. 
 <br>
-If one needs to estimate standard errors for this partial effects, it is necessary to account for the uncertainty of all 
+If one needs to estimate standard errors for these partial effects, it is necessary to account for the uncertainty of all 
 estimated coefficients in the model, including the uncertainly of the errors \( \hat{u}_2 \).
 Unofficial words (still under discussion)  indictates that the current formulation assumes \( \rho \) and \( \sigma_2 \) to be constant, 
 when standard errors are calculated. 
@@ -863,19 +853,52 @@ However, you are free to take this as limited evidence, and use either strategy 
 <p> The command -ml- is a powerful tool that can be used to estimate single or multiple equation models, as long as
 the loglikelihood functions (and their inter-relations) can be properly defined.
 <br><br>
--margins- is also a very flexible command that can be easily combined with -ml- to expand 
-the estimation marginal effects for properly defined outcomes. While the command is flexible, and relatively easy to use, 
-these properties can also be double+edge swords, if one is not aware of the mechanics behind the actual estimation of partial effects.
+-margins- is also a very flexible command that can be easily combined with -ml- to expand the estimation of marginal effects for properly defined outcomes. While the command is flexible and relatively easy to use, these properties can also be double+edge swords, if one is not aware of the mechanics behind the actual estimation of partial effects.
 <br><br>
 In my view, the original estimation of marginal effects after iv-probit was correct, but the changes
-it recieved in Stata 14.1 introduced what we could call a bug, that was based on solid Math. However, unless you dig dipper into what
-ivprobit tries to estimate, it would be difficult to say why that change produced undesirable results.
+it received in Stata 14.1 introduced what we could call a bug, that was based on solid Math. However, unless you dig deeper into what ivprobit tries to estimate, it would be difficult to say why that change produced undesirable results.
 <br><br>
 While the last update on Stata 16 has made a correction that now produces correct partial effects (two-step like), 
 I still believe there is a remaining bug in the program that may be affecting the estimation of standard errors. 
-And of course, margins could also go back to the beggining, and provide users the option for the estimation of MLE-structural marginal effects.
+And of course, margins could also go back to the beginning, and provide users the option for the estimation of MLE-structural marginal effects.
 <br><br>
-Who knows, this may be going to the Statalist wishlist....
+Who knows, this may be going to the Statalist wishlist...
+</p>
+<h2>Epilog: one last change</h2>
+<p>
+Today's development! As of April 1st, 2021, the way of how IVprobit works has changed for the estimation of standard errors!
+<br><br>
+If you happen to read my post before, (or what you can see above), when I wrote it i made the case that Standard errors for IVprobit were 
+not being estimated correctly, because they didn't account for errors on some of the structural parameters (rho and sigma). However, Today (April 1, 2021), Stata has pushed an update
+fixing this!. On the one side, the code above will no longer be reproducible. On the brighter side, it seems my hunch was right! 
+<br><br>
+And now, standard errors for IVprobit are estimated the right way! The circle is complete!
+<br><br>
+So, just for closure, the example today:
+<pre id="stlog-1" class="stlog"><samp><span class="stinp">. webuse laborsup</span>
+<span class="stinp">. global  y1   fem_work</span>
+<span class="stinp">. global  z1   fem_educ   kids  </span>
+<span class="stinp">. global  y2   other_inc</span>
+<span class="stinp">. global  z2   male_educ   </span>
+<span class="stinp">. qui: ivprobit $y1  $z1 ($y2 = $z2), ml</span>
+<span class="stinp">. margins, dydx(*) predict(pr)</span>
+Average marginal effects                        Number of obs     = <span class="stres">       500</span>
+Model VCE    : <span class="stres">OIM</span>
+
+Expression   : <span class="stres">Average structural function probabilities, predict(pr)</span>
+dy/dx w.r.t. : <span class="stres">other_inc fem_educ kids</span>
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   Std. Err.      z    P&gt;|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+   other_inc |<span class="stres">  -.0166128   .0023501    -7.07   0.000    -.0212189   -.0120068</span>
+    fem_educ |<span class="stres">   .0646175   .0063309    10.21   0.000     .0522091    .0770258</span>
+        kids |<span class="stres">  -.0557355   .0134692    -4.14   0.000    -.0821347   -.0293364</span>
+------------------------------------------------------------------------------
+</samp></pre>
+<br><br>
+So no more Statawish list! The change is done, and here to stay! Unless someone else finds something that needs to be addressed...
 </p>
 </body>
 </html>
