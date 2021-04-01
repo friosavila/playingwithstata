@@ -238,7 +238,7 @@ program define mmqreg1, eclass sortpreserve
 	
 	ereturn post __bq __vq, esample(`touse') buildfvinfo findomitted  obs(`nobs')
 	ereturn local cmd "mmqreg"
-	ereturn local cmd_line "mmqreg `0'"
+	ereturn local cmdline "mmqreg `0'"
 	*ereturn local predict  "mmqreg_p"
 	ereturn local vce "mmvce"
 	ereturn matrix qth `qth'
