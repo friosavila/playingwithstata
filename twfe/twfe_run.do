@@ -14,7 +14,7 @@ program twfe_setup
 	
 	global time_dd  0
 	// Calibratio for always treated vs never treated (periods before and after
-	global out_time 2  // Needs to be INT >= -($time-1)/2
+	global out_time 4  // Needs to be INT >= -($time-1)/2
 	
 	// Treatment Calibration
 	// Treatent Size
@@ -30,8 +30,6 @@ program twfe_setup
 	global tch_early    0
 
 end 
-
-
 ss
 program sim1, eclass
   	twfe_setup
