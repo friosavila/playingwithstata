@@ -13,7 +13,11 @@ program sim_c1, eclass
 	gen y = 0.5*x +ui+ rnormal()
 	** Regression without adjusting for clusters
 	reg y x, 
+	*predict res, res
 	gen res=y-0.5*x
+	sum res, meanonly
+	replace res=res-r(mean)
+	ereturn display
 	matrix tt=r(table)
 	matrix b=tt["b","x"],tt["ll","x"],tt["ul","x"] 
 	
@@ -22,10 +26,15 @@ program sim_c1, eclass
 	matrix tt=r(table)
 	matrix b=b,tt["ll","x"],tt["ul","x"] 
 	** Regression using WildBootstrap
-	boottest x, nograph cluster(id)
-	matrix xtemp = r(CI)
+	mata:reg_wldb("y","x","res","id",$nclusters,$nobspc,1000)
+	adde repost V=Vwb
+	ereturn display
+	matrix tt=r(table)
+	*boottest x, nograph cluster(id)
+	*matrix xtemp = r(CI)
+	*matrix b=b,xtemp[1,1],xtemp[1,2]
+	matrix b=b,tt["ll","x"],tt["ul","x"] 
 
-	matrix b=b,xtemp[1,1],xtemp[1,2]
 	matrix colname b = b ll ul cll cul wll wul
 	ereturn post b
 end
@@ -33,11 +42,11 @@ end
 
 /// setup
 global nclusters 10
-global nobspc    20
+global nobspc    10
 global reps		 1000
 
 
-simulate, seed(1) reps($reps): sim_c1
+simulate, seed(1) reps(200): sim_c1
 
 gen n=_n
 gen flag = inrange(0.5,_b_ll,_b_ul)
