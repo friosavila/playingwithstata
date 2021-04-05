@@ -1,4 +1,7 @@
 /// simulation
+clear all
+** reuires boottest
+** ssc install boottest, replace
 capture program drop sim_c1
 program sim_c1, eclass
 	clear
@@ -31,10 +34,10 @@ end
 /// setup
 global nclusters 10
 global nobspc    20
-global reps		 200
+global reps		 1000
 
 
-simulate, seed(1) reps(200): sim_c1
+simulate, seed(1) reps($reps): sim_c1
 
 gen n=_n
 gen flag = inrange(0.5,_b_ll,_b_ul)
