@@ -1,0 +1,70 @@
+<span class="stinp">. qui: {</span>
+
+<span class="stinp">. esttab m1 m2 m3 , nogaps se label wrap</span>
+
+--------------------------------------------------------------------
+                              (1)             (2)             (3)   
+                     Q22. Men o~l    Q23. Women~b    Q24. Educa~b   
+--------------------------------------------------------------------
+<span class="stres">main                                                                </span>
+Q1. Age             <span class="stres">     -0.00119        -0.00287         0.00408   </span>
+                    <span class="stres">    </span>(<span class="stres">0.00274</span>)<span class="stres">       </span>(<span class="stres">0.00288</span>)<span class="stres">       </span>(<span class="stres">0.00270</span>)<span class="stres">   </span>
+cage_2              <span class="stres">    0.0000617       0.0000528      0.00000189   </span>
+                    <span class="stres">   </span>(<span class="stres">0.000112</span>)<span class="stres">      </span>(<span class="stres">0.000111</span>)<span class="stres">      </span>(<span class="stres">0.000109</span>)<span class="stres">   </span>
+Male                <span class="stres">            0               0               0   </span>
+                    <span class="stres">          </span>(<span class="stres">.</span>)<span class="stres">             </span>(<span class="stres">.</span>)<span class="stres">             </span>(<span class="stres">.</span>)<span class="stres">   </span>
+Female              <span class="stres">       0.0844          -0.101         -0.0781   </span>
+                    <span class="stres">     </span>(<span class="stres">0.0599</span>)<span class="stres">        </span>(<span class="stres">0.0625</span>)<span class="stres">        </span>(<span class="stres">0.0594</span>)<span class="stres">   </span>
+No formal schooling <span class="stres">            0               0               0   </span>
+                    <span class="stres">          </span>(<span class="stres">.</span>)<span class="stres">             </span>(<span class="stres">.</span>)<span class="stres">             </span>(<span class="stres">.</span>)<span class="stres">   </span>
+Informal schooling  <span class="stres">        0.316*         -0.133           0.287*  </span>
+only                <span class="stres">      </span>(<span class="stres">0.133</span>)<span class="stres">         </span>(<span class="stres">0.131</span>)<span class="stres">         </span>(<span class="stres">0.133</span>)<span class="stres">   </span>
+Some primary        <span class="stres">        0.186*         -0.159*          0.269***</span>
+schooling           <span class="stres">     </span>(<span class="stres">0.0770</span>)<span class="stres">        </span>(<span class="stres">0.0795</span>)<span class="stres">        </span>(<span class="stres">0.0780</span>)<span class="stres">   </span>
+Primary school      <span class="stres">        0.235*         -0.290*          0.373***</span>
+completed           <span class="stres">      </span>(<span class="stres">0.111</span>)<span class="stres">         </span>(<span class="stres">0.114</span>)<span class="stres">         </span>(<span class="stres">0.106</span>)<span class="stres">   </span>
+Some secondary      <span class="stres">        0.395**        -0.462***        0.502***</span>
+school/high school  <span class="stres">      </span>(<span class="stres">0.125</span>)<span class="stres">         </span>(<span class="stres">0.137</span>)<span class="stres">         </span>(<span class="stres">0.113</span>)<span class="stres">   </span>
+Secondary school    <span class="stres">        0.508***       -0.567***        0.455***</span>
+completed/high sch~l<span class="stres">      </span>(<span class="stres">0.113</span>)<span class="stres">         </span>(<span class="stres">0.124</span>)<span class="stres">         </span>(<span class="stres">0.101</span>)<span class="stres">   </span>
+Post-secondary      <span class="stres">        0.557***       -0.509**         0.365** </span>
+qualifications, no~y<span class="stres">      </span>(<span class="stres">0.128</span>)<span class="stres">         </span>(<span class="stres">0.158</span>)<span class="stres">         </span>(<span class="stres">0.132</span>)<span class="stres">   </span>
+Some university     <span class="stres">        0.746***       -0.638**         0.609***</span>
+                    <span class="stres">      </span>(<span class="stres">0.174</span>)<span class="stres">         </span>(<span class="stres">0.196</span>)<span class="stres">         </span>(<span class="stres">0.151</span>)<span class="stres">   </span>
+Tigray              <span class="stres">            0               0               0   </span>
+                    <span class="stres">          </span>(<span class="stres">.</span>)<span class="stres">             </span>(<span class="stres">.</span>)<span class="stres">             </span>(<span class="stres">.</span>)<span class="stres">   </span>
+Afar                <span class="stres">       -0.319*          0.501***       -0.295*  </span>
+                    <span class="stres">      </span>(<span class="stres">0.152</span>)<span class="stres">         </span>(<span class="stres">0.140</span>)<span class="stres">         </span>(<span class="stres">0.134</span>)<span class="stres">   </span>
+Amhara              <span class="stres">       -0.384***       -0.138          0.0435   </span>
+                    <span class="stres">      </span>(<span class="stres">0.100</span>)<span class="stres">        </span>(<span class="stres">0.0995</span>)<span class="stres">        </span>(<span class="stres">0.0845</span>)<span class="stres">   </span>
+Oromia              <span class="stres">       -0.163          -0.109          -0.396***</span>
+                    <span class="stres">      </span>(<span class="stres">0.102</span>)<span class="stres">        </span>(<span class="stres">0.0993</span>)<span class="stres">        </span>(<span class="stres">0.0861</span>)<span class="stres">   </span>
+Somali              <span class="stres">      -0.0458          -0.121          -0.557***</span>
+                    <span class="stres">      </span>(<span class="stres">0.148</span>)<span class="stres">         </span>(<span class="stres">0.140</span>)<span class="stres">         </span>(<span class="stres">0.139</span>)<span class="stres">   </span>
+Benshangul-Gumz     <span class="stres">       -0.163          -0.220           0.503** </span>
+                    <span class="stres">      </span>(<span class="stres">0.187</span>)<span class="stres">         </span>(<span class="stres">0.184</span>)<span class="stres">         </span>(<span class="stres">0.186</span>)<span class="stres">   </span>
+Sounthern Nations   <span class="stres">       -0.297**      -0.00923          -0.316***</span>
+                    <span class="stres">      </span>(<span class="stres">0.103</span>)<span class="stres">        </span>(<span class="stres">0.0989</span>)<span class="stres">        </span>(<span class="stres">0.0886</span>)<span class="stres">   </span>
+Gambella            <span class="stres">       -0.423**         0.225          -0.534***</span>
+                    <span class="stres">      </span>(<span class="stres">0.156</span>)<span class="stres">         </span>(<span class="stres">0.150</span>)<span class="stres">         </span>(<span class="stres">0.140</span>)<span class="stres">   </span>
+Harari              <span class="stres">       -0.230          -0.146          -0.684***</span>
+                    <span class="stres">      </span>(<span class="stres">0.142</span>)<span class="stres">         </span>(<span class="stres">0.162</span>)<span class="stres">         </span>(<span class="stres">0.144</span>)<span class="stres">   </span>
+Addis Ababa         <span class="stres">       0.0621         -0.0924           0.105   </span>
+                    <span class="stres">      </span>(<span class="stres">0.147</span>)<span class="stres">         </span>(<span class="stres">0.151</span>)<span class="stres">         </span>(<span class="stres">0.115</span>)<span class="stres">   </span>
+Dire Dawa           <span class="stres">       -0.277         -0.0153          -0.329*  </span>
+                    <span class="stres">      </span>(<span class="stres">0.153</span>)<span class="stres">         </span>(<span class="stres">0.155</span>)<span class="stres">         </span>(<span class="stres">0.143</span>)<span class="stres">   </span>
+--------------------------------------------------------------------
+<span class="stres">/                                                                   </span>
+cut1                <span class="stres">       -1.166***       -0.296          -1.307***</span>
+                    <span class="stres">      </span>(<span class="stres">0.154</span>)<span class="stres">         </span>(<span class="stres">0.159</span>)<span class="stres">         </span>(<span class="stres">0.149</span>)<span class="stres">   </span>
+cut2                <span class="stres">       -0.719***        0.771***       -0.735***</span>
+                    <span class="stres">      </span>(<span class="stres">0.153</span>)<span class="stres">         </span>(<span class="stres">0.155</span>)<span class="stres">         </span>(<span class="stres">0.146</span>)<span class="stres">   </span>
+cut3                <span class="stres">       -0.714***        0.787***       -0.355*  </span>
+                    <span class="stres">      </span>(<span class="stres">0.153</span>)<span class="stres">         </span>(<span class="stres">0.156</span>)<span class="stres">         </span>(<span class="stres">0.143</span>)<span class="stres">   </span>
+cut4                <span class="stres">        0.225           1.352***        0.561***</span>
+                    <span class="stres">      </span>(<span class="stres">0.153</span>)<span class="stres">         </span>(<span class="stres">0.156</span>)<span class="stres">         </span>(<span class="stres">0.144</span>)<span class="stres">   </span>
+--------------------------------------------------------------------
+Observations        <span class="stres">         2244            2264            2222   </span>
+--------------------------------------------------------------------
+Standard errors in parentheses
+* p&lt;0.05, ** p&lt;0.01, *** p&lt;0.001

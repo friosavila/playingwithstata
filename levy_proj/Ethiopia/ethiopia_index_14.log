@@ -1,0 +1,7 @@
+<span class="stinp">. kdensity2c sindex1 riagency ,   scheme(s1mono) level(10) zlabel(#5) ylabel(-1.32 -1/2 2.40)</span>
+
+<span class="stinp">. addplot:  scatter mean_index mean_index2 if tag==1 <span class="stcmt">///</span>
+&gt;                         , mlab(rcode) msize(small) color(maroon) mlabcolor(black) legend(off)</span>
+
+<span class="stinp">. graph export jpg9.png   </span>
+(file jpg9.png written in PNG format)

@@ -1,0 +1,17 @@
+<span class="stinp">. set scheme s1color</span>
+
+<span class="stinp">. scatter sindex1 cq22, jitter(5) color(navy%5) <span class="stcmt">///</span>
+&gt;                 xtitle("") <span class="stcmt">///</span>
+&gt;                 xlabel(0.5 " " 1 "Strongly agree with 1" <span class="stcmt">///</span>
+&gt;            2 "Agree with 1" <span class="stcmt">///</span>
+&gt;            3 "Agree with neither" <span class="stcmt">///</span>
+&gt;            4 "Agree with 2" <span class="stcmt">///                         </span>
+&gt;            5 "Strongly Agree with 2" 5.5 " ",  labsize(small)   ) <span class="stcmt">///</span>
+&gt;                    note("Stt 1: Men make better political leaders than women, and should be elected rather than women." 
+&gt; <span class="stcmt">///</span>
+&gt;                                 "Stt 2: Women should have the same chance of being elected to political office as men.")
+&gt;  </span>
+
+<span class="stinp">. graph export jpg1.png, replace</span>
+(note: file jpg1.png not found)
+(file jpg1.png written in PNG format)
