@@ -91,6 +91,13 @@ pre {
 
 <span class="stinp">.                                            </span>
 <span class="stinp">. label values cq22 cq23 cq24  new2224 </span>
+
+<span class="stinp">.       </span>
+<span class="stinp">.  </span>
+<span class="stinp">.  gen comp_index =  ((1-cq22/5)+ cq23/5 + (1-cq24/5)  )/3</span>
+(169 missing values generated)
+
+<span class="stinp">.  label var comp_index "Composite index"</span>
 </samp></pre>
 The index will be estimated using a method known as Generalized structural model equations.
 <br><br>
@@ -173,10 +180,10 @@ Below, I provide a simple scatter of how the index looks compared to the underly
 &gt;            3 "Agree with neither" <span class="stcmt">///</span>
 &gt;            4 "Agree with 2" <span class="stcmt">///                         </span>
 &gt;            5 "Strongly Agree with 2" 5.5 " ",  labsize(small)   ) <span class="stcmt">///</span>
-&gt;                    note("Stt 1: Men make better political leaders than women, and should be elected rather than women." 
-&gt; <span class="stcmt">///</span>
-&gt;                                 "Stt 2: Women should have the same chance of being elected to political office as men.")
-&gt;  </span>
+&gt;                    note("Stt 1: Men make better political leaders than women, and should be elected rather than
+&gt;  women." ///
+&gt;                                 "Stt 2: Women should have the same chance of being elected to political office 
+&gt; as men.") </span>
 
 <span class="stinp">. graph export jpg1.png, replace</span>
 (note: file jpg1.png not found)
@@ -190,10 +197,10 @@ Below, I provide a simple scatter of how the index looks compared to the underly
 &gt;            3 "Agree with neither" <span class="stcmt">///</span>
 &gt;            4 "Agree with 2" <span class="stcmt">///                         </span>
 &gt;            5 "Strongly Agree with 2" 5.5 " ",  labsize(small)   )                  <span class="stcmt">///</span>
-&gt;                    note("Stt 1: In our country, women should have equal rights and receive the same treatment as men do.
-&gt; " ///
-&gt;                                 "Stt 2: Women have always been subject to traditional laws and customs, and should remai
-&gt; n so.") </span>
+&gt;                    note("Stt 1: In our country, women should have equal rights and receive the same treatment a
+&gt; s men do." ///
+&gt;                                 "Stt 2: Women have always been subject to traditional laws and customs, and sho
+&gt; uld remain so.") </span>
 
 <span class="stinp">. </span>
 <span class="stinp">. graph export jpg2.png, replace</span>
@@ -208,10 +215,10 @@ Below, I provide a simple scatter of how the index looks compared to the underly
 &gt;            3 "Agree with neither" <span class="stcmt">///</span>
 &gt;            4 "Agree with 2" <span class="stcmt">///                         </span>
 &gt;            5 "Strongly Agree with 2" 5.5 " ",  labsize(small)   )       <span class="stcmt">///        </span>
-&gt;                    note("Stt 1: If funds for schooling are limited, a boy should always receive an education in school b
-&gt; efore a girl." ///
-&gt;                                 "Stt 2: If funds for schooling are limited, a family should send the child with the grea
-&gt; test ability to learn.")  </span>
+&gt;                    note("Stt 1: If funds for schooling are limited, a boy should always receive an education in
+&gt;  school before a girl." ///
+&gt;                                 "Stt 2: If funds for schooling are limited, a family should send the child with
+&gt;  the greatest ability to learn.")  </span>
 
 <span class="stinp">.                                 </span>
 <span class="stinp">. graph export jpg3.png, replace</span>
@@ -232,15 +239,13 @@ We can also check how the indices distribute across regions.
 <span class="stinp">. graph export jpg4.png</span>
 (file jpg4.png written in PNG format)
 
-<img src="jpg4.png">
-
+<span class="stinp">. <span class="stcmt">/***&lt;img src="jpg4.png"&gt;***/</span></span>
 <span class="stinp">. graph hbox sindex1 [aw=withinwt], over(rcode)</span>
 
 <span class="stinp">. graph export jpg5.png</span>
 (file jpg5.png written in PNG format)
 
-<img src="jpg5.png">
-
+<span class="stinp">. <span class="stcmt">/***&lt;img src="jpg5.png"&gt;***/</span></span>
 <span class="stinp">. </span>
 <span class="stinp">. <span class="stcmt">** Simpler models using oprobit </span></span>
 </samp></pre>
@@ -332,27 +337,27 @@ The above figure plots the values obtained using all this methods. THey show tha
 The alternative to compare the indices is to look how they rank regions. 
 ANd based on the following, they rank them similarly, except for MCA.
 
-<pre id="stlog-11" class="stlog"><samp><span class="stinp">. tabstat rsindex1 rifact ripca rimca , by(rcode)</span>
+<pre id="stlog-11" class="stlog"><samp><span class="stinp">. tabstat rsindex1 rifact ripca rimca rcomp_index, by(rcode)</span>
 
 Summary statistics: mean
   by categories of: rcode (Province or region)
 
-           rcode |  rsindex1    rifact     ripca     rimca
------------------+----------------------------------------
-          Tigray | <span class="stres">        2         2         2         8</span>
-            Afar | <span class="stres">       11        10        11        11</span>
-          Amhara | <span class="stres">        9         9         9         4</span>
-          Oromia | <span class="stres">        7         8         8         7</span>
-          Somali | <span class="stres">        6         5         5         9</span>
- Benshangul-Gumz | <span class="stres">        3         4         3         2</span>
-Sounthern Nation | <span class="stres">        8         6         6         5</span>
-        Gambella | <span class="stres">       10        11        10        10</span>
-          Harari | <span class="stres">        5         7         7         3</span>
-     Addis Ababa | <span class="stres">        1         1         1         1</span>
-       Dire Dawa | <span class="stres">        4         3         4         6</span>
------------------+----------------------------------------
-           Total | <span class="stres"> 6.921207   6.76907   6.76865  5.689019</span>
-----------------------------------------------------------
+           rcode |  rsindex1    rifact     ripca     rimca  rcomp_~x
+-----------------+--------------------------------------------------
+          Tigray | <span class="stres">        2         2         2         8         2</span>
+            Afar | <span class="stres">       11        10        11        11        11</span>
+          Amhara | <span class="stres">        9         9         9         4         5</span>
+          Oromia | <span class="stres">        7         8         8         7         9</span>
+          Somali | <span class="stres">        6         5         5         9         7</span>
+ Benshangul-Gumz | <span class="stres">        3         4         3         2         3</span>
+Sounthern Nation | <span class="stres">        8         6         6         5         6</span>
+        Gambella | <span class="stres">       10        11        10        10        10</span>
+          Harari | <span class="stres">        5         7         7         3         8</span>
+     Addis Ababa | <span class="stres">        1         1         1         1         1</span>
+       Dire Dawa | <span class="stres">        4         3         4         6         4</span>
+-----------------+--------------------------------------------------
+           Total | <span class="stres"> 6.921207   6.76907   6.76865  5.689019   6.24057</span>
+--------------------------------------------------------------------
 
 <span class="stinp">.  </span>
 <span class="stinp">.   </span>
@@ -363,6 +368,64 @@ For the second index, Agency, I do a similar implementation using GSEM
 Main difference is that we now have more variables to identify latents
 
 <pre id="stlog-12" class="stlog"><samp><span class="stinp">. qui: {</span>
+
+<span class="stinp">. gsem (l1 -&gt; cq25a, family(ordinal) link(probit)) <span class="stcmt">///</span>
+&gt;          (l1 -&gt; cq25b, family(ordinal) link(probit)) <span class="stcmt">///</span>
+&gt;          (l1 -&gt; cq26a, family(ordinal) link(probit)) <span class="stcmt">///</span>
+&gt;          (l1 -&gt; cq26b, family(ordinal) link(probit)) <span class="stcmt">///</span>
+&gt;          (l1 -&gt; cq26c, family(ordinal) link(probit)) <span class="stcmt">///</span>
+&gt;          (l1 -&gt; cq26d, family(ordinal) link(probit)) <span class="stcmt">///</span>
+&gt;          (l1 -&gt; cq26e, family(ordinal) link(probit)) <span class="stcmt">///</span>
+&gt;          (l1 -&gt; cq29a, family(ordinal) link(probit)) <span class="stcmt">///</span>
+&gt;          (l1 -&gt; cq29b, family(ordinal) link(probit)) <span class="stcmt">///</span>
+&gt;          (l1 -&gt; cq29c, family(ordinal) link(probit)) <span class="stcmt">///</span>
+&gt;          (l1 -&gt; cq27, family(binomial) link(probit)) [iw=withinwt], latent(l1 )  var(l1@1) nolog</span>
+
+Generalized structural equation model           Number of obs     = <span class="stres">     2,386</span>
+
+Response       : <span class="stres">cq25a</span>                          Number of obs     = <span class="stres">     2,229</span>
+Family         : <span class="stres">ordinal</span>
+Link           : <span class="stres">probit</span>
+
+Response       : <span class="stres">cq25b</span>                          Number of obs     = <span class="stres">     2,208</span>
+Family         : <span class="stres">ordinal</span>
+Link           : <span class="stres">probit</span>
+
+Response       : <span class="stres">cq26a</span>                          Number of obs     = <span class="stres">     2,339</span>
+Family         : <span class="stres">ordinal</span>
+Link           : <span class="stres">probit</span>
+
+Response       : <span class="stres">cq26b</span>                          Number of obs     = <span class="stres">     2,309</span>
+Family         : <span class="stres">ordinal</span>
+Link           : <span class="stres">probit</span>
+
+Response       : <span class="stres">cq26c</span>                          Number of obs     = <span class="stres">     2,262</span>
+Family         : <span class="stres">ordinal</span>
+Link           : <span class="stres">probit</span>
+
+Response       : <span class="stres">cq26d</span>                          Number of obs     = <span class="stres">     2,217</span>
+Family         : <span class="stres">ordinal</span>
+Link           : <span class="stres">probit</span>
+
+Response       : <span class="stres">cq26e</span>                          Number of obs     = <span class="stres">     2,210</span>
+Family         : <span class="stres">ordinal</span>
+Link           : <span class="stres">probit</span>
+
+Response       : <span class="stres">cq29a</span>                          Number of obs     = <span class="stres">     2,248</span>
+Family         : <span class="stres">ordinal</span>
+Link           : <span class="stres">probit</span>
+
+Response       : <span class="stres">cq29b</span>                          Number of obs     = <span class="stres">     2,225</span>
+Family         : <span class="stres">ordinal</span>
+Link           : <span class="stres">probit</span>
+
+Response       : <span class="stres">cq29c</span>                          Number of obs     = <span class="stres">     2,232</span>
+Family         : <span class="stres">ordinal</span>
+Link           : <span class="stres">probit</span>
+
+Response       : <span class="stres">cq27</span>                           Number of obs     = <span class="stres">     2,386</span>
+Family         : <span class="stres">Bernoulli</span>
+Link           : <span class="stres">probit</span>
 
 Log likelihood = <span class="stres">-16869.666</span>
 
