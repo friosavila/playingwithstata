@@ -100,7 +100,7 @@ As I already mention, all conditional quantile regression methods attempt to ide
 The most common approach, which I'll use for the data simulation, is to assume that, for a fixed $\tau$, the function $g()$ is linear in $X$:
 $$ Q_{y|X}(\tau) = g(X,\tau) = X*\beta(\tau)$$
 
-In this setup, the unobserved heterogeneity comes from $\beta(\tau)$ , because we never really know what quantile $\tau$ a person belongs to, the same way that we never observe the true error in a standard LR model. Additionally, quantile regression algorithms will find $\betas(\tau)$ that may generate "reasonable" quantiles, but you may also observe quantile crossings where predicted 90th quantile may have a value below than 10th quantile, for combinations of characteristics that are rare or unobserved in the actual data.
+In this setup, the unobserved heterogeneity comes from $\beta(\tau)$ , because we never really know what quantile $\tau$ a person belongs to, the same way that we never observe the true error in a standard LR model. Additionally, quantile regression algorithms will find $\beta(\tau)s$ that may generate "reasonable" quantiles, but you may also observe quantile crossings where predicted 90th quantile may have a value below than 10th quantile, for combinations of characteristics that are rare or unobserved in the actual data.
 
 <h2>DGP for conditional quantile regressions</h2>
 
