@@ -1,0 +1,34 @@
+<h1 id="drdid-for-stata">DRDID for Stata</h1>
+<h2 id="version-0-1">Version 0.1</h2>
+<p>Hello everyone, This should be a very quick note on the first beta version for drdid command for Stata. Right now, this command only produces the basic panel estimator proposed in Sant&#39;Anna and Zhao (2020).</p>
+<p>I hope this guide may help in using this command.</p>
+
+<h2 id="setup">Setup</h2>
+<p>For the replication exercise, I ll use the same dataset used in the example for the drdid command in R. Let&#39;s call it lalonde.dta</p>
+<pre><code class="lang-stata"><span class="hljs-keyword">use</span> <span class="hljs-symbol">https:</span>/<span class="hljs-regexp">/friosavila.github.io/playingwithstata</span><span class="hljs-regexp">/drdid/lalonde</span>.dta, clear
+</code></pre>
+<p>Then, you may need to make sure to copy the files <a href="https://friosavila.github.io/playingwithstata/drdid/drdid.ado">drdid.ado</a> and <a href="https://friosavila.github.io/playingwithstata/drdid/drdid_logit.ado">drdid_logit.ado</a> in your personal ado folder. For my pc, it&#39;s in <code>C:\ado\personal</code>.</p>
+    
+<h2 id="inaction">drdid in action</h2>
+<p>Then, lets simply use it:</p>
+<pre><code class="lang-stata">drdid re age educ black married nodegree hisp re74 <span class="hljs-keyword">if</span> treated==<span class="hljs-number">0</span> | sample==<span class="hljs-number">2</span> , ivar(<span class="hljs-built_in">id</span>) <span class="hljs-built_in">time</span>(<span class="hljs-built_in">year</span>) tr( experimental )
+</code></pre>
+<p>and if everything went well, you should be seeing this:</p>
+<pre><code class="lang-stata">
+Estimating IPT
+Estimating Counterfactual Outcome
+Estiating ATT
+
+      Source |       SS           df       MS      Number of obs   =    <span class="hljs-number">16</span>,<span class="hljs-number">417</span>
+-------------+----------------------------------   F(<span class="hljs-number">0</span>, <span class="hljs-number">16416</span>)     =      <span class="hljs-number">0.00</span>
+       Model |           <span class="hljs-number">0</span>         <span class="hljs-number">0</span>           .   Prob &gt; F        =         .
+    Residual |  <span class="hljs-number">4.1757e+13</span>    <span class="hljs-number">16</span>,<span class="hljs-number">416</span>  <span class="hljs-number">2.5437e+09</span>   R-squared       =    <span class="hljs-number">0.0000</span>
+-------------+----------------------------------   Adj R-squared   =    <span class="hljs-number">0.0000</span>
+       Total |  <span class="hljs-number">4.1757e+13</span>    <span class="hljs-number">16</span>,<span class="hljs-number">416</span>  <span class="hljs-number">2.5437e+09</span>   Root MSE        =     <span class="hljs-number">50435</span>
+
+------------------------------------------------------------------------------
+     __att__ |      Coef.   Std. Err.      t    P&gt;|t|     [<span class="hljs-number">95</span>% Conf. Interval]
+-------------+----------------------------------------------------------------
+       _cons |  <span class="hljs-number">-901.2703</span>   <span class="hljs-number">393.6247</span>    <span class="hljs-number">-2.29</span>   <span class="hljs-number">0.022</span>    <span class="hljs-number">-1672.817</span>   <span class="hljs-number">-129.7233</span>
+------------------------------------------------------------------------------
+</code></pre>
