@@ -66,6 +66,7 @@ program define drdid2, eclass sortpreserve
 		gen double `ww00' = `w0'*(1-`trt')*(`tmt'==0)
 		gen double `ww01' = `w0'*(1-`trt')*(`tmt'==1)
 		gen double `www0'=`trt'
+		
 		** Normalizing
 		foreach i in `ww10' `ww11' `ww00' `ww01' `www0' {
 			sum `i' if `touse', meanonly
@@ -76,8 +77,8 @@ program define drdid2, eclass sortpreserve
 		** 
 		** First ATT1
 		tempvar att1 att2
-		gen double `att1'=`y'-`y0'
-		sum `att1' if `touse' & `trt'==1, 
+		gen double `att1'=(`y'-`y0')*(`ww11'-`ww10'-(`ww01'-`ww00'))
+		sum `att1' if `touse' 
 		gen double __att1__=r(mean) if `touse'
 		gen double `att2'=__att1__+ ///
 						   ((`www0'-`ww11')*(`y11'-`y01'))- ///
@@ -104,7 +105,7 @@ end
 
  
 mata 
-	void rif_drdid(string scalar y, w , tr, tm, touse){
+	void rif_drdid(string scalar y, w , tr, tm, touse, nv1, nv2){
 		real matrix yy,ww,trt,tmt
 		yy =st_data(., y,touse)
 		ww =st_data(., w,touse)
@@ -128,15 +129,18 @@ mata
 		//n10=n101:-n100
 		n1=(n111:-n110):-(n101:-n100)
 		
-		n211=ww[,5]*((yy[,5]:-yy[,4]):-mean(yy[,5]:-yy[,4],ww[,5])):+
-			(ww[,4]*((yy[,1]:-yy[,5]):-mean(yy[,1]:-yy[,5],ww[,4])))
-		n210=ww[,5]*((yy[,3]:-yy[,2]):-mean(yy[,3]:-yy[,2],ww[,5])):+
-			(ww[,3]*((yy[,1]:-yy[,4]):-mean(yy[,1]:-yy[,4],ww[,3])))
-		n21=n211-n210
-		//n20=n10
+		n211=ww[,5]:*((yy[,5]:-yy[,4]):-mean(yy[,5]:-yy[,4],ww[,5])):+
+			(ww[,4]:*((yy[,1]:-yy[,5]):-mean(yy[,1]:-yy[,5],ww[,4])))
+		n210=ww[,5]:*((yy[,3]:-yy[,2]):-mean(yy[,3]:-yy[,2],ww[,5])):+
+			(ww[,3]:*((yy[,1]:-yy[,4]):-mean(yy[,1]:-yy[,4],ww[,3])))
+		n21=n211:-n210
 		n2=n21:-(n101:-n100)
+		//n20=n10
+		st_store(.,nv1,touse,n1)
+		st_store(.,nv2,touse,n2)
+
 	}
-	///("`y00' `y01' `y10' `y11'","`ww00' `ww01' `ww10' `ww11' `www0'","`trt'","`tmt'","`touse'")
+
 
 end
 

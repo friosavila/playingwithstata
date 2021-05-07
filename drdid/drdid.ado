@@ -6,6 +6,7 @@ program define drdid, eclass sortpreserve
 	syntax varlist(fv ) [if] [in], ivar(varname) time(varname) TReatment(varname) [noisily ]
 	marksample touse
 	markout `touse' `ivar' `time' `treatment'
+	
 	** First determine outcome and xvars
 	gettoken y xvar:varlist
 	** Sanity Checks for Time. Only 2 values
@@ -43,8 +44,8 @@ program define drdid, eclass sortpreserve
 		** Determine dy and dyhat
 		capture drop __dy__
 		tempvar tag
-		bysort `ivar' (`time'):gen double __dy__=`y'[2]-`y'[1] if `touse'
-		bysort `ivar' (`time'):gen byte `tag'=_n
+		bysort `touse' `ivar' (`time'):gen double __dy__=`y'[2]-`y'[1] if `touse'
+		bysort `touse' `ivar' (`time'):gen byte `tag'=_n if `touse'
 		** determine weights
 		tempvar w1 w0
 		gen double `w1' = `trt'
@@ -58,6 +59,7 @@ program define drdid, eclass sortpreserve
 		** estimating dy_hat for a counterfactual
 	}
 	display "Estimating Counterfactual Outcome"
+	
 	qui {	
 	    tempname regb regV
 		`isily' reg __dy__ `xvar' [w=`w0'] if `trt'==0 ,
