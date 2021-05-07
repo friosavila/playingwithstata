@@ -17,7 +17,7 @@ program define drdid, eclass sortpreserve
 	}
 	drop `vals'
 	qui:bysort `touse' `treatment': gen byte `vals' = (_n == 1) * `touse'
-	su `vals' if `touse', 
+	su `vals' if `touse', meanonly
  
 	if  r(sum)!=2 {
 	    display in red "Treatment variable can only have 2 values in the working sample"
