@@ -1,8 +1,9 @@
-*! v0.1 DRDID for Stata by FRA Typo with ID TIME
+*! v0.2 DRDID for Stata by FRA Allows for Factor notation
+* v0.1 DRDID for Stata by FRA Typo with ID TIME
 * For panel only for now
 capture program drop drdid
 program define drdid, eclass sortpreserve
-	syntax varlist [if] [in], ivar(varname) time(varname) TReatment(varname) [noisily ]
+	syntax varlist(fv ) [if] [in], ivar(varname) time(varname) TReatment(varname) [noisily ]
 	marksample touse
 	markout `touse' `ivar' `time' `treatment'
 	** First determine outcome and xvars
