@@ -70,7 +70,7 @@ program define drdid, eclass sortpreserve
 		sum `att' if `touse' & `trt'==1, meanonly
 		gen double __att__ = r(mean)+  (`w1'-`w0')*`att'-`w1'*r(mean) if `tag'==1  & `touse'
 	}
-	display "Estiating ATT"
+	display "Estimating ATT"
 	reg __att__ if   `touse'
 	*** Wrapping all
 	ereturn local cmd drdid
