@@ -42,8 +42,8 @@ program define drdid, eclass sortpreserve
 		** Determine dy and dyhat
 		capture drop __dy__
 		tempvar tag
-		bysort id (year):gen double __dy__=`y'[2]-`y'[1] if `touse'
-		bysort id (year):gen byte `tag'=_n
+		bysort `ivar' (`time'):gen double __dy__=`y'[2]-`y'[1] if `touse'
+		bysort `ivar' (`time'):gen byte `tag'=_n
 		** determine weights
 		tempvar w1 w0
 		gen double `w1' = `trt'
