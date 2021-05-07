@@ -192,7 +192,7 @@ program define drdid, eclass sortpreserve
 	}
 
 end
- ss
+ 
 mata 
 	void rif_drdid(string scalar y, w , tr, tm, touse, nv1, nv2){
 		real matrix yy,ww,trt,tmt
