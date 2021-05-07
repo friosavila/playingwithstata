@@ -1,4 +1,5 @@
-*! v0.2 DRDID for Stata by FRA Allows for Factor notation
+*! v0.2 DRDID for Stata by FRA Fixes typo with tag
+* v0.2 DRDID for Stata by FRA Allows for Factor notation
 * v0.1 DRDID for Stata by FRA Typo with ID TIME
 * For panel only for now
 capture program drop drdid
