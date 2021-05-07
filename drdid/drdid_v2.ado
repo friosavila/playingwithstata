@@ -80,7 +80,7 @@ program define drdid, eclass sortpreserve
 			gen double __att__ = r(mean)+  (`w1'-`w0')*`att'-`w1'*r(mean) if `tag'==1  & `touse'
 		}
 		display "Estimating ATT"
-		reg __att__ if   `touse', noheader
+		reg __att__ if   `touse'
 		*** Wrapping all
 		ereturn local cmd drdid
 		ereturn local cmdline drdid `0'
@@ -110,26 +110,17 @@ program define drdid, eclass sortpreserve
 		}
 		display "Estimating Counterfactual Outcome"	
 		qui {
-		    tempname regb00 regV00 regb01 regV01 regb10 regV10 regb11 regV11
 			tempvar y01 y00 y10 y11
 			`isily' reg `y' `xvar' [w=`w0'] if `trt'==0 & `tmt'==0,
 			predict double `y00'
-			matrix `regb00' =e(b)
-			matrix `regV00' =e(V)
 			`isily' reg `y' `xvar' [w=`w0'] if `trt'==0 & `tmt'==1,
 			predict double `y01'
-			matrix `regb01' =e(b)
-			matrix `regV01' =e(V)
 			tempvar y0
 			gen double `y0'=`y00'*(`tmt'==0)+`y01'*(`tmt'==1)
 			`isily' reg `y' `xvar'  		   if `trt'==1 & `tmt'==0,
 			predict double `y10'
-			matrix `regb10' =e(b)
-			matrix `regV10' =e(V)
 			`isily' reg `y' `xvar'  		   if `trt'==1 & `tmt'==1,
 			predict double `y11'
-			matrix `regb11' =e(b)
-			matrix `regV11' =e(V)
 			
 			tempvar ww1 ww0 ww11 ww10 ww01 ww00 www0 
 			gen double `ww10' = `w1'*(`tmt'==0)
@@ -164,35 +155,15 @@ program define drdid, eclass sortpreserve
 			replace __att1__=__att1__+`rif1'
 			replace __att2__=__att2__+`rif2'
 		}
-		display "ATT RC1 estimator"
-		reg __att1__ if   `touse', nohead 
-		local att1    =`=_b[_cons]'
-		local attvar1 =`=_se[_cons]'
-		display "ATT RC2 estimator"	
-		reg __att2__ if   `touse', nohead
-		local att2    =`=_b[_cons]'
-		local attvar2 =`=_se[_cons]'
-*** All ereturn stuff
-		ereturn local cmd drdid
-		ereturn local cmdline drdid `0'
-		ereturn scalar att1    =`att1'
-		ereturn scalar attvar1 =`attvar1'
-		ereturn scalar att2    =`att2'
-		ereturn scalar attvar2 =`attvar2'
-		ereturn matrix iptb `iptb'
-		ereturn matrix iptV `iptV'
-		ereturn matrix regb00 `regb00'
-		ereturn matrix regV00 `regV00'
-		ereturn matrix regb01 `regb01'
-		ereturn matrix regV01 `regV01'
-		ereturn matrix regb10 `regb10'
-		ereturn matrix regV10 `regV10'
-		ereturn matrix regb11 `regb11'
-		ereturn matrix regV11 `regV11'
+			qui:reg __att1__ if   `touse'
+			adde return scalar dof
+			regress
+			noisily reg __att2__ if   `touse'
 	}
 
 end
- ss
+
+
 mata 
 	void rif_drdid(string scalar y, w , tr, tm, touse, nv1, nv2){
 		real matrix yy,ww,trt,tmt

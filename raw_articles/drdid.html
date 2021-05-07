@@ -17,18 +17,36 @@
 <pre><code class="lang-stata">
 Estimating IPT
 Estimating Counterfactual Outcome
-Estiating ATT
-
-      Source |       SS           df       MS      Number of obs   =    <span class="hljs-number">16</span>,<span class="hljs-number">417</span>
--------------+----------------------------------   F(<span class="hljs-number">0</span>, <span class="hljs-number">16416</span>)     =      <span class="hljs-number">0.00</span>
-       Model |           <span class="hljs-number">0</span>         <span class="hljs-number">0</span>           .   Prob &gt; F        =         .
-    Residual |  <span class="hljs-number">4.1757e+13</span>    <span class="hljs-number">16</span>,<span class="hljs-number">416</span>  <span class="hljs-number">2.5437e+09</span>   R-squared       =    <span class="hljs-number">0.0000</span>
--------------+----------------------------------   Adj R-squared   =    <span class="hljs-number">0.0000</span>
-       Total |  <span class="hljs-number">4.1757e+13</span>    <span class="hljs-number">16</span>,<span class="hljs-number">416</span>  <span class="hljs-number">2.5437e+09</span>   Root MSE        =     <span class="hljs-number">50435</span>
-
+Estimating ATT
 ------------------------------------------------------------------------------
      __att__ |      Coef.   Std. Err.      t    P&gt;|t|     [<span class="hljs-number">95</span>% Conf. Interval]
 -------------+----------------------------------------------------------------
        _cons |  <span class="hljs-number">-901.2703</span>   <span class="hljs-number">393.6247</span>    <span class="hljs-number">-2.29</span>   <span class="hljs-number">0.022</span>    <span class="hljs-number">-1672.817</span>   <span class="hljs-number">-129.7233</span>
 ------------------------------------------------------------------------------
 </code></pre>
+
+And the newest update. It can now estimate the repeated cross section estimator.
+</p>
+If you do not include "ivar", the program will assume your data is cross section, and estimate the model as if it were cross section. Here the results
+
+<pre><code>
+<span class="hljs-bullet">. </span>drdid re c.age c.educ i.black married nodegree hisp re74 if treated==0 | sample==2 ,   time(year) tr( experimental )
+Estimating IPT
+Estimating Counterfactual Outcome
+<span class="hljs-section">ATT RC1 estimator
+------------------------------------------------------------------------------</span>
+<span class="hljs-code">    __att1__ | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]</span>
+-------------+----------------------------------------------------------------
+<span class="hljs-section">       _cons |  -901.2703   434.3109    -2.08   0.038    -1752.535    -50.0052
+------------------------------------------------------------------------------</span>
+<span class="hljs-section">ATT RC2 estimator
+------------------------------------------------------------------------------</span>
+<span class="hljs-code">    __att2__ | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]</span>
+-------------+----------------------------------------------------------------
+<span class="hljs-section">       _cons |  -901.2703   408.3169    -2.21   0.027    -1701.586   -100.9543
+------------------------------------------------------------------------------</span>
+</code></pre>
+
+Notice that now it reports two numbers. This correspond to RC1 and RC2 estimator from Sant'Anna and Zhao (2020).
+
+And one last note. There is an option -noisily-. If you use it, it will report all intermediate steps. 
