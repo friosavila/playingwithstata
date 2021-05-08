@@ -1,8 +1,11 @@
-*! v0 DRDID for Stata by FRA
+*! v0.5 DRDID for Stata by FRA Incorporates RC1 and RC2 estimators
+* v0.2 DRDID for Stata by FRA Fixes typo with tag
+* v0.2 DRDID for Stata by FRA Allows for Factor notation
+* v0.1 DRDID for Stata by FRA Typo with ID TIME
 * For panel only for now
-capture program drop drdid2
-program define drdid2, eclass sortpreserve
-	syntax varlist [if] [in], ivar(varname) time(varname) TReatment(varname) [noisily ]
+capture program drop drdid
+program define drdid, eclass sortpreserve
+	syntax varlist(fv ) [if] [in], [ivar(varname)] time(varname) TReatment(varname) [noisily ]
 	marksample touse
 	markout `touse' `ivar' `time' `treatment'
 	** First determine outcome and xvars
@@ -18,8 +21,10 @@ program define drdid2, eclass sortpreserve
 	else {
 		tempvar tmt
 		qui:egen byte `tmt'=group(`time') if `touse'
- 	}
-	capture drop `vals'
+		qui:replace `tmt'=`tmt'-1	    
+	}
+	
+	drop `vals'
 	qui:bysort `touse' `treatment': gen byte `vals' = (_n == 1) * `touse'
 	su `vals' if `touse', meanonly
  
@@ -32,77 +37,161 @@ program define drdid2, eclass sortpreserve
 		qui:egen byte `trt'=group(`treatment') if `touse'
 		qui:replace `trt'=`trt'-1
 	}
-	** estimate model
-	
-	display "Estimating IPT"
-	qui {
-		`isily' ml model lf drdid_logit (`trt'=`xvar') if `touse' , maximize  robust
-		`isily' ml display
-		tempname iptb iptV
-		matrix `iptb'=e(b)
-		matrix `iptV'=e(V)
-		tempvar prx
-		predictnl double `prx'=logistic(xb())
-		
-		** outcomes
-		tempvar w1 w0
-		gen double `w1' = `trt'
-		gen double `w0' = ((`prx'*(1-`trt')))/(1-`prx')
-		tempvar y01 y00 y10 y11
-		`isily' reg `y' `xvar' [w=`w0'] if `trt'==0 & `tmt'==0,
-		predict double `y00'
-		`isily' reg `y' `xvar' [w=`w0'] if `trt'==0 & `tmt'==1,
-		predict double `y01'
-		tempvar y0
-		gen double `y0'=`y00'*(`tmt'==0)+`y01'*(`tmt'==1)
-		`isily' reg `y' `xvar'  		   if `trt'==1 & `tmt'==0,
-		predict double `y10'
-		`isily' reg `y' `xvar'  		   if `trt'==1 & `tmt'==1,
-		predict double `y11'
-		** determining weights
-		tempvar ww1 ww0 ww11 ww10 ww01 ww00 www0 
-		gen double `ww10' = `w1'*(`tmt'==0)
-		gen double `ww11' = `w1'*(`tmt'==1)
-		gen double `ww00' = `w0'*(1-`trt')*(`tmt'==0)
-		gen double `ww01' = `w0'*(1-`trt')*(`tmt'==1)
-		gen double `www0'=`trt'
-		
-		** Normalizing
-		foreach i in `ww10' `ww11' `ww00' `ww01' `www0' {
-			sum `i' if `touse', meanonly
-			replace `i'=`i'/r(mean)
+	**# for panel estimator
+	if "`ivar'"!="" {
+	    	display "Estimating IPT"
+		qui {
+			`isily' ml model lf drdid_logit (`trt'=`xvar') if `touse' , maximize  robust
+			`isily' ml display
+			tempname iptb iptV
+			matrix `iptb'=e(b)
+			matrix `iptV'=e(V)
+			tempvar prx
+			predictnl double `prx'=logistic(xb())
+			** Determine dy and dyhat
+			capture drop __dy__
+			tempvar tag
+			bysort `touse' `ivar' (`time'):gen double __dy__=`y'[2]-`y'[1] if `touse'
+			bysort `touse' `ivar' (`time'):gen byte `tag'=_n if `touse'
+			** determine weights
+			tempvar w1 w0
+			gen double `w1' = `trt'
+			gen double `w0' = ((`prx'*(1-`trt')))/(1-`prx')
+			
+			sum `w1' if `touse', meanonly
+			replace `w1'=`w1'/r(mean)
+			sum `w0' if `touse', meanonly
+			replace `w0'=`w0'/r(mean)
+			
+			** estimating dy_hat for a counterfactual
 		}
-		*gen double `ww1'=`ww11'-`ww10'
-		*gen double `ww0'=`ww01'-`ww00'
-		** 
-		** First ATT1
-		tempvar att1 att2
-		gen double `att1'=(`y'-`y0')*(`ww11'-`ww10'-(`ww01'-`ww00'))
-		sum `att1' if `touse' 
-		gen double __att1__=r(mean) if `touse'
-		gen double `att2'=__att1__+ ///
-						   ((`www0'-`ww11')*(`y11'-`y01'))- ///
-						   ((`www0'-`ww10')*(`y10'-`y00'))
-		** then att2				   
-		sum `att2' if `touse'
-		gen double __att2__=r(mean) if `touse'
-		** estimating IFS
-		mata:rif_drdid("`y' `y00' `y01' `y10' `y11'","`ww00' `ww01' `ww10' `ww11' `www0'","`trt'","`tmt'","`touse'")
-		
+		display "Estimating Counterfactual Outcome"	
+		qui {	
+			tempname regb regV
+			`isily' reg __dy__ `xvar' [w=`w0'] if `trt'==0 ,
+			matrix `regb' =e(b)
+			matrix `regV' =e(V)
+			tempvar dyhat
+			qui:predict double `dyhat'
+			tempvar att
+			qui:gen double `att'=__dy__-`dyhat'
+			capture drop __att__
+			sum `att' if `touse' & `trt'==1, meanonly
+			gen double __att__ = r(mean)+  (`w1'-`w0')*`att'-`w1'*r(mean) if `tag'==1  & `touse'
+		}
+		display "Estimating ATT"
+		reg __att__ if   `touse', noheader
+		*** Wrapping all
+		ereturn local cmd drdid
+		ereturn local cmdline drdid `0'
+		ereturn scalar att    =`=_b[_cons]'
+		ereturn scalar attvar =`=_se[_cons]'
+		ereturn matrix iptb `iptb'
+		ereturn matrix iptV `iptV'
+		ereturn matrix regb `regb'
+		ereturn matrix regV `regV'
 	}
-	display "Estimating ATT"
-	reg __att__ if   `touse'
-	*** Wrapping all
-	ereturn local cmd drdid
-	ereturn local cmdline drdid `0'
-	ereturn scalar att    =`=_b[_cons]'
-	ereturn scalar attvar =`=_se[_cons]'
-	ereturn matrix iptb `iptb'
-	ereturn matrix iptV `iptV'
-	ereturn matrix regb `regb'
-	ereturn matrix regV `regV'
-end
+	else {
+	**# for Crossection estimator    
+	    *** if no ivar means its RC.
+		display "Estimating IPT"
+		qui {
+			`isily' ml model lf drdid_logit (`trt'=`xvar') if `touse' , maximize  robust
+			`isily' ml display
+			tempname iptb iptV
+			matrix `iptb'=e(b)
+			matrix `iptV'=e(V)
+			tempvar prx
+			predictnl double `prx'=logistic(xb())
+			** outcomes
+			tempvar w1 w0
+			gen double `w1' =    `trt'
+			gen double `w0' = (1-`trt')*`prx'/(1-`prx')
+		}
+		display "Estimating Counterfactual Outcome"	
+		qui {
+		    tempname regb00 regV00 regb01 regV01 regb10 regV10 regb11 regV11
+			tempvar y01 y00 y10 y11
+			`isily' reg `y' `xvar' [w=`w0'] if `trt'==0 & `tmt'==0,
+			predict double `y00'
+			matrix `regb00' =e(b)
+			matrix `regV00' =e(V)
+			`isily' reg `y' `xvar' [w=`w0'] if `trt'==0 & `tmt'==1,
+			predict double `y01'
+			matrix `regb01' =e(b)
+			matrix `regV01' =e(V)
+			tempvar y0
+			gen double `y0'=`y00'*(`tmt'==0)+`y01'*(`tmt'==1)
+			`isily' reg `y' `xvar'  		   if `trt'==1 & `tmt'==0,
+			predict double `y10'
+			matrix `regb10' =e(b)
+			matrix `regV10' =e(V)
+			`isily' reg `y' `xvar'  		   if `trt'==1 & `tmt'==1,
+			predict double `y11'
+			matrix `regb11' =e(b)
+			matrix `regV11' =e(V)
+			
+			tempvar ww1 ww0 ww11 ww10 ww01 ww00 www0 
+			gen double `ww10' = `w1'*(`tmt'==0)
+			gen double `ww11' = `w1'*(`tmt'==1)
+			gen double `ww00' = `w0'*(`tmt'==0)
+			gen double `ww01' = `w0'*(`tmt'==1)
+			gen double `www0'=`trt'			
+			** Normalizing weights
+			foreach i in `ww10' `ww11' `ww00' `ww01' `www0' {
+				sum `i' if `touse', meanonly
+				replace `i'=`i'/r(mean)
+			}
+			** estimating ATT
+			capture drop __att1__ __att2__ 
+			tempvar att1 att2
+			gen double `att1'=(`y'-`y0')*(`ww11'-`ww10'-(`ww01'-`ww00'))
+			sum `att1' if `touse' 
+			gen double __att1__=r(mean) if `touse'
+			gen double `att2'=__att1__+ ///
+							   ((`www0'-`ww11')*(`y11'-`y01'))- ///
+							   ((`www0'-`ww10')*(`y10'-`y00'))
+			** then att2				   
+			sum `att2' if `touse'
+			gen double __att2__=r(mean) if `touse'
+			** estimating IFS
+			tempvar rif1 rif2
+			gen double `rif1'=.
+			gen double `rif2'=.
+			mata:rif_drdid("`y' `y00' `y01' `y10' `y11'", ///
+							"`ww00' `ww01' `ww10' `ww11' `www0'", ///
+							"`trt'","`tmt'","`touse'","`rif1'","`rif2'")
+			replace __att1__=__att1__+`rif1'
+			replace __att2__=__att2__+`rif2'
+		}
+		display "ATT RC1 estimator"
+		reg __att1__ if   `touse', nohead 
+		local att1    =`=_b[_cons]'
+		local attvar1 =`=_se[_cons]'
+		display "ATT RC2 estimator"	
+		reg __att2__ if   `touse', nohead
+		local att2    =`=_b[_cons]'
+		local attvar2 =`=_se[_cons]'
+*** All ereturn stuff
+		ereturn local cmd drdid
+		ereturn local cmdline drdid `0'
+		ereturn scalar att1    =`att1'
+		ereturn scalar attvar1 =`attvar1'
+		ereturn scalar att2    =`att2'
+		ereturn scalar attvar2 =`attvar2'
+		ereturn matrix iptb `iptb'
+		ereturn matrix iptV `iptV'
+		ereturn matrix regb00 `regb00'
+		ereturn matrix regV00 `regV00'
+		ereturn matrix regb01 `regb01'
+		ereturn matrix regV01 `regV01'
+		ereturn matrix regb10 `regb10'
+		ereturn matrix regV10 `regV10'
+		ereturn matrix regb11 `regb11'
+		ereturn matrix regV11 `regV11'
+	}
 
+end
  
 mata 
 	void rif_drdid(string scalar y, w , tr, tm, touse, nv1, nv2){
@@ -145,13 +234,4 @@ mata
 end
 
 
-
-
-
-
-
-
-
-
-
-
+ 
