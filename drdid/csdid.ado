@@ -50,8 +50,8 @@ syntax varlist(fv ) [if] [in], ivar(varname) time(varname) gvar(varname) [att_gt
 		matrix roweq   `v'=`eqname'
 	}	
 	ereturn post `b' `v'
-	ereturn cmd csdid
-	ereturn cmdline csdid `0'
+	ereturn local cmd csdid
+	ereturn local cmdline csdid `0'
 	display "Callaway Santana (2021)"
 	ereturn display
 end 
