@@ -3,7 +3,7 @@
 * Logic. Estimate the ATT of the base (first) year against all subsequent years
 * using data BY groups
 ** assumes all years are available. For now
-capture program drop mpdid
+capture program drop csdid
 program csdid, eclass
 syntax varlist(fv ) [if] [in], ivar(varname) time(varname) gvar(varname) [att_gt]
 	* FIXME: if missing, read ivar and time from xtset
