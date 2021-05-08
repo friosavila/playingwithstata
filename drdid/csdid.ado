@@ -6,21 +6,25 @@
 capture program drop mpdid
 program csdid, eclass
 syntax varlist(fv ) [if] [in], ivar(varname) time(varname) gvar(varname) [att_gt]
+	* FIXME: if missing, read ivar and time from xtset
 	marksample touse
 	markout `touse' `ivar' `time' `gvar'
 	** First determine outcome and xvars
 	gettoken y xvar:varlist
 	** determine time0
 	if "`time0'"=="" {
+		* FIXME: implement Stata style guide
 	    qui:sum `time' if `touse'
 		local time0 `r(min)'
 	}
 	** prepare loops over gvar.
+	* QUESTION: does this not conflict with the att_gt option?
 	local att_gt att_gt
 	tempvar tr
 	qui:gen byte `tr'=`gvar'!=0 if `gvar'!=.
 	if "`att_gt'"!="" {
 		qui:levelsof `gvar' if `gvar'>0       & `touse', local(glev)
+		* QUESTION: should this not start from time0?
 		qui:levelsof `time' if `time'>`time0' & `touse', local(tlev)
 		
 		tempname b v
@@ -28,6 +32,7 @@ syntax varlist(fv ) [if] [in], ivar(varname) time(varname) gvar(varname) [att_gt
 		    foreach j of local tlev {
 			    local time1 = min(`i'-1, `j'-1)
 				
+				* FIXME: allow for not-yet-treated as control
 				qui:drdid `varlist' if inlist(`gvar',0,`i') & inlist(year,`time1',`j'), ivar(`ivar') time(`time') treatment(`tr')
 				matrix `b'=nullmat(`b'),e(b)
 				matrix `v'=nullmat(`v'),e(V)
