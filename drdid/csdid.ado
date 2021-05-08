@@ -33,7 +33,7 @@ syntax varlist(fv ) [if] [in], ivar(varname) time(varname) gvar(varname) [att_gt
 			    local time1 = min(`i'-1, `j'-1)
 				
 				* FIXME: allow for not-yet-treated as control
-				qui:drdid `varlist' if inlist(`gvar',0,`i') & inlist(year,`time1',`j'), ivar(`ivar') time(`time') treatment(`tr')
+				qui:drdid `varlist' if inlist(`gvar',0,`i') & inlist(`time',`time1',`j'), ivar(`ivar') time(`time') treatment(`tr')
 				matrix `b'=nullmat(`b'),e(b)
 				matrix `v'=nullmat(`v'),e(V)
 				local eqname `eqname' g`i'
