@@ -21,6 +21,7 @@ syntax varlist(fv ) [if] [in], ivar(varname) time(varname) gvar(varname) [att_gt
 	* QUESTION: does this not conflict with the att_gt option?
 	local att_gt att_gt
 	tempvar tr
+	* FIXME: use gvar=. to encode non-treated groups. time=0 may be a legit date in some applications
 	qui:gen byte `tr'=`gvar'!=0 if `gvar'!=.
 	if "`att_gt'"!="" {
 		qui:levelsof `gvar' if `gvar'>0       & `touse', local(glev)
