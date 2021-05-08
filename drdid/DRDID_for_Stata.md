@@ -1,6 +1,6 @@
-# DRDID for Stata
+# DRDID and CSDID for Stata
 
-## Version 0.5
+## DRDID Version 0.5
 
 Hello everyone, this should be a quick note on the second beta version for drdid command for Stata. Right now, this command produces the basic panel estimator proposed in Sant'Anna and Zhao (2020), as well as both Repeated Crosssection estimators.
 
@@ -135,3 +135,45 @@ and the output!
        _cons |  -.1069093   .0329364    -3.25   0.001    -.1717025   -.0421161
 ------------------------------------------------------------------------------
 ```
+
+## CSDID Version 0.1
+
+And with these pieces in places, we can now have a proper first version of R's DID command native to Stata.
+By popular demand (3 guys in a chatroom) we are calling it -[csdid.ado](https://friosavila.github.io/playingwithstata/drdid/csdid.ado)-.
+
+As it was suggested on twitter, *csdid* works using *drdid* on the background. And as of right now, it produces what you would get when using att_gt command. 
+
+You will see point estimates are either exactly like those from -did-. but some differences come up. The main reason is that DID does not really use DRDID as the estimator. But it does so on this implementation. here it is:
+
+```
+use https://friosavila.github.io/playingwithstata/drdid/mpdta.dta, clear
+
+. csdid  lemp lpop , ivar(countyreal) time(year) gvar(first_treat)
+------------------------------------------------------------------------------
+             | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+g2004        |
+t0_2003_2004 |  -.0145329   .0221602    -0.66   0.512     -.057966    .0289002
+t0_2003_2005 |  -.0764267   .0287098    -2.66   0.008    -.1326969   -.0201566
+t0_2003_2006 |  -.1404536   .0354269    -3.96   0.000     -.209889   -.0710183
+t0_2003_2007 |  -.1069093   .0329364    -3.25   0.001    -.1714634   -.0423551
+-------------+----------------------------------------------------------------
+g2006        |
+t0_2003_2004 |  -.0006112   .0222299    -0.03   0.978    -.0441809    .0429586
+t0_2004_2005 |   -.006267   .0185075    -0.34   0.735     -.042541    .0300071
+t0_2005_2006 |   .0009473    .019409     0.05   0.961    -.0370936    .0389883
+t0_2005_2007 |  -.0413123   .0197454    -2.09   0.036    -.0800126   -.0026119
+-------------+----------------------------------------------------------------
+g2007        |
+t0_2003_2004 |   .0266993   .0140788     1.90   0.058    -.0008947    .0542933
+t0_2004_2005 |  -.0045906    .015728    -0.29   0.770    -.0354169    .0262357
+t0_2005_2006 |  -.0284515   .0181982    -1.56   0.118    -.0641193    .0072163
+t0_2006_2007 |  -.0287821   .0162518    -1.77   0.077     -.060635    .0030709
+------------------------------------------------------------------------------
+```
+
+so what is next? 2 big pieces left. 
+1. Adding other estimators including IPW and OR. (this if for DRDID)
+2. start working on the aggregators!
+3. add bells ans whisles for graphs and stuff. And of course, helpfiles, examples, and the paper that is waiting for me to use and implement this.
+

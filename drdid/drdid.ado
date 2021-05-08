@@ -85,7 +85,7 @@ program define drdid, eclass sortpreserve
 		ereturn local cmd drdid
 		ereturn local cmdline drdid `0'
 		ereturn scalar att    =`=_b[_cons]'
-		ereturn scalar attvar =`=_se[_cons]'
+		ereturn scalar attvar =`=_se[_cons]'^2
 		ereturn matrix iptb `iptb'
 		ereturn matrix iptV `iptV'
 		ereturn matrix regb `regb'
@@ -167,11 +167,11 @@ program define drdid, eclass sortpreserve
 		display "ATT RC1 estimator"
 		reg __att1__ if   `touse', nohead 
 		local att1    =`=_b[_cons]'
-		local attvar1 =`=_se[_cons]'
+		local attvar1 =`=_se[_cons]'^2
 		display "ATT RC2 estimator"	
 		reg __att2__ if   `touse', nohead
 		local att2    =`=_b[_cons]'
-		local attvar2 =`=_se[_cons]'
+		local attvar2 =`=_se[_cons]'^2
 *** All ereturn stuff
 		ereturn local cmd drdid
 		ereturn local cmdline drdid `0'
