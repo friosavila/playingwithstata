@@ -1,4 +1,4 @@
-* v0.2 by FRA csdid or Multiple periods did.
+* v0.2 by FRA csdid or Multiple periods did. Adds Notyet
 * v0.1 by FRA mpdid or Multiple periods did.
 * This version implements did::attgp
 * Logic. Estimate the ATT of the base (first) year against all subsequent years

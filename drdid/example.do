@@ -11,6 +11,9 @@ adopath + C:\Users\Fernando\Documents\GitHub\playingwithstata\drdid
 sysuse lalonde
 ** Example Simple Panel estimator
 drdid re age educ black married nodegree hisp re74 if treated==0 | sample==2 , ivar(id) time(year) tr( experimental )  
+** DRDID IPW instead of IPT
+drdid re age educ black married nodegree hisp re74 if treated==0 | sample==2 , ivar(id) time(year) tr( experimental )  
+
 ** Example RC estimator
 drdid re age educ black married nodegree hisp re74 if treated==0 | sample==2 ,   time(year) tr( experimental )  
 ** need to think of doing this via Moptimize
