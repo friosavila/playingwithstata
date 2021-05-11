@@ -6,10 +6,9 @@ xvar: This are all controls for the oucome model and for the propensity score
 ivar: must include the panel identifier
 time: Variable identifying Time.
 tr: Variable identify ever treated group
-
 */
 adopath + C:\Users\Fernando\Documents\GitHub\playingwithstata\drdid
-sysuse lalonde
+sysuse lalonde, clear
 ** Example Simple Panel estimator
 drdid re age educ black married nodegree hisp re74 if treated==0 | sample==2 , ivar(id) time(year) tr( experimental )  
 ** DRDID IPW instead of IPT
@@ -17,7 +16,6 @@ drdid re age educ black married nodegree hisp re74 if treated==0 | sample==2 , i
 
 ** Example RC estimator
 drdid re age educ black married nodegree hisp re74 if treated==0 | sample==2 ,   time(year) tr( experimental )  
-
 ** need to think of doing this via Moptimize
 sysuse mpdta, clear
 foreach i in 2004 2005 2006 2007 {
@@ -58,8 +56,7 @@ drdid  lemp lpop if inlist(first_treat,0,2007) & inlist(year,2005,2006), ivar(co
 
 drdid  lemp lpop if inlist(first_treat,0,2007) & inlist(year,2006,2007), ivar(countyreal)  time(year) tr(treat)
 
-/////
 sysuse mpdta, clear
-csdid  lemp lpop , ivar(countyreal) time(year) gvar(first_treat)
+mpdid  lemp lpop , ivar(countyreal) time(year) gvar(first_treat)
 
-
+use https://github.com/scunning1975/mixtape/raw/master/castle.dta
