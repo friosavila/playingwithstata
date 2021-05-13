@@ -516,7 +516,7 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 		local scl = r(mean)
 		gen double `sy'= __dy__/`scl'
 		
-		qui:teffects ipwra (`sy' `xvar') (`trt' `xvar', logit) if `touse' [iw = `weight'] , atet 
+		qui:teffects ipwra (`sy' `xvar') (`trt' `xvar', logit) if `touse' & `tmt' == 0 [iw = `weight'] , atet 
 		tempname b V aux
 		matrix `aux'=e(b)*`scl'
 		matrix `b'=`aux'[1,1]
