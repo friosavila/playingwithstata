@@ -12,7 +12,7 @@
 * For panel only for now
 
 capture program drop _all
-
+mata:mata clear
 program define drdid, eclass sortpreserve
 	syntax varlist(fv ) [if] [in] [iw], [ivar(varname)] time(varname) TReatment(varname) ///
 	[noisily drimp dripw reg stdipw aipw ipwra all  rc1]  
@@ -192,6 +192,7 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 
 		    tempname b V
 			mata:ipw_abadie_panel("__dy__","`xvar'","`xb'","`psb' ","`psV' ","`psxb'","`trt'","`tmt'","`touse'","__att__","`b'","`V'","`weight'")
+			replace __att__=. if `tmt'==1
 			matrix colname `b'=__att__
 			matrix colname `V'=__att__
 			matrix rowname `V'=__att__
@@ -266,6 +267,7 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
  
 		    tempname b V
 			mata:drdid_panel("__dy__","`xvar'","`xb'","`psb'","`psV'","`psxb'","`trt'","`tmt'","`touse'","__att__","`b'","`V'","`weight'")
+			replace __att__=. if `tmt'==1
 			matrix colname `b'=__att__
 			matrix colname `V'=__att__
 			matrix rowname `V'=__att__
@@ -369,7 +371,7 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 			matrix `regV'=e(V)
 			tempname b V
 			mata:reg_panel("__dy__", "`xvar'", "`xb'" , "`trt'", "`tmt'" , "`touse'","__att__","`b'","`V'","`weight'") 
-	 
+			replace __att__=. if `tmt'==1
 			matrix colname `b' = __att__
 			matrix colname `V' = __att__
 			matrix rowname `V' = __att__
@@ -451,7 +453,8 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 		*display "Estimating ATT"
 		qui {
 		    tempname b V		
-			noisily mata:std_ipw_panel("__dy__","`xvar'","`xb'","`psb'","`psV'","`psxb'","`trt'","`tmt'","`touse'","__att__","`b'","`V'","`weight'")		
+			noisily mata:std_ipw_panel("__dy__","`xvar'","`xb'","`psb'","`psV'","`psxb'","`trt'","`tmt'","`touse'","__att__","`b'","`V'","`weight'")
+			replace __att__=. if `tmt'==1
 			matrix colname `b'=__att__
 			matrix colname `V'=__att__
 			matrix rowname `V'=__att__
@@ -568,6 +571,7 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 			capture drop __att__
 			gen double __att__=.
 			noisily mata:drdid_imp_panel("__dy__","`xvar'","`xb'","`psb'","`psV'","`psxb'","`trt'","`tmt'","`touse'","__att__","`b'","`V'","`weight'")		
+			replace __att__=. if `tmt'==1
 			matrix colname `b'=__att__
 			matrix colname `V'=__att__
 			matrix rowname `V'=__att__
