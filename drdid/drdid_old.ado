@@ -1,7 +1,5 @@
-**Last V
 ** Goal. Make the estimator modular. That way other options can be added
-*! v1.3 DRDID for Stata by FRA Changing ATT RIF creation
-* v1.2 DRDID for Stata by FRA All Estimators are ready For panel and RC
+*! v1.2 DRDID for Stata by FRA All Estimators are ready For panel and RC
 * Next help!
 * v1.0 DRDID for Stata by FRA All Estimators but IPWRA have are available for panel
 * Need to add weights. 
@@ -14,7 +12,7 @@
 * For panel only for now
 
 capture program drop _all
-mata:mata clear
+
 program define drdid, eclass sortpreserve
 	syntax varlist(fv ) [if] [in] [iw], [ivar(varname)] time(varname) TReatment(varname) ///
 	[noisily drimp dripw reg stdipw aipw ipwra all  rc1]  
@@ -173,7 +171,7 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 	if "`ivar'"!="" {
 	    *display "Estimating IPW logit"
 		qui {		
-			`isily' logit `trt' `xvar' if `touse' & `tmt'==0 [iw = `weight']
+			`isily' logit `trt' `xvar' if `touse' [iw = `weight']
 			tempvar psxb
 			predict double `psxb', xb
 			tempname psb psV
@@ -181,7 +179,7 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 			matrix `psV'=e(V)
 			** _delta
 			capture drop __dy__
-			bysort `touse' `ivar' (`tmt'):gen double __dy__=`y'[2]-`y'[1] if `touse' 
+			bysort `touse' `ivar' (`tmt'):gen double __dy__=`y'[2]-`y'[1] if `touse'
 			** Reg for outcome 
 			*`isily' reg __dy__ `xvar' if `trt'==0 
 			*tempname regb regV
@@ -191,11 +189,9 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 			*predict double `xb'
 			capture drop __att__
 			gen double __att__=.
-			tempvar touse2 
-			gen byte `touse2'=`touse'*(`tmt'==0)
+
 		    tempname b V
-			mata:ipw_abadie_panel("__dy__","`xvar'","`xb'","`psb' ","`psV' ","`psxb'","`trt'","`tmt'","`touse2'","__att__","`b'","`V'","`weight'")
-			*replace __att__=. if `tmt'==1
+			mata:ipw_abadie_panel("__dy__","`xvar'","`xb'","`psb' ","`psV' ","`psxb'","`trt'","`tmt'","`touse'","__att__","`b'","`V'","`weight'")
 			matrix colname `b'=__att__
 			matrix colname `V'=__att__
 			matrix rowname `V'=__att__
@@ -248,7 +244,7 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 	if "`ivar'"!="" {
 	    *display "Estimating IPW logit"
 		qui {		
-			`isily' logit `trt' `xvar' if `touse' & `tmt'==0 [iw = `weight']
+			`isily' logit `trt' `xvar' if `touse' [iw = `weight']
 			tempvar psxb
 			predict double `psxb', xb
 			tempname psb psV
@@ -259,7 +255,7 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 			bysort `touse' `ivar' (`tmt'):gen double __dy__=`y'[2]-`y'[1] if `touse'
 			** Reg for outcome 
  
-			`isily' reg __dy__ `xvar' if `touse' & `trt'==0  & `tmt'==0 [iw = `weight']
+			`isily' reg __dy__ `xvar' if `trt'==0  [iw = `weight']
 			tempname regb regV
 			matrix `regb'=e(b)
 			matrix `regV'=e(V)
@@ -267,11 +263,9 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 			predict double `xb'
 			capture drop __att__
 			gen double __att__=.
-			tempvar touse2
-			gen byte `touse2'=`touse'*(`tmt'==0)
+ 
 		    tempname b V
-			mata:drdid_panel("__dy__","`xvar'","`xb'","`psb'","`psV'","`psxb'","`trt'","`tmt'","`touse2'","__att__","`b'","`V'","`weight'")
-			**replace __att__=. if `tmt'==1
+			mata:drdid_panel("__dy__","`xvar'","`xb'","`psb'","`psV'","`psxb'","`trt'","`tmt'","`touse'","__att__","`b'","`V'","`weight'")
 			matrix colname `b'=__att__
 			matrix colname `V'=__att__
 			matrix rowname `V'=__att__
@@ -364,7 +358,7 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 		qui {
 			capture drop __dy__
 			bysort `touse' `ivar' (`tmt'):gen double __dy__=`y'[2]-`y'[1] if `touse' 
-			`isily' reg __dy__ `xvar' if `touse' & `trt'==0 & `tmt'==0  [iw = `weight']
+			`isily' reg __dy__ `xvar' if `trt'==0  [iw = `weight']
 			tempvar xb
 			predict double `xb'
 			capture drop __att__
@@ -374,10 +368,8 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 			matrix `regb'=e(b)
 			matrix `regV'=e(V)
 			tempname b V
-			tempvar touse2
-			gen byte `touse2'=`touse'*(`tmt'==0)
-			mata:reg_panel("__dy__", "`xvar'", "`xb'" , "`trt'", "`tmt'" , "`touse2'","__att__","`b'","`V'","`weight'") 
-			*replace __att__=. if `tmt'==1
+			mata:reg_panel("__dy__", "`xvar'", "`xb'" , "`trt'", "`tmt'" , "`touse'","__att__","`b'","`V'","`weight'") 
+	 
 			matrix colname `b' = __att__
 			matrix colname `V' = __att__
 			matrix rowname `V' = __att__
@@ -434,7 +426,7 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 	if "`ivar'"!="" {
 	    *display "Estimating IPW logit"
 		qui {		
-			`isily' logit `trt' `xvar' if `touse' & `tmt'==0 [iw = `weight']
+			`isily' logit `trt' `xvar' if `touse' [iw = `weight']
 			tempvar psxb
 			predict double `psxb', xb
 			tempname psb psV
@@ -455,12 +447,11 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 			*predict double `xb'
 			capture drop __att__
 			gen double __att__=.
-		
+		}
+		*display "Estimating ATT"
+		qui {
 		    tempname b V		
-			tempvar touse2
-			gen byte `touse2'=`touse'*(`tmt'==0)
-			noisily mata:std_ipw_panel("__dy__","`xvar'","`xb'","`psb'","`psV'","`psxb'","`trt'","`tmt'","`touse2'","__att__","`b'","`V'","`weight'")
-			*replace __att__=. if `tmt'==1
+			noisily mata:std_ipw_panel("__dy__","`xvar'","`xb'","`psb'","`psV'","`psxb'","`trt'","`tmt'","`touse'","__att__","`b'","`V'","`weight'")		
 			matrix colname `b'=__att__
 			matrix colname `V'=__att__
 			matrix rowname `V'=__att__
@@ -525,7 +516,7 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 		local scl = r(mean)
 		gen double `sy'= __dy__/`scl'
 		
-		qui:teffects ipwra (`sy' `xvar') (`trt' `xvar', logit) if `touse' & `tmt'==0 [iw = `weight'] , atet 
+		qui:teffects ipwra (`sy' `xvar') (`trt' `xvar', logit) if `touse' [iw = `weight'] , atet 
 		tempname b V aux
 		matrix `aux'=e(b)*`scl'
 		matrix `b'=`aux'[1,1]
@@ -547,7 +538,7 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 	if "`ivar'"!="" {
 	   	*display "Estimating IPT"
 		qui {
-			`isily' ml model lf drdid_logit (`trt'=`xvar') if `touse' & `tmt'==0 [iw = `weight'], maximize  robust
+			`isily' ml model lf drdid_logit (`trt'=`xvar') if `touse' [iw = `weight'], maximize  robust
 			`isily' ml display
 			tempname iptb iptV
 			matrix `iptb'=e(b)
@@ -576,11 +567,7 @@ syntax, touse(str) trt(str) y(str) [xvar(str)] [noisily] [ivar(str)] [tag(str)] 
 			tempname b V
 			capture drop __att__
 			gen double __att__=.
-			tempvar touse2
-			gen byte `touse2'=`touse'*(`tmt'==0)
-			
-			noisily mata:drdid_imp_panel("__dy__","`xvar'","`xb'","`psb'","`psV'","`psxb'","`trt'","`tmt'","`touse2'","__att__","`b'","`V'","`weight'")		
-			*replace __att__=. if `tmt'==1
+			noisily mata:drdid_imp_panel("__dy__","`xvar'","`xb'","`psb'","`psV'","`psxb'","`trt'","`tmt'","`touse'","__att__","`b'","`V'","`weight'")		
 			matrix colname `b'=__att__
 			matrix colname `V'=__att__
 			matrix rowname `V'=__att__
@@ -683,7 +670,7 @@ mata
 		real matrix psc
 		psc=logistic(psxb)
 		trt =st_data(.,trt_ ,touse)
-		//tmt =1:-st_data(.,tmt_ ,touse)
+		tmt =1:-st_data(.,tmt_ ,touse)
 		// and matrices
 		///psb =st_matrix(psb_ )
 		///psv =st_matrix(psV_ )
@@ -696,10 +683,10 @@ mata
 		w_1 = w_1:/mean(w_1)
 		w_0 = w_0:/mean(w_0)
 		att=(dy:-xb):*(w_1:-w_0)
-		att_inf_func = mean(att) :+ att :- w_1:*mean(att)
+		att_inf_func = mean(att,tmt) :+ att :- w_1:*mean(att,tmt)
 		st_store(.,att_,touse, att_inf_func)	
-		st_matrix(bb,mean(att_inf_func))
-		st_matrix(VV,variance(att_inf_func)/nn)
+		st_matrix(bb,mean(att_inf_func,tmt ))
+		st_matrix(VV,variance(att_inf_func,tmt)/sum(tmt))
 		
 	}
  
@@ -745,8 +732,8 @@ mata
 		att_inf_func = mean(ipw_att):+inf_treat :- inf_control
  
 		st_store(.,att_,touse, att_inf_func)	
-		st_matrix(bb,mean(att_inf_func ))
-		st_matrix(VV,variance(att_inf_func)/nn)
+		st_matrix(bb,mean(att_inf_func,tmt ))
+		st_matrix(VV,variance(att_inf_func,tmt)/sum(tmt))
 	}
   
 	void reg_panel(string scalar dy_, xvar_, xb_ , trt_,tmt_,touse,att_,bb,VV,ww) {
@@ -793,8 +780,8 @@ mata
 		att_inf_func = mean(reg_att):+(inf_treat :- inf_control)
 			
 		st_store(.,att_,touse, att_inf_func)	
-		st_matrix(bb,mean(att_inf_func ))
-		st_matrix(VV,variance(att_inf_func)/nn)
+		st_matrix(bb,mean(att_inf_func,tmt ))
+		st_matrix(VV,variance(att_inf_func,tmt)/sum(tmt))
 	}
 	
  
@@ -836,11 +823,9 @@ mata
 		att_lin2  = lin_ps * mom_logit'
 		att_inf_func = mean(ipw_att):+(att_lin1 :- att_lin2 :- w_1 :* ipw_att)/mean(w_1)
  		st_store(.,att_,touse, att_inf_func)	
-		st_matrix(bb,mean(att_inf_func))
-		st_matrix(VV,variance(att_inf_func)/nn)
+		st_matrix(bb,mean(att_inf_func,tmt ))
+		st_matrix(VV,variance(att_inf_func,tmt)/sum(tmt))
 	}
-	
-	
 /// drdid_ipw	
  	void drdid_panel(string scalar dy_, xvar_, xb_ , psb_,psV_,psxb_,trt_,tmt_,touse,att_,bb,VV,ww) {
 	    real matrix dy, xvar, xb, psb, psv, psxb, trt, tmt
@@ -895,8 +880,8 @@ mata
 		// RIF att_inf_func = inf_treat' :- inf_control
 		rif = att:+n1:-n0:-nest
 		st_store(.,att_,touse, rif)	
-		st_matrix(bb,mean(rif))
-		st_matrix(VV,variance(rif)/nn)
+		st_matrix(bb,mean(rif,tmt))
+		st_matrix(VV,variance(rif,tmt)/sum(tmt))
 	}
 	//// standard IPW
 
