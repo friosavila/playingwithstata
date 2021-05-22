@@ -34,7 +34,7 @@ I tried to keep the syntax of drdid relatively standard. At least standard with 
 
 The general syntax of the command is as follows
 
-```{stata}
+``` 
 drdid depvar [indepvar] [if] [in] [iw], [ivar(varname)] time(varname) tr(varname) [estimator] [boot]
 ```
 
@@ -63,7 +63,7 @@ drdid re age educ black married nodegree hisp re74 if treated==0 | sample==2 , i
 
 and if everything went well, you should be seeing this:
 
-```stata
+```
 ------------------------------------------------------------------------------
              | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
 -------------+----------------------------------------------------------------
@@ -114,62 +114,24 @@ stdipw:Standardized IPW estimator
 sipwra:IPW and Regression adjustment estimator.
 
 ```
-
 And that is it!. Please, if you find any bugs or encounter any problems. Let me know. So, what is next?
 
-## CSDID Version 0.1
+# CSDID Version 1.0
 
-Yes, `CSDID` is next!. It may take some time. Havent done much progress since the v0.1. But may come back to this soon. There was a small bug so I think we are at version v0.2 now. See below for an example:
+Yes, `CSDID` is here!.
 
-With these pieces in places, we can now have a proper first version of R's DID command native to Stata.
-By popular demand (3 guys in a chatroom) we are calling it -[csdid.ado](https://friosavila.github.io/playingwithstata/drdid/csdid.ado)-.
+This took longer, just because I was a bit burned with the first week of `DRDID` coding. Even having the base code (Thank you Pedro!) it was hard to understand how each moving piece moved. And, if you do not understand how it all moves, you cannot move forward. 
 
-As it was already mention on Twitter **`csdid`**, or rather R's **`DID`**  works using **`drdid`** on the background. And as of right now, **`csdid`**  produces what you would get when using att_gt command. 
+In any case...Yes, It clicked again, and we have a beta version!
 
-In contrast with **`DID`**, my command will use **`drimp`** as the default estimator method. However, all other estimators within **`drdid`** will be allowed (except `all`). They key is to declare the method using option **`method()`**. Interestingly enough, **`DID`** uses `dripw` as the default. So I will use that for the following replication.
+I used to add information about `CSDID` here, but since it has just been completed, I'll create its own page!
+Please use the menu on the right, and go to the new corresponding page.
 
-```
-use https://friosavila.github.io/playingwithstata/drdid/mpdta.dta, clear
+## what is next for `DRDID`?
 
-. csdid  lemp lpop , ivar(countyreal) time(year) gvar(first_treat) method(dripw)
-Callaway Sant'Anna (2021)
-------------------------------------------------------------------------------
-             | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
--------------+----------------------------------------------------------------
-g2004        |
- t_2003_2004 |  -.0145297   .0221629    -0.66   0.512    -.0579681    .0289087
- t_2003_2005 |  -.0764219    .028715    -2.66   0.008    -.1327022   -.0201415
- t_2003_2006 |  -.1404483    .035432    -3.96   0.000    -.2098939   -.0710028
- t_2003_2007 |  -.1069039   .0329366    -3.25   0.001    -.1714584   -.0423494
--------------+----------------------------------------------------------------
-g2006        |
- t_2003_2004 |  -.0004721   .0222553    -0.02   0.983    -.0440918    .0431475
- t_2004_2005 |  -.0062025   .0185223    -0.33   0.738    -.0425055    .0301004
- t_2005_2006 |   .0009606    .019428     0.05   0.961    -.0371177    .0390389
- t_2005_2007 |  -.0412939   .0197495    -2.09   0.037    -.0800021   -.0025856
--------------+----------------------------------------------------------------
-g2007        |
- t_2003_2004 |   .0267278   .0140817     1.90   0.058    -.0008718    .0543274
- t_2004_2005 |  -.0045766   .0157357    -0.29   0.771    -.0354179    .0262647
- t_2005_2006 |  -.0284475   .0182016    -1.56   0.118    -.0641219    .0072269
- t_2006_2007 |  -.0287814   .0162574    -1.77   0.077    -.0606454    .0030826
-------------------------------------------------------------------------------
-Control: Never Treated
-```
-I find this output a bit easier to understand than the baseline output in R. 
-
-Each `equation` represents the group treatment. And each `coefficient` represents the two years (pre and post) used to estimate the ATT. 
-
-All point estimates are the same as the R command. The standard errors are different, because R's `DID` uses bootstrap standard errors by default, whereas I use the asymptotic normal ones as default.
-
-## what is next?
-
-So what is next? 
-
-1. `drdid` is basically done. I do need to include an option for clusters. So that may come next. Also weights. 
-2. Along with E.P., we are also working on adding `gmm` estimators to `drdid`. It will just be to provide you with more options for analysis and report.
-3. I need to start working on the `csdid` part. The basic structure is ready (see above), but details and other options are still in development. The aggregation is a bit complicated because some features in R are not so easy to replicate with Mata. Not so easy, but not impossible. I'll get there.
-4. Once aggregators are done, we will put special emphsis on the visualizations. Im currently thinking this can work as an `estat/postestimation` option. 
-5. Clean everything up, more efficient code, proper help file. And if you find bugs...kill the bugs! This is of course the less fun part. But necessary. 
-6. If you have comments or questions, please, let me know!
+1. `drdid` is basically done. I do need to include an option for clusters. So that may come next. Weights are already incorporated, but needs testing.
+2. Along with E.P., we are also working on adding `gmm` estimators to `drdid`. It will just be to provide you with more options for analysis and report. He also provided a new Display. function. 
+3. There is also the "problem" of Wild Bootstrap. The code its done, but display is missing (the standard errors)
+ 
+If you have comments or questions, please, let me know!
 

@@ -16,14 +16,11 @@
 * v0.2 DRDID for Stata by FRA Allows for Factor notation
 * v0.1 DRDID for Stata by FRA Typo with ID TIME
 * For panel only for now
-/*
-** This is for debugging, whe
+
 capture program drop _all
 mata:mata clear
-*/
-program define drdid, eclass sortpreserve
-version 14
 
+program define drdid, eclass sortpreserve
 syntax  [anything(everything)] [iw] [if] [in], [*]
 
 	if replay() {
@@ -45,6 +42,8 @@ syntax  [anything(everything)] [iw] [if] [in], [*]
 end
 
 program define drdid_wh, eclass sortpreserve
+version 14
+
 	syntax varlist(fv ) [if] [in] [iw], [ivar(varname)] time(varname) TReatment(varname) ///
 	[noisily drimp dripw reg stdipw ipw ipwra all  rc1 ///
 	boot reps(int 999) bwtype(int 1)  /// Hidden option
@@ -178,7 +177,7 @@ program define drdid_wh, eclass sortpreserve
 		**capture drop `stub'att_dripw
 		*ren `stub'att  `stub'att_dripw
 		if "`ivar'"=="" {
-		    qui:drdid_dripw , `01' rc1 
+		    qui:drdid_dripw , touse(`touse') tmt(`tmt') trt(`trt') y(`y') xvar(`xvar') `isily' ivar(`ivar') tag(`tag') weight(`wgt') rc1 stub(`stub') `forboot'
 			matrix `bb' = nullmat(`bb')\e(b)
 			matrix `VV' = nullmat(`VV')\e(V)
 			local clname `clname' dripw_rc1
@@ -194,7 +193,7 @@ program define drdid_wh, eclass sortpreserve
 		*ren `stub'att  `stub'att_drimp
 		
 		if "`ivar'"=="" {
-		    qui:drdid_imp , `01' rc1 
+		    qui:drdid_imp , touse(`touse') tmt(`tmt') trt(`trt') y(`y') xvar(`xvar') `isily' ivar(`ivar') tag(`tag') weight(`wgt') rc1 stub(`stub') `forboot'
 			matrix `bb' = nullmat(`bb')\e(b)
 			matrix `VV' = nullmat(`VV')\e(V)
 			local clname `clname' drimp_rc1
@@ -1763,43 +1762,15 @@ real matrix mboot_did(pointer scalar y, real scalar reps, bwtype) {
 	real scalar i,n, k1, k2
 	n=rows(yy)
 	k1=((1+sqrt(5))/(2*sqrt(5)))
-	k2=0.5*(1+sqrt(5))
-	
-	if (bwtype==1) {			
-	    for(i=1;i<=reps;i++){
+	k2=0.5*(1+sqrt(5)) 
+	for(i=1;i<=reps;i++){
+		// WBootstrap:Mammen 
+		if (bwtype==1) {			
 			bsmean[i,]=mean(yy:*(k2:-sqrt(5)*(runiform(n,1):<k1)) )	
 		}
-	}
-	else if (bwtype==2) {
-	    for(i=1;i<=reps;i++){
+		else if (bwtype==2) {
 		// -1 or 1:Rademacher distribution:
 			bsmean[i,]=mean(yy:*(1:-2*runiformint(n,1,0,1) ) )	
-		}	
-	}
-	
-	return(bsmean)
-}
-
-real matrix wboot_did(pointer scalar y, id, real scalar reps, bwtype) {
-	real matrix yy, bsmean
-	yy=(*y):-mean((*y))
- 	bsmean=J(reps,cols(yy),0)
-	real scalar i,n, k1, k2
-	n=rows(*id)
-	k1=((1+sqrt(5))/(2*sqrt(5)))
-	k2=0.5*(1+sqrt(5)) 
-	// WBootstrap:Mammen 
-	if (bwtype==1) {			
-	    for(i=1;i<=reps;i++){
-		    v =(k2:-sqrt(5)*(runiform(n,1):<k1))
-			bsmean[i,]=mean(yy:*v[(*id)])	
-		}
-	}
-	else if (bwtype==2) {
-	    for(i=1;i<=reps;i++){
-		// -1 or 1:Rademacher distribution:
-			v=(1:-2*runiformint(n,1,0,1) )
-			bsmean[i,]=mean(yy:*v[(*id)])	
 		}	
 	}
 	return(bsmean)
@@ -1834,20 +1805,7 @@ void mboot(string scalar rif, touse, vv, real scalar reps, bwtype ) {
 	st_matrix(vv,iqrse(fr)^2)
 }
 
-real rowvector makeid(real rowvector nid) {
-    real rowvector id
-    id=J(rows(nid),1,1)
-	for(i=2;i<=2956;i++){
-		if (nid[i]==nid[i-1]) id[i]=id[i-1]
-		else (
-			id[i]=id[i-1]+1
-		)
-	}
-	return(id)
-}
-
-
-
+/// qtp(abs(xx/ iqrse(xx)),.95) 
 end
 
 ** estimators left

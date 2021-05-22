@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>CSDID Version 1&period;0</title>
+        <style>
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        
+        
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="csdid-version-10">CSDID Version 1.0</h1>
+<h2 id="prolog">Prolog</h2>
+<p>Yes, <code>CSDID</code> is here!.</p>
+<p>This took longer, just because I was a bit burned with the first week of <code>DRDID</code> coding. Even having the base code (Thank you Pedro!) it was hard to understand how each moving piece moved. And, if you do not understand how it all moves, you cannot move forward.</p>
+<p>In any case...Yes, It clicked again, and we have a new version!</p>
+<p>So a bit of the Guts of the program. As it has been suggested in twitter, and confirmed by the authors (Pedro and Barty), R's <code>DID</code> is a wrapper around <code>DRDID</code>. <code>DRDID</code> does the heavy lifting of the 2x2 setup, and <code>DID</code> collects everything, summarizes, and makes nice tables for you.</p>
+<p>So that was the part that required some ingenuity. How to aggregate all the information, (averages) and correctly report what we wanted to see. It is a bit harder than in R because <strong>Mata</strong> does not have some of the tools. (wishes and grumbles comming!). And on top of that, how to apply the Wild Bootstrap procedure.</p>
+<p>Since the WB is relatively easy (once the IF's are created) I decided to take a different route and start with the asymptotic versions of the aggregators first. After a talk with Barty, It click, and I realize a very easy way to do it. Ok, let me show you.</p>
+<h2 id="setup">Setup</h2>
+<p>So, to use <code>csdid</code> you will need three sets of files:</p>
+<ul>
+<li><a href="https://friosavila.github.io/playingwithstata/drdid/drdid.ado">drdid.ado</a>. This is the workhorse of the estimation. Does the actual estimation, and gets the IF.</li>
+<li><a href="https://friosavila.github.io/playingwithstata/drdid/csdid.ado">csdid.ado</a>. This is the main program that works like <code>DID</code> works. It will call on <code>drdid.do</code>, and put all the pieces into a nice table. It kind of does the work that <code>att_gt</code> does.</li>
+<li><a href="https://friosavila.github.io/playingwithstata/drdid/csdid_estat.ado">csdid_estat.ado</a>. This file will be used as a post-estimation program. It does the work that <code>aggte</code> and <code>summarize</code> does.</li>
+</ul>
+<p>In contrast with <strong><code>DID</code></strong>, my command will use <strong><code>drimp</code></strong> as the default estimator method. However, all other estimators within <strong><code>drdid</code></strong> will be allowed (except <code>all</code>). They key is to declare the method using option <strong><code>method()</code></strong>. Interestingly enough, <strong><code>DID</code></strong> uses <code>dripw</code> as the default. So I will use that for the following replication.</p>
+<h2 id="simple-help">Simple Help</h2>
+<p>The general syntaxis of the command will be as follows:</p>
+<pre><code><code><div>csdid depvar indepvar [if] [in] [iw], ivar(varname) time(year) gvar(group_var) method(drdid estimator) [notyet]
+</div></code></code></pre>
+<p>Here an explanation of all the pieces:</p>
+<ul>
+<li><strong><code>depvar</code></strong> : is your dependent variable or outcome of interest</li>
+<li><strong><code>indepvar</code></strong>: are your independent variables, you may or may not have variables here. These variables will included in the outcome regression specification and/or the propensity score estimation.</li>
+<li><strong><code>ivar</code></strong>: is a variable that identifies the panel ID. If you drop this, the command will use repeated crossection estimators instead. If included, it will estimate the panel estimators. This option may change to groupvar.</li>
+<li><strong><code>time</code></strong>: identifies the time variable (for example year). It does not matter if the periods are contiguous or not. this variable should overlap all possible periods within `gvar'</li>
+<li><strong><code>gvar</code></strong>: is the variable that identifies the first time an observation is treated. It should be within the &quot;time&quot; bracket. Observations with <code>gvar==0</code> are never treated units.</li>
+<li><strong>method(<code>estimator</code>)</strong> is used to indicate which estimator you want to use. Below the list of all that is available:
+<ul>
+<li><strong><code>drimp</code></strong> Estimates the DR improved estimator. If you add <code>rc1</code> it provides you with the alternative estimator (that is not locally efficient). Default</li>
+<li><strong><code>dripw</code></strong> Estimates the DR IPW estimator. You can also use <code>rc1</code> to provide the alternative (not locally efficient) estimator.</li>
+<li><strong><code>reg</code></strong> Estimates the Outcome regression estimator.</li>
+<li><strong><code>stdipw</code></strong> Estimates the Standard IPW estimator.</li>
+<li><strong><code>ipw</code></strong> Estimates the estimator similar to Abadies (2005)</li>
+<li><strong><code>ipwra</code></strong> Estimates the IPW regression augmented estimator. This is estimated through <code>Stata</code> command <code>teffects ipwra</code>. Not available for Repeated Crossection</li>
+</ul>
+</li>
+<li><strong><code>notyet</code></strong> request using not yet treated variables as controls, rather than never-treated only.</li>
+</ul>
+<p>Now for the post estimation command (aggregations) you have the following:</p>
+<pre><code><code><div>estat [subcommand]
+</div></code></code></pre>
+<p>And this are the options:</p>
+<ul>
+<li><strong><code>pretrend</code></strong>: This tests if all the pre-treatment effects are all equal to 0.</li>
+<li><strong><code>simple</code></strong>: Estimates the simple aggregation of all post treatment effects.</li>
+<li><strong><code>group</code></strong>: Estimates the group effects</li>
+<li><strong><code>calendar</code></strong>: Estimates the calendar time effects</li>
+<li><strong><code>event</code></strong>: Estimates the dynamic aggregation/event study effects</li>
+</ul>
+<h2 id="replication">Replication</h2>
+<p>So lets see how this works.  First, load the data, and estimate the model. To replicate the <code>DID</code> simple output, I will use <code>method(dripw)</code>.</p>
+<pre><code><code><div>use https://friosavila.github.io/playingwithstata/drdid/mpdta.dta, clear
+
+. csdid  lemp lpop , ivar(countyreal) time(year) gvar(first_treat) method(dripw)
+
+Callaway Sant'Anna (2021)
+------------------------------------------------------------------------------
+             | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+g2004        |
+ t_2003_2004 |  -.0145297   .0221292    -0.66   0.511     -.057902    .0288427
+ t_2003_2005 |  -.0764219   .0286713    -2.67   0.008    -.1326166   -.0202271
+ t_2003_2006 |  -.1404483   .0353782    -3.97   0.000    -.2097882   -.0711084
+ t_2003_2007 |  -.1069039   .0328865    -3.25   0.001    -.1713602   -.0424476
+-------------+----------------------------------------------------------------
+g2006        |
+ t_2003_2004 |  -.0004721   .0222234    -0.02   0.983    -.0440293     .043085
+ t_2004_2005 |  -.0062025   .0184957    -0.34   0.737    -.0424534    .0300484
+ t_2005_2006 |   .0009606   .0194002     0.05   0.961    -.0370631    .0389843
+ t_2005_2007 |  -.0412939   .0197211    -2.09   0.036    -.0799466   -.0026411
+-------------+----------------------------------------------------------------
+g2007        |
+ t_2003_2004 |   .0267278   .0140657     1.90   0.057    -.0008404     .054296
+ t_2004_2005 |  -.0045766   .0157178    -0.29   0.771    -.0353828    .0262297
+ t_2005_2006 |  -.0284475   .0181809    -1.56   0.118    -.0640814    .0071864
+ t_2006_2007 |  -.0287814    .016239    -1.77   0.076    -.0606091    .0030464
+-------------+----------------------------------------------------------------
+wgt          |
+       w2004 |    .104712   .0229413     4.56   0.000      .059748    .1496761
+       w2006 |   .2094241   .0317607     6.59   0.000     .1471742     .271674
+       w2007 |   .6858639    .051479    13.32   0.000     .5849668    .7867609
+------------------------------------------------------------------------------
+Control: Never Treated
+</div></code></code></pre>
+<p>I find this output a bit easier to understand than the baseline output in R.</p>
+<p>Each <code>equation</code> represents the group treatment. And each <code>coefficient</code> represents the two years (pre and post) used to estimate the ATT.</p>
+<p>All point estimates are the same as the R command. The standard errors are different, because R's <code>DID</code> uses bootstrap standard errors by default, whereas I use the asymptotic normal ones as default. You can replicate this in R using the <code>bstrap = F</code> option.</p>
+<p>The last equation is something that will be used for the aggregation. Corresponds to the Weights each group has in sample.</p>
+<p>So what about the aggregation. The first thing would be the pretest for parallel assumption:</p>
+<pre><code><code><div>. estat pretrend
+Pretrend Test. H0 All Pre-treatment are equal to 0
+
+ ( 1)  [g2006]t_2003_2004 = 0
+ ( 2)  [g2006]t_2004_2005 = 0
+ ( 3)  [g2007]t_2003_2004 = 0
+ ( 4)  [g2007]t_2004_2005 = 0
+ ( 5)  [g2007]t_2005_2006 = 0
+
+           chi2(  5) =    6.84
+         Prob &gt; chi2 =    0.2327
+
+</div></code></code></pre>
+<p>We can also reproduce the simple, calendar and group aggregations:</p>
+<pre><code><code><div>. estat simple
+Simple Average Treatment
+
+------------------------------------------------------------------------------
+             | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      simple |  -.0417518   .0115028    -3.63   0.000    -.0642969   -.0192066
+------------------------------------------------------------------------------
+
+. estat calendar
+Time Estimated Effects
+
+------------------------------------------------------------------------------
+             | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       t2004 |  -.0145297   .0221292    -0.66   0.511     -.057902    .0288427
+       t2005 |  -.0764219   .0286713    -2.67   0.008    -.1326166   -.0202271
+       t2006 |  -.0461757   .0212107    -2.18   0.029     -.087748   -.0046035
+       t2007 |  -.0395822   .0129299    -3.06   0.002    -.0649242   -.0142401
+------------------------------------------------------------------------------
+
+. estat group
+Group Effects
+
+------------------------------------------------------------------------------
+             | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       g2004 |  -.0845759   .0245649    -3.44   0.001    -.1327222   -.0364297
+       g2006 |  -.0201666   .0174696    -1.15   0.248    -.0544065    .0140732
+       g2007 |  -.0287814    .016239    -1.77   0.076    -.0606091    .0030464
+------------------------------------------------------------------------------
+
+</div></code></code></pre>
+<p>And the one that is the most difficult to program. The event studies one:</p>
+<pre><code><code><div>
+. estat event
+Event Studies:Dynamic effects
+
+------------------------------------------------------------------------------
+             | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         E_3 |   .0267278   .0140657     1.90   0.057    -.0008404     .054296
+         E_2 |  -.0036165   .0129283    -0.28   0.780    -.0289555    .0217226
+         E_1 |   -.023244   .0144851    -1.60   0.109    -.0516343    .0051463
+          E0 |  -.0210604   .0114942    -1.83   0.067    -.0435886    .0014679
+          E1 |  -.0530032   .0163465    -3.24   0.001    -.0850417   -.0209647
+          E2 |  -.1404483   .0353782    -3.97   0.000    -.2097882   -.0711084
+          E3 |  -.1069039   .0328865    -3.25   0.001    -.1713602   -.0424476
+------------------------------------------------------------------------------
+
+</div></code></code></pre>
+<p>And that is it! a functional Stata Native DID program!</p>
+<h2 id="what-is-next">What is next?</h2>
+<ol>
+<li>Some stress testing. Right now i have worked with balanced panel datasets. Who knows how it will react with less than ideal situations.</li>
+<li>Some verification. Basically add conditions so all <code>att_gt</code> that can be estimated, are estimated. You know, the safegards and bugs.</li>
+<li>WB, Now that I know better how the &quot;weights&quot; play into the analysis, this should be easier. But, I still need to figure out how to report the CI.</li>
+<li>Help files. And of course...Graphs!</li>
+</ol>
+
+    </body>
+    </html>
