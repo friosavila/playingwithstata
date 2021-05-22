@@ -28,7 +28,7 @@
 <p>Yes, <code>CSDID</code> is here!.</p>
 <p>This took longer, just because I was a bit burned with the first week of <code>DRDID</code> coding. Even having the base code (Thank you Pedro!) it was hard to understand how each moving piece moved. And, if you do not understand how it all moves, you cannot move forward.</p>
 <p>In any case...Yes, It clicked again, and we have a new version!</p>
-<p>So a bit of the Guts of the program. As it has been suggested in twitter, and confirmed by the authors (Pedro and Barty), R's <code>DID</code> is a wrapper around <code>DRDID</code>. <code>DRDID</code> does the heavy lifting of the 2x2 setup, and <code>DID</code> collects everything, summarizes, and makes nice tables for you.</p>
+<p>So a bit of the Guts of the program. As it has been suggested in twitter, and confirmed by the authors (Pedro and Brant), R's <code>DID</code> is a wrapper around <code>DRDID</code>. <code>DRDID</code> does the heavy lifting of the 2x2 setup, and <code>DID</code> collects everything, summarizes, and makes nice tables for you.</p>
 <p>So that was the part that required some ingenuity. How to aggregate all the information, (averages) and correctly report what we wanted to see. It is a bit harder than in R because <strong>Mata</strong> does not have some of the tools. (wishes and grumbles comming!). And on top of that, how to apply the Wild Bootstrap procedure.</p>
 <p>Since the WB is relatively easy (once the IF's are created) I decided to take a different route and start with the asymptotic versions of the aggregators first. After a talk with Barty, It click, and I realize a very easy way to do it. Ok, let me show you.</p>
 <h2 id="setup">Setup</h2>
