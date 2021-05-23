@@ -7,7 +7,7 @@
 capture program drop csdid
 program csdid, eclass
 	syntax varlist(fv ) [if] [in] [iw], /// Basic syntax  allows for weights
-										ivar(varname) ///
+										[ivar(varname)] ///
 										time(varname)  ///
 										gvar(varname)  ///
 										[att_gt]  ///
