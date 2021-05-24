@@ -1,3 +1,9 @@
+** NOTE when Panel is unbalanced (check this somehow.)
+** there could be two solutions.
+** 1 Using strong balance 
+** 2 use semi balance (whenever att_gt exists)
+** 3 use weak balance/crossection with cluster.
+
 *! v1.01 by FRA. Make sure we have at least 1 not treated period.
 // and check that if no Never treated exist, we add extra variable for dummies.
 // exclude if There are no treated observations
@@ -9,8 +15,7 @@
 * Logic. Estimate the ATT of the base (first) year against all subsequent years
 * using data BY groups
 ** assumes all years are available. For now
-capture program drop csdid
-
+ 
 /*program csdid_check,
 syntax varlist(fv ) [if] [in] [iw], /// Basic syntax  allows for weights
 										[ivar(varname)]  ///
@@ -22,6 +27,18 @@ syntax varlist(fv ) [if] [in] [iw], /// Basic syntax  allows for weights
 										[method(str) ]  // This allows other estimators
 	
 end*/
+*capture program drop sdots
+*capture program drop csdid
+program sdots
+syntax , [mydots(integer 10) maxdots(int 50)]
+	if mod(`mydots',`maxdots')==0 {
+		display "." 
+	}
+	else {
+		display "." _c
+	}
+end
+
 program csdid, eclass
 	syntax varlist(fv ) [if] [in] [iw], 	/// Basic syntax  allows for weights
 							[ivar(varname)] ///
@@ -60,33 +77,44 @@ program csdid, eclass
 		tempname b v
  		foreach i of local glev {		
 		    foreach j of local tlev {
+				local mydots=`mydots'+1
+				sdots, mydots(`mydots')
+				
 				* Stata quirk: `notyet' is called `tyet' because "no" is removed
 			    if "`tyet'"=="" {
 				    ** This implements the Never treated
 					local time1 = min(`i'-1, `j'-1)
-					qui:drdid `varlist' if inlist(`gvar',0,`i') & inlist(`time',`time1',`j') [`weight'`exp'], ///
+					qui:capture:drdid `varlist' if inlist(`gvar',0,`i') & inlist(`time',`time1',`j') [`weight'`exp'], ///
 										ivar(`ivar') time(`time') treatment(`tr') `method' stub(__) replace
 *					matrix `b'=nullmat(`b'),e(b)
 *					matrix `v'=nullmat(`v'),e(V)
 					local eqname `eqname' g`i'
 					local colname `colname'  t_`time1'_`j'
 					capture drop _g`i'_`time1'_`j'
-					ren __att    _g`i'_`time1'_`j'
+					
+				    capture   confirm variable __att
+				
+					if 	_rc==111	qui:gen _g`i'_`time1'_`j'=.
+					else 		ren __att    _g`i'_`time1'_`j'
 					local vlabrif `vlabrif' _g`i'_`time1'_`j'
+					
 				}
 				else if "`tyet'"!="" {
-				    ** This will implement not yet treated.
+				    ** This will implement not yet treated.////////////////////
+					//////////////////////////////////////
 					qui:replace `tr'=`gvar'==`i' if `touse'
 					local time1 = min(`i'-1, `j'-1)
 					* Use as controls those never treated and those not treated by time `j'>`i'
-					qui:drdid `varlist' if (`gvar'==0 | `gvar'==`i' | `gvar'> `j') & inlist(`time',`time1',`j') [`weight'`exp'], ///
+					qui:capture:drdid `varlist' if (`gvar'==0 | `gvar'==`i' | `gvar'> `j') & inlist(`time',`time1',`j') [`weight'`exp'], ///
 										ivar(`ivar') time(`time') treatment(`tr') `method' stub(__) replace
 *					matrix `b'=nullmat(`b'),e(b)
 *					matrix `v'=nullmat(`v'),e(V)
 					local eqname `eqname' g`i'
 					local colname `colname'  t_`time1'_`j'
-					capture drop _g`i'_`time1'_`j'
-				    ren __att    _g`i'_`time1'_`j'
+				    capture confirm variable __att
+					if 	_rc==111	qui:gen _g`i'_`time1'_`j'=.
+					else 			ren __att    _g`i'_`time1'_`j'
+					
 					local vlabrif `vlabrif' _g`i'_`time1'_`j'
 				}
 				local rifvar `rifvar' _g`i'_`time1'_`j'
@@ -109,8 +137,8 @@ program csdid, eclass
 				qui:gen double `ivar'=_n
 			}
 			collapse `time' `gvar' `vlabrif' `wgtt', by(`ivar')
-			tab `gvar', gen(gvar_)
-			count if `gvar'==0
+			qui:tab `gvar', gen(gvar_)
+			qui:count if `gvar'==0
 			if r(N)>0 	mata:makerif("`vlabrif'","gvar_*","`wgtt'","`b'","`v'")
 			else 		mata:makerif("`vlabrif'","`gvar' gvar_*","`wgtt'","`b'","`v'")
 		restore
@@ -122,7 +150,7 @@ program csdid, eclass
 		matrix roweq   `v'=`eqname'
 	*
 	*** Mata to put all together.
-	
+ 
 	ereturn post `b' `v'
 	ereturn local cmd 		csdid
 	ereturn local cmdline 	csdid `0'
@@ -135,15 +163,14 @@ program csdid, eclass
 	
 	if  "`tyet'"=="" ereturn local control_group "Never Treated"
 	if  "`tyet'"!="" ereturn local control_group "Not yet Treated"
-	display "Callaway Sant'Anna (2021)"
+	display _n "Callaway and Sant'Anna (2021)"
 	ereturn display
 	display "Control: `e(control_group)'" 
 end 
 
 /// This can be used for aggregation. Creates the matrixes we need.
 mata:
- 
-void makerif(string scalar att_gt_ , pg_ , wgt_, b, V){	
+ void makerif(string scalar att_gt_ , pg_ , wgt_, b, V){	
     real matrix att_gt, pg, all, wgt
 	att_gt	= st_data(.,att_gt_)
 	pg    	= st_data(.,pg_)
@@ -157,6 +184,7 @@ void makerif(string scalar att_gt_ , pg_ , wgt_, b, V){
 	// stp2 get Mean(RIF) 
 	real matrix mean_y
 	mean_y=colsum(all):/colnonmissing(all)
+	_editmissing(mean_y,0)
 	// stp3 Exp factor
 	real matrix exp_factor
 	exp_factor = (rows(all):/colnonmissing(all))
@@ -164,7 +192,9 @@ void makerif(string scalar att_gt_ , pg_ , wgt_, b, V){
 	all=all:-mean_y
 	// make missing zeros
 	_editmissing(all,0)
+	_editmissing(exp_factor,0)
 	all=all:*exp_factor
+ 
 	// estimate Variance Covariance assuming SUper normal
 	real matrix VV
 	VV=quadcross(all,all)/rows(all)^2
