@@ -1,36 +1,62 @@
+*! v1.01 by FRA. Make sure we have at least 1 not treated period.
+// and check that if no Never treated exist, we add extra variable for dummies.
+// exclude if There are no treated observations
+* v1 by FRA csdid Added all tests! and ready to play
 * v0.2 by FRA csdid or Multiple periods did. Adds Notyet
+
 * v0.1 by FRA mpdid or Multiple periods did.
 * This version implements did::attgp
 * Logic. Estimate the ATT of the base (first) year against all subsequent years
 * using data BY groups
 ** assumes all years are available. For now
 capture program drop csdid
-program csdid, eclass
-	syntax varlist(fv ) [if] [in] [iw], /// Basic syntax  allows for weights
-										[ivar(varname)] ///
-										time(varname)  ///
-										gvar(varname)  ///
+
+/*program csdid_check,
+syntax varlist(fv ) [if] [in] [iw], /// Basic syntax  allows for weights
+										[ivar(varname)]  ///
+										time(varname)    ///
+										[gvar(varname)]  /// Ppl either declare gvar
+										[trvar(varname)] /// or declare treat var, and we create gvar. Only works if Panel data
 										[att_gt]  ///
 										[notyet] /// att_gt basic option. May prepare others as Post estimation
 										[method(str) ]  // This allows other estimators
+	
+end*/
+program csdid, eclass
+	syntax varlist(fv ) [if] [in] [iw], 	/// Basic syntax  allows for weights
+							[ivar(varname)] ///
+							time(varname)   ///
+							gvar(varname)  	/// Ppl either declare gvar
+							[notyet] 		/// att_gt basic option. May prepare others as Post estimation
+							[method(str) ]  // This allows other estimators
 	marksample touse
 	markout `touse' `ivar' `time' `gvar'
 	** First determine outcome and xvars
 	gettoken y xvar:varlist
+
 	** determine time0
 	if "`time0'"=="" {
 	    qui:sum `time' if `touse'
 		local time0 `r(min)'
 	}
+	** Checks If Gvar is even untreated
+	
 	** prepare loops over gvar.
-	local att_gt att_gt
+	*local att_gt att_gt
 	tempvar tr
 	qui:gen byte `tr'=`gvar'!=0 if `gvar'!=.
-	if "`att_gt'"!="" {
-	    
-		qui:levelsof `gvar' if `gvar'>0       & `touse', local(glev)
-		qui:levelsof `time' if `time'>`time0' & `touse', local(tlev)
-		
+	
+	qui:levelsof `gvar' if `gvar'>0       & `touse', local(glev)
+	qui:levelsof `time' if `time'>`time0' & `touse', local(tlev)
+	
+	** Checks If Gvar is ever untreated
+	if `:word 1 of `glev'' < `:word 1 of `tlev'' {
+	    display in red "All observations require at least 1 not treated period"
+		display in red "See cross table below, and verify All Gvar have at least 1 not treated period"
+		tab `time' `gvar' if `touse'
+		error 1
+	}
+	
 		tempname b v
  		foreach i of local glev {		
 		    foreach j of local tlev {
@@ -83,17 +109,18 @@ program csdid, eclass
 				qui:gen double `ivar'=_n
 			}
 			collapse `time' `gvar' `vlabrif' `wgtt', by(`ivar')
-			*mata:makerif("_g2004_2003_2004 _g2004_2003_2005 _g2004_2003_2006 _g2004_2003_2007 _g2006_2003_2004 _g2006_2004_2005 _g2006_2005_2006 _g2006_2005_2007 _g2007_2003_2004 _g2007_2004_2005 _g2007_2005_2006 _g2007_2006_2007","i.first","wgt","b","V")
-			mata:makerif("`vlabrif'","i.`gvar'","`wgtt'","`b'","`v'")
+			tab `gvar', gen(gvar_)
+			count if `gvar'==0
+			if r(N)>0 	mata:makerif("`vlabrif'","gvar_*","`wgtt'","`b'","`v'")
+			else 		mata:makerif("`vlabrif'","`gvar' gvar_*","`wgtt'","`b'","`v'")
 		restore
-		
 		matrix colname `b'=`colname'
 		matrix coleq   `b'=`eqname'
 		matrix colname `v'=`colname'
 		matrix coleq   `v'=`eqname'
 		matrix rowname `v'=`colname'
 		matrix roweq   `v'=`eqname'
-	}
+	*
 	*** Mata to put all together.
 	
 	ereturn post `b' `v'
