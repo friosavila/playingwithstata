@@ -14,8 +14,11 @@ DESCRIPTION/AUTHOR(S)
    See examples in helpfile to see how it can be applied.
       
       KW: f_able
+      KW: f_reg
       KW: fgen
       KW: frep
+      KW: f_spline
+      KW: f_rcspline
       KW: f_symrv
       KW: f_symev
       KW: margins
@@ -30,4 +33,4 @@ DESCRIPTION/AUTHOR(S)
       
 
 Files:
-f_able.ado, f_able.sthlp, f_able_p.ado, f_able_reset.ado, fgen.ado, frep.ado, f_symrv.ado, f_symev.ado, f_spline.ado, f_spline.sthlp, f_rcspline.ado, f_rcspline.sthlp
+f_able.ado, f_able.sthlp, f_reg.ado, f_able_p.ado, f_able_reset.ado, fgen.ado, frep.ado, f_symrv.ado, f_symev.ado, f_spline.ado, f_spline.sthlp, f_rcspline.ado, f_rcspline.sthlp
