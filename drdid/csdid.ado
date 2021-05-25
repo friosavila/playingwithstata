@@ -4,6 +4,7 @@
 ** 2 use semi balance (whenever att_gt exists)
 ** 3 use weak balance/crossection with cluster.
 
+*! v1.02 by FRA. added touse
 *! v1.01 by FRA. Make sure we have at least 1 not treated period.
 // and check that if no Never treated exist, we add extra variable for dummies.
 // exclude if There are no treated observations
