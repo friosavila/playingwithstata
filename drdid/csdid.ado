@@ -28,8 +28,8 @@ syntax varlist(fv ) [if] [in] [iw], /// Basic syntax  allows for weights
 										[method(str) ]  // This allows other estimators
 	
 end*/
-capture program drop sdots
-capture program drop csdid
+*capture program drop sdots
+*capture program drop csdid
 program sdots
 syntax , [mydots(integer 10) maxdots(int 50)]
 	if mod(`mydots',`maxdots')==0 {
