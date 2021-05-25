@@ -1,3 +1,4 @@
+*!v1.1 FRA f
 *!v1 FRA restores Est attributes
 program f_able_reset, eclass
 	if "`e(predict_old)'"!="" {
@@ -9,6 +10,7 @@ program f_able_reset, eclass
 		ereturn hidden local _`i' 
 	}
 	ereturn local nldepvar 
-	ereturn local hidden margins_prolog 
-	ereturn local hidden margins_epilog 
+	ereturn local margins_prolog  
+	ereturn local margins_epilog 
+	ereturn local margins_cmd
 end

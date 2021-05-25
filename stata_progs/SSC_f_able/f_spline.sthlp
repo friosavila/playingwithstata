@@ -6,7 +6,7 @@
 {title:Title}
 
 {p2colset 5 14 16 2}{...}
-{p2col :{cmd:f_able} {hline 1}} Module for the construction of polynomial splines for {cmd:f_able} {p_end}
+{p2col :{cmd:f_spline} {hline 1}} Module for the construction of polynomial splines for {cmd:f_able} {p_end}
 {p2colreset}{...}
 
 
@@ -55,7 +55,7 @@ Polynomial spline of degree #d with #k knots set at equally distant #k percentil
 {cmd:=}
 {it:oldvar}
 {ifin}
-[{cmd:,  weight(varname) {opt kp:ctile:nots(#k)} {opt d:egree}(#d)}]
+[{cmd:,  weight(varname) {opt np:ctile(#k)} {opt d:egree}(#d)}]
 
 
 {marker description}{...}

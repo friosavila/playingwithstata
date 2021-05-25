@@ -1,3 +1,4 @@
+*! v1.02 FRA Adds Characteristics Fable
 *! v1.01 FRA Change fgen. Note needed to be stored without Quotes
 program fgen
 	syntax newvarname =/exp [if] [in] 
@@ -10,4 +11,5 @@ program fgen
 	    label var `varlist' "See notes"
 		note `varlist': `exp'
 	}
+	char `varlist'[fbl] "fable"
 end

@@ -11,4 +11,5 @@ program frep
 		label var `varlist' "See notes"
 		note `varlist': `exp'
 	}
+	char `varlist'[fbl] "fable"
 end

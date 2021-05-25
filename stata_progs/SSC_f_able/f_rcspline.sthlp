@@ -6,7 +6,7 @@
 {title:Title}
 
 {p2colset 5 14 16 2}{...}
-{p2col :{cmd:f_able} {hline 1}} Module for the construction of restricted cubic spline for {cmd:f_able} {p_end}
+{p2col :{cmd:f_rcspline} {hline 1}} Module for the construction of restricted cubic spline for {cmd:f_able} {p_end}
 {p2colreset}{...}
 
 {marker syntax}{...}

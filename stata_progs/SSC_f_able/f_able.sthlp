@@ -32,6 +32,12 @@ Declares which variables in the specification are "constructed/transformed" vari
 
 {p 8 17 2}
 {cmd:f_able} [varlist] {cmd:,} {cmdab:nl:var(varlist)} [auto]
+
+{phang}
+Automatically detects which variables in a regression are "constructed/transformed" variables.  
+
+{p 8 17 2}
+{cmd:f_reg} {cmd:command} depvar [indepvars] [if in] [weights], [command options]
  
 {phang}
 Resets stored in e() to the original ones
@@ -113,14 +119,24 @@ See Rios-Avila(2020) for brief discussion on the estimation of marginal effects,
 {pstd}{bf:. {stata "f_able, nlvar(fines2)"}}{p_end}
 
 {pstd}Margins need to include the option nochain{p_end}
-
 {pstd}{bf:. {stata "margins, dydx(fines) nochain"}}{p_end}
+
+{pstd}Same in 1-step{p_end}
+{pstd}{bf:. {stata "freg reg citations fines fines2"}}{p_end}
+{pstd}{bf:. {stata "margins, dydx(fines) nochain"}}{p_end}
+
 
 {pstd}Example 2{p_end}
 {pstd} Using spline transformations. Quadratic spline, with 1 knot {p_end}
 {pstd}{bf:. {stata "fgen fines3=max(fines-9.9,0)^2"}}{p_end}
+
+{pstd}Option 1{p_end}
 {pstd}{bf:. {stata "reg citations fines fines2 fines3"}}{p_end}
 {pstd}{bf:. {stata "f_able, nlvar(fines2 fines3)"}}{p_end}
+{pstd}Option 2{p_end}
+{pstd}{bf:. {stata "f_reg reg citations fines fines2 fines3"}}{p_end}
+
+{pstd} Estimating marginal effects{p_end}
 {pstd}{bf:. {stata "margins, dydx(fines) nochain"}}{p_end}
 
 {pstd} Estimating marginal effects across various points of fines, and plotting. {p_end}
@@ -163,7 +179,7 @@ making use of both factor notation and f_able. {p_end}
 {pstd}{bf:. {stata "fgen   fines5=max(fines-9.9,0)^3"}}{p_end}
 {pstd}{bf:. {stata "fgen   fines6=max(fines-11.1,0)^3"}}{p_end}
 {pstd}{bf:. {stata "reg citations fines fines2 fines3 fines4 fines5 fines6 i.csize i.csize#c.(fines fines2 fines3 fines4 fines5 fines6)"}}{p_end}
-{pstd}{bf:. {stata "f_able, nlvar(fines2 fines3 fines4 fines5 fines6)"}}{p_end}
+{pstd}{bf:. {stata "f_able fines2 fines3 fines4 fines5 fines6, auto"}}{p_end}
 
 {pstd} This may fail because of the complexity of the model{p_end}
 {pstd}{bf:. {stata "margins, dydx(fines) nochain "}}{p_end}
@@ -193,7 +209,7 @@ making use of both factor notation and f_able. {p_end}
 {pstd}Example 7{p_end}
 {pstd} Marginal effects for other variables in model will be the same with and without f_able, with small differences in point estimates {p_end}
 {pstd}{bf:. {stata "qui:reg citations fines fines2 fines3 fines4 fines5 fines6 i.csize i.csize#c.(fines fines2 fines3 fines4 fines5 fines6)"}}{p_end}
-{pstd}{bf:. {stata "qui:f_able, nlvar(fines2 fines3 fines4 fines5 fines6)"}}{p_end}
+{pstd}{bf:. {stata "qui:f_able fines2 fines3 fines4 fines5 fines6, auto"}}{p_end}
 
 {pstd}{bf:. {stata "margins, dydx(csize) noestimcheck"}}{p_end}
 {pstd}{bf:. {stata "margins, dydx(csize) noestimcheck nochain"}}{p_end}
@@ -287,8 +303,7 @@ if "age" is not of interest (assumed fixed) {p_end}
 {title:References}
 
 {phang}
-Rios-Avila, F. 2020. f_able: Estimation of marginal effects for models with alternative variable transformations.
-Unpublished manuscript. see {browse "https://drive.google.com/file/d/1500owR3mEcTfiWXLZKD5nVcBXFnYfDoM/view?usp=sharing":f_able}
+Rios-Avila, F. 2021.  Estimation of marginal effects for models with alternative variable transformations.  Stata Journal 21: 81-96. https://doi.org/10.1177/1536867X211000005.
 
 {marker Acknowledgments}{...}
 {title:Acknowledgments}
