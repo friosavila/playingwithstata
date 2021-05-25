@@ -126,7 +126,7 @@ program csdid_group, sortpreserve rclass
 		return matrix table 	= `table'
 	}	
 end
-
+capture program drop csdid_calendar
 program csdid_calendar, sortpreserve rclass
 	syntax , [post estore(name)]
 
@@ -134,18 +134,19 @@ program csdid_calendar, sortpreserve rclass
 	local mint:word 1 of `e(glev)'	
 	foreach j in `e(tlev)' {
 		if `j' >= `mint' {
-			local calendar `calendar' (t`j': ( ( 
+		    local cnt=0    
+			local mcalendar   (t`j': ( ( 
 			macro drop _wcl
 			foreach i in `e(glev)' {		
-				local cnt=0    
 				local time1 = min(`i'-1, `j'-1)
 				if (`i'<=`j') {
-					local calendar `calendar' [g`i']t_`time1'_`j'*[wgt]w`i'+
-					local wcl      `wcl' 	  [wgt]w`i'+
-		 
+				    local cnt=`cnt'+1    
+					local mcalendar `mcalendar' [g`i']t_`time1'_`j'*[wgt]w`i'+
+					local wcl      `wcl' 	  [wgt]w`i'+ 
 				}
 			}
-			local calendar `calendar' 0)/(`wcl'0)))
+			local mcalendar `mcalendar' 0)/(`wcl'0)))
+			if `cnt'>0 local calendar `calendar' `mcalendar'
 		}
 	}
 	display "Time Estimated Effects"
