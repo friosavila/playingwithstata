@@ -27,8 +27,8 @@ syntax varlist(fv ) [if] [in] [iw], /// Basic syntax  allows for weights
 										[method(str) ]  // This allows other estimators
 	
 end*/
-*capture program drop sdots
-*capture program drop csdid
+capture program drop sdots
+capture program drop csdid
 program sdots
 syntax , [mydots(integer 10) maxdots(int 50)]
 	if mod(`mydots',`maxdots')==0 {
@@ -73,7 +73,7 @@ program csdid, eclass
 		tab `time' `gvar' if `touse'
 		error 1
 	}
-	
+	tab `time' `gvar' if `touse'
 		tempname b v
  		foreach i of local glev {		
 		    foreach j of local tlev {
@@ -84,7 +84,7 @@ program csdid, eclass
 			    if "`tyet'"=="" {
 				    ** This implements the Never treated
 					local time1 = min(`i'-1, `j'-1)
-					qui:capture:drdid `varlist' if inlist(`gvar',0,`i') & inlist(`time',`time1',`j') [`weight'`exp'], ///
+					qui:capture:drdid `varlist' if inlist(`gvar',0,`i') & inlist(`time',`time1',`j') & `touse' [`weight'`exp'], ///
 										ivar(`ivar') time(`time') treatment(`tr') `method' stub(__) replace
 *					matrix `b'=nullmat(`b'),e(b)
 *					matrix `v'=nullmat(`v'),e(V)
@@ -105,16 +105,16 @@ program csdid, eclass
 					qui:replace `tr'=`gvar'==`i' if `touse'
 					local time1 = min(`i'-1, `j'-1)
 					* Use as controls those never treated and those not treated by time `j'>`i'
-					qui:capture:drdid `varlist' if (`gvar'==0 | `gvar'==`i' | `gvar'> `j') & inlist(`time',`time1',`j') [`weight'`exp'], ///
+					qui:capture:drdid `varlist' if (`gvar'==0 | `gvar'==`i' | `gvar'> `j') & inlist(`time',`time1',`j') & `touse' [`weight'`exp'], ///
 										ivar(`ivar') time(`time') treatment(`tr') `method' stub(__) replace
 *					matrix `b'=nullmat(`b'),e(b)
 *					matrix `v'=nullmat(`v'),e(V)
 					local eqname `eqname' g`i'
 					local colname `colname'  t_`time1'_`j'
+					capture drop _g`i'_`time1'_`j'					
 				    capture confirm variable __att
 					if 	_rc==111	qui:gen _g`i'_`time1'_`j'=.
 					else 			ren __att    _g`i'_`time1'_`j'
-					
 					local vlabrif `vlabrif' _g`i'_`time1'_`j'
 				}
 				local rifvar `rifvar' _g`i'_`time1'_`j'
