@@ -1,5 +1,6 @@
+*! v1 FRA Adds Safeguards to csdid calendar. Calendar starts after treatment
 ** Estat command for aggregators
-*program drop csdid_estat
+program drop csdid_estat
 program csdid_estat, sortpreserve  
 version 14
         if "`e(cmd)'" != "csdid" {
@@ -8,7 +9,7 @@ version 14
 		gettoken key rest : 0, parse(", ")
 		 
 		if inlist("`key'","simple","pretrend","group","calendar","event","all") {
-			csdid_`key', `rest'
+			csdid_`key'  `rest'
 		}
 		else {
 		    display in red "Option `key' not recognized"
@@ -126,7 +127,7 @@ program csdid_group, sortpreserve rclass
 		return matrix table 	= `table'
 	}	
 end
-capture program drop csdid_calendar
+
 program csdid_calendar, sortpreserve rclass
 	syntax , [post estore(name)]
 
