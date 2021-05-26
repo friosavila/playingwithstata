@@ -33,7 +33,7 @@
 <p>In the first period, neither of these groups receive a treatment. So for all intents or purposes, you can assume that they are identical in every single say.</p>
 <p>In the second period, however, one of the groups receive a treatment (a training program, medicine, or other type of treatment), whereas the other is left &quot;untreated&quot;.</p>
 <p>Once the experiment is finalized, you can design a simple 2x2 matrix that could help analyze the data, and quantify the impact of the treatment:</p>
-<p><img src="file:///c:\Users\Fernando\Documents\GitHub\playingwithstata\raw_articles\didxmdid_files\image001.png" alt="fig1"></p>
+<p><img src="/didxmdid_files/image001.png" alt="fig1"></p>
 <p>To simplify notation, I’ll assume that all the -yXY- represent the average outcome for the group -X- (treated =1 or untreated=0) at time Y (Pre=0 and post =1).</p>
 <blockquote>
 <p>how do we estimate the treatment effects? or how we cannot do it?</p>
@@ -73,7 +73,7 @@
 <p>Callaway and Sant’Anna (2020) using the letter G to identify this variable, but use “infinity” to refer to observations that are never treated (at least in the data on hand). I will not assign a number, and call it never treated (NT for short).</p>
 <p>Notice that I ignore the option that a group is “always” treated. Because we cannot really identify anything about them.</p>
 <p>This TxG design would look like the following (in matrix form):</p>
-<p><img src="file:///c:\Users\Fernando\Documents\GitHub\playingwithstata\raw_articles\didxmdid_files\image002.png" alt="fig2"></p>
+<p><img src="/didxmdid_files/image002.png" alt="fig2"></p>
 <p>All blue cells are units that have been effectively treated, whereas the orange cells are observations that could be used as potential controls, because they have not been treated yet. The cells in green correspond to the never treated units. This are in essence the perfect controls, because they have never been treated. Thus, unless spill over exists (which lets assume they don’t), you can always use NT units to make GOOD 2x2 DiD.</p>
 <p>Here is where the connection to the 2x2 design starts, which also may explain why the TWFE model, may sometimes get it wrong.</p>
 <p>From a technical point of view (read for example Goodman-Bacon 2019), the traditional TWFE model obtains a parameter for TE that is the average of all possible 2x2 designs that could be constructed from the above matrix. However, not all of them are good ones!.</p>
@@ -87,25 +87,25 @@ Some, however, will be combinations that are not useful, and may lead you to inc
 <p>Lets say, we are interested in the treatment effect only for the group that was first treated in period 1 (G=1).</p>
 <p>The first thing to consider is which group could be used as a “control”, to appropriately identify the TE. The first and easy choice is to compare the G1 units with those observations that were never treated (NT). (the “perfect” control group).</p>
 <p>Using the NT as control units, we can construct at least 3 2x2 DiD setups to identify the TE 1, 2 and 3 periods after the treatment took place:</p>
-<p><img src="file:///c:\Users\Fernando\Documents\GitHub\playingwithstata\raw_articles\didxmdid_files\image004.png" alt="fig3"></p>
+<p><img src="/didxmdid_files/image004.png" alt="fig3"></p>
 <p>A very similar exercise could be done if one is interested in analyzing the TE for other groups (say G2 and G3):</p>
-<p><img src="file:///c:\Users\Fernando\Documents\GitHub\playingwithstata\raw_articles\didxmdid_files\image006.png" alt="fig4"></p>
+<p><img src="/didxmdid_files/image006.png" alt="fig4"></p>
 <p>If a Never treated group were not available, it is also possible, and valid given limited information, to use units from other “treated” groups as controls, as long as they have not yet been treated:</p>
-<p><img src="file:///c:\Users\Fernando\Documents\GitHub\playingwithstata\raw_articles\didxmdid_files\image008.png" alt="fig5"></p>
+<p><img src="/didxmdid_files/image008.png" alt="fig5"></p>
 <p>For the case of G1, if we want to estimate the TE 1 period after treatment, we could use observations from G2 and G3, as part of the controls. This is possible because those observations are not affected by the treatment yet at T1 (assuming no anticipation).</p>
 <p>For G2, we could also do the same, using data from G3. For G3, we couldn’t use this strategy, because other than NT units, there will not be any other observation that is untreated.</p>
 <p>A general rule, if you look at the different matrices, is that a “good” 2x2 DiD will be one where only 1 of the cells falls in the effectively treated group (blue cells), whereas all other 3 cells are formed by “good – untreated controls” (Red and green)</p>
 <h2 id="parallel-trends-assumptions">Parallel trends assumptions</h2>
 <p>There are other designs that could also be of interest, especially if we would be interest in testing the parallel trends assumption.
 For observations treated in the second period, for example, we could use the following design to check if there have been any important changes in their outcome (anticipation treatment) a period before they were treated.</p>
-<p><img src="file:///c:\Users\Fernando\Documents\GitHub\playingwithstata\raw_articles\didxmdid_files\image0010.png" alt="fig6"></p>
+<p><img src="/didxmdid_files/image0010.png" alt="fig6"></p>
 <p>This is a good DID design because all units are effectively untreated. Thus, if parallel assumption holds, you should see a TE that is effectively 0.</p>
 <p>For observations in G3, one has even more options. One can check if there were period to period changes in the outcome before the treatment took place, or even looking into at long-run changes (as the third matrix suggest).</p>
-<p><img src="file:///c:\Users\Fernando\Documents\GitHub\playingwithstata\raw_articles\didxmdid_files\image012.png" alt="fig7"></p>
+<p><img src="/didxmdid_files/image012.png" alt="fig7"></p>
 <p>In general, if we refer to the first matrix, if all units in the 2x2 DiD are part of the never treated or not-yet-treated units, those comparisons can be used to test parallel lines assumptions. Since neither unit was treated, one should expect TE that are equal to zero.</p>
 <h2 id="bad-2x2-did">Bad 2x2 DiD</h2>
 <p>Just as there are good, there are also Bad. As described in Goodman-Bacon (2019), one of the pitfalls of the TWFE is that it may also try to identify TE by comparing units that are already treated, but at different times.</p>
-<p><img src="file:///c:\Users\Fernando\Documents\GitHub\playingwithstata\raw_articles\didxmdid_files\image014.png" alt="fig8"></p>
+<p><img src="/didxmdid_files/image014.png" alt="fig8"></p>
 <p>Consider the first panel. It compares data for G2 to those in G1. At T1, G2 is untreated, whereas G1 is treated both at T1 and T2. If the treatment effect were homogenous (a location shift), this may work. However, if the treatment affected both G1 and G2 differently (violating the parallel line assumption), then this 2x2 design will not identify Treatment effects (it may identify TE differences across both groups).
 The same thing would happen if we use a longer difference (second matrix) or if we look at G3.</p>
 <p>As a rule, if your “control” group includes unit that were treated as any point in time, It is a bad control, and the 2x2 DiD will not identify the TE.</p>
