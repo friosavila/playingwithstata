@@ -1,6 +1,5 @@
 *! v1 FRA Adds Safeguards to csdid calendar. Calendar starts after treatment
 ** Estat command for aggregators
-program drop csdid_estat
 program csdid_estat, sortpreserve  
 version 14
         if "`e(cmd)'" != "csdid" {
@@ -8,7 +7,8 @@ version 14
         }
 		gettoken key rest : 0, parse(", ")
 		 
-		if inlist("`key'","simple","pretrend","group","calendar","event","all") {
+		if inlist("`key'","simple","pretrend","group","calendar","event","all") | ///
+		   inlist("`key'","group_alt","calendar_alt","event_alt"){
 			csdid_`key'  `rest'
 		}
 		else {
@@ -99,6 +99,7 @@ program csdid_group, sortpreserve rclass
 		}
 		local group `group' 0)/`cnt'))
 	}
+	
 	display "Group Effects"
 	if "`post'`estore'"=="" {
 		nlcom `group', noheader
@@ -127,6 +128,25 @@ program csdid_group, sortpreserve rclass
 		return matrix table 	= `table'
 	}	
 end
+
+program csdid_group_alt, sortpreserve rclass
+	syntax ,  
+	display "Group Effects"
+	foreach i in `e(glev)'  {		
+		local group (g`i': ( ( 
+		local cnt=0
+		foreach j in `e(tlev)' {
+			local time1 = min(`i'-1, `j'-1)
+			if (`i'<=`j') {
+						local cnt=`cnt'+1
+				local group `group' [g`i']t_`time1'_`j'+
+			}
+		}
+		local group `group' 0)/`cnt'))
+		nlcom `group', noheader
+	}
+end
+
 
 program csdid_calendar, sortpreserve rclass
 	syntax , [post estore(name)]
@@ -178,6 +198,34 @@ program csdid_calendar, sortpreserve rclass
 		return matrix table 	= `table'
 	}
 end
+
+program csdid_calendar_alt, sortpreserve rclass
+	syntax , [post estore(name)]
+	display "Time Estimated Effects"
+	** Verify Tlevel > glevel
+	local mint:word 1 of `e(glev)'	
+	foreach j in `e(tlev)' {
+		if `j' >= `mint' {
+		    local cnt=0    
+			local mcalendar   (t`j': ( ( 
+			macro drop _wcl
+			foreach i in `e(glev)' {		
+				local time1 = min(`i'-1, `j'-1)
+				if (`i'<=`j') {
+				    local cnt=`cnt'+1    
+					local mcalendar `mcalendar' [g`i']t_`time1'_`j'*[wgt]w`i'+
+					local wcl      `wcl' 	  [wgt]w`i'+ 
+				}
+			}
+			local mcalendar `mcalendar' 0)/(`wcl'0)))
+			if `cnt'>0 {
+				nlcom `mcalendar', noheader
+			}
+		}
+	}
+
+end
+ 
  
 program csdid_event, sortpreserve rclass
 	syntax , [post estore(name)]
@@ -243,6 +291,46 @@ program csdid_event, sortpreserve rclass
 		return matrix table 	= `table'
 	}
 end 
+
+program csdid_event_alt, sortpreserve rclass
+	syntax , [post estore(name)]
+
+	** Define groups
+	** G
+	local tt : word count   `e(glev)'
+	local gmax: word `tt' of `e(glev)' 
+	local gmin: word  1   of `e(glev)'
+	** t
+	local tt : word count   `e(tlev)'
+	local tmax: word `tt' of `e(tlev)' 
+	local tmin: word  1   of `e(tlev)'
+
+	local emin= `tmin'-`gmax'
+	local emax= `tmax'-`gmin'
+	display "Event Studies:Dynamic effects"
+	forvalues e = `emin'/`emax' {
+	 
+		local e_t `=cond(sign(`e')<0,"_","")'`=abs(`e')'
+		local wcl 
+		local evnt0 (E`e_t': ( ( 
+	 
+		foreach j in `e(tlev)' {
+			foreach i in `e(glev)' {		    
+				local time1 = min(`i'-1, `j'-1)
+
+					if `i'+`e'==`j' {
+						*display "g:`i' ; t: `time1' ; t1:`j'"
+						local evnt0 `evnt0'    [g`i']t_`time1'_`j'*[wgt]w`i'+
+						local wcl      `wcl' 	  [wgt]w`i'+				    
+					}
+				
+				}
+			}
+			local evnt0 `evnt0' 0)/(`wcl'0)))
+			nlcom `evnt0', noheader
+		}
+end 
+
  
 program stuff
 ************ Estat

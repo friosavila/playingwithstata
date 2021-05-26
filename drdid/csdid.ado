@@ -4,6 +4,7 @@
 ** 2 use semi balance (whenever att_gt exists)
 ** 3 use weak balance/crossection with cluster.
 
+*! v1.03 by FRA. Adding Balance checks
 *! v1.02 by FRA. added touse
 *! v1.01 by FRA. Make sure we have at least 1 not treated period.
 // and check that if no Never treated exist, we add extra variable for dummies.
@@ -40,24 +41,51 @@ syntax , [mydots(integer 10) maxdots(int 50)]
 	}
 end
 
-program csdid, eclass
+program csdid, sortpreserve eclass
 	syntax varlist(fv ) [if] [in] [iw], 	/// Basic syntax  allows for weights
 							[ivar(varname)] ///
 							time(varname)   ///
 							gvar(varname)  	/// Ppl either declare gvar
 							[notyet] 		/// att_gt basic option. May prepare others as Post estimation
-							[method(str) ]  // This allows other estimators
+							[method(str) bal(str) ]  // This allows other estimators
 	marksample touse
-	markout `touse' `ivar' `time' `gvar'
 	** First determine outcome and xvars
 	gettoken y xvar:varlist
+	markout `touse' `ivar' `time' `gvar' `y' `xvar'
 
 	** determine time0
 	if "`time0'"=="" {
 	    qui:sum `time' if `touse'
 		local time0 `r(min)'
 	}
-	** Checks If Gvar is even untreated
+	
+	** Check if panel is Full Balance
+	qui {
+	    // Only if panel
+	    if "`ivar'"!="" {
+			tempvar x1 x2
+			bysort `touse' `ivar':gen `x1'=_N if `touse'
+			qui:sum `x1'
+			local mxcol = `r(max)'
+			*bysort `touse' `time':gen `x2'=_N if `touse'
+			*noisily tab `x1'
+			if `r(min)'<`r(max)' {
+			    display in red "Panel is not balanced"
+				if "`bal'"=="full" {
+					display in red "Will use Only observations fully balanced (Max periods observed)"
+					replace `touse'=0 if `x1'<`mxcol'
+				}
+				if "`bal'"=="" {
+					display in red "Will use observations with Pair balanced (observed at t0 and t1)"
+				}
+				if "`bal'"=="unbal" {
+					display in red "Will use all observations (as if CS)"
+					local cluster `ivar'
+					local ivar    
+				}
+			}	
+		}
+	}
 	
 	** prepare loops over gvar.
 	*local att_gt att_gt
@@ -74,8 +102,7 @@ program csdid, eclass
 		tab `time' `gvar' if `touse'
 		error 1
 	}
-	tab `time' `gvar' if `touse'
-		tempname b v
+ 		tempname b v
  		foreach i of local glev {		
 		    foreach j of local tlev {
 				local mydots=`mydots'+1
