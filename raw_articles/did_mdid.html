@@ -108,7 +108,7 @@ For observations treated in the second period, for example, we could use the fol
 <p><img src="didxmdid_files/image014.png" alt="fig8"></p>
 <p>Consider the first panel. It compares data for G2 to those in G1. At T1, G2 is untreated, whereas G1 is treated both at T1 and T2. If the treatment effect were homogenous (a location shift), this may work. However, if the treatment affected both G1 and G2 differently (violating the parallel line assumption), then this 2x2 design will not identify Treatment effects (it may identify TE differences across both groups).
 The same thing would happen if we use a longer difference (second matrix) or if we look at G3.</p>
-<p>As a rule, if your “control” group includes unit that were treated as any point in time, It is a bad control, and the 2x2 DiD will not identify the TE.</p>
+<p>As a rule, if your “control” group includes unit that were treated as any point in the present or past, It is a bad control, and the 2x2 DiD will not identify the TE.</p>
 <h2 id="how-do-drdid-and-csdid-fit-here">How do DRDID and CSDID fit here?</h2>
 <p>DRDID is a doubly robust methodology that deals with how to get the best estimation from a 2x2 design. Specifically, how to get the best Average Treatment Effect. So you can use it for any of the square 2x2 combinations I show above (or others you can come up).</p>
 <p>CSDID on the other hand uses DRDID to get this ATT’s but only for “good” designs. Either those that identify ATT’s correctly, or those that can be used for testing parallel trends. More importantly, it avoids estimating bad DiD designs.</p>
