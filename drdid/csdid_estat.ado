@@ -1,3 +1,5 @@
+*! v1.2 FRA Adds the options for simple and calendar so it doesnt depend on consecutive years
+* also adds the option window
 *! v1 FRA Adds Safeguards to csdid calendar. Calendar starts after treatment
 ** Estat command for aggregators
 program csdid_estat, sortpreserve  
@@ -29,9 +31,11 @@ end
 program csdid_pretrend, sortpreserve rclass
 	local pretrend
 	foreach i in `e(glev)' {		
+   		local time1 = `e(time0)'
 		foreach j in `e(tlev)' {
-			local time1 = min(`i'-1, `j'-1)
+			*local time1 = min(`i'-1, `j'-1)
 			if `j'<`i' local pretrend `pretrend' ([g`i']t_`time1'_`j'=0)
+			if `j'<`i' local time1 = `j'							
 		}
 	}
 	display "Pretrend Test. H0 All Pre-treatment are equal to 0"
@@ -44,13 +48,15 @@ end
 program csdid_simple,  rclass sortpreserve
 	syntax , [post estore(name)]
 	local simple `simple' (simple: ( ( 
-	foreach j in `e(tlev)' {
-		foreach i in `e(glev)' {		
-			local time1 = min(`i'-1, `j'-1)
+	foreach i in `e(glev)' {
+   		local time1 = `e(time0)'
+		foreach j in `e(tlev)' {
+			*local time1 = min(`i'-1, `j'-1)
 			if (`i'<=`j') {
 				local simple `simple' [g`i']t_`time1'_`j'*[wgt]w`i'+
 				local wcl      `wcl' 	  [wgt]w`i'+
 			}
+			if `j'<`i' local time1 = `j'							
 		}
 	}
 	local simple `simple' 0)/(`wcl'0)))
@@ -88,14 +94,16 @@ program csdid_group, sortpreserve rclass
 	syntax , [post estore(name)]
 
 	foreach i in `e(glev)'  {		
+   		local time1 = `e(time0)'
 		local group `group' (g`i': ( ( 
 		local cnt=0
 		foreach j in `e(tlev)' {
-			local time1 = min(`i'-1, `j'-1)
+			*local time1 = min(`i'-1, `j'-1)
 			if (`i'<=`j') {
 						local cnt=`cnt'+1
 				local group `group' [g`i']t_`time1'_`j'+
 			}
+			if `j'<`i' local time1 = `j'			
 		}
 		local group `group' 0)/`cnt'))
 	}
@@ -133,14 +141,17 @@ program csdid_group_alt, sortpreserve rclass
 	syntax ,  
 	display "Group Effects"
 	foreach i in `e(glev)'  {		
+   		local time1 = `e(time0)'
 		local group (g`i': ( ( 
 		local cnt=0
 		foreach j in `e(tlev)' {
-			local time1 = min(`i'-1, `j'-1)
+			*local time1 = min(`i'-1, `j'-1)
 			if (`i'<=`j') {
 						local cnt=`cnt'+1
 				local group `group' [g`i']t_`time1'_`j'+
 			}
+			if `j'<`i' local time1 = `j'			
+
 		}
 		local group `group' 0)/`cnt'))
 		nlcom `group', noheader
@@ -152,20 +163,26 @@ program csdid_calendar, sortpreserve rclass
 	syntax , [post estore(name)]
 
 	** Verify Tlevel > glevel
-	local mint:word 1 of `e(glev)'	
+	local mint:word 1 of `e(glev)'
+	local time1 = `e(time0)'
 	foreach j in `e(tlev)' {
 		if `j' >= `mint' {
 		    local cnt=0    
 			local mcalendar   (t`j': ( ( 
 			macro drop _wcl
-			foreach i in `e(glev)' {		
-				local time1 = min(`i'-1, `j'-1)
-				if (`i'<=`j') {
-				    local cnt=`cnt'+1    
-					local mcalendar `mcalendar' [g`i']t_`time1'_`j'*[wgt]w`i'+
-					local wcl      `wcl' 	  [wgt]w`i'+ 
-				}
+*****************************************************************			
+			foreach i in `e(glev)' {
+				local time1 = `e(time0)'
+				foreach t in `e(tlev)' {
+					if (`i'<=`j' & `t'==`j') {
+						local cnt=`cnt'+1    
+						local mcalendar `mcalendar' [g`i']t_`time1'_`j'*[wgt]w`i'+
+						local wcl      `wcl' 	  [wgt]w`i'+ 
+					}					
+					if `t'<`i' local time1 = `t'			
+				}			    				
 			}
+*****************************************************************
 			local mcalendar `mcalendar' 0)/(`wcl'0)))
 			if `cnt'>0 local calendar `calendar' `mcalendar'
 		}
@@ -205,18 +222,24 @@ program csdid_calendar_alt, sortpreserve rclass
 	** Verify Tlevel > glevel
 	local mint:word 1 of `e(glev)'	
 	foreach j in `e(tlev)' {
+	    local cnj=`cnj'+1
 		if `j' >= `mint' {
 		    local cnt=0    
 			local mcalendar   (t`j': ( ( 
 			macro drop _wcl
-			foreach i in `e(glev)' {		
-				local time1 = min(`i'-1, `j'-1)
-				if (`i'<=`j') {
-				    local cnt=`cnt'+1    
-					local mcalendar `mcalendar' [g`i']t_`time1'_`j'*[wgt]w`i'+
-					local wcl      `wcl' 	  [wgt]w`i'+ 
-				}
+*****************************************************************			
+			foreach i in `e(glev)' {
+				local time1 = `e(time0)'
+				foreach t in `e(tlev)' {
+					if (`i'<=`j' & `t'==`j') {
+						local cnt=`cnt'+1    
+						local mcalendar `mcalendar' [g`i']t_`time1'_`j'*[wgt]w`i'+
+						local wcl      `wcl' 	  [wgt]w`i'+ 
+					}					
+					if `t'<`i' local time1 = `t'			
+				}			    				
 			}
+*****************************************************************			
 			local mcalendar `mcalendar' 0)/(`wcl'0)))
 			if `cnt'>0 {
 				nlcom `mcalendar', noheader
@@ -228,11 +251,26 @@ end
  
  
 program csdid_event, sortpreserve rclass
-	syntax , [post estore(name)]
+	syntax , [post estore(name) window(str)]
 
 	** Define groups
 	** G
-	local tt : word count   `e(glev)'
+	event_dist, glist(`e(glev)') tlist(`e(tlev)') 
+	local elist `r(vlist)'
+	** redefine windows
+	if "`window'"!="" {
+	    numlist "`window'", sort max(2) min(2)
+		local aux `r(numlist)'
+		local wmin:word 1 of `aux'
+		local wmax:word 2 of `aux'
+		
+		foreach i of local elist {
+		    if inrange(`i',`wmin',`wmax')   local eelist `eelist' `i'
+		}
+		local elist `eelist'			
+	}
+	
+	/*local tt : word count   `e(glev)'
 	local gmax: word `tt' of `e(glev)' 
 	local gmin: word  1   of `e(glev)'
 	** t
@@ -241,24 +279,23 @@ program csdid_event, sortpreserve rclass
 	local tmin: word  1   of `e(tlev)'
 
 	local emin= `tmin'-`gmax'
-	local emax= `tmax'-`gmin'
+	local emax= `tmax'-`gmin'*/
 
-	forvalues e = `emin'/`emax' {
+	foreach e of local elist {
 	 
 		local e_t `=cond(sign(`e')<0,"_","")'`=abs(`e')'
 		local wcl 
 		local evnt0 `evnt0' (E`e_t': ( ( 
-	 
-		foreach j in `e(tlev)' {
-			foreach i in `e(glev)' {		    
-				local time1 = min(`i'-1, `j'-1)
-
+		
+		foreach i in `e(glev)' {
+		    local time1 = `e(time0)'
+			foreach j in `e(tlev)' {
 					if `i'+`e'==`j' {
 						*display "g:`i' ; t: `time1' ; t1:`j'"
 						local evnt0 `evnt0'    [g`i']t_`time1'_`j'*[wgt]w`i'+
 						local wcl      `wcl' 	  [wgt]w`i'+				    
 					}
-				
+					if `j'<`i' local time1 = `j'			
 				}
 			}
 			local evnt0 `evnt0' 0)/(`wcl'0)))
@@ -297,32 +334,25 @@ program csdid_event_alt, sortpreserve rclass
 
 	** Define groups
 	** G
-	local tt : word count   `e(glev)'
-	local gmax: word `tt' of `e(glev)' 
-	local gmin: word  1   of `e(glev)'
-	** t
-	local tt : word count   `e(tlev)'
-	local tmax: word `tt' of `e(tlev)' 
-	local tmin: word  1   of `e(tlev)'
-
-	local emin= `tmin'-`gmax'
-	local emax= `tmax'-`gmin'
+	event_dist, glist(`e(glev)') tlist(`e(tlev)') 
+	local elist `r(vlist)'
+	
 	display "Event Studies:Dynamic effects"
-	forvalues e = `emin'/`emax' {
+	foreach e of local elist {
 	 
 		local e_t `=cond(sign(`e')<0,"_","")'`=abs(`e')'
 		local wcl 
 		local evnt0 (E`e_t': ( ( 
 	 
-		foreach j in `e(tlev)' {
-			foreach i in `e(glev)' {		    
-				local time1 = min(`i'-1, `j'-1)
-
+		foreach i in `e(glev)' {
+		    local time1 = `e(time0)'
+			foreach j in `e(tlev)' {		    
 					if `i'+`e'==`j' {
 						*display "g:`i' ; t: `time1' ; t1:`j'"
 						local evnt0 `evnt0'    [g`i']t_`time1'_`j'*[wgt]w`i'+
 						local wcl      `wcl' 	  [wgt]w`i'+				    
 					}
+					if `j'<`i' local time1 = `j'
 				
 				}
 			}
@@ -331,6 +361,25 @@ program csdid_event_alt, sortpreserve rclass
 		}
 end 
 
+program event_dist, rclass
+	syntax, glist(string) tlist(string)
+
+	foreach i of local tlist {
+		foreach j of local glist {
+			local eve `eve' `=`i'-`j''
+		}
+	}
+	numlist "`eve'", sort
+	local eve `r(numlist)'
+	local j .
+	foreach i of local eve {
+	    if `i'!=`j' {
+		    local vlist `vlist' `i'
+			local j `i'
+		}
+	}
+	return local vlist `vlist'
+end
  
 program stuff
 ************ Estat

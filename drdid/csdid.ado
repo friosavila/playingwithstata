@@ -63,13 +63,10 @@ program csdid, sortpreserve eclass
 	qui {
 	    // Only if panel
 	    if "`ivar'"!="" {
-			tempvar x1 x2
-			bysort `touse' `ivar':gen `x1'=_N if `touse'
-			qui:sum `x1'
-			local mxcol = `r(max)'
-			*bysort `touse' `time':gen `x2'=_N if `touse'
-			*noisily tab `x1'
-			if `r(min)'<`r(max)' {
+			tempvar isbal
+			mata:isbalanced("`ivar'","`touse'","`isbal'")
+
+			if scalar(`isbal')!=1 {
 			    display in red "Panel is not balanced"
 				if "`bal'"=="full" {
 					display in red "Will use Only observations fully balanced (Max periods observed)"
@@ -104,16 +101,23 @@ program csdid, sortpreserve eclass
 	}
  		tempname b v
  		foreach i of local glev {		
+			local time1 = `time0'
+ 
 		    foreach j of local tlev {
 				local mydots=`mydots'+1
 				sdots, mydots(`mydots')
-				
 				* Stata quirk: `notyet' is called `tyet' because "no" is removed
 			    if "`tyet'"=="" {
 				    ** This implements the Never treated
-					local time1 = min(`i'-1, `j'-1)
-					qui:capture:drdid `varlist' if inlist(`gvar',0,`i') & inlist(`time',`time1',`j') & `touse' [`weight'`exp'], ///
-										ivar(`ivar') time(`time') treatment(`tr') `method' stub(__) replace
+					///local time1 = `min(`i'-1, `j'-1)'
+					*display "inlist(`time',`time1',`j')"		
+					qui:capture:drdid `varlist' if inlist(`gvar',0,`i') ///
+														 & inlist(`time',`time1',`j') ///
+														 & `touse' [`weight'`exp'], ///
+														ivar(`ivar') time(`time') treatment(`tr') ///
+														`method' stub(__) replace
+												
+					*else 		local time1 = `j'
 *					matrix `b'=nullmat(`b'),e(b)
 *					matrix `v'=nullmat(`v'),e(V)
 					local eqname `eqname' g`i'
@@ -125,18 +129,19 @@ program csdid, sortpreserve eclass
 					if 	_rc==111	qui:gen _g`i'_`time1'_`j'=.
 					else 		ren __att    _g`i'_`time1'_`j'
 					local vlabrif `vlabrif' _g`i'_`time1'_`j'
-					
+					if `j'<`i' local time1 = `j'
 				}
 				else if "`tyet'"!="" {
 				    ** This will implement not yet treated.////////////////////
 					//////////////////////////////////////
 					qui:replace `tr'=`gvar'==`i' if `touse'
-					local time1 = min(`i'-1, `j'-1)
+					*local time1 = min(`i'-1, `j'-1)
 					* Use as controls those never treated and those not treated by time `j'>`i'
 					qui:capture:drdid `varlist' if (`gvar'==0 | `gvar'==`i' | `gvar'> `j') & inlist(`time',`time1',`j') & `touse' [`weight'`exp'], ///
 										ivar(`ivar') time(`time') treatment(`tr') `method' stub(__) replace
 *					matrix `b'=nullmat(`b'),e(b)
 *					matrix `v'=nullmat(`v'),e(V)
+					
 					local eqname `eqname' g`i'
 					local colname `colname'  t_`time1'_`j'
 					capture drop _g`i'_`time1'_`j'					
@@ -144,6 +149,7 @@ program csdid, sortpreserve eclass
 					if 	_rc==111	qui:gen _g`i'_`time1'_`j'=.
 					else 			ren __att    _g`i'_`time1'_`j'
 					local vlabrif `vlabrif' _g`i'_`time1'_`j'
+					if `j'<`i' local time1 = `j'	
 				}
 				local rifvar `rifvar' _g`i'_`time1'_`j'
 			}
@@ -185,6 +191,7 @@ program csdid, sortpreserve eclass
 	ereturn local estat_cmd csdid_estat
 	ereturn local glev 		`glev'
 	ereturn local tlev 		`tlev'
+	ereturn local time0		`time0'
 	ereturn local rif 		`rifvar'
 	ereturn local ggroup 	`gvar'
 	ereturn local id	 	`ivar'
@@ -228,6 +235,15 @@ mata:
 	VV=quadcross(all,all)/rows(all)^2
 	st_matrix(b,mean_y)
 	st_matrix(V,VV)
+}
+
+void isbalanced(string ivar, touse, isbal) {
+    real matrix xx, info
+	xx= st_data(.,ivar,touse)
+	xx=sort(xx,1)
+	info=panelsetup(xx,1)
+	info=info[,2]:-info[,1]:+1
+	st_numscalar(isbal,max(info)==min(info))
 }
 
 end

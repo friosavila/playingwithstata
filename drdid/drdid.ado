@@ -1,6 +1,7 @@
-*! version 1.36 17may2021 Changes with EP display options
+*! version 1.37 2jun2021 Add extra messages of 2x2 balance
+* version 1.36 17may2021 Changes with EP display options
 ** Goal. Make the estimator modular. That way other options can be added
-*! v1.35 DRDID for Stata 
+* v1.35 DRDID for Stata 
 * Added by AN and adapted by FRA
 * Added Version control (v14), Variables are no longer left after DRDID. But option stub is added 
 * for later, as CSDID will use those
@@ -122,6 +123,7 @@ program define drdid_wh, eclass sortpreserve byable(recall)
 	su `vals' if `touse', meanonly 
 	if  r(sum)!=2 {
 	    display in red "Time variable can only have 2 values in the working sample"
+		display in red "Yours have `r(sum)'"
 		error 1
 	}
 	else {
@@ -148,6 +150,7 @@ program define drdid_wh, eclass sortpreserve byable(recall)
  
 	if  r(sum)!=2 {
 	    display in red "Treatment variable can only have 2 values in the working sample"
+		display in red "Yours have `r(sum)'."
 		display "The lower value identifies the control group, whereas the higher one identifies the treated group."
 		error 1
 	}
