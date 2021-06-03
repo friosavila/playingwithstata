@@ -46,12 +46,13 @@ program csdid, sortpreserve eclass
 							[ivar(varname)] ///
 							time(varname)   ///
 							gvar(varname)  	/// Ppl either declare gvar
+							[cluster(varname)] /// 
 							[notyet] 		/// att_gt basic option. May prepare others as Post estimation
 							[method(str) bal(str) ]  // This allows other estimators
 	marksample touse
 	** First determine outcome and xvars
 	gettoken y xvar:varlist
-	markout `touse' `ivar' `time' `gvar' `y' `xvar'
+	markout `touse' `ivar' `time' `gvar' `y' `xvar' `cluster'
 
 	** determine time0
 	if "`time0'"=="" {
@@ -66,7 +67,7 @@ program csdid, sortpreserve eclass
 			** First check if data is Panel
 			tempname ispan
 			mata:ispanel("`ivar' `time'", "`touse'", "`ispan'") 
-			if scalar(`ispan')>=1 {
+			if scalar(`ispan')>1 {
 				display in red 	"{p}Repeated time values within panel `ivar'{p_end}" _n ///
 								"{p}You may want to use Repeated crosssection estimators {p_end}"
 				exit 451
@@ -168,23 +169,24 @@ program csdid, sortpreserve eclass
 			local eqname `eqname' wgt
 			local colname `colname'  w`i'
 		}
-		** Here we do the asymptotic	
+////////////////////////////////////////////////////////////////////////////////
 		preserve
 			tempvar wgtt
 			if "`exp'"!="" clonevar `wgtt'`exp'
 			else gen byte `wgtt'=1
 			qui:keep if `touse'
-			qui:keep `ivar' `time' `gvar' `vlabrif' `wgtt' 
+			qui:keep `ivar' `time' `gvar' `vlabrif' `wgtt' `cluster'
 			if "`ivar'"=="" {
 			    tempvar ivar
 				qui:gen double `ivar'=_n
 			}
-			collapse `time' `gvar' `vlabrif' `wgtt', by(`ivar')
+			collapse `time' `gvar' `vlabrif' `wgtt' `cluster', by(`ivar')
 			qui:tab `gvar', gen(gvar_)
 			qui:count if `gvar'==0
-			if r(N)>0 	mata:makerif("`vlabrif'","gvar_*","`wgtt'","`b'","`v'")
-			else 		mata:makerif("`vlabrif'","`gvar' gvar_*","`wgtt'","`b'","`v'")
+			if r(N)>0 	mata:makerif("`vlabrif'","gvar_*"       ,"`wgtt'","`b'","`v'","`cluster' ")
+			else 		mata:makerif("`vlabrif'","`gvar' gvar_*","`wgtt'","`b'","`v'","`cluster' ")
 		restore
+////////////////////////////////////////////////////////////////////////////////
 		matrix colname `b'=`colname'
 		matrix coleq   `b'=`eqname'
 		matrix colname `v'=`colname'
@@ -214,7 +216,7 @@ end
 
 /// This can be used for aggregation. Creates the matrixes we need.
 mata:
- void makerif(string scalar att_gt_ , pg_ , wgt_, b, V){	
+ void makerif(string scalar att_gt_ , pg_ , wgt_, b, V, clv){	
     real matrix att_gt, pg, all, wgt
 	att_gt	= st_data(.,att_gt_)
 	pg    	= st_data(.,pg_)
@@ -241,9 +243,47 @@ mata:
  
 	// estimate Variance Covariance assuming SUper normal
 	real matrix VV
-	VV=quadcross(all,all)/rows(all)^2
 	st_matrix(b,mean_y)
+	
+	if (clv==" ") {	
+		VV=quadcross(all,all)/rows(all)^2
+	}
+	else {
+		real scalar cln
+		real matrix clvar
+		clvar=st_data(.,clv)
+		clusterse(all,clvar,VV,cln)
+	}
 	st_matrix(V,VV)
+}
+
+void clusterse(real matrix iff, cl, V, real scalar cln){
+    /// estimates Clustered Standard errors
+    real matrix ord, xcros, ifp, info, vv 
+	//1st get the IFS and CL variable. 
+	//iiff = st_data(.,rif,touse)
+	//cl   = st_data(.,clvar,touse)
+	// order and sort them, Make sure E(IF) is zero.
+	ord  = order(cl,1)
+	//iiff = iiff:-mean(iiff)
+	iiff = iiff[ord,]
+	cl   = cl[ord,]
+	// check how I cleaned data!
+	info  = panelsetup(cl,1)
+	// faster Cluster? Need to do this for mmqreg
+	ifp   = panelsum(iiff,info)
+	xcros = quadcross(ifp,ifp)
+	real scalar nt, nc
+	nt=rows(iiff)
+	nc=rows(info)
+	V =	xcros/(nt^2)
+	cln=nc
+	//*nc/(nc-1)
+	//st_matrix(V,    vv)
+	//st_numscalar(ncl, nc)
+	//        ^     ^
+	//        |     |
+	//      stata   mata
 }
 
 void isbalanced(string ivar, touse, isbal) {

@@ -2173,7 +2173,7 @@ void drdid_imp_rc1(string scalar y_, yy_, xvar_ , tmt_, trt_, psv_, pxb_, wgt_ ,
 
 // Clustered Standard errors
 
-real matrix clusterse(string scalar rif, clvar, touse, V,ncl){
+void clusterse(string scalar rif, clvar, touse, V,ncl){
     /// estimates Clustered Standard errors
     real matrix ord, xcros, ifp, info, vv, iiff , cl
 	//1st get the IFS and CL variable. 
