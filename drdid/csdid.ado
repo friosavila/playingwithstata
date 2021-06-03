@@ -63,7 +63,16 @@ program csdid, sortpreserve eclass
 	qui {
 	    // Only if panel
 	    if "`ivar'"!="" {
-			tempvar isbal
+			** First check if data is Panel
+			tempname ispan
+			mata:ispanel("`ivar' `time'", "`touse'", "`ispan'") 
+			if scalar(`ispan')>=1 {
+				display in red 	"{p}Repeated time values within panel `ivar'{p_end}" _n ///
+								"{p}You may want to use Repeated crosssection estimators {p_end}"
+				exit 451
+			}
+			
+			tempname isbal
 			mata:isbalanced("`ivar'","`touse'","`isbal'")
 
 			if scalar(`isbal')!=1 {
@@ -244,6 +253,13 @@ void isbalanced(string ivar, touse, isbal) {
 	info=panelsetup(xx,1)
 	info=info[,2]:-info[,1]:+1
 	st_numscalar(isbal,max(info)==min(info))
+}
+
+void ispanel(string itvar, touse, ispan) {
+    real matrix xx, info
+	xx= st_data(.,itvar,touse)
+	info=uniqrows(xx,1)[,3]
+	st_numscalar(ispan,max(info))
 }
 
 end
