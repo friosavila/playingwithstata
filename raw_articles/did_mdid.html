@@ -24,7 +24,7 @@
     </head>
     <body class="vscode-body vscode-light">
         <h1 id="understanding-what-went-wrong-with-did-or-dnddddiff-in-diff">Understanding what went wrong with DID (or DnD/DD/Diff in Diff)?</h1>
-<p>So, as you may have read on my posts on Twitter, I've been working closely with developing a Stata command for the DID estimator proposed by Callaway and Sant'Anna (2021).</p>
+<p>So, as you may have read on my posts on Twitter, I've been working closely with developing a Stata command for the DID estimator proposed by Callaway and Sant'Anna (2020).</p>
 <p>One of the payoffs of doing this, while trying to read or attend presentations on DID estimators, is that after so much coding and reading, you do end up understanding a few of the concepts better, in particular why some strategies (like the infamous Two-way-Fixed-effect TWFE) may not produce correct estimates.</p>
 <p>I'll try to keep things simple, to improve the intuition. Let's get started.</p>
 <h2 id="did-2x2-canonical-design">DiD 2x2 Canonical Design</h2>
@@ -36,7 +36,7 @@
 <p><img src="didxmdid_files/image001.png" alt="fig1"></p>
 <p>To simplify notation, I’ll assume that all the -yXY- represent the average outcome for the group -X- (treated =1 or untreated=0) at time Y (Pre=0 and post =1).</p>
 <blockquote>
-<p>how do we estimate the treatment effects? or how we cannot do it?</p>
+<p>how do we estimate the treatment effects? </p>
 </blockquote>
 <p>We know that the treatment occurred in T=1. One may be willing to estimate the TE by simply obtaining the difference in the outcome between treated and not-treated groups “y11-y01” (First D).</p>
 <p>This, however, would be incorrect, as this difference accounts for the treatment effect and a “self-selection bias”. In other words, there could be differences in their average outcomes because both groups were different to begin with.</p>
@@ -70,18 +70,18 @@
 <p>Assume that you have 4 periods: T=0, 1, 2, 3; and 4 “groups” G = Never treated (NT), 1,2,3</p>
 <p>The idea of the “T” as a time variable is similar to the 2x2 design. What changes is the idea of the treatment identifier.</p>
 <p>Before, I was using the name “TR”, to identify treated (1) or untreated (0) units. However, when adding more time periods into the analysis, we add the possibility that units can be “treated” at different points in time, or Never treated at all.</p>
-<p>Callaway and Sant’Anna (2020) using the letter G to identify this variable, but use “infinity” to refer to observations that are never treated (at least in the data on hand). I will not assign a number, and call it never treated (NT for short).</p>
-<p>Notice that I ignore the option that a group is “always” treated. Because we cannot really identify anything about them.</p>
+<p>Callaway and Sant’Anna (2020) use the letter G to identify this variable, but use “infinity” to refer to observations that are never treated (at least in the data on hand). I will not assign a number, and call it never treated (NT for short).</p>
+<p>Notice that I ignore the case that a group is “always” treated. Because we cannot really identify anything about them (we cannot see their outcomes before treatment) </p>
 <p>This TxG design would look like the following (in matrix form):</p>
 <p><img src="didxmdid_files/image002.png" alt="fig2"></p>
-<p>All blue cells are units that have been effectively treated, whereas the orange cells are observations that could be used as potential controls, because they have not been treated yet. The cells in green correspond to the never treated units. This are in essence the perfect controls, because they have never been treated. Thus, unless spill over exists (which lets assume they don’t), you can always use NT units to make GOOD 2x2 DiD.</p>
+<p>All blue cells are units that have been effectively treated, whereas orange cells are observations that could be used as potential controls, because they have not been treated yet. The cells in green correspond to the never treated units. These are in essence the perfect controls, because they have never been treated. Thus, unless spill over exists (which lets assume they don’t), you can always use NT units to make GOOD 2x2 DiD.</p>
 <p>Here is where the connection to the 2x2 design starts, which also may explain why the TWFE model, may sometimes get it wrong.</p>
 <p>From a technical point of view (read for example Goodman-Bacon 2019), the traditional TWFE model obtains a parameter for TE that is the average of all possible 2x2 designs that could be constructed from the above matrix. However, not all of them are good ones!.</p>
 <p>Some of the 2x2 combinations will provide interesting and meaningful results:</p>
 <ul>
 <li>You can use some of them to calculate Treatment effects.</li>
-<li>Some can be used for testing assumptions regarding parallel trends.
-Some, however, will be combinations that are not useful, and may lead you to incorrect conclusions.</li>
+<li>Some can be used for testing assumptions regarding parallel trends.</li>
+<li>Some, however, will be combinations that are not useful, and may lead you to incorrect conclusions.</li>
 </ul>
 <h2 id="first-the-good">First the good</h2>
 <p>Lets say, we are interested in the treatment effect only for the group that was first treated in period 1 (G=1).</p>
@@ -110,7 +110,7 @@ For observations treated in the second period, for example, we could use the fol
 The same thing would happen if we use a longer difference (second matrix) or if we look at G3.</p>
 <p>As a rule, if your “control” group includes unit that were treated as any point in the present or past, It is a bad control, and the 2x2 DiD will not identify the TE.</p>
 <h2 id="how-do-drdid-and-csdid-fit-here">How do DRDID and CSDID fit here?</h2>
-<p>DRDID is a doubly robust methodology that deals with how to get the best estimation from a 2x2 design. Specifically, how to get the best Average Treatment Effect. So you can use it for any of the square 2x2 combinations I show above (or others you can come up).</p>
+<p>DRDID is a doubly robust methodology that deals with how to get the best estimation from a 2x2 design. Specifically, how to get the best Average Treatment Effect on the treated. So you can use it for any of the square 2x2 combinations I show above (or others you can come up).</p>
 <p>CSDID on the other hand uses DRDID to get this ATT’s but only for “good” designs. Either those that identify ATT’s correctly, or those that can be used for testing parallel trends. More importantly, it avoids estimating bad DiD designs.</p>
 <p>In addition to that, because there are so many numbers to follow, It summarizes the results by averaging ATT’s based on some criteria, like averaging effects by G, by T, or by length of treatment (events Study equivalent).</p>
 <p>All right, thanks for reading. Hope you find this useful!</p>

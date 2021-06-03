@@ -48,31 +48,12 @@ program csdid, sortpreserve eclass
 							gvar(varname)  	/// Ppl either declare gvar
 							[cluster(varname)] /// 
 							[notyet] 		/// att_gt basic option. May prepare others as Post estimation
-							[saverif(name) replace ]    ///
-							[method(str) bal(str)  ]  // This allows other estimators
+							[method(str) bal(str) ]  // This allows other estimators
 	marksample touse
 	** First determine outcome and xvars
 	gettoken y xvar:varlist
 	markout `touse' `ivar' `time' `gvar' `y' `xvar' `cluster'
 
-	** Confirm if new file exists
-	if "`saverif'"!="" {
-	    capture confirm new file "`saverif'.dta"
-		if _rc!=0 {
-			if "`replace'"=="" {
-			    display in red "File `saverif'.dta already exists"
-				display in red "Please use a different file name or use -replace-"
-				exit 602
-			}
-			else {
-			    display "File `saverif'.dta will be replaced"
-			}
-		}
-		else {
-		    display "File `saverif'.dta will be used to save all RIFs"
-		}
-	}
-	
 	** determine time0
 	if "`time0'"=="" {
 	    qui:sum `time' if `touse'
@@ -199,25 +180,12 @@ program csdid, sortpreserve eclass
 			    tempvar ivar
 				qui:gen double `ivar'=_n
 			}
-			collapse `time' `gvar' `vlabrif' `wgtt' `cluster', by(`ivar') fast
-			
-			ren `wgtt' __wgt__
-			label var  __wgt__  "Weight Variable"
-			qui:levelsof `gvar', local(glev)
-			foreach i of local glev {
-				qui:gen byte gvar_`i'=`gvar'==`i'
-			}
+			collapse `time' `gvar' `vlabrif' `wgtt' `cluster', by(`ivar')
+			qui:tab `gvar', gen(gvar_)
 			qui:count if `gvar'==0
-			if r(N)>0 	noisily mata:makerif("`vlabrif'","       gvar_*","__wgt__","`b'","`v'","`cluster' ")
-			else 		noisily mata:makerif("`vlabrif'","`gvar' gvar_*","__wgt__","`b'","`v'","`cluster' ")
-			/// saving RIF
-			note: Data created with -csdid-. Contains all -RIFs- associated with model estimation. 
-			note: Command use: csdid `0'
-			if "`saverif'"!="" {
-			    save `saverif', replace
-			}
+			if r(N)>0 	noisily mata:makerif("`vlabrif'","gvar_*"       ,"`wgtt'","`b'","`v'","`cluster' ")
+			else 		noisily mata:makerif("`vlabrif'","`gvar' gvar_*","`wgtt'","`b'","`v'","`cluster' ")
 		restore
-		capture drop `vlabrif'
 ////////////////////////////////////////////////////////////////////////////////
 		matrix colname `b'=`colname'
 		matrix coleq   `b'=`eqname'
@@ -238,7 +206,6 @@ program csdid, sortpreserve eclass
 	ereturn local rif 		`rifvar'
 	ereturn local ggroup 	`gvar'
 	ereturn local id	 	`ivar'
-	ereturn local riffile	`saverif'
 	/// Add here Cluster var and number of Clusters.
 	if  "`tyet'"=="" ereturn local control_group "Never Treated"
 	if  "`tyet'"!="" ereturn local control_group "Not yet Treated"

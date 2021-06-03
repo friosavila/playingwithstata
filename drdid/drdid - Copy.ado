@@ -68,11 +68,9 @@ program define drdid_wh, eclass sortpreserve byable(recall)
 							ipwra 						///
 							all  						///
 							rc1 						///
-							wboot 						///
+							boot 						///
 							reps(int 999) 				///
 							bwtype(int 1)  				/// Hidden option
-							seed(str)					/// set seed
-							Level(int 95)				/// CI level
 							stub(name) replace 			/// to avoid overwritting
 							cluster(varname)			/// For Cluster
 							*							///
@@ -203,9 +201,8 @@ program define drdid_wh, eclass sortpreserve byable(recall)
 	
 	local 01 touse(`touse') tmt(`tmt') trt(`trt') y(`y') 	///
 			 xvar(`xvar') `isily' ivar(`ivar') tag(`tag')	///
-			 weight(`wgt') stub(`stub') ///
-			  treatvar(`treatment') `rc1' cluster(`cluster') ///
-			 `wboot' reps(`reps')  bwtype(`bwtype') level(`level') seed(`seed')
+			 weight(`wgt') stub(`stub') `boot' reps(`reps') ///
+			 bwtype(`bwtype') treatvar(`treatment') `rc1' cluster(`cluster')
 		
 	** Default will be IPT 
  	if "`estimator'"!="all" {
@@ -283,7 +280,7 @@ program define drdid_wh, eclass sortpreserve byable(recall)
 	}
 	
 	ereturn local cmd drdid
-	ereturn local method         `drimp'`dripw'`reg'`stdipw'`aipw'`ipwra'`all'
+	ereturn local method  `drimp'`dripw'`reg'`stdipw'`aipw'`ipwra'`all'
 	ereturn hidden local method2 `drimp'`dripw'`reg'`stdipw'`aipw'`ipwra'`all'	
 
     Display, bmatrix(e(b)) vmatrix(e(V)) `diopts' 
@@ -427,11 +424,9 @@ program define drdid_aipw, eclass
 			 weight(str) 			///
 			 stub(name) 			///	
 			 treatvar(string)		///
-			 wboot 					///
+			 boot 					///
 			 reps(int 999) 			///
-			 level(int 95) 			///
 			 bwtype(int 1) 			///
-			 seed(string)			///
 			 cluster(str)			///
 			 *						///
 			 ] 
@@ -459,20 +454,17 @@ program define drdid_aipw, eclass
 			** _delta
 			bysort `touse' `ivar' (`tmt'):gen double `__dy__'=`y'[2]-`y'[1] if `touse' 
 			gen byte `touse2'=`touse'*(`tmt'==0)
-		    tempname b V ciband ncl
+		    tempname b V ncl
 			mata:ipw_abadie_panel("`__dy__'","`xvar' ","`xb'","`psb' ","`psV' ","`psxb'","`trt'","`tmt'","`touse2'","`att'","`b'","`V'","`weight'")
 			
 			*replace `stub'att=. if `tmt'==1
 			
-			if "`cluster'"!="" & "`wboot'"=="" {
+			if "`cluster'"!="" & "`boot'"=="" {
 				mata:clusterse("`att'","`cluster'","`touse'", "`V'","`ncl'")
 				
 			}
-			else if "`wboot'"!="" {
-				if "`seed'"!="" set seed `seed'
-				local ci = `level'/100
-			    mata:mboot("`att'", "`touse'", "`V'","`ciband'", `reps', `bwtype', `ci')
-				noisily matrix list `ciband'
+			else if "`boot'"!="" {
+			    mata:mboot("`att'", "`touse2'", "`V'", `reps', `bwtype')
 			}
 			
 			matrix colname `b'= ATET:r1vs0.`treatvar'
@@ -500,19 +492,16 @@ program define drdid_aipw, eclass
 			tempname psb psV
 			matrix `psb'=e(b)
 			matrix `psV'=e(V)
-		    tempname b V ciband ncl
+		    tempname b V ncl
  
 			mata:ipw_abadie_rc("`y'","`xvar' ","`tmt'","`trt'","`psV'","`psxb'","`weight'","`touse'","`att'","`b'","`V'")
 			** Wbootstrap Multipler
-			if "`cluster'"!="" & "`wboot'"=="" {
+			if "`cluster'"!="" & "`boot'"=="" {
 				mata:clusterse("`att'","`cluster'","`touse'", "`V'","`ncl'")
 				
 			}
-			else if "`wboot'"!="" {
-				if "`seed'"!="" set seed `seed'
-				local ci = `level'/100
-			    mata:mboot("`att'", "`touse'", "`V'","`ciband'", `reps', `bwtype', `ci')
-				noisily matrix list `ciband'
+			else if "`boot'"!="" {
+			    mata:mboot("`att'", "`touse'", "`V'", `reps', `bwtype')
 			}
 			matrix colname `b' = ATET:r1vs0.`treatvar'
 			matrix colname `V' = ATET:r1vs0.`treatvar'
@@ -567,18 +556,16 @@ program define drdid_dripw, eclass
 				weight(str) 				///
 				rc1 						///
 				stub(name) 					///
-				treatvar(string)			///
-				wboot 						///
-				level(int 95) 				///
+				treatvar(string)			 ///
+				boot 						///
 				reps(int 999)				///
 				bwtype(int 1) 				///
-				seed(string)			///
-				cluster(str)				///
+				cluster(str)			///
 				*							///
 				]
 	** PS
 	tempvar att psxb __dy__ xb touse2
-	tempname psb psV regb regV  b V ciband 
+	tempname psb psV regb regV  b V
 	qui:gen double `att'=.
 	if "`ivar'"!="" {
 	    *display "Estimating IPW logit"
@@ -600,15 +587,12 @@ program define drdid_dripw, eclass
 			gen byte `touse2'=`touse'*(`tmt'==0)
 			mata:drdid_panel("`__dy__'","`xvar' ","`xb'","`psb'","`psV'","`psxb'","`trt'","`tmt'","`touse2'","`att'","`b'","`V'","`weight'")
 			**replace `stub'att=. if `tmt'==1
-			if "`cluster'"!="" & "`wboot'"=="" {
+			if "`cluster'"!="" & "`boot'"=="" {
 				mata:clusterse("`att'","`cluster'","`touse'", "`V'","`ncl'")
 				
 			}
-			else if "`wboot'"!="" {
-				if "`seed'"!="" set seed `seed'
-				local ci = `level'/100
-			    mata:mboot("`att'", "`touse'", "`V'","`ciband'", `reps', `bwtype', `ci')
-				noisily matrix list `ciband'
+			else if "`boot'"!="" {
+			    mata:mboot("`att'", "`touse2'", "`V'", `reps', `bwtype')
 			}
 			matrix colname `b'= ATET:r1vs0.`treatvar'
 			matrix colname `V'= ATET:r1vs0.`treatvar'
@@ -638,7 +622,7 @@ program define drdid_dripw, eclass
 			tempname psb psV
 			matrix `psb'=e(b)
 			matrix `psV'=e(V)
-		    tempname b V ciband ncl
+		    tempname b V ncl
 			*capture drop `stub'att
 			*gen double `stub'att=.
 			**ols 
@@ -669,15 +653,12 @@ program define drdid_dripw, eclass
 				local nle "Not Locally efficient"
 			}
 			////
-			if "`cluster'"!="" & "`wboot'"=="" {
+			if "`cluster'"!="" & "`boot'"=="" {
 				mata:clusterse("`att'","`cluster'","`touse'", "`V'","`ncl'")
 				
 			}
-			else if "`wboot'"!="" {
-				if "`seed'"!="" set seed `seed'
-				local ci = `level'/100
-			    mata:mboot("`att'", "`touse'", "`V'","`ciband'", `reps', `bwtype', `ci')
-				noisily matrix list `ciband'
+			else if "`boot'"!="" {
+			    mata:mboot("`att'", "`touse'", "`V'", `reps', `bwtype')
 			}			
 			matrix colname `b' = ATET:r1vs0.`treatvar'
 			matrix colname `V' = ATET:r1vs0.`treatvar'
@@ -737,11 +718,9 @@ program define drdid_reg, eclass
 			weight(str) 			///
 			stub(name) 				///
 			treatvar(string) 		///
-			wboot 					///
-			level(int 95) 			///
+			boot 					///
 			reps(int 999) 			///
 			bwtype(int 1) 			///
-			seed(string)			///
 			 cluster(str)			///
 			*						///
 			] 
@@ -751,7 +730,7 @@ program define drdid_reg, eclass
 	if "`ivar'"!="" {
 		qui {
 			tempvar __dy__ xb touse2
-			tempname regb regV b V ciband
+			tempname regb regV b V
 			bysort `touse' `ivar' (`tmt'):gen double	///
 				`__dy__'=`y'[2]-`y'[1] if `touse' 
 			`isily' reg `__dy__' `xvar' if `touse' & `trt'==0	///
@@ -766,15 +745,12 @@ program define drdid_reg, eclass
 			mata:reg_panel("`__dy__'", "`xvar' ", "`xb' " , "`trt'",	///
 				"`tmt'" , "`touse2'","`att'","`b'","`V'","`weight'") 
 			*replace `stub'att=. if `tmt'==1
-			if "`cluster'"!="" & "`wboot'"=="" {
+			if "`cluster'"!="" & "`boot'"=="" {
 				mata:clusterse("`att'","`cluster'","`touse'", "`V'","`ncl'")
 				
 			}
-			else if "`wboot'"!="" {
-				if "`seed'"!="" set seed `seed'
-				local ci = `level'/100
-			    mata:mboot("`att'", "`touse'", "`V'","`ciband'", `reps', `bwtype', `ci')
-				noisily matrix list `ciband'
+			else if "`boot'"!="" {
+			    mata:mboot("`att'", "`touse2'", "`V'", `reps', `bwtype')
 			}			
 			matrix colname `b' = ATET:r1vs0.`treatvar'
 			matrix colname `V' = ATET:r1vs0.`treatvar'
@@ -804,21 +780,18 @@ program define drdid_reg, eclass
 			predict double `y01'
 			matrix `regb01' = e(b)
 			matrix `regV01' = e(V)
-			tempname b V ciband ncl
+			tempname b V ncl
 			*capture drop `stub'att
 			*gen double `stub'att=.
 			mata:reg_rc("`y'","`y00' `y01'","`xvar' ",	///
 				"`tmt'","`trt'","`weight'","`touse'","`att'","`b'","`V'")
 				
-			if "`cluster'"!="" & "`wboot'"=="" {
+			if "`cluster'"!="" & "`boot'"=="" {
 				mata:clusterse("`att'","`cluster'","`touse'", "`V'","`ncl'")
 				
 			}
-			else if "`wboot'"!="" {
-				if "`seed'"!="" set seed `seed'
-				local ci = `level'/100
-			    mata:mboot("`att'", "`touse'", "`V'","`ciband'", `reps', `bwtype', `ci')
-				noisily matrix list `ciband'
+			else if "`boot'"!="" {
+			    mata:mboot("`att'", "`touse'", "`V'", `reps', `bwtype')
 			}			
 			matrix colname `b' = ATET:r1vs0.`treatvar'
 			matrix colname `V' = ATET:r1vs0.`treatvar'
@@ -870,11 +843,9 @@ program define drdid_stdipw, eclass
 			weight(str) 			///
 			stub(name) 				///
 			treatvar(string) 		///
-			wboot 					///
-			level(int 95) 			///
+			boot 					///
 			reps(int 999) 			///
 			bwtype(int 1) 			///
-			seed(string)			///
 			 cluster(str)			///
 			*						///
 			] 
@@ -887,7 +858,7 @@ program define drdid_stdipw, eclass
 		qui {		
 			`isily' logit `trt' `xvar' if `touse' & `tmt'==0 [iw = `weight']
 			tempvar psxb __dy__ xb touse2
-			tempname psb psV b V ciband
+			tempname psb psV b V
 			predict double `psxb', xb		
 			matrix `psb'=e(b)
 			matrix `psV'=e(V)
@@ -910,15 +881,12 @@ program define drdid_stdipw, eclass
 				"`psb'","`psV'","`psxb'","`trt'","`tmt'","`touse2'",	///
 				"`att'","`b'","`V'","`weight'")
 			*replace `stub'att=. if `tmt'==1
-			if "`cluster'"!="" & "`wboot'"=="" {
+			if "`cluster'"!="" & "`boot'"=="" {
 				mata:clusterse("`att'","`cluster'","`touse'", "`V'","`ncl'")
 				
 			}
-			else if "`wboot'"!="" {
-				if "`seed'"!="" set seed `seed'
-				local ci = `level'/100
-			    mata:mboot("`att'", "`touse'", "`V'","`ciband'", `reps', `bwtype', `ci')
-				noisily matrix list `ciband'
+			else if "`boot'"!="" {
+			    mata:mboot("`att'", "`touse2'", "`V'", `reps', `bwtype')
 			}			
 			matrix colname `b'= ATET:r1vs0.`treatvar'
 			matrix colname `V'= ATET:r1vs0.`treatvar'
@@ -945,19 +913,16 @@ program define drdid_stdipw, eclass
 			tempname psb psV
 			matrix `psb'=e(b)
 			matrix `psV'=e(V)
-			tempname b V ciband ncl
+			tempname b V ncl
 			*capture drop `stub'att
 			*gen `stub'att=.
 			mata:std_ipw_rc("`y'","`xvar' ","`tmt'","`trt'","`psV'","`psxb'","`weight'","`touse'","`att'","`b'","`V'")
-			if "`cluster'"!="" & "`wboot'"=="" {
+			if "`cluster'"!="" & "`boot'"=="" {
 				mata:clusterse("`att'","`cluster'","`touse'", "`V'","`ncl'")
 				
 			}
-			else if "`wboot'"!="" {
-				if "`seed'"!="" set seed `seed'
-				local ci = `level'/100
-			    mata:mboot("`att'", "`touse'", "`V'","`ciband'", `reps', `bwtype', `ci')
-				noisily matrix list `ciband'
+			else if "`boot'"!="" {
+			    mata:mboot("`att'", "`touse'", "`V'", `reps', `bwtype')
 			}			
 			matrix colname `b' = ATET:r1vs0.`treatvar'
 			matrix colname `V' = ATET:r1vs0.`treatvar'
@@ -1014,10 +979,9 @@ program define drdid_sipwra, eclass
 			weight(str) 			///
 			stub(name) 				///
 			treatvar(string)		///
-			reps(int 999) 			/// Notused here
-			bwtype(int 1) 			/// not used here
-			seed(string)			///
-			level(int 95) 			/// not used here
+			boot 					///
+			reps(int 999) 			///
+			bwtype(int 1) 			///
 			cluster(str)			///
 			*						///
 			] 
@@ -1041,7 +1005,7 @@ program define drdid_sipwra, eclass
 		gen double `sy'= `__dy__'/`scl'		
 		qui:teffects ipwra (`sy' `xvar') (`trt' `xvar', logit)	///
 			if `touse' & `tmt'==0 [iw = `weight'] , atet `clopt'
-		tempname b V ciband ncl aux
+		tempname b V ncl aux
 		matrix `aux'=e(b)*`scl'
 		matrix `b'=`aux'[1,1]
 		matrix `aux'=e(V)*`scl'^2
@@ -1080,11 +1044,9 @@ program define drdid_imp, eclass sortpreserve
 			weight(str) 		///
 			rc1 stub(name)		///
 			treatvar(string)	///
-            wboot 				///
-			level(int 95) 		///
+            boot 				///
 			reps(int 999) 		///
 			bwtype(int 1) 		///
-			seed(string)			///
 			cluster(str)			///
 		*						///
 		] 
@@ -1097,7 +1059,7 @@ program define drdid_imp, eclass sortpreserve
 	}
 	
 	tempvar att  psxb __dy__ w0 xb
-	tempname iptb iptV regb regV b V ciband
+	tempname iptb iptV regb regV b V
 	
 	qui:gen double `att'=.
 	if "`ivar'"!="" {
@@ -1130,15 +1092,12 @@ program define drdid_imp, eclass sortpreserve
 				"`att'","`b'","`V'","`weight'")	
 ********************************************************************************				
 ********************************************************************************
-			if "`cluster'"!="" & "`wboot'"=="" {
+			if "`cluster'"!="" & "`boot'"=="" {
 				mata:clusterse("`att'","`cluster'","`touse'", "`V'","`ncl'")
 				
 			}
-			else if "`wboot'"!="" {
-				if "`seed'"!="" set seed `seed'
-				local ci = `level'/100
-			    mata:mboot("`att'", "`touse'", "`V'","`ciband'", `reps', `bwtype', `ci')
-				noisily matrix list `ciband'
+			else if "`boot'"!="" {
+			    mata:mboot("`att'", "`touse2'", "`V'", `reps', `bwtype')
 			}
 			
 			matrix colname `b'= ATET:r1vs0.`treatvar'
@@ -1192,7 +1151,7 @@ program define drdid_imp, eclass sortpreserve
 			predict double `y11'
 			matrix `regb11' =e(b)
 			matrix `regV11' =e(V)
-			tempname b V ciband ncl
+			tempname b V ncl
 			
 			if "`rc1'"=="" {
 				mata:drdid_imp_rc("`y'","`y00' `y01' `y10' `y11'",	///
@@ -1206,15 +1165,12 @@ program define drdid_imp, eclass sortpreserve
 				local nle "Not Locally efficient"
 			}
 			
-			if "`cluster'"!="" & "`wboot'"=="" {
+			if "`cluster'"!="" & "`boot'"=="" {
 				mata:clusterse("`att'","`cluster'","`touse'", "`V'","`ncl'")
 				
 			}
-			else if "`wboot'"!="" {
-				if "`seed'"!="" set seed `seed'
-				local ci = `level'/100
-			    mata:mboot("`att'", "`touse'", "`V'","`ciband'", `reps', `bwtype', `ci')
-				noisily matrix list `ciband'
+			else if "`boot'"!="" {
+			    mata:mboot("`att'", "`touse'", "`V'", `reps', `bwtype')
 			}			
 			matrix colname `b'=ATET:r1vs0.`treatvar'
 			matrix colname `V'=ATET:r1vs0.`treatvar'
@@ -2256,18 +2212,16 @@ real matrix mboot_did(pointer scalar y, real scalar reps, bwtype) {
 	n=rows(yy)
 	k1=((1+sqrt(5))/(2*sqrt(5)))
 	k2=0.5*(1+sqrt(5)) 
-	// WBootstrap:Mammen 
-	if (bwtype==1) {			
-		for(i=1;i<=reps;i++){
+	for(i=1;i<=reps;i++){
+		// WBootstrap:Mammen 
+		if (bwtype==1) {			
 			bsmean[i,]=mean(yy:*(k2:-sqrt(5)*(runiform(n,1):<k1)) )	
 		}
-	}
-	else if (bwtype==2) {
-		for(i=1;i<=reps;i++){
-	// -1 or 1:Rademacher distribution:
+		else if (bwtype==2) {
+		// -1 or 1:Rademacher distribution:
 			bsmean[i,]=mean(yy:*(1:-2*runiformint(n,1,0,1) ) )	
-		}
-	}	
+		}	
+	}
 	return(bsmean)
 }
  
@@ -2292,19 +2246,12 @@ real scalar qtp(real matrix y, real scalar p) {
 	return(y[q,])
 }
  
-void mboot(string scalar rif, touse, vv, cband, real scalar reps, bwtype, ci ) {
+void mboot(string scalar rif, touse, vv, real scalar reps, bwtype ) {
     real matrix y, fr
 	y=st_data(., rif, touse )
-	// this gets the Bootstraped values
 	fr=mboot_did(&y, reps, bwtype)
-	real matrix ifse , ccb
-	ifse = iqrse(fr)
-	// this gets Tvalue
-	ccb=(  mean(y):-qtp(abs(fr :/ ifse),ci)* ifse ,  
-	       mean(y):+qtp(abs(fr :/ ifse),ci)* ifse   )
 	//sqrt(variance(fr))
 	st_matrix(vv,iqrse(fr)^2)
-	st_matrix(cband,ccb)
 }
 
 /// qtp(abs(xx/ iqrse(xx)),.95) 

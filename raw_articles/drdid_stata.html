@@ -46,7 +46,8 @@
 <h2 id="drdid-in-action">drdid in action</h2>
 <p>I tried to keep the syntax of drdid relatively standard. At least standard with other commands I have worked before. So some of the options may change slightly, as other features are integrated.</p>
 <p>The general syntax of the command is as follows</p>
-<pre><code><code><div>drdid depvar [indepvar] [if] [in] [iw], [ivar(varname)] time(varname) tr(varname) [estimator] [boot cluster(varname) stub(string) replace]
+<pre><code><code><div>drdid depvar [indepvar] [if] [in] [iw], [ivar(varname)] 
+    time(varname) tr(varname) [estimator] [wboot cluster(varname) stub(string) replace]
 </div></code></code></pre>
 <p>Here an explanation of all the pieces:</p>
 <ul>
@@ -66,7 +67,7 @@
 <li><strong><code>all</code></strong> Provides all estimators. Perhaps you may find it useful for robustness. (I did it for replication). This results cannot be used to make comparison across estimators.</li>
 </ul>
 </li>
-<li><strong><code>boot</code></strong>: When used, the command will estimate the 1-step wild-bootstrap (or multiplier bootstrap), with 999 repetions. It currently implements Mammen(1993) approach. This does not work after <strong><code>all</code></strong> or after <strong>`ipwra'</strong>.</li>
+<li><strong><code>wboot</code></strong>: When used, the command will estimate the 1-step wild-bootstrap (or multiplier bootstrap), with 999 repetions. It currently implements Mammen(1993) approach. This does not work after <strong><code>all</code></strong> or after <strong>`ipwra'</strong>.</li>
 <li><strong><code>cluster</code></strong>: When used, the command will estimate the clustered standard errors based. This option does not yet work in combination with <em><code>boot</code></em></li>
 <li><strong><code>stub</code></strong>: When used, the <em>recentered influence function</em> will be stored in the dataset with the name <strong><code>stub</code></strong><em><code>att</code></em>. If the variable already exists, you can request to overwrite it using <code>replace</code>. This option does not work when one requests <strong>all</strong> estimators, or when <strong><code>ipwra</code></strong> estimator is requested.</li>
 </ul>
