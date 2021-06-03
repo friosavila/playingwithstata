@@ -206,7 +206,7 @@ program csdid, sortpreserve eclass
 	ereturn local rif 		`rifvar'
 	ereturn local ggroup 	`gvar'
 	ereturn local id	 	`ivar'
-	
+	/// Add here Cluster var and number of Clusters.
 	if  "`tyet'"=="" ereturn local control_group "Never Treated"
 	if  "`tyet'"!="" ereturn local control_group "Not yet Treated"
 	display _n "Callaway and Sant'Anna (2021)"
