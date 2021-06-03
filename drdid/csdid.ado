@@ -183,8 +183,8 @@ program csdid, sortpreserve eclass
 			collapse `time' `gvar' `vlabrif' `wgtt' `cluster', by(`ivar')
 			qui:tab `gvar', gen(gvar_)
 			qui:count if `gvar'==0
-			if r(N)>0 	mata:makerif("`vlabrif'","gvar_*"       ,"`wgtt'","`b'","`v'","`cluster' ")
-			else 		mata:makerif("`vlabrif'","`gvar' gvar_*","`wgtt'","`b'","`v'","`cluster' ")
+			if r(N)>0 	noisily mata:makerif("`vlabrif'","gvar_*"       ,"`wgtt'","`b'","`v'","`cluster' ")
+			else 		noisily mata:makerif("`vlabrif'","`gvar' gvar_*","`wgtt'","`b'","`v'","`cluster' ")
 		restore
 ////////////////////////////////////////////////////////////////////////////////
 		matrix colname `b'=`colname'
@@ -257,7 +257,7 @@ mata:
 	st_matrix(V,VV)
 }
 
-void clusterse(real matrix iff, cl, V, real scalar cln){
+void clusterse(real matrix iiff, cl, V, real scalar cln){
     /// estimates Clustered Standard errors
     real matrix ord, xcros, ifp, info, vv 
 	//1st get the IFS and CL variable. 
