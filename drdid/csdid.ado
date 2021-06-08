@@ -203,8 +203,8 @@ program csdid, sortpreserve eclass
 			
 			ren `wgtt' __wgt__
 			label var  __wgt__  "Weight Variable"
-			qui:levelsof `gvar', local(glev)
-			foreach i of local glev {
+			qui:levelsof `gvar', local(gglev) 
+			foreach i of local gglev {
 				qui:gen byte gvar_`i'=`gvar'==`i'
 			}
 			qui:count if `gvar'==0
