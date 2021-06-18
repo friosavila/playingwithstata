@@ -2,12 +2,12 @@ capture program drop twfe_setup
 ** Standard DD with Panel data
 program twfe_setup
 	// Data size
-	global ids    100   // # of Individuals
-	global time    10   // # of time periods
+	global ids    1000   // # of Individuals
+	global time    30   // # of time periods
 
 	// Common and Individual trends
 	global xtrend   0.5 // common
-	global itrend   0.5 // SHould be a positive number. If 0 no individual trend
+	global itrend   .5 // SHould be a positive number. If 0 no individual trend
 
 	// Size of Idiosyncratic error
 	global noise    2   // Size of Noise (in sd) Idiosyncratic noise
@@ -44,7 +44,7 @@ end
 	simulate, reps(100):sim1
 	sum
 	// True effects 
-	reg tte i.event0_r  
+	reg tte i.wtreat  
 	margins, dydx(event0_r) noestimcheck plot
  	// TWFE REG
 	
