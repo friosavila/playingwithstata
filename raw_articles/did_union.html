@@ -99,7 +99,7 @@ ssc install event_plot
 did_imputation ln_wage id year gvar, horizons(0/15) pretrend(10) autosample
 event_plot, default_look
 </div></code></code></pre>
-<img src="/raw_articles/did_union/event1.png">
+<img src="playingwithstata/raw_articles/did_union/event1.png">
 <p>These seem as very promising results. Unions do have a positive impact on wages (about 15%), there is some anticipation, two or three periods before they change union-status. Perhaps due to wage negotiations or job change. But going beyond 3 or 4 periods in the past, I could argue the parallel trends asusmption holds.</p>
 <p>The story also makes sense when you look into weeks work and hours of work!</p>
 <pre><code><code><div>ssc install addplot
@@ -111,8 +111,8 @@ did_imputation hours id year gvar, horizons(0/15) pretrend(10) autosample
 event_plot, default_look 
 addplot:,title(&quot;Hours work per week&quot;) legend(off)
 </div></code></code></pre>
-<img src="/raw_articles/did_union/event2.png" width = 40%>
-<img src="/raw_articles/did_union/event3.png" width = 40%>
+<img src="playingwithstata/raw_articles/did_union/event2.png" width = 40%>
+<img src="playingwithstata/raw_articles/did_union/event3.png" width = 40%>
 <p>Yes, there are some pre-trends, but the story seems reasonable. Higher wages, work longer shifts (full time rather than part time?) and more weeks per year.</p>
 <p>But, how much can I believe these results.</p>
 <h2 id="falsification-test">Falsification test</h2>
@@ -134,10 +134,10 @@ did_imputation ln_wage id year gvar2, horizons(0/15) pretrend(10) autosample
 event_plot, default_look 
 </div></code></code></pre>
 <p>Because this falsification test is based on random assignment, I will use different seeds (feel free to change that) for the plots below. What is important, however, is that in this design there shouldnt be any treatment effects or anticipation, or pre-trends. Any deviations from that should be of concern.</p>
-<img src="/raw_articles/did_union/event_f1.png" width = 40%>
-<img src="/raw_articles/did_union/event_f2.png" width = 40%>
-<img src="/raw_articles/did_union/event_f3.png" width = 40%>
-<img src="/raw_articles/did_union/event_f4.png" width = 40%>
+<img src="playingwithstata/raw_articles/did_union/event_f1.png" width = 40%>
+<img src="playingwithstata/raw_articles/did_union/event_f2.png" width = 40%>
+<img src="playingwithstata/raw_articles/did_union/event_f3.png" width = 40%>
+<img src="playingwithstata/raw_articles/did_union/event_f4.png" width = 40%>
 <p>Unfortunately, that is precisely what is being observed. In all the examples I show above, I find that there is some kind of treatment effect, with problems of anticipation.</p>
 <p>The anticipation effect is just as big or bigger than the original data suggested. The wage premium effect is smaller (around 10%) and is often significant for the first few periods. However, based on the design, we shouldnt be observing this.</p>
 <h2 id="conclusions">Conclusions</h2>
