@@ -23,7 +23,7 @@
  
  bysort id (year):egen everunion= max(union)
  drop if everunion==1
- 
+ ss
  ** falsification
  forvalues i = 1 / 4 {
  set seed `i'

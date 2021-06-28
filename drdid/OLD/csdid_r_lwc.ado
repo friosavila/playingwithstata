@@ -5,8 +5,6 @@
 ** 3 use weak balance/crossection with cluster.
 ** Ultimate check. Do thestatistics Once.
 
-*! v1.3  by FRA. Overhaul Change in how Weights are estimated. All effects are now in Mata.
-* All effects in mata. Quick!
 *! v1.03 by FRA. Adding Balance checks
 *! v1.02 by FRA. added touse
 *! v1.01 by FRA. Make sure we have at least 1 not treated period.
@@ -44,80 +42,6 @@ syntax , [mydots(integer 10) maxdots(int 50)]
 	}
 end
 
-
-program csdid, sortpreserve eclass
-        version 14
-        if replay() {
-                if `"`e(cmd)'"' != "csdid" { 
-                        error 301
-                }
-                else {
-                        Display `0'
-                }
-                exit
-        }
-		if runiform()<.001 {
-				easter_egg
-		}
-		
-		csdid_r `0'
-		
-        *ereturn local cmdline `"drdid `0'"'
-end
-
- program define Display
-                syntax [, bmatrix(passthru) vmatrix(passthru) *]
-                
-        _get_diopts diopts rest, `options'
-        local myopts `bmatrix' `vmatrix'        
-                if ("`rest'"!="") {
-                                display in red "option {bf:`rest'} not allowed"
-                                exit 198
-                }
-                
-                _S_Me_thod
-                local omodel "`s(omodel)'"
-                local tmodel "`s(tmodel)'"
-
-                
-                if ("`e(method)'"!="all") {
-                        _coef_table_header, title(Difference-in-difference with Multiple Time Periods) 
-                        noi display as text "Outcome model  : {res:`omodel'}"
-                        noi display as text "Treatment model: {res:`tmodel'}"
-                }
-                _coef_table,  `diopts' `myopts' neq(`e(neqr)')
- 
-end
-
-
-program define _S_Me_thod, sclass
-        if ("`e(method)'"=="drimp") {
-                local tmodel "inverse probability tilting"
-                local omodel "weighted least squares"
-        }
-        if ("`e(method)'"=="dripw") {
-                local tmodel "inverse probability"
-                local omodel "least squares"
-        }
-		if ("`e(method)'"=="aipw") {
-                local tmodel "inverse probability"
-                local omodel "weighted mean"
-        }
-        if ("`e(method)'"=="reg") {
-                local tmodel "none"
-                local omodel "regression adjustment"
-        }
-        if ("`e(method)'"=="stdipw") {
-                local tmodel "stabilized inverse probability"
-                local omodel "weighted mean"
-        }
-
-        sreturn local omodel "`omodel'"
-        sreturn local tmodel "`tmodel'"
-end
-
-
-
 program csdid_r, sortpreserve eclass
 	syntax varlist(fv ) [if] [in] [iw], 	/// Basic syntax  allows for weights
 							[ivar(varname)] ///
@@ -154,36 +78,9 @@ program csdid_r, sortpreserve eclass
 		}
 	}
 	
-	
     if "`agg'"=="" {
 		local agg attgt
 	}
-	
-	if !inlist("`agg'","attgt","simple","pretrend","group","calendar","event") {
-		display in red "Aggregation not Allowed"
-		exit 10
-	}
-	
-	if "`tyet'"=="" {
-		qui:count if `touse' & `gvar'==0
-		if r(N)==0 {
-			local tyet notyet
-			display "No never treated observations found. Using Not yet treated data"
-		}	
-	}
-	
-	** checking for Min gvar being larger than min time
-	qui:sum `time' if `touse', meanonly 
-	local mintime=r(min)
-	qui:sum `gvar' if `touse' & `gvar'>0, meanonly 
-	local mingvar=r(min)
-	
-	if `mintime'>=`mingvar' {
-		display "Units always treated found. These will be excluded"
-		replace `touse'=0 if (`gvar'<=`mintime') & (`gvar'>0) & `touse'
-	}
-	
-	
 	** determine time0
 	if "`time0'"=="" {
 	    qui:sum `time' if `touse'
@@ -305,14 +202,10 @@ program csdid_r, sortpreserve eclass
 				local rifvar `rifvar' _g`i'_`time1'_`j'
 			}
 		}
-		** names for Weights To be changed
-		
+		** names for Weights
 		foreach i of local glev {
-			local neqr = `neqr'+1
-			foreach j of local tlev {
-				local eqname `eqname' wgt
-				local colname `colname'  w`i'_`j'				
-			}
+			local eqname `eqname' wgt
+			local colname `colname'  w`i'
 		}
 ////////////////////////////////////////////////////////////////////////////////
 		preserve
@@ -322,45 +215,28 @@ program csdid_r, sortpreserve eclass
 			else gen byte `wgtt'=1
 			qui:keep if `touse'
 			qui:keep `ivar' `time' `gvar' `vlabrif' `wgtt' `cluster'
-			local oivar `ivar'
 			if "`ivar'"=="" {
 			   	qui:gen double ivar=_n
 				label var ivar "indicator"
 				local ivar ivar
 			}
 			*collapse  `time'  `gvar' `vlabrif' `wgtt' `cluster', by(`ivar') fast
-			collapse   `time'  `gvar' `vlabrif' `wgtt' `cluster', by(`ivar' ) fast
+			collapse           `gvar' `vlabrif' `wgtt'          , by(`ivar'  `cluster' `time' ) fast
 			ren `wgtt' __wgt__
 			label var  __wgt__  "Weight Variable"
 			*qui:levelsof `gvar' if `gvar'!=0, local(gglev) 
 			foreach i of local glev {
-				foreach j of local tlev {
-					fvexpand _g`i'_*_`j'
-					qui:gen double w`i'_`j'=0
-					qui:replace w`i'_`j'=1 if (`r(varlist)'!=.) & (`gvar'==`i')
-					local lvl_gvar `lvl_gvar' w`i'_`j'
-				}
+				qui:gen double w_`i'=`gvar'==`i' 
+				local lvl_gvar `lvl_gvar' w_`i'
 			}
 			*** Organizing all data.
 			*** first Gvars
 			if "`cluster'"!="" {
-				qui:egen long _cl_var=group(`cluster')
-				qui:sort _cl_var
-				label var _cl_var "Effective cluster"
-				local cluster _cl_var
+				tempvar cclv
+				qui:egen long `cclv'=group(`cluster')
+				qui:replace `cluster'=`cclv'
+				qui:sort `cluster'
 			}
-			/*else if "`cluster'"!="" & "`oivar'"!="" {
- 
-				qui:egen long _cl_var=group(`oivar' `cluster')
-				qui:sort _cl_var
-			}
-			else if "`cluster'"=="" & "`oivar'"!="" {
- 
-				qui:egen long _cl_var=group(`oivar')
-				qui:sort _cl_var
-			}*/
-			
-			
 			/// saving RIF
 			note: Data created with -csdid-. Contains all -RIFs- associated with model estimation. 
 			note: cmdline csdid `0'
@@ -392,7 +268,7 @@ program csdid_r, sortpreserve eclass
  
 			** New idea. Hacerlo todo desde makerif	
 			*mata:makerif("`rifgt'","`rifwt'","__wgt__","`b'","`v'","`cluster' ")
-			*save extra, replace
+			save extra, replace
 			noisily mata: makerif2("`rifgt'" , "`rifwt'","__wgt__","`agg'",  ///
 								  "`time0'","`glvls'","`tlvls'", ///
 									"`b1'",  /// `b2' `b3' `b4' `b5' `b6'
@@ -430,7 +306,7 @@ program csdid_r, sortpreserve eclass
 	ereturn local cmdline 	csdid `0'
 	
 	if "`wboot'"!="" {
-		ereturn local vcetype "WBoot"
+		ereturn local vcetype "WildBootstrap"
 	}
 	
 	ereturn local estat_cmd csdid_estat
@@ -442,32 +318,16 @@ program csdid_r, sortpreserve eclass
 	ereturn local rif 		`rifvar'
 	ereturn local ggroup 	`gvar'
 	ereturn local id	 	`ivar'
-	ereturn scalar neqr	=	`neqr'
 	ereturn local riffile	`saverif'
-	ereturn local method 	`method'
 	/// Add here Cluster var and number of Clusters.
 	if  "`tyet'"=="" ereturn local control_group "Never Treated"
 	if  "`tyet'"!="" ereturn local control_group "Not yet Treated"
-	
-	Display
+	display _n "Callaway and Sant'Anna (2021)"
+	ereturn display
 	display "Control: `e(control_group)'" 
-	display _n "See Callaway and Sant'Anna (2021) for details"
 end 
 
 /// This can be used for aggregation. Creates the matrixes we need.
-
-
-program define easter_egg
-                display "{p}This is just for fun. Its my attempt to an Easter Egg within my program. {p_end}" _n /// 
-                "{p} Also, if you are reading this, it means you are lucky," ///
-                "only 0.1% of people using this program will see this message. {p_end}" _n ///
-                "{p} This program was inspired by challenge post by Scott Cunningham. " ///
-                "It is the second part of Pedro, Brantly and Juns's contribution to the DID world{p_end} " _n  ///
-                "{p} Remember One Difference is good, and 2x2 DiD is twice as good!. " ///
-				" Just dont confuse it with DnD (Dungeons and Dragons){p_end} "
-end
-
-
 mata:
  void makerif(string scalar att_gt_ , pg_ , wgt_, b, V, clv){	
     real matrix att_gt, pg, all, wgt
@@ -570,27 +430,16 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 	tlvl = strtoreal(tokens(tlvl_))	
 	
     real matrix ag_rif, ag_wt
-	real matrix bb, VV, VV1, aux
+	real matrix bb, VV, aux
 	real vector ind_gt, ind_wt
 	string matrix coleqnm
 	/////////////////////////////////////////
 	// Always make attgt, even if not shown. 
- 
-	//VV-VV1
 	
-	if (wboot_==" ") {
-		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, wboot_ ,VV1 )
-		st_matrix("b_attgt",bb)
-		st_matrix("V_attgt",VV)
-	}
-	else             {
-		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, " ",VV1 )
-		st_matrix("b_attgt",bb)
-		st_matrix("V_attgt",VV)
-		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, wboot_ ,VV1 )
-	}
+	make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, wboot_ )
 	
-	//if (wboot_!=" ") make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, wboot_ , VV1)
+	st_matrix("b_attgt",bb)
+	st_matrix("V_attgt",VV)
 	/////////////////////////////////////////
 	if (agg=="simple") {
 		k=0
@@ -605,18 +454,18 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 					//ag_rif=ag_rif, rifgt[.,k]
 					//ag_wt =ag_wt , rifwt[.,i]
 					ind_gt=ind_gt,k
-//	ind_wt=ind_wt,i
+					ind_wt=ind_wt,i
 				}
  			}
 		}
 		// Above gets the Right elements Below, aggregates them
 		ag_rif = rifgt[.,ind_gt]
-		ag_wt  = rifwt[.,ind_gt]
+		ag_wt  = rifwt[.,ind_wt]
 		aux = aggte(ag_rif, ag_wt)
-		make_tbl(aux ,bb,VV,clvar_, wboot_ , VV1)
+		make_tbl(aux ,bb,VV,clvar_, wboot_ )
 		coleqnm = "ATT"
 	}
-	/////////////////////////////////////////simple pretrend
+	/////////////////////////////////////////
 	real scalar dfchi, flag
 	if (agg=="pretrend") {
 		k=0
@@ -640,35 +489,35 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 		dfchi = cols(ag_rif)	
 	 	
 	}
-	/////////////////////////////////////////simple pretrend group
+	/////////////////////////////////////////
 	if (agg=="group") {
 		// i groups j time
 		k=0
-			
+		ind_gt=J(1,0,.)
+		
 		aux    =J(rows(rifwt),0,.)
 		coleqnm=""
 		/// ag_wt=J(rows(rifwt),0,.)
 		for(i=1;i<=cols(glvl);i++) {
-		ind_gt=J(1,0,.)
 		flag=0
 			ag_rif=J(rows(rifwt),0,.)
 			for(j=1;j<=cols(tlvl);j++) {
 				k++
  				if (glvl[i]<=tlvl[j]) {
 					//ag_rif=ag_rif, rifgt[.,k]
-					flag=1
+					flag==1
 					ind_gt=ind_gt,k
  				}
  			}
 			if (flag==1)  {
 				coleqnm=coleqnm+sprintf(" G%s",strofreal(glvl[i]))
 				ag_rif = rifgt[.,ind_gt]
-				ag_wt  = rifwt[.,ind_gt]
- 				aux = aux, aggte(ag_rif, ag_wt)
+				ag_wt=J(1,cols(ag_rif),1)
+				aux = aux, aggte(ag_rif, ag_wt)
 			}	
 		}
 		// get table elements		
-		make_tbl(aux ,bb,VV,clvar_, wboot_ ,VV1)
+		make_tbl(aux ,bb,VV,clvar_, wboot_ )
 	}	
 	/////////////////////////////////////////
 
@@ -699,11 +548,11 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 				
 			}
 			ag_rif = rifgt[.,ind_gt]
-			ag_wt  = rifwt[.,ind_gt]			
+			ag_wt  = rifwt[.,ind_wt]			
 			aux = aux, aggte(ag_rif, ag_wt)
 		}	
 		// get table elements		
-		make_tbl(aux ,bb,VV,clvar_, wboot_ ,VV1 )
+		make_tbl(aux ,bb,VV,clvar_, wboot_ )
 	}
 	
 	if (agg=="event") {
@@ -738,11 +587,11 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 				
 			}
 			ag_rif = rifgt[.,ind_gt]
-			ag_wt  = rifwt[.,ind_gt]			
+			ag_wt  = rifwt[.,ind_wt]			
 			aux = aux, aggte(ag_rif, ag_wt)
 		}	
 		// get table elements		
-		make_tbl(aux ,bb,VV,clvar_, wboot_ ,VV1)
+		make_tbl(aux ,bb,VV,clvar_, wboot_ )
 	}
 	
 	st_matrix(bb_,bb)
@@ -756,7 +605,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 	
 }
 
-void make_tbl(real matrix rif,bb,VV, clv , wboot ,VV1){
+void make_tbl(real matrix rif,bb,VV, clv , wboot ){
 	real matrix aux, nobs, clvar
 	real scalar cln
 	bb=mean(rif)
@@ -773,11 +622,11 @@ void make_tbl(real matrix rif,bb,VV, clv , wboot ,VV1){
 	real matrix cband
 	// wboot no cluster
 	if ((clv==" ") & (wboot!=" ")) {
-		mboot(rif,bb, VV, cband, clv, VV1)
+		mboot(rif,bb, VV, cband, clv)
 	}
 	// wboot with cluster
 	if ((clv!=" ") & (wboot!=" ")) {
-		mboot(rif,bb, VV, cband, clv, VV1)
+		mboot(rif,bb, VV, cband, clv)
 	}
  } 
 
@@ -924,7 +773,7 @@ real vector qtp(real matrix y, real scalar p) {
 	return(qq)
 }
 
-void mboot(real matrix rif,mean_rif, vv, cband, string scalar clv, real matrix vv1) {
+void mboot(real matrix rif,mean_rif, vv, cband, string scalar clv) {
     //, real scalar reps, bwtype, ci 
     real matrix fr
 	real scalar reps, wbtype
@@ -948,8 +797,7 @@ void mboot(real matrix rif,mean_rif, vv, cband, string scalar clv, real matrix v
 		cband=( mean_rif':-qtp(abs(fr :/ ifse),ci)':* ifse' ,  
 				mean_rif':+qtp(abs(fr :/ ifse),ci)':* ifse'   )
 	}
-	vv=quadcross(ifse,ifse):*I(cols(ifse))
-	vv1=quadcross(fr,fr)/rows(fr)
+	vv=quadcross(ifse,ifse):*I(rows(ifse))
 	//sqrt(variance(fr))
 	//st_matrix(vv,iqrse(fr)^2)
 	//st_matrix(cband,ccb)
