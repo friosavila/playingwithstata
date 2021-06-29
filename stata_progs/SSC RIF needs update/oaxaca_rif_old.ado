@@ -1,4 +1,6 @@
-*!version 2.34 April  2020 Fernando Rios Avila
+*!version 2.4 Nov 2020 Fernando Rios Avila
+* Took out the Robust and cluster as default options. This may give users more flexibility, and avoid the "robust" problem/
+* version 2.34 April  2020 Fernando Rios Avila
 * added alert for Robust standard errors. 
 * Note to myself: How to add info about Cluster? and allow for NO SE?
 * version 2.33 April  2020 Fernando Rios Avila
@@ -22,14 +24,14 @@
 * Various RIF decompositions are available. More than just RIFREG
 * Correction to output table regarding Reweight error.
 *capture program drop oaxaca_rif
-program oaxaca_rif, eclass sortpreserve byable(recall)  properties( svyb )
+program oaxaca_rif_old, eclass sortpreserve byable(recall)  properties( svyb )
     if replay() {
         display_ob
         exit
     }
    version 12.0
    syntax anything [if] [in] [aw fw iw pw] , by(varname) rif(string)  ///
-						[ swp swap Weights(str) rwlogit(str) rwprobit(str) wgt(int -1) cluster(varname) ///
+						[ swp swap Weights(str) rwlogit(str) rwprobit(str) wgt(int -1) cluster(varname) robust ///
 								relax Noisily scale(real 1.0) retain(str) replace iseed(str) s2var(varlist) nose]
    *iseed undocumented. The idea is to make some indices reproducible
 	/*if c(stata_version)>=16 {
@@ -118,6 +120,8 @@ program oaxaca_rif, eclass sortpreserve byable(recall)  properties( svyb )
 	if "`retain'"!="" {
 	tempvar rifretain
 		qui:egen `rifretain'=rifvar(`y') if `touse', `rif' weight(`exp') by(`by')
+		qui: replace `rifretain'=`rifretain'*`scale' 
+
 		if "`replace'"!="" {
 			capture:gen double `retain'=`rifretain'
 			capture:replace    `retain'=`rifretain'
@@ -163,7 +167,7 @@ program oaxaca_rif, eclass sortpreserve byable(recall)  properties( svyb )
 		    local cnt=`cnt'+1
 		    if `cnt'==1 display in w "RIF regression group 1"
 			if `cnt'==2 display in w "RIF regression group 2"
-			rifhdreg `y' `rest2' `re' [`weight'=`exp'] if `touse'==1 & `by'==`i',  robust cluster(`cluster') rif(`rif') iseed(`iseed')
+			rifhdreg `y' `rest2' `re' [`weight'=`exp'] if `touse'==1 & `by'==`i',  `robust' cluster(`cluster') rif(`rif') iseed(`iseed')
 			tempname bf`cnt'  Vf`cnt'
 			matrix `bf`cnt''=e(b)
 			matrix `Vf`cnt''=e(V)
@@ -171,9 +175,10 @@ program oaxaca_rif, eclass sortpreserve byable(recall)  properties( svyb )
 		}
 		  
 		*qui:reg `re' if `touse'==1
-		qui:`fv'oaxaca `rif_var' `rest' `re' [`weight'=`exp'] if `touse'==1,   by(`by') w(`wgt') robust cluster(`cluster') `relax'  `se'
+		qui:`fv'oaxaca `rif_var' `rest' `re' [`weight'=`exp'] if `touse'==1,   by(`by') w(`wgt') `robust' cluster(`cluster') `relax'  `se'
  		drop `rif_var'
 		local lgd "" `e(legend)'  ""
+		local N_clust `e(N_clust)'
 		tempname b V
 		matrix `b'=e(b)
 		if "`se'"==""		matrix `V'=e(V)
@@ -289,7 +294,7 @@ program oaxaca_rif, eclass sortpreserve byable(recall)  properties( svyb )
 		}
 			
 		if "`cluster'"!="" 	local idcluster `cluster'
-		else 				local idcluster `id'
+		*else 				local idcluster `id'
 		
 		if "`noisily'"!="" {
 		  local cnt=0
@@ -299,24 +304,27 @@ program oaxaca_rif, eclass sortpreserve byable(recall)  properties( svyb )
 		    if `cnt'==1   display in w "RIF regression group 1"
 			else if `cnt'==2   display in w "RIF regression counterfactual group"
 			else if `cnt'==3   display in w "RIF regression group 2"
-			rifhdreg `y' `rest2' `re' [`weight'=`exp'*`ipw'] if `touse'==1 & `ddy'==`i',  robust cluster(`cluster') rif(`rif') iseed(`iseed')
+			rifhdreg `y' `rest2' `re' [`weight'=`exp'*`ipw'] if `touse'==1 & `ddy'==`i',  `robust' cluster(`cluster') rif(`rif') iseed(`iseed')
 			tempname bf`cnt'  Vf`cnt'
 			matrix `bf`cnt''=e(b)
 			matrix `Vf`cnt''=e(V)
 		   }	
 		}
 		** re is the created s2var
-		qui:`fv'oaxaca `rifvar' `rest'  `re' [aw=`exp'*`ipw'] if `touse'==1 & (`ddy'==1 | `ddy'==3),   by(`ddy') w(`wgt') nodetail robust cluster(`idcluster')  `relax'   `se'
+		qui:`fv'oaxaca `rifvar' `rest'  `re' [aw=`exp'*`ipw'] if `touse'==1 & (`ddy'==1 | `ddy'==3),   by(`ddy') w(`wgt') nodetail `robust' cluster(`idcluster')  `relax'   `se'
+		local N_clust `e(N_clust)'
 		tempname b0 v0 bb vb bx vx bc vc
         matrix `b0'=e(b)
         matrix `v0'=e(V)  
 		if `wgt'==0 { 
 		   ** Delta B
-	 		qui:`fv'oaxaca `rifvar' `rest'  `re' [aw=`exp'*`ipw'] if `touse'==1 & inlist(`ddy',1,2),   by(`ddy') w(0) cluster(`idcluster')   `relax'   `se'
+	 		qui:`fv'oaxaca `rifvar' `rest'  `re' [aw=`exp'*`ipw'] if `touse'==1 & inlist(`ddy',1,2),   by(`ddy') w(0) `robust' cluster(`idcluster')   `relax'   `se'
+			local N_clust `e(N_clust)'
 			matrix `bb'=e(b)
 			matrix `vb'=e(V)
 		   ** Delta x
-			qui:`fv'oaxaca `rifvar' `rest'  `re' [aw=`exp'*`ipw'] if `touse'==1 & inlist(`ddy',2,3),   by(`ddy') w(0) cluster(`idcluster')   `relax'  `se'
+			qui:`fv'oaxaca `rifvar' `rest'  `re' [aw=`exp'*`ipw'] if `touse'==1 & inlist(`ddy',2,3),   by(`ddy') w(0) `robust' cluster(`idcluster')   `relax'  `se'
+			local N_clust `e(N_clust)'
 			matrix `bx'=e(b)
 			matrix `vx'=e(V)
 			local lgd "" `e(legend)'  ""
@@ -326,11 +334,13 @@ program oaxaca_rif, eclass sortpreserve byable(recall)  properties( svyb )
 			}
 		if `wgt'==1 {
 		   ** Delta X
-			qui:`fv'oaxaca `rifvar' `rest'  `re' [aw=`exp'*`ipw'] if `touse'==1 & inlist(`ddy',1,2),   by(`ddy') w(1) cluster(`idcluster') `relax'   `se'
+			qui:`fv'oaxaca `rifvar' `rest'  `re' [aw=`exp'*`ipw'] if `touse'==1 & inlist(`ddy',1,2),   by(`ddy') w(1) `robust' cluster(`idcluster') `relax'   `se'
+			local N_clust `e(N_clust)'
 			matrix `bx'=e(b)
 			matrix `vx'=e(V)
 		   ** Delta B
-			qui:`fv'oaxaca `rifvar' `rest'  `re' [aw=`exp'*`ipw'] if `touse'==1 & inlist(`ddy',2,3),   by(`ddy') w(1) cluster(`idcluster') `relax'   `se'
+			qui:`fv'oaxaca `rifvar' `rest'  `re' [aw=`exp'*`ipw'] if `touse'==1 & inlist(`ddy',2,3),   by(`ddy') w(1) `robust' cluster(`idcluster') `relax'   `se'
+			local N_clust `e(N_clust)'
 			matrix `bb'=e(b)
 			matrix `vb'=e(V)
 			local lgd `e(legend)'
@@ -411,7 +421,7 @@ program oaxaca_rif, eclass sortpreserve byable(recall)  properties( svyb )
 			matrix rowname `V'=`cb'
 			matrix roweq `V'=`ceqb'		
 		}
-		** returing results
+		** retoring results
 		
 	restore	
 
@@ -465,7 +475,14 @@ program oaxaca_rif, eclass sortpreserve byable(recall)  properties( svyb )
 		}
 	*capture matrix drop v0 vb vx b0 bb bx vc bc xs bs xcx bcx xc xm bm
 	ereturn local lgd `lgd'
-	ereturn local vcetype  "Robust"
+	if "`robust'`cluster'"!="" {
+		ereturn local vcetype  "Robust"
+		if "`cluster'"!="" {
+    		ereturn local vce "cluster"
+			ereturn local clustvar "`cluster'"
+			ereturn scalar N_clust =`N_clust' 
+		}
+	}
 	display_ob
 end
 
@@ -505,7 +522,7 @@ prog Display_legend
 end
 
 
-*** This part of the code was extracted from -Oaxaca-
+*** This part of the code was extracted from -Oaxaca- Jan(2008)
 
 program ParseVar, rclass
     capt ParseVarCheckNormalize, `0'
@@ -534,7 +551,7 @@ program ParseVar, rclass
         }
         if `"`base'"'=="" gettoken base: vars  // pick first
         local xvars: list vars - base
-        ret local normalize `""`cons' `vars'" "'
+        ret local normalize `" "`cons' `vars'" "'
     }
     else {
         Unab vars: `0'
