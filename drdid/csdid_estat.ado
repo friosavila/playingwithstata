@@ -190,10 +190,7 @@ void csdid_group(){
 	real scalar k, i, j, flag
 	string scalar coleqnm
 	ii=(1..(cols(glvl)*cols(tlvl))),(cols(glvl)*cols(tlvl)):+(1..cols(glvl))#J(1,cols(tlvl),1)
-	   //(cols(glvl)*cols(tlvl)):+
-	   //(1..cols(glvl))#J(1,cols(tlvl),1)
-	///v=v[ii,ii]
-	///b=b[ii]
+     
 	real matrix br, bw
 	br=b[1,(1..(cols(ii)/2))]
 	bw=b[1,((cols(ii)/2+1)..cols(ii))]
@@ -209,7 +206,7 @@ void csdid_group(){
 		flag = 0
 		for(j=1;j<=cols(tlvl);j++) {
 			k++
-			if (glvl[i]<=tlvl[j]) {
+			if ((glvl[i]<=tlvl[j]) & (b[k]!=0) ) {
 				//ag_rif=ag_rif, rifgt[.,k]
 				ii[k]=1
 				flag=1
@@ -266,7 +263,7 @@ void csdid_calendar(){
 		for(i=1;i<=cols(glvl);i++) {
 			for(j=1;j<=cols(tlvl);j++) {
 				k++
-				if ((glvl[i]<=tlvl[j]) & (tlvl[h]==tlvl[j]) ){
+				if ((glvl[i]<=tlvl[j]) & (tlvl[h]==tlvl[j]) & (b[k]!=0) ){
 					ii[k] = 1
 					if (flag==0) coleqnm=coleqnm+sprintf(" T%s",strofreal(tlvl[h]))
 					flag=1
@@ -301,7 +298,7 @@ void csdid_pretrend(){
 	for(i=1;i<=cols(glvl);i++) {
 		for(j=1;j<=cols(tlvl);j++) {
 			k++
-			if (glvl[i]>tlvl[j]) {
+			if ( (glvl[i]>tlvl[j]) & (b[k]!=0) )  {
 				ii=ii,k				
 			}
 		}
@@ -336,7 +333,7 @@ void csdid_simple() {
 	for(i=1;i<=cols(glvl);i++) {
 		for(j=1;j<=cols(tlvl);j++) {
 			k++
-			if (glvl[i]<=tlvl[j]) {
+			if ((glvl[i]<=tlvl[j]) & (b[k]!=0)) {
 				ii[k] = 1
 				//jj=jj,i
 			}
@@ -410,7 +407,7 @@ vector event_list(real matrix glvl, tlvl,window){
 		for(i=1;i<=cols(glvl);i++) {
 			for(j=1;j<=cols(tlvl);j++) {
 				k++
-				if ( (glvl[i]+evnt_lst[h])==tlvl[j] ) {	
+				if ( ( (glvl[i]+evnt_lst[h])==tlvl[j] ) & (b[k]!=0) ) {	
 					//ag_rif=ag_rif, rifgt[.,k]
 					//ag_wt =ag_wt , rifwt[.,i]
 					ii[k] = 1						
