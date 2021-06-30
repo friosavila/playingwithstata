@@ -383,8 +383,7 @@ vector event_list(real matrix glvl, tlvl,window){
 	 
 	real matrix evnt_lst
 	evnt_lst=event_list(glvl,tlvl,wndw)
-		evnt_lst
-	real scalar k, i, j, h, flag
+ 	real scalar k, i, j, h, flag
 	string scalar coleqnm
 	ii=(1..(cols(glvl)*cols(tlvl))),(cols(glvl)*cols(tlvl)):+(1..cols(glvl))#J(1,cols(tlvl),1)
 
