@@ -360,7 +360,7 @@ vector event_list(real matrix glvl, tlvl,window){
 	toreturn2=J(1,0,.)
 	for(i=1;i<=cols(glvl);i++) {
 		for(j=1;j<=cols(tlvl);j++) {
-			toreturn=toreturn,(tlvl[i]-glvl[j])
+			toreturn=toreturn,(tlvl[j] -glvl[i])
 		}
 	}
 	toreturn=uniqrows(toreturn')'
