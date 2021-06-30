@@ -1,6 +1,12 @@
+cd C:\Users\Fernando\Documents\GitHub\playingwithstata\drdid
 cscript
 use mpdta, clear
-csdid  lemp lpop  ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)  saverif(rif1) replace
+csdid  lemp lpop  if years_exposed==0 | years_exposed>=2,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)  
+csdid  lemp lpop  ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)  
+program drop csdid_estat
+estat event
+ereturn display
+saverif(rif1) replace
 estat all
 csdid  lemp lpop  ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw) wboot
 estat all
