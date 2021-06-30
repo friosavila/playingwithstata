@@ -360,7 +360,7 @@ vector event_list(real matrix glvl, tlvl,window){
 	toreturn2=J(1,0,.)
 	for(i=1;i<=cols(glvl);i++) {
 		for(j=1;j<=cols(tlvl);j++) {
-			toreturn=toreturn,(glvl[i]-tlvl[j])
+			toreturn=toreturn,(tlvl[i]-glvl[j])
 		}
 	}
 	toreturn=uniqrows(toreturn')'
@@ -380,10 +380,10 @@ vector event_list(real matrix glvl, tlvl,window){
 	glvl = strtoreal(tokens(gl_));tlvl = strtoreal(tokens(tl_))	
 	b=st_matrix(bb_);v=st_matrix(vv_)
 	wndw=strtoreal(tokens(wnw))
-	
+	 
 	real matrix evnt_lst
 	evnt_lst=event_list(glvl,tlvl,wndw)
-		
+		evnt_lst
 	real scalar k, i, j, h, flag
 	string scalar coleqnm
 	ii=(1..(cols(glvl)*cols(tlvl))),(cols(glvl)*cols(tlvl)):+(1..cols(glvl))#J(1,cols(tlvl),1)
