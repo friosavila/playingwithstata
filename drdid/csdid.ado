@@ -35,12 +35,15 @@ end*/
 *capture program drop sdots
 *capture program drop csdid
 program sdots
-syntax , [mydots(integer 10) maxdots(int 50)]
+syntax , [mydots(integer 10) maxdots(int 50) bad]
+	
 	if mod(`mydots',`maxdots')==0 {
-		display "." 
+		if "`bad'"==""	display "." 
+		else display "x" 
 	}
 	else {
-		display "." _c
+		if "`bad'"==""	display "." _c
+		else display "x" _c
 	}
 end
 
@@ -238,8 +241,9 @@ program csdid_r, sortpreserve eclass
 	** prepare loops over gvar.
 	*local att_gt att_gt
 	tempvar tr
-	qui:gen byte `tr'=`gvar'!=0 if `gvar'!=.
+	tempname gtt
 	
+	qui:gen byte `tr'=`gvar'!=0 if `gvar'!=.
 	qui:levelsof `gvar' if `gvar'>0       & `touse', local(glev)
 	qui:levelsof `time' if `time'>`time0' & `touse', local(tlev)
 	
@@ -256,31 +260,29 @@ program csdid_r, sortpreserve eclass
  
 		    foreach j of local tlev {
 				local mydots=`mydots'+1
-				sdots, mydots(`mydots')
 				* Stata quirk: `notyet' is called `tyet' because "no" is removed
 			    if "`tyet'"=="" {
 				    ** This implements the Never treated
-					///local time1 = `min(`i'-1, `j'-1)'
-					*display "inlist(`time',`time1',`j')"		
 					qui:capture:drdid `varlist' if inlist(`gvar',0,`i') ///
-														 & inlist(`time',`time1',`j') ///
-														 & `touse' [`weight'`exp'], ///
-														ivar(`ivar') time(`time') treatment(`tr') ///
-														`method' stub(__) replace
-												
-					*else 		local time1 = `j'
-*					matrix `b'=nullmat(`b'),e(b)
-*					matrix `v'=nullmat(`v'),e(V)
+								 & inlist(`time',`time1',`j') ///
+								 & `touse' [`weight'`exp'], ///
+								ivar(`ivar') time(`time') treatment(`tr') ///
+								`method' stub(__) replace
+					if _rc!=0 local	bad bad
+					
+					matrix `gtt'=nullmat(`gtt')\[`i',`time1',`j',_rc]
+					sdots, mydots(`mydots') `bad'
+					local bad
 					local eqname `eqname' g`i'
 					local colname `colname'  t_`time1'_`j'
 					capture drop _g`i'_`time1'_`j'
 					
 				    capture   confirm variable __att
-				
 					if 	_rc==111	qui:gen _g`i'_`time1'_`j'=.
 					else 		ren __att    _g`i'_`time1'_`j'
 					local vlabrif `vlabrif' _g`i'_`time1'_`j'
-					if `j'<`i' local time1 = `j'
+					if `j'<`i' local time1 = `j'					
+					
 				}
 				else if "`tyet'"!="" {
 				    ** This will implement not yet treated.////////////////////
@@ -290,9 +292,12 @@ program csdid_r, sortpreserve eclass
 					* Use as controls those never treated and those not treated by time `j'>`i'
 					qui:capture:drdid `varlist' if (`gvar'==0 | `gvar'==`i' | `gvar'> `j') & inlist(`time',`time1',`j') & `touse' [`weight'`exp'], ///
 										ivar(`ivar') time(`time') treatment(`tr') `method' stub(__) replace
-*					matrix `b'=nullmat(`b'),e(b)
-*					matrix `v'=nullmat(`v'),e(V)
 					
+					if _rc!=0 local	bad bad
+					
+					matrix `gtt'=nullmat(`gtt')\[`i',`time1',`j',`_rc']
+					sdots, mydots(`mydots') `bad'
+					local bad
 					local eqname `eqname' g`i'
 					local colname `colname'  t_`time1'_`j'
 					capture drop _g`i'_`time1'_`j'					
@@ -349,16 +354,7 @@ program csdid_r, sortpreserve eclass
 				label var _cl_var "Effective cluster"
 				local cluster _cl_var
 			}
-			/*else if "`cluster'"!="" & "`oivar'"!="" {
- 
-				qui:egen long _cl_var=group(`oivar' `cluster')
-				qui:sort _cl_var
-			}
-			else if "`cluster'"=="" & "`oivar'"!="" {
- 
-				qui:egen long _cl_var=group(`oivar')
-				qui:sort _cl_var
-			}*/
+
 			
 			
 			/// saving RIF
@@ -436,6 +432,7 @@ program csdid_r, sortpreserve eclass
 	ereturn local estat_cmd csdid_estat
 	ereturn matrix b_attgt  b_attgt 
 	ereturn matrix V_attgt  V_attgt 
+	ereturn matrix gtt  	`gtt'
 	ereturn local glev 		`glev'
 	ereturn local tlev 		`tlev'
 	ereturn local time0		`time0'

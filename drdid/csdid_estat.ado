@@ -144,7 +144,7 @@ program csdid_calendar, sortpreserve rclass
 end
  
 program csdid_event, sortpreserve rclass
-	syntax, [estore(name) esave(name) replace window(str) ]
+	syntax, [estore(name) esave(name) replace window(str) balance(int 0) ]
    	display "ATT by Periods Before and After treatment"
 	display "Event Study:Dynamic effects"
 	if "`window'"!="" {
@@ -152,7 +152,7 @@ program csdid_event, sortpreserve rclass
 		local window `r(numlist)'
 	}
  
-	mata:csdid_event("e(b_attgt)","e(V_attgt)","`e(glev)'","`e(tlev)'","`window'")
+	mata:csdid_event("e(b_attgt)","e(V_attgt)","`e(glev)'","`e(tlev)'","`window'", `balance')
 	tempname lastreg
 	tempvar b V table
 	matrix `b' = r_b_
@@ -374,13 +374,29 @@ vector event_list(real matrix glvl, tlvl,window){
 		return(toreturn2)
 	}
  }
-  
- void csdid_event(string scalar  bb_, vv_, gl_, tl_, wnw){
-    real matrix b, v , ii, jj, glvl, tlvl, wndw
+
+vector ptreat(real matrix glvl, tlvl, b){
+	real scalar i, j, k, aux
+	aux = J(1,cols(glvl),0)
+	k=0 
+	for(i=1;i<=cols(glvl);i++){
+		for(j=1;j<=cols(tlvl);j++){
+			k++
+			if ((b[k]!=0) & (tlvl[j]>=glvl[i])) aux[i]=aux[i]+1
+		}	
+	}
+	return(aux)
+}
+ 
+ void csdid_event(string scalar  bb_, vv_, gl_, tl_, wnw, real scalar bal ){
+    real matrix b, v , ii, jj, glvl, tlvl, wndw, trtp
 	glvl = strtoreal(tokens(gl_));tlvl = strtoreal(tokens(tl_))	
 	b=st_matrix(bb_);v=st_matrix(vv_)
 	wndw=strtoreal(tokens(wnw))
 	 
+	// Find Balance
+	trtp=ptreat(glvl,tlvl, b )
+	
 	real matrix evnt_lst
 	evnt_lst=event_list(glvl,tlvl,wndw)
  	real scalar k, i, j, h, flag
@@ -405,7 +421,7 @@ vector event_list(real matrix glvl, tlvl,window){
 		for(i=1;i<=cols(glvl);i++) {
 			for(j=1;j<=cols(tlvl);j++) {
 				k++
-				if ( ( (glvl[i]+evnt_lst[h])==tlvl[j] ) & (b[k]!=0) ) {	
+				if ( ( (glvl[i]+evnt_lst[h])==tlvl[j] ) & (b[k]!=0)) {	
 					//ag_rif=ag_rif, rifgt[.,k]
 					//ag_wt =ag_wt , rifwt[.,i]
 					ii[k] = 1						
