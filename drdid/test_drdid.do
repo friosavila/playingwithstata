@@ -1,6 +1,5 @@
 cscript
-cd "C:\Users\Fernando\Documents\GitHub\playingwithstata\drdid"
-use lalonde, clear
+ use lalonde, clear
 gen trt=experimental==1
 gen tmt=year==1978
 keep if treated==0 | sample==2
@@ -9,8 +8,11 @@ global xvar age educ black married nodegree hisp re74
 
 set seed 1
 drop if runiform()<.1
-drdid re $xvar ,   time(year) tr( experimental ) all
+drdid_r re $xvar ,  ivar(id) time(year) tr( experimental )   
 
+
+
+asd
 ** manual rc
 
 **# AIPW or IPW Abadie Non standardized weights

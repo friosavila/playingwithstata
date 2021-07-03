@@ -1,11 +1,7 @@
 *adopath + C:\Users\Fernando\Documents\GitHub\csdid_drdid\code
 *adopath + C:\Users\Fernando\Documents\GitHub\csdid_drdid\data
 **#Example
-cscript 
-cls
-use lalonde, clear
-set seed 1
-drdid_r re black educ black married nodegree hisp re74,  ivar(id) time(year) tr( experimental ) wboot 
+ 
  
 
 
@@ -18,7 +14,7 @@ keep if treated==0 | sample==2
 // Wild bootstrap 
 
 rcof "noi drdid re `xvar', `ivaropts' drimp wboot wboot(rseed(111))"==198  
-drdid_r re  , ivar(id) time(year) tr( experimental ) drimp wboot seed(111)
+*drdid_r re  , ivar(id) time(year) tr( experimental ) drimp wboot seed(111)
 drdid re `xvar', `ivaropts' drimp wboot(rseed(111))
 drdid re `xvar', `ivaropts' drimp wboot seed(111)
 drdid re `xvar', `ivaropts' drimp wboot(rseed(111))
