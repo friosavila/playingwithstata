@@ -138,7 +138,7 @@ program csdid_r, sortpreserve eclass
 	** First determine outcome and xvars
 	gettoken y xvar:varlist
 	markout `touse' `ivar' `time' `gvar' `y' `xvar' `cluster'
-
+	tempname cband
 	** Confirm if new file exists
 	if "`saverif'"!="" {
 	    capture confirm new file "`saverif'.dta"
@@ -393,7 +393,7 @@ program csdid_r, sortpreserve eclass
 								  "`time0'","`glvls'","`tlvls'", ///
 									"`b1'",  /// `b2' `b3' `b4' `b5' `b6'
 									"`s1'",  ///  `s2' `s3' `s4' `s5' `s6'
-									"`clvar' ","`wboot' ")
+									"`clvar' ","`wboot' ", "`cband'")
 			
 				** Time0 `time0'		
 			if "`saverif'"!="" {
@@ -427,12 +427,15 @@ program csdid_r, sortpreserve eclass
 	
 	if "`wboot'"!="" {
 		ereturn local vcetype "WBoot"
+		matrix colname `cband'= b se t ll ul
+		ereturn matrix cband  	`cband'
 	}
 	
 	ereturn local estat_cmd csdid_estat
 	ereturn matrix b_attgt  b_attgt 
 	ereturn matrix V_attgt  V_attgt 
 	ereturn matrix gtt  	`gtt'
+	
 	ereturn local glev 		`glev'
 	ereturn local tlev 		`tlev'
 	ereturn local time0		`time0'
@@ -527,7 +530,7 @@ mata:
 // Think how to save all elements.
 		
 void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg, 
-				time0, glvl_, tlvl_, bb_, ss_, clvar_, wboot_ ) {	
+				time0, glvl_, tlvl_, bb_, ss_, clvar_, wboot_ , cband ) {	
 					
     real matrix rifgt , rifwt, wgt, t0, glvl, tlvl
 	real scalar i,j,k,h
@@ -576,15 +579,15 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 	//VV-VV1
 	
 	if (wboot_==" ") {
-		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, wboot_ ,VV1 )
+		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, wboot_ ,VV1 , cband)
 		st_matrix("b_attgt",bb)
 		st_matrix("V_attgt",VV)
 	}
 	else             {
-		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, " ",VV1 )
+		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, " ",VV1, cband )
 		st_matrix("b_attgt",bb)
 		st_matrix("V_attgt",VV)
-		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, wboot_ ,VV1 )
+		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, wboot_ ,VV1 , cband)
 	}
 	
 	//if (wboot_!=" ") make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, wboot_ , VV1)
@@ -610,7 +613,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 		ag_rif = rifgt[.,ind_gt]
 		ag_wt  = rifwt[.,ind_gt]
 		aux = aggte(ag_rif, ag_wt)
-		make_tbl(aux ,bb,VV,clvar_, wboot_ , VV1)
+		make_tbl(aux ,bb,VV,clvar_, wboot_ , VV1, cband)
 		coleqnm = "ATT"
 	}
 	/////////////////////////////////////////simple pretrend
@@ -668,7 +671,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 			}	
 		}
 		// get table elements		
-		make_tbl(aux ,bb,VV,clvar_, wboot_ ,VV1)
+		make_tbl(aux ,bb,VV,clvar_, wboot_ ,VV1, cband)
 	}	
 	/////////////////////////////////////////
 
@@ -706,7 +709,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 			}
 		}	
 		// get table elements		
-		make_tbl(aux ,bb,VV,clvar_, wboot_ ,VV1 )
+		make_tbl(aux ,bb,VV,clvar_, wboot_ ,VV1, cband )
 	}
 	
 	if (agg=="event") {
@@ -748,11 +751,12 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 			}	
 		}	
 		// get table elements		
-		make_tbl(aux ,bb,VV,clvar_, wboot_ ,VV1)
+		make_tbl(aux ,bb,VV,clvar_, wboot_ ,VV1, cband)
 	}
 	
 	st_matrix(bb_,bb)
 	st_matrix(ss_,VV)
+	
 	
 	if (agg!="attgt") {
 		stata("matrix colname "+bb_+" ="+coleqnm)
@@ -762,7 +766,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 	
 }
 
-void make_tbl(real matrix rif,bb,VV, clv , wboot ,VV1){
+void make_tbl(real matrix rif,bb,VV, clv , wboot ,VV1 , string scalar cband_){
 	real matrix aux, nobs, clvar
 	real scalar cln
 	bb=mean(rif)
@@ -778,12 +782,9 @@ void make_tbl(real matrix rif,bb,VV, clv , wboot ,VV1){
 	}
 	real matrix cband
 	// wboot no cluster
-	if ((clv==" ") & (wboot!=" ")) {
+	if ( wboot!=" ") {
 		mboot(rif,bb, VV, cband, clv, VV1)
-	}
-	// wboot with cluster
-	if ((clv!=" ") & (wboot!=" ")) {
-		mboot(rif,bb, VV, cband, clv, VV1)
+		st_matrix(cband_, cband)
 	}
  } 
 
@@ -943,7 +944,10 @@ void mboot(real matrix rif,mean_rif, vv, cband, string scalar clv, real matrix v
 		fr=mboot_did(rif,mean_rif, reps, wbtype)
 		ifse = iqrse(fr)
 		// this gets Tvalue
-		cband=( mean_rif':-qtp(abs(fr :/ ifse),ci)':* ifse' ,  
+		cband=( mean_rif',
+				ifse',
+				mean_rif':/ifse',
+				mean_rif':-qtp(abs(fr :/ ifse),ci)':* ifse' ,  
 				mean_rif':+qtp(abs(fr :/ ifse),ci)':* ifse'   )
 	}
 	else {
@@ -951,7 +955,10 @@ void mboot(real matrix rif,mean_rif, vv, cband, string scalar clv, real matrix v
 		fr=mboot_didc(rif,mean_rif, reps, wbtype, clvar)
 		
 		ifse = iqrse(fr)
-		cband=( mean_rif':-qtp(abs(fr :/ ifse),ci)':* ifse' ,  
+		cband=( mean_rif',
+				ifse',
+				mean_rif':/ifse',
+				mean_rif':-qtp(abs(fr :/ ifse),ci)':* ifse' ,  
 				mean_rif':+qtp(abs(fr :/ ifse),ci)':* ifse'   )
 	}
 	vv=quadcross(ifse,ifse):*I(cols(ifse))
