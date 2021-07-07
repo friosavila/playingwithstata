@@ -50,7 +50,7 @@ program csdid_est, rclass
 		exit 10
 	}
 	
-	
+	*matrix `cband'=1
 	** New idea. Hacerlo todo desde makerif	
 	*mata:makerif("`rifgt'","`rifwt'","__wgt__","`b'","`v'","`cluster' ")
 
@@ -151,7 +151,7 @@ mata:
 // Think how to save all elements.
 		
 void makerif2(string scalar rifgt_ , rifwt_ , agg, 
-				glvl_, tlvl_, bb_, ss_, clvar_, wboot_ , cband_) {	
+				glvl_, tlvl_, bb_, ss_, clvar_, wboot , cband_) {	
 					
     real matrix rifgt , rifwt, wgt, t0, glvl, tlvl
 	real scalar i,j,k,h
@@ -175,7 +175,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , agg,
 	/////////////////////////////////////////
 	// Always make attgt, even if not shown. 
 	if (agg=="attgt") {
-		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_,wboot_, cband_)
+		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_,wboot, cband_)
  	}
 	/////////////////////////////////////////
 	if (agg=="simple") {
@@ -200,7 +200,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , agg,
 		ag_rif = rifgt[.,ind_gt]
 		ag_wt  = rifwt[.,ind_gt]
 		aux = aggte(ag_rif, ag_wt)
-		make_tbl(aux ,bb,VV,clvar_,wboot_, cband_)
+		make_tbl(aux ,bb,VV,clvar_,wboot, cband_)
 		coleqnm = "ATT"
 	}
 	/////////////////////////////////////////
@@ -235,7 +235,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , agg,
 		}
  
 		// get table elements		
-		make_tbl(aux ,bb,VV,clvar_,wboot_, cband_)
+		make_tbl(aux ,bb,VV,clvar_,wboot, cband_)
 	}	
 	/////////////////////////////////////////
 	
@@ -274,7 +274,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , agg,
  			}
 		}	
 		// get table elements		
-		make_tbl(aux ,bb,VV,clvar_,wboot_, cband_)
+		make_tbl(aux ,bb,VV,clvar_,wboot, cband_)
 	}
 	
 	if (agg=="event") {
@@ -315,36 +315,38 @@ void makerif2(string scalar rifgt_ , rifwt_ , agg,
 			}
 		}	
 		// get table elements		
-		make_tbl(aux ,bb,VV,clvar_,wboot_, cband_)
+		make_tbl(aux ,bb,VV,clvar_,wboot, cband_)
 	}
 	
 	st_matrix(bb_,bb)
 	st_matrix(ss_,VV)
-	
+
 	if (agg!="attgt") {
 		stata("matrix colname "+bb_+" ="+coleqnm)
 		stata("matrix colname "+ss_+" ="+coleqnm)
 		stata("matrix rowname "+ss_+" ="+coleqnm)
-		
-		stata("matrix colname "+cband_+" ="+"b se t ll ul")
-		stata("matrix rowname "+cband_+" ="+coleqnm)
+		if (wboot!=" ") {
+			stata("matrix colname "+cband_+" ="+"b se t ll ul")
+			stata("matrix rowname "+cband_+" ="+coleqnm)
+		}		
 	}
 	
 }
 
-void make_tbl(real matrix rif,bb,VV, clv , wboot, string  scalar cband_){
+void make_tbl(real matrix rif,bb,VV, clv , string  scalar wboot, cband_){
 	real matrix aux, nobs, clvar
 	real scalar cln
 	bb=mean(rif)
 	nobs=rows(rif)
 	// simple
+			
 	if ((clv==" ") & (wboot==" ")) {	
 		VV=quadcrossdev(rif,bb,rif,bb):/ (nobs^2) 
 	}
 	// cluster std
 	if ((clv!=" ") & (wboot==" ")) {
 		clvar=st_data(.,clv)
-		clusterse((rif:-bb),clvar,VV,cln)
+		clusterse((rif:-bb),clvar,VV,cln)		
 	}
 	real matrix cband
 	// wboot no cluster
