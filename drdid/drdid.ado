@@ -155,8 +155,7 @@ program define drdid_wh, eclass sortpreserve byable(recall)
 	if "`ivar'"!="" {
 		capture xtset
 		if _rc!=0 {
-		    sort `ivar' `time'
-		    qui:xtset `ivar' `time'
+			qui:xtset `ivar' `time'
 			qui:xtset ,  clear
 		}
 		if "`cluster'"!="" {

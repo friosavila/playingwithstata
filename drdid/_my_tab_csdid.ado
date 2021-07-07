@@ -1,6 +1,6 @@
 program _my_tab_csdid, rclass 
 	syntax [, level(int `c(level)') noci cformat(string) sformat(string) *]
-
+*set trace on
 	_get_diopts diopts rest, `options'
 
 	local cf %9.0g  

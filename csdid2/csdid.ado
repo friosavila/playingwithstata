@@ -88,15 +88,7 @@ end
                         noi display as text "Outcome model  : {res:`omodel'}"
                         noi display as text "Treatment model: {res:`tmodel'}"
                 }
-				
-				if ("`e(vcetype)'"=="WBoot") {
-				
-                    _my_tab_csdid, `diopts'
-                }
-                else {
-                    _coef_table,  `diopts' `myopts' neq(`e(neqr)')
-                }
-                
+                _coef_table,  `diopts' `myopts' neq(`e(neqr)')
  
 end
 
@@ -303,7 +295,7 @@ program csdid_r, sortpreserve eclass
 					
 					if _rc!=0 local	bad bad
 					
-					matrix `gtt'=nullmat(`gtt')\[`i',`time1',`j',_rc]
+					matrix `gtt'=nullmat(`gtt')\[`i',`time1',`j',`_rc']
 					sdots, mydots(`mydots') `bad'
 					local bad
 					local eqname `eqname' g`i'
@@ -443,7 +435,7 @@ program csdid_r, sortpreserve eclass
 	ereturn matrix b_attgt  b_attgt 
 	ereturn matrix V_attgt  V_attgt 
 	ereturn matrix gtt  	`gtt'
-	ereturn local agg     	`agg'
+	
 	ereturn local glev 		`glev'
 	ereturn local tlev 		`tlev'
 	ereturn local time0		`time0'
