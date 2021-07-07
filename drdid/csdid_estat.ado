@@ -58,6 +58,7 @@ program csdid_attgt,  rclass sortpreserve
 	adde post `b' `V'
 	adde local cmd 	   estat
 	adde local cmdline estat attgt
+	adde local agg     attgt
 	if "`estore'"!="" est store `estore'
 	if "`esave'" !="" est save  `esave', `replace'
 	_coef_table
@@ -84,6 +85,7 @@ program csdid_simple,  rclass sortpreserve
 	adde post `b' `V'
 	adde local cmd 	   estat
 	adde local cmdline estat simple
+	adde local agg     simple
 	if "`estore'"!="" est store `estore'
 	if "`esave'" !="" est save  `esave', `replace'
 	_coef_table
@@ -108,6 +110,7 @@ program csdid_group, sortpreserve rclass
 	adde post `b' `V'
 	adde local cmd 	   estat
 	adde local cmdline estat group
+	adde local agg     group
 	if "`estore'"!="" est store `estore'
 	if "`esave'" !="" est save  `esave', `replace'
 	_coef_table
@@ -132,6 +135,7 @@ program csdid_calendar, sortpreserve rclass
 	adde post `b' `V'
 	adde local cmd 	   estat
 	adde local cmdline estat calendar
+	adde local agg     calendar
 	if "`estore'"!="" est store `estore'
 	if "`esave'" !="" est save  `esave', `replace'
 	_coef_table
@@ -163,6 +167,7 @@ program csdid_event, sortpreserve rclass
 	adde post `b' `V'
 	adde local cmd 	   estat
 	adde local cmdline estat event
+	adde local agg     event
 	if "`estore'"!="" est store `estore'
 	if "`esave'" !="" est save  `esave', `replace'
 	_coef_table
