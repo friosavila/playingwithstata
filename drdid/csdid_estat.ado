@@ -432,7 +432,7 @@ vector ptreat(real matrix glvl, tlvl, b){
 					ii[k] = 1						
 					if (flag==0) {
 						if (evnt_lst[h]< 0) coleqnm=coleqnm+sprintf(" T%s" ,strofreal(evnt_lst[h]))
-						if (evnt_lst[h]==0) coleqnm=coleqnm+" T"
+						if (evnt_lst[h]==0) coleqnm=coleqnm+" T+0"
 						if (evnt_lst[h]> 0) coleqnm=coleqnm+sprintf(" T+%s",strofreal(evnt_lst[h]))
 					}
 					flag=1

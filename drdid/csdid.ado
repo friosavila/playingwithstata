@@ -744,7 +744,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 						ind_wt=ind_wt,i							
 						if (flag==0) {
 							if (evnt_lst[h]< 0) coleqnm=coleqnm+sprintf(" T%s" ,strofreal(evnt_lst[h]))
-							if (evnt_lst[h]==0) coleqnm=coleqnm+" T"
+							if (evnt_lst[h]==0) coleqnm=coleqnm+" T+0"
 							if (evnt_lst[h]> 0) coleqnm=coleqnm+sprintf(" T+%s",strofreal(evnt_lst[h]))
 						}
 						flag=1
