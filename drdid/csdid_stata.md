@@ -1,4 +1,4 @@
-# CSDID Version 1.%5
+# CSDID Version 1.5
 
 ## Prolog
 Yes, `CSDID` v1.5 is here!. And Im very excited about this!. It took some time for me to handle a few things, in particular the "slowness" related to the aggregations. In particular, using nlcom is fast for most cases (few coefficients and few equations), but it quickly gets slow when you have too many coefficients and equations. The reason for that is that it uses numerical derivatives to apply the delta method. The solution: use analytical derivatives!. Sounds easy, and once you figure out how to track indices within a matrix, walk through the park.
@@ -100,11 +100,12 @@ where $\Omega$ is the variance convariance for all the $ATT(g,t)$ and the $w_{g,
 
 Alright, the previous section was more of a brief introduction on the magic behind `CSDID` and `DRDID`. But now what you are really here for. The new `CSDID`. 
 
-First, in order to use `CSDID` you will need four sets of files:
+First, in order to use `CSDID` you will need five sets of files:
 - [drdid.ado](https://friosavila.github.io/playingwithstata/drdid/drdid.ado). This is the workhorse of the estimation. Implements the 2x2 DID estimation for any possible pair of treated and untreated groups, as gets the Recentered Influence functions. This is what is used to make Statistical inferences. This implements Sant'Anna and Zhao (2020).
 - [csdid.ado](https://friosavila.github.io/playingwithstata/drdid/csdid.ado). This is the main program that implements Callaway and Sant'Anna (2021). It will call on `drdid.ado`, and put all the `attgt's` into a nice table. Itdoes the work that `att_gt` does. It does come with couple of new surprises.
 - [csdid_estat.ado](https://friosavila.github.io/playingwithstata/drdid/csdid_estat.ado). This file will be used as a post-estimation program. It does the work that `aggte` and `summarize` does. And it now does it quickly, because it only uses the info left by `csdid`. 
-- [csdid_stat.ado](https://friosavila.github.io/playingwithstata/drdid/csdid_stat.ado). This is a new program that joins the `CSDID` family. (It may still recive a name change). This program will do mostly the same that `csdid_estat.ado` does, with a small difference. It will not work on your current dataset, it will work on a new dataset that you can create and store all the Influence functions created in `CSDID`. This is my attempt to simulate R's capacity to "save" entire datsets within objects for later use. 
+- [csdid_stats.ado](https://friosavila.github.io/playingwithstata/drdid/csdid_stats.ado). This is a new program that joins the `CSDID` family. (It may still recive a name change). This program will do mostly the same that `csdid_estat.ado` does, with a small difference. It will not work on your current dataset, it will work on a new dataset that you can create and store all the Influence functions created in `CSDID`. This is my attempt to simulate R's capacity to "save" entire datsets within objects for later use. 
+- [csdid_table.ado](https://friosavila.github.io/playingwithstata/drdid/csdid_table.ado). This program works whenever `wboot` is called. It simply posts the Wildbootstrap confidence intervals. 
 
 In contrast with **`DID`**, my command uses **`drimp`** as the default estimator method. However, all other estimators within **`drdid`** will be allowed (except `all` and `stdipwra`). They key is to declare the method using option **`method()`**. Interestingly enough, **`DID`** uses `dripw` as the default. So I will use that for the following replication.
 
@@ -376,8 +377,7 @@ Please, let me know if you have any questions!
 
 1. Some stress testing. I have done a few for now, But as questions arrive, more fixes will be possible. The command has been tested for crossection and for unbalance panel. In contrast with `DID`, this version will use all 2x2 balance data, even if some are not observed for all periods. 
 2. Some verification. Many data verifications have been added. But some checks may be missing. For instance, right now the command doesnt check if your weights are fixed for panel ID (which should be). 
-3. WBootstrap is now implemented, allowing for clusters. However, Im still producing CI based on normal distribution, not the "uniform" CI as proposed in CS2021. This will come next.
-4. Help files. And of course...Graphs! Right now, you can get very crude graphs with coefplot, or with -event_plot-. But I ll make sure our Graphic's Guru gets his hands on this.
+3. Help files. And of course...Graphs! Right now, you can get very crude graphs with coefplot, or with -event_plot-. But I ll make sure our Graphic's Guru gets his hands on this.
    
 
    

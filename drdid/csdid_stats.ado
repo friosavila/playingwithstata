@@ -124,7 +124,7 @@ end
                                 exit 198
                 }
  				if ("`e(vcetype)'"=="WBoot") {
-                    _my_tab_csdid, `diopts'
+                    csdid_table, `diopts'
                  }
                 else {
                     _coef_table,  `diopts' `myopts' neq(`e(neqr)')

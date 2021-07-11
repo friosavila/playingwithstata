@@ -67,6 +67,7 @@ program csdid_attgt,  rclass sortpreserve
 	return matrix table = rtb
 	return matrix b = r_b_
 	return matrix V = r_V_
+	return local agg = attgt
 end
 	
 program csdid_simple,  rclass sortpreserve
@@ -94,6 +95,7 @@ program csdid_simple,  rclass sortpreserve
 	return matrix table = rtb
 	return matrix b = r_b_
 	return matrix V = r_V_
+	return local agg = simple
 end
 
 program csdid_group, sortpreserve rclass
@@ -119,6 +121,7 @@ program csdid_group, sortpreserve rclass
 	return matrix table = rtb
 	return matrix b = r_b_
 	return matrix V = r_V_
+	return local agg = group
 end
 
 program csdid_calendar, sortpreserve rclass
@@ -144,6 +147,7 @@ program csdid_calendar, sortpreserve rclass
 	return matrix table = rtb
 	return matrix b = r_b_
 	return matrix V = r_V_
+	return local agg = calendar
 	
 end
  
@@ -176,6 +180,8 @@ program csdid_event, sortpreserve rclass
 	return matrix table = rtb
 	return matrix b = r_b_
 	return matrix V = r_V_
+	return local agg event
+	return local cmd estat
 end 
 
 

@@ -63,6 +63,11 @@ program csdid, sortpreserve eclass
 				easter_egg
 		}
 		
+		capture which drdid
+		if _rc!=0 {
+			display in red "Program drdid.ado not found. Make sure you have a copy of it installed." as text
+			exit 101
+		}
 		csdid_r `0'
 		
         *ereturn local cmdline `"drdid `0'"'
@@ -91,7 +96,7 @@ end
 				
 				if ("`e(vcetype)'"=="WBoot") {
 				
-                    _my_tab_csdid, `diopts'
+                    csdid_table, `diopts'
                 }
                 else {
                     _coef_table,  `diopts' `myopts' neq(`e(neqr)')

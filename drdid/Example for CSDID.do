@@ -62,18 +62,20 @@ csdid_stats calendar,   wboot
 csdid_stats group,   wboot
 csdid_stats event,   wboot
 use mpdta, clear
-csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   saverif(rif) replace notyet
+csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   saverif(rif) replace  
 ** Y una vez que los tengas, puedes hacer las aggregaciones desde aca
 cscript
 use rif, clear
+csdid_stats group,  
+csdid_plot, style(rbar)
 ** Si uno hace el llamado por wboot, seria necesario tener los CI modificados
 csdid_stats attgt, wboot
 csdid_stats simple, wboot
 csdid_stats calendar, wboot
 csdid_stats group, wboot
-csdid_stats event, 
+csdid_stats event, wboot
 
-
+csdid_plot, title("Dynamic Effect")
 
 set scheme s2color
 two rspike  k5 k6 t if t<0, pstyle(p1) color(%50) lw(3) || scatter k1 t if t<0 , pstyle(p1) || rspike k5 k6 t if t>=0, color(%40) pstyle(p2) lw(3) || scatter k1 t if t>=0, pstyle(p2) , legend(order(1 "Pre-treatment" 3 "Pre-treatment"))
