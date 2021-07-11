@@ -1,4 +1,4 @@
-program csdida_table, rclass 
+program csdid_table, rclass 
 	syntax [, level(int `c(level)') noci cformat(string) sformat(string) *]
 *set trace on
 	_get_diopts diopts rest, `options'
