@@ -3,6 +3,7 @@ program csdid_plot
 	syntax, [style(passthru) title(passthru) name(passthru) ]
 	tempvar mm 
 	tempvar kk
+	
 	if "`e(agg)'"=="event" | "`r(agg)'"=="event" {
 		if "`e(agg)'"=="event" {
 			 qui:csdid
@@ -62,19 +63,22 @@ end
 
 capture program drop csdid_plot_event
 program csdid_plot_event 
-	syntax varlist, style(str) [title(passthru) name(passthru)	 ]
+	syntax varlist, style(str) [title(passthru) name(passthru) ///
+								ytitle(passthru) xtitle(passthru)	 ]
 	gettoken t rest:varlist
 	gettoken b rest:rest
 	gettoken ll rest:rest 
 	gettoken uu rest:rest 
-	
+	** defaults
+	if "`xtitle'"=="" local xtitle xtitle("Periods to Treatment")
+	if "`ytitle'"=="" local xtitle ytitle("ATT")
 	
 	if "`style'"=="rspike" {
 	two   rspike  `ll' `uu' `t'   if `t'<0 , pstyle(p1) color(%40) lw(3) || ///
 		  scatter  `b'      `t'   if `t'<0 , pstyle(p1) || ///
 		  rspike  `ll' `uu' `t'   if `t'>=0, color(%40) pstyle(p2) lw(3) || ///
 		  scatter  `b'      `t'   if `t'>=0, pstyle(p2) , ///
-		  legend(order(1 "Pre-treatment" 3 "Post-treatment")) xtitle("Periods to Treatment") ytitle("ATT") ///
+		  legend(order(1 "Pre-treatment" 3 "Post-treatment")) `xtitle' `ytitle' ///
 		  yline(0 , lp(dash) lcolor(black)) `title' `name' 
 	}	  
 	
@@ -83,7 +87,7 @@ program csdid_plot_event
 		  (scatter  `b'     `t'   if `t'<0 , pstyle(p1) connect(l) ) || ///
 		  (rarea  `ll' `uu' `t'   if `t'>=0, color(%40) pstyle(p2) lw(0) ) || ///
 		  (scatter  `b'     `t'   if `t'>=0, pstyle(p2) connect(l) ), ///
-		  legend(order(1 "Pre-treatment" 3 "Post-treatment")) xtitle("Periods to Treatment") ytitle("ATT") ///
+		  legend(order(1 "Pre-treatment" 3 "Post-treatment")) `xtitle' `ytitle' ///
 		  yline(0 , lp(dash) lcolor(black))  `title' `name' 
 	}
 	
@@ -92,7 +96,7 @@ program csdid_plot_event
 		  (scatter  `b'      `t'   if `t'<0 , pstyle(p1) connect(l) ) || ///
 		  (rcap `ll' `uu' `t'   if `t'>=0, color(%60) pstyle(p2) lw(1) ) || ///
 		  (scatter  `b'      `t'   if `t'>=0, pstyle(p2) connect(l) ), ///
-		  legend(order(1 "Pre-treatment" 3 "Post-treatment")) xtitle("Periods to Treatment") ytitle("ATT") ///
+		  legend(order(1 "Pre-treatment" 3 "Post-treatment")) `xtitle' `ytitle' ///
 		  yline(0 , lp(dash) lcolor(black))  `title' `name'
 	}
 	
@@ -101,7 +105,7 @@ program csdid_plot_event
 		  (scatter  `b'      `t'   if `t'<0 , pstyle(p1) connect(l) ) || ///
 		  (rbar `ll' `uu' `t'   if `t'>=0, color(%60) pstyle(p2) lw(0) barwidth(0.5) ) || ///
 		  (scatter  `b'      `t'   if `t'>=0, pstyle(p2) connect(l) ), ///
-		  legend(order(1 "Pre-treatment" 3 "Post-treatment")) xtitle("Periods to Treatment") ytitle("ATT") ///
+		  legend(order(1 "Pre-treatment" 3 "Post-treatment")) `xtitle' `ytitle' ///
 		  yline(0 , lp(dash) lcolor(black))  `title' `name'
 	}
 end
