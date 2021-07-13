@@ -118,7 +118,7 @@ rifhdreg  logexppc i.sex_hh i.educ_hh age_hh hhsize i.couple sh_nchild05 sh_nchi
  
 *** Alternative example 
 replace educ_status = . if educ_det>90
-
+gen life_satis = q45scale if q45scale<=10
 ** Inequality of Education , health, life satisfaction
 
 rifmean educ_status if inrange(age,15,40), rif(eindex(expenditure_pcp)  lb(1) ub(4), windex(expenditure_pcp)  lb(1) ub(4))
@@ -136,3 +136,15 @@ mean i.sex age i.sex_hh i.educ_hh age_hh hhsize i.couple sh_nchild05 sh_nchild61
 est sto m4
 esttab m1 m2 m3 m4,  wide b(3)  drop(1.sex_hh 0.couple 1.educ_hh) label mtitle("EDUC" "Health" Life_Satis) scalar(rifmean) compress star(* 0.05) nop nose not
 
+
+** Reg  as QTE
+
+rifhdreg educ_status i.sex age i.sex_hh i.educ_hh  age_hh hhsize i.couple sh_nchild05 sh_nchild615 sh_wrk_wmen sh_wrk_men if inrange(age,15,40), rif(eindex(expenditure_pcp)  lb(1) ub(4)) scale(100) over(sex)  rwlogit(age i.sex_hh i.educ_hh  age_hh hhsize i.couple sh_nchild05 sh_nchild615 sh_wrk_wmen sh_wrk_men)
+est sto m1
+rifhdreg health i.sex age i.sex_hh i.educ_hh  age_hh hhsize i.couple sh_nchild05 sh_nchild615 sh_wrk_wmen sh_wrk_men if inrange(age,15,40), rif(eindex(expenditure_pcp)  lb(1) ub(5)) scale(100) over(sex) rwlogit(age i.sex_hh i.educ_hh  age_hh hhsize i.couple sh_nchild05 sh_nchild615 sh_wrk_wmen sh_wrk_men)
+est sto m2
+rifhdreg life_satis i.sex age i.sex_hh i.educ_hh  age_hh hhsize i.couple sh_nchild05 sh_nchild615 sh_wrk_wmen sh_wrk_men if inrange(age,15,40), rif(eindex(expenditure_pcp)  lb(1) ub(10)) scale(100) over(sex) rwlogit(age i.sex_hh i.educ_hh  age_hh hhsize i.couple sh_nchild05 sh_nchild615 sh_wrk_wmen sh_wrk_men)
+est sto m3
+mean i.sex age i.sex_hh i.educ_hh age_hh hhsize i.couple sh_nchild05 sh_nchild615 sh_wrk_wmen sh_wrk_men
+est sto m4
+esttab m1 m2 m3 m4,  wide b(3)  drop(1.sex_hh 0.couple 1.educ_hh) label mtitle("EDUC" "Health" Life_Satis) scalar(rifmean) compress star(* 0.05) nop nose not
