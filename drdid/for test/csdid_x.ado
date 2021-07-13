@@ -1,11 +1,10 @@
-
 ** NOTE when Panel is unbalanced (check this somehow.)
 ** there could be two solutions.
 ** 1 Using strong balance 
 ** 2 use semi balance (whenever att_gt exists)
 ** 3 use weak balance/crossection with cluster.
 ** Ultimate check. Do thestatistics Once.
-*! v1.51  by FRA. Added seed and method. for bootstrap
+
 *! v1.3  by FRA. Overhaul Change in how Weights are estimated. All effects are now in Mata.
 * All effects in mata. Quick!
 *! v1.03 by FRA. Adding Balance checks
@@ -49,7 +48,7 @@ syntax , [mydots(integer 10) maxdots(int 50) bad]
 end
 
 
-program csdid, sortpreserve eclass
+program csdid_x, sortpreserve eclass
         version 14
         if replay() {
                 if `"`e(cmd)'"' != "csdid" { 
@@ -94,14 +93,13 @@ end
                         noi display as text "Outcome model  : {res:`omodel'}"
                         noi display as text "Treatment model: {res:`tmodel'}"
                 }
-				
+				if "`e(clustvar)'"!="" {
+					display as text "(Std. err. adjusted for" ///
+					as result %9.0gc e(N_clust) ///
+					as text " clusters in " as result e(clustvar) as text ")"
+				}
 				if ("`e(vcetype)'"=="WBoot") {
-					if "`e(clustvar)'"!="" {
-						
-						display as text "(Std. err. adjusted for" ///
-						as result %9.0gc e(N_clust) ///
-						as text " clusters in " as result e(clustvar) as text ")"
-					}
+				
                     csdid_table, `diopts'
                 }
                 else {

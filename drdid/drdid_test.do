@@ -5,6 +5,7 @@ gen tmt=year==1978
 keep if treated==0 | sample==2
 global y re
 global xvar age educ black married nodegree hisp re74
+ drdid re $xvar ,  time(year) tr( experimental ) drimp wboot( rseed(1))
   timer on 1
  drdid re $xvar ,  time(year) tr( experimental ) drimp
  drdid re $xvar ,  time(year) tr( experimental ) dripw
@@ -49,8 +50,9 @@ global xvar age educ black married nodegree hisp re74
  
  
  
- drdid re $xvar ,  time(year) tr( experimental ) drimp wboot
+ drdid re $xvar ,  time(year) tr( experimental ) drimp wboot( rseed(1))
  drdid re $xvar ,  time(year) tr( experimental ) dripw wboot
+ drdid re $xvar ,  time(year) tr( experimental ) drimp wboot rseed(1)
  drdid re $xvar ,  time(year) tr( experimental ) reg wboot
  drdid re $xvar ,  time(year) tr( experimental ) stdipw wboot
  drdid re $xvar ,  time(year) tr( experimental ) ipw wboot

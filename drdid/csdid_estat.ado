@@ -5,6 +5,7 @@
 ** Estat command for aggregators
 program csdid_estat, sortpreserve  
 version 14
+		syntax anything, [plot *]
         if "`e(cmd)'" != "csdid" {
                 error 301
         }
@@ -15,6 +16,7 @@ version 14
 		}
 		if inlist("`key'","attgt","simple","pretrend","group","calendar","event","all") {
 			csdid_`key'  `rest'
+			
 		}
 		else {
 		    display in red "Option `key' not recognized"
@@ -44,7 +46,7 @@ program clrreturn, rclass
 end
 
 program csdid_attgt,  rclass sortpreserve
-	syntax, [estore(name) esave(name) replace]
+	syntax, [estore(name) esave(name) replace plot * ]
  	display "ATT GT with WBOOT SE (alternative method)"
 	tempname lastreg
 	tempvar b V table
@@ -68,10 +70,12 @@ program csdid_attgt,  rclass sortpreserve
 	return matrix b = r_b_
 	return matrix V = r_V_
 	return local agg  attgt
+ 
 end
 	
+ 
 program csdid_simple,  rclass sortpreserve
-	syntax, [estore(name) esave(name) replace]
+	syntax, [estore(name) esave(name) replace ]
  	display "Average Treatment Effect on Treated"
 	mata:csdid_simple("e(b_attgt)","e(V_attgt)","`e(glev)'","`e(tlev)'")
 	tempname lastreg
@@ -99,7 +103,7 @@ program csdid_simple,  rclass sortpreserve
 end
 
 program csdid_group, sortpreserve rclass
-	syntax, [estore(name) esave(name) replace]
+	syntax, [estore(name) esave(name) replace plot *]
   	display "ATT by group"
 	mata:csdid_group("e(b_attgt)","e(V_attgt)","`e(glev)'","`e(tlev)'")
 	tempname lastreg
@@ -122,10 +126,11 @@ program csdid_group, sortpreserve rclass
 	return matrix b = r_b_
 	return matrix V = r_V_
 	return local agg  group
+ 
 end
 
 program csdid_calendar, sortpreserve rclass
-	syntax, [estore(name) esave(name) replace]
+	syntax, [estore(name) esave(name) replace plot * ]
   	display "ATT by Calendar Period"
 	mata:csdid_calendar("e(b_attgt)","e(V_attgt)","`e(glev)'","`e(tlev)'")
 	tempname lastreg
@@ -148,11 +153,13 @@ program csdid_calendar, sortpreserve rclass
 	return matrix b = r_b_
 	return matrix V = r_V_
 	return local agg  calendar
-	
+ 
 end
  
 program csdid_event, sortpreserve rclass
-	syntax, [estore(name) esave(name) replace window(str) balance(int 0) ]
+	syntax, [estore(name) esave(name) replace window(str) balance(int 0) ///
+			 plot * ]
+			 
    	display "ATT by Periods Before and After treatment"
 	display "Event Study:Dynamic effects"
 	if "`window'"!="" {
@@ -182,6 +189,7 @@ program csdid_event, sortpreserve rclass
 	return matrix V = r_V_
 	return local agg event
 	return local cmd estat
+ 
 end 
 
 
@@ -191,6 +199,10 @@ end
 
 program addr, rclass
         return `0'
+end
+
+program adds, sclass
+        sreturn `0'
 end
 
 mata

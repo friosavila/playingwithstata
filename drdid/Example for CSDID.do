@@ -1,16 +1,123 @@
 cscript
 use mpdta, clear
 ** este es un ejemplo para csdid. sin WB
-csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   
+
+gen wgt = exp(runiform())
+bysort countyreal:replace wgt=wgt[1]
+ 
+ 
+csdid  lemp lpop  [w=wgt] ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   
  ** Igualmente si uno lo hace con todos los aggregadores
 csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   agg(simple)
+estat all
  csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   agg(calendar)
+ csdid_plot
  csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   agg(group)
+ csdid_plot
  csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   agg(event)
-
+csdid_plot
 ** NOT YET
 ** este es un ejemplo para csdid. sin WB
 csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   notyet
+csdid_plot, g(2006)
+estat event
+csdid_plot, 
+legend(order(1 "Antes" 3 "despues"))
+estat calendar
+csdid_plot
+estat group
+csdid_plot
+
+csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   notyet  agg(simple)
+estat attgt
+csdid_plot, g(2006) 
+estat event
+csdid_plot
+estat calendar
+csdid_plot
+estat group
+csdid_plot
+
+csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   notyet  agg(calendar)
+estat attgt
+csdid_plot, g(2006) 
+estat event
+csdid_plot
+estat calendar
+csdid_plot
+estat group
+csdid_plot
+
+csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   notyet  agg(group)
+estat attgt
+csdid_plot, g(2006) 
+estat event
+csdid_plot
+estat calendar
+csdid_plot
+estat group
+csdid_plot
+
+csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   notyet  agg(event)
+estat attgt
+csdid_plot, g(2006) 
+estat event
+csdid_plot
+estat calendar
+csdid_plot
+estat group
+csdid_plot
+
+ ******************
+ csdid  lemp lpop   ,  time(year) gvar(first_treat) cluster(countyreal)  method(dripw)   notyet wboot
+csdid_plot, g(2004)
+estat event
+csdid_plot
+estat calendar
+csdid_plot
+estat group
+csdid_plot
+
+csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   notyet  agg(simple)
+estat attgt
+csdid_plot, g(2006) 
+estat event
+csdid_plot
+estat calendar
+csdid_plot
+estat group
+csdid_plot
+
+csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   notyet  agg(calendar)
+estat attgt
+csdid_plot, g(2006) 
+estat event
+csdid_plot
+estat calendar
+csdid_plot
+estat group
+csdid_plot
+
+csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   notyet  agg(group)
+estat attgt
+csdid_plot, g(2006) 
+estat event
+csdid_plot
+estat calendar
+csdid_plot
+estat group
+csdid_plot
+
+csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   notyet  agg(event)
+estat attgt
+csdid_plot, g(2006) 
+estat event
+csdid_plot
+estat calendar
+csdid_plot
+estat group
+csdid_plot
+
  ** Igualmente si uno lo hace con todos los aggregadores
 csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   agg(simple) notyet
  csdid  lemp lpop   ,  time(year) gvar(first_treat) ivar(countyreal)  method(dripw)   agg(calendar) notyet
@@ -69,7 +176,7 @@ use rif, clear
 csdid_stats group,  
 csdid_plot, style(rbar)
 ** Si uno hace el llamado por wboot, seria necesario tener los CI modificados
-csdid_stats attgt, wboot
+csdid_stats attgt
 csdid_stats simple, wboot
 csdid_stats calendar, wboot
 csdid_stats group, wboot

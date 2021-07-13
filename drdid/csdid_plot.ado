@@ -7,12 +7,42 @@ capture program drop csdid_plot_group
 capture program drop isgroup_eq
 capture program drop csdid_plot_calendar
 capture program drop _matrix_list*/
+
+program csdid_agg_cat, sclass
+** levels for agg 
+	syntax , [agg(str) ragg(str) eagg(str)]
+
+	if "`agg'"!="" {
+		if "`agg'"=="attgt" 		 local agg_cat=1
+		else if "`agg'"=="event"     local agg_cat=2
+		else if "`agg'"=="calendar"  local agg_cat=3
+		else if "`agg'"=="group"     local agg_cat=4
+	}
+	else if "`ragg'"!="" {
+		if "`ragg'"=="attgt" 		 local agg_cat=1
+		else if "`ragg'"=="event"    local agg_cat=2
+		else if "`ragg'"=="calendar" local agg_cat=3
+		else if "`ragg'"=="group"    local agg_cat=4
+	}
+	else if "`eagg'"!="" {
+		if "`eagg'"=="attgt" 		 local agg_cat=1
+		else if "`eagg'"=="event"    local agg_cat=2
+		else if "`eagg'"=="calendar" local agg_cat=3
+		else if "`eagg'"=="group"    local agg_cat=4
+	}
+	sreturn local agg_cat = `agg_cat'
+end
+
 program csdid_plot
-	syntax, [style(passthru) title(passthru) name(passthru) group(str)  ]
+	syntax, [style(passthru) title(passthru) name(passthru) Group(str) ///
+							 ytitle(passthru) xtitle(passthru)	///
+							 legend(passthru) agg(str) ]
 	tempvar mm 
 	tempvar kk
 	
-	if "`e(agg)'"=="event" | "`r(agg)'"=="event" {
+	csdid_agg_cat, agg(`agg') ragg(`r(agg)') eagg(`e(agg)')
+	
+	if `s(agg_cat)'==2 {
 		if "`e(agg)'"=="event" {
 			 qui:csdid
 			 local evlist = subinstr("`:colname e(b)'","T","",.)
@@ -31,11 +61,11 @@ program csdid_plot
 		}
 		csdid_default, `options' `style'
 		csdid_plot_event `kk'  `mm'1  `mm'5 `mm'6	, ///
-					style(`r(style)')	  `title' `name'  		   
+					style(`r(style)') `title' `name'  `ytitle'	`xtitle' `legend'	   
 		drop `mm'? 
 	}
 	
-	else if "`e(agg)'"=="group" | "`r(agg)'"=="group" {
+	else if `s(agg_cat)'==4 {
 		if "`e(agg)'"=="group" {
 			 qui:csdid
 			 local evlist :colname e(b)
@@ -57,11 +87,11 @@ program csdid_plot
 		 
 		csdid_default, `options' `style'
 		csdid_plot_group `k2'  `mm'1  `mm'5 `mm'6	, ///
-					style(`r(style)')	  `title' `name'  		   
+					style(`r(style)')	  `title' `name'  `ytitle'	`xtitle' `legend'	   
 		drop `mm'? 
 	}
 	
-	else if "`e(agg)'"=="calendar" | "`r(agg)'"=="calendar" {
+	else if `s(agg_cat)'==3 {
 		if "`e(agg)'"=="calendar" {
 			 qui:csdid
 			 local evlist :colname e(b)
@@ -83,23 +113,25 @@ program csdid_plot
 		 
 		csdid_default, `options' `style'
 		csdid_plot_calendar `k2'  `mm'1  `mm'5 `mm'6	, ///
-					style(`r(style)')	  `title' `name'  		   
+					style(`r(style)')	  `title' `name'  `ytitle'	`xtitle' `legend'		   
 		drop `mm'? 
 	}
 	
-	else if "`e(agg)'"=="attgt" | "`r(agg)'"=="attgt" {
+	else if `s(agg_cat)'==1 {
 		* First check all info from e(b)
 		if "`e(agg)'"=="attgt" {
 			 qui:csdid
 			 local evlist : colname e(b)
 			 local evqlist: coleq e(b)
 			 matrix `mm'=r(table)'
+			 matrix roweq `mm'=`evqlist'
 			 matrix `mm'=`mm'[1..rowsof(`mm')/2,....]			
 		}
 		else if "`r(agg)'"=="attgt" {		 
 			 local evlist : colname r(b)
 			 local evqlist: coleq r(b)
 			 matrix `mm'=r(table)'
+			 matrix roweq `mm'=`evqlist'
 			 matrix `mm'=`mm'[1..rowsof(`mm')/2,....]			
 		}
 //////////////////////////
@@ -128,7 +160,7 @@ program csdid_plot
 		csdid_default, `options' `style'
 		*sum `kk'  `nmm'1  `nmm'5 `nmm'6
 		csdid_plot_event `kk'  `nmm'1  `nmm'5 `nmm'6	, ///
-					style(`r(style)')	  `title' `name'  		   
+					style(`r(style)')	  `title' `name'  `ytitle'	`xtitle' `legend'		   
 		drop `nmm'? 	
 		
 	}
@@ -197,6 +229,7 @@ program csdid_default, rclass
 	else             return local style `style'
 end
 
+ 
 
 program csdid_plot_event 
 	syntax varlist, style(str) [title(passthru) name(passthru) ///
@@ -210,12 +243,13 @@ program csdid_plot_event
 	if "`xtitle'"=="" local xtitle xtitle("Periods to Treatment")
 	if "`ytitle'"=="" local ytitle ytitle("ATT")
 	
+		
 	if "`style'"=="rspike" {
 	two   rspike  `ll' `uu' `t'   if `t'<0 , pstyle(p1) color(%40) lw(3) || ///
 		  scatter  `b'      `t'   if `t'<0 , pstyle(p1) || ///
 		  rspike  `ll' `uu' `t'   if `t'>=0, color(%40) pstyle(p2) lw(3) || ///
 		  scatter  `b'      `t'   if `t'>=0, pstyle(p2) , ///
-		  legend( order(1 "Pre-treatment" 3 "Post-treatment") `legend' ) `xtitle' `ytitle' ///
+		  legend(order(1 "Pre-treatment" 3 "Post-treatment") `legend' ) `xtitle' `ytitle' ///
 		  yline(0 , lp(dash) lcolor(black)) `title' `name' 
 	}	  
 	
@@ -233,7 +267,7 @@ program csdid_plot_event
 		  (scatter  `b'      `t'   if `t'<0 , pstyle(p1) connect(l) ) || ///
 		  (rcap `ll' `uu' `t'   if `t'>=0, color(%60) pstyle(p2) lw(1) ) || ///
 		  (scatter  `b'      `t'   if `t'>=0, pstyle(p2) connect(l) ), ///
-		  legend(order(1 "Pre-treatment" 3 "Post-treatment") `legend') `xtitle' `ytitle' ///
+		  legend(order(1 "Pre-treatment" 3 "Post-treatment")  `legend') `xtitle' `ytitle' ///
 		  yline(0 , lp(dash) lcolor(black))  `title' `name'
 	}
 	

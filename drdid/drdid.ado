@@ -1,4 +1,5 @@
-*! Ver 1.5   New output, with panel GMM estimators. Also WB standard errors with cluster
+*! Ver 1.51 Change in check for 2x2 data
+* Ver 1.5   New output, with panel GMM estimators. Also WB standard errors with cluster
 * Ver 1.38  Adding Cluster Stantandard errors
 * version 1.37 2jun2021 Add extra messages of 2x2 balance. Checks that you indeed have panel data
 * version 1.36 17may2021 Changes with EP display options
@@ -77,7 +78,8 @@ void is_2x2(string scalar time, treat, touse, isok){
     real matrix dta
  	
 	dta=st_data(.,time,touse),st_data(.,treat,touse)
-	if (rows(uniqrows(dta))==4) st_numscalar(isok,1)
+	dta=uniqrows(dta)
+	if ((rows(dta)==4) & (rows(uniqrows(dta[,1]))==2) & (rows(uniqrows(dta[,2]))==2)) st_numscalar(isok,1)
 	else st_numscalar(isok,0)
 }
 	
@@ -107,7 +109,7 @@ program define drdid_wh, eclass sortpreserve byable(recall)
 							WBOOT1						///
 							*reps(int 999) 				///
 							*wbtype(int 1)  			/// Hidden option
-							seed(str)					/// set seed
+							rseed(str)					/// set seed
 							Level(int 95)				/// CI level
 							stub(name) replace 			/// to avoid overwritting
 							cluster(varname)			/// For Cluster
@@ -148,8 +150,10 @@ program define drdid_wh, eclass sortpreserve byable(recall)
 		local ocluster `cluster'
 		local cluster `clvar'
 	}
-	if "`seed'"=="" 	local seed    "`r(seed)'"
-	capture:set seed `seed'
+	
+	if "`rseed'"=="" 	local rseed    "`r(seed)'"
+	
+	capture:set seed `rseed'
 	
  	**# Verifies if data is panel data when "ivar" is declared
 	if "`ivar'"!="" {
@@ -246,7 +250,8 @@ program define drdid_wh, eclass sortpreserve byable(recall)
 			 xvar(`xvar') `isily' ivar(`ivar') 	///
 			 weight(`wgt') stub(`stub') ///
 			  treatvar(`treatment') `rc1' cluster(`cluster') ///
-			 `wboot' reps(`reps')  wbtype(`wbtype') level(`level') seed(`seed')
+			 `wboot' reps(`reps')  wbtype(`wbtype') level(`level') 
+			 *seed(`seed')
 		
 	** Default will be IPT 
  	if "`estimator'"!="all" {
@@ -254,6 +259,7 @@ program define drdid_wh, eclass sortpreserve byable(recall)
 			drdid_`estimator', `01' `diopts' 
 			ereturn local semethod `semethod'
 			ereturn local clustvar `ocluster'
+			ereturn local seed     `rseed'
 			Display, bmatrix(e(b)) vmatrix(e(V)) `diopts' 
 			exit 
 		}
@@ -477,10 +483,10 @@ program _Parse_Wildboot, rclass
 					exit 198
 				}
 			}
-			quietly egen `wncl0' = group(`cluster') if `touse'
-			summarize `wncl0', meanonly
-			local wncl = r(max)
-			return scalar wncl = `wncl'
+			*quietly egen `wncl0' = group(`cluster') if `touse'
+			*summarize `wncl0', meanonly
+			*local wncl = r(max)
+			*return scalar wncl = `wncl'
 		}
 		return local cluster "`cluster'"
 	}

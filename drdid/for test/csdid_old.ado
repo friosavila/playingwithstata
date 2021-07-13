@@ -1,11 +1,10 @@
-
 ** NOTE when Panel is unbalanced (check this somehow.)
 ** there could be two solutions.
 ** 1 Using strong balance 
 ** 2 use semi balance (whenever att_gt exists)
 ** 3 use weak balance/crossection with cluster.
 ** Ultimate check. Do thestatistics Once.
-*! v1.51  by FRA. Added seed and method. for bootstrap
+
 *! v1.3  by FRA. Overhaul Change in how Weights are estimated. All effects are now in Mata.
 * All effects in mata. Quick!
 *! v1.03 by FRA. Adding Balance checks
@@ -96,12 +95,7 @@ end
                 }
 				
 				if ("`e(vcetype)'"=="WBoot") {
-					if "`e(clustvar)'"!="" {
-						
-						display as text "(Std. err. adjusted for" ///
-						as result %9.0gc e(N_clust) ///
-						as text " clusters in " as result e(clustvar) as text ")"
-					}
+				
                     csdid_table, `diopts'
                 }
                 else {
@@ -138,103 +132,29 @@ program define _S_Me_thod, sclass
         sreturn local tmodel "`tmodel'"
 end
 
- 
-program _Parse2_wboot, rclass
-	syntax, [reps(integer 999) wbtype(str) rseed(str) cluster(str)]
-	return scalar reps    = `reps'
-	return local seed 	   `rseed'
-	return local  cluster  `cluster'
-	
-	if ("`wbtype'"=="") {
-		    return scalar wbtype = 1
 
-		}
-	else if ("`wbtype'"=="mammen") {
-		    return scalar wbtype = 1
-		}
-	else if ("`wbtype'"=="rademacher") {
-		    return scalar wbtype = 2
-		}
-	else if ("`wbtype'"!="rademacher" & "`wbtype'"!="mammen") {
-		    display as error "invalid {bf:wbtype()}"
-			di as txt "{p 4 4 2}"                           
-			di as smcl as err ///
-			"{bf:wbtype()} should be one of {bf:mammen} or " ///
-			"{bf:rademacher}."      
-			di as smcl as err  "{p_end}"
-			exit 198 
-		}	
-		
-end 
 
-program _Parse_Wildboot, rclass 
-	syntax 			, [			///
-					   WBOOT1				///
-					   WBOOT(str)			///
-					   reps(integer 999) 	///
-					   rseed(string) 		///
-					   wbtype(string)		///
-					   cluster(string)		///
-					   ]
-
-	marksample touse 
-	if ("`wboot1'"=="" & "`wboot'"!="") {
-	    _Parse2_wboot, `wboot'
-		return scalar reps= `r(reps)'
-		return local  seed `r(seed)'
-		return scalar wbtype= `r(wbtype)'
-		return local  cluster `r(cluster)'
-		
-	}
-	else if ("`wboot1'"!="") {
-		return scalar reps = `reps'
-		return local seed 	   `rseed'
-		if ("`wbtype'"=="") {
-		    local wbtypen = 1
-		}
-		else if ("`wbtype'"=="mammen") {
-		    local wbtypen = 1
-		}
-		else if ("`wbtype'"=="rademacher") {
-		    local wbtypen = 2
-		}
-		else if ("`wbtype'"!="rademacher" & "`wbtype'"!="mammen") {
-		    display as error "invalid {bf:wbtype()}"
-			di as txt "{p 4 4 2}"                           
-			di as smcl as err ///
-			"{bf:wbtype()} should be one of {bf:mammen} or " ///
-			"{bf:rademacher}."      
-			di as smcl as err  "{p_end}"
-			exit 198 
-		}
-		return scalar wbtype = `wbtypen' 
-		if ("`cluster'"!="") {
-		    tempvar nclust wncl0
-			capture confirm numeric variable `cluster'
-			local rc = _rc
-			if (`rc') {
-				capture destring `rest', generate(`nclust')
-				local rc = _rc 
-				if (`rc') {
-					display in red "option {bf:cluster()} incorrectly specified"
-					exit 198
-				}
-				capture confirm numeric variable `nclust'
-				local rc = _rc 
-				if (`rc') {
-					display in red "option {bf:cluster()} incorrectly specified"
-					exit 198
-				}
-			}
-		}
-		return local cluster `cluster'
-	}
-end 
-
-program issaverif, 
-	syntax, [saverif(str) replace]
+program csdid_r, sortpreserve eclass
+	syntax varlist(fv ) [if] [in] [iw], 	/// Basic syntax  allows for weights
+							[ivar(varname)] ///
+							time(varname)   ///
+							gvar(varname)  	/// Ppl either declare gvar
+							[cluster(varname)] /// 
+							[notyet] 		/// att_gt basic option. May prepare others as Post estimation
+							[saverif(name) replace ]    ///
+							[method(str) bal(str) ///
+							agg(str)  ///
+							wboot /// For Wbootstrap
+							]  // This allows other estimators
+				
+	marksample touse
+	** First determine outcome and xvars
+	gettoken y xvar:varlist
+	markout `touse' `ivar' `time' `gvar' `y' `xvar' `cluster'
+	tempname cband
+	** Confirm if new file exists
 	if "`saverif'"!="" {
-	    capture confirm new file "`saverif'.dta" 
+	    capture confirm new file "`saverif'.dta"
 		if _rc!=0 {
 			if "`replace'"=="" {
 			    display in red "File `saverif'.dta already exists"
@@ -249,52 +169,6 @@ program issaverif,
 		    display "File `saverif'.dta will be used to save all RIFs"
 		}
 	}
-end
-
-program csdid_r, sortpreserve eclass
-	syntax varlist(fv ) [if] [in] [iw], 			/// Basic syntax  allows for weights
-							[ivar(varname)] 		///
-							time(varname)  			///
-							gvar(varname)  			/// Ppl either declare gvar
-							[cluster(varname)] 		/// 
-							[notyet] 				/// att_gt basic option. May prepare others as Post estimation
-							[saverif(name) replace ] ///
-							[method(str) bal(str)	 ///
-							agg(str)  				///
-							WBOOT(str) 				///
-							WBOOT1					///
-							reps(int 999) 			///
-							wbtype(str)  			/// Hidden option
-							rseed(str)				/// set seed
-							Level(int 95)			/// CI level
-							]  // This allows other estimators
-				
-	marksample touse
-	** First determine outcome and xvars
-	gettoken y xvar:varlist
-	markout `touse' `ivar' `time' `gvar' `y' `xvar' `cluster'
-	tempname cband
-	** Parsing WBOOT
-	_Parse_Wildboot, wboot(`wboot') `wboot1' reps(`reps') wbtype(`wbtype') rseed(`rseed') cluster(`cluster')
-	
-	if "`wboot'`wboot1'"!="" {
-	    local cluster 	`r(cluster)'
-		local ocluster 	`r(cluster)'
-		local seed 		`r(seed)'
-		if "`wbtype'"=="" local owbtype mammen
-		local owbtype   rademacher 
-		local wbtype 	`r(wbtype)'
-		local reps 		`r(reps)'
-		local vcetype 	WBoot
-	}
-	else {
-	    local wbtype 1
-	}
-	if "`seed'"!="" set seed `seed'
-	** Original cluster
-	local ocluster 	`cluster'
-	** Confirm if new file exists
-	issaverif, saverif(`saverif') `replace'
 	
 	
     if "`agg'"=="" {
@@ -417,9 +291,8 @@ program csdid_r, sortpreserve eclass
 					capture drop _g`i'_`time1'_`j'
 					
 				    capture   confirm variable __att
-					if 	_rc==111	qui:      gen _g`i'_`time1'_`j'=.
-					else 		    ren __att     _g`i'_`time1'_`j'
-					
+					if 	_rc==111	qui:gen _g`i'_`time1'_`j'=.
+					else 		ren __att    _g`i'_`time1'_`j'
 					local vlabrif `vlabrif' _g`i'_`time1'_`j'
 					if `j'<`i' local time1 = `j'					
 					
@@ -430,10 +303,8 @@ program csdid_r, sortpreserve eclass
 					qui:replace `tr'=`gvar'==`i' if `touse'
 					*local time1 = min(`i'-1, `j'-1)
 					* Use as controls those never treated and those not treated by time `j'>`i'
-					qui:capture:drdid `varlist' if (`gvar'==0 | `gvar'==`i' | `gvar'> `j') ///
-													& inlist(`time',`time1',`j') ///
-					                                & `touse' [`weight'`exp'], ///
-													ivar(`ivar') time(`time') treatment(`tr') `method' stub(__) replace
+					qui:capture:drdid `varlist' if (`gvar'==0 | `gvar'==`i' | `gvar'> `j') & inlist(`time',`time1',`j') & `touse' [`weight'`exp'], ///
+										ivar(`ivar') time(`time') treatment(`tr') `method' stub(__) replace
 					
 					if _rc!=0 local	bad bad
 					
@@ -462,7 +333,6 @@ program csdid_r, sortpreserve eclass
 			}
 		}
 ////////////////////////////////////////////////////////////////////////////////
-		
 		preserve
 			qui:notes drop _all
 			tempvar wgtt
@@ -476,7 +346,7 @@ program csdid_r, sortpreserve eclass
 				label var ivar "indicator"
 				local ivar ivar
 			}
-			
+			*collapse  `time'  `gvar' `vlabrif' `wgtt' `cluster', by(`ivar') fast
 			collapse   `time'  `gvar' `vlabrif' `wgtt' `cluster', by(`ivar' ) fast
 			ren `wgtt' __wgt__
 			label var  __wgt__  "Weight Variable"
@@ -493,10 +363,12 @@ program csdid_r, sortpreserve eclass
 			*** first Gvars
 			if "`cluster'"!="" {
 				qui:egen long _cl_var=group(`cluster')
-				*qui:sort _cl_var
+				qui:sort _cl_var
 				label var _cl_var "Effective cluster"
 				local cluster _cl_var
 			}
+
+			
 			
 			/// saving RIF
 			note: Data created with -csdid-. Contains all -RIFs- associated with model estimation. 
@@ -526,21 +398,17 @@ program csdid_r, sortpreserve eclass
 			//  7 all 
 			tempname b1 b2 b3 b4 b5 
 			tempname s1 s2 s3 s4 s5 
-			
+ 
 			** New idea. Hacerlo todo desde makerif	
 			*mata:makerif("`rifgt'","`rifwt'","__wgt__","`b'","`v'","`cluster' ")
 			*save extra, replace
-			local ci `level'/100
-			if "`wboot'`wboot1'"!="" local wboot wboot
-			
 			noisily mata: makerif2("`rifgt'" , "`rifwt'","__wgt__","`agg'",  ///
 								  "`time0'","`glvls'","`tlvls'", ///
 									"`b1'",  /// `b2' `b3' `b4' `b5' `b6'
 									"`s1'",  ///  `s2' `s3' `s4' `s5' `s6'
-									"`clvar' ","`wboot' ", "`cband'", /// 
-									`ci', `reps', `wbtype')
-									
-			** Time0 `time0'		
+									"`clvar' ","`wboot' ", "`cband'")
+			
+				** Time0 `time0'		
 			if "`saverif'"!="" {
 			    save `saverif', replace
 			}
@@ -570,6 +438,12 @@ program csdid_r, sortpreserve eclass
 	ereturn local cmd 		csdid
 	ereturn local cmdline 	csdid `0'
 	
+	if "`wboot'"!="" {
+		ereturn local vcetype "WBoot"
+		matrix colname `cband'= b se t ll ul
+		ereturn matrix cband  	`cband'
+	}
+	
 	ereturn local estat_cmd csdid_estat
 	ereturn matrix b_attgt  b_attgt 
 	ereturn matrix V_attgt  V_attgt 
@@ -584,24 +458,10 @@ program csdid_r, sortpreserve eclass
 	ereturn scalar neqr	=	`neqr'
 	ereturn local riffile	`saverif'
 	ereturn local method 	`method'
-	if "`ocluster'"!="" {
-		ereturn local clustvar 	`ocluster'
-		ereturn scalar N_clust = `=scalar(clnm)'
-	}
 	/// Add here Cluster var and number of Clusters.
 	if  "`tyet'"=="" ereturn local control_group "Never Treated"
 	if  "`tyet'"!="" ereturn local control_group "Not yet Treated"
 	
-	if "`vcetype'"=="WBoot" {
-		ereturn local  seed	  `seed'
-		ereturn local wbtype `wbtype'
-		ereturn scalar reps   =		`reps'
-		matrix colname `cband'= b se t ll ul
-		ereturn matrix cband  	`cband'
-		ereturn local vcetype 	WBoot
-	}
-		    
-		
 	Display
 	display "Control: `e(control_group)'" 
 	display _n "See Callaway and Sant'Anna (2021) for details"
@@ -622,6 +482,51 @@ end
 
 
 mata:
+ void makerif(string scalar att_gt_ , pg_ , wgt_, b, V, clv){	
+    real matrix att_gt, pg, all, wgt
+	att_gt	= st_data(.,att_gt_)
+	pg    	= st_data(.,pg_)
+	wgt   	= st_data(.,wgt_)
+	wgt	  	= wgt:/mean(wgt)
+	pg	  	= pg[,1..cols(pg)]:*wgt
+	wgt     = . 
+  	pg		= pg:/rowsum(mean(pg))
+	/// pg here is just a dummy
+	// stp1 all together
+	all=att_gt,pg
+	// stp2 get Mean(RIF) 
+	real matrix mean_y
+	mean_y=colsum(all):/colnonmissing(all)
+	_editmissing(mean_y,0)
+	// stp3 Exp factor
+	real matrix exp_factor
+	exp_factor = (rows(all):/colnonmissing(all))
+	// stp4 RIF -> IF
+	all=all:-mean_y
+	
+	// make missing zeros
+	_editmissing(all,0)
+	_editmissing(exp_factor,0)
+	all=all:*exp_factor
+    st_store(.,tokens(att_gt_+" "+pg_),all:+mean_y)
+	// estimate Variance Covariance assuming SUper normal
+	
+	//
+	real matrix VV
+	st_matrix(b,mean_y)
+	
+	if (clv==" ") {	
+		VV=quadcross(all,all)/rows(all)^2
+	}
+	else {
+		real scalar cln
+		real matrix clvar
+		clvar=st_data(.,clv)
+		clusterse(all,clvar,VV,cln)
+	}
+	st_matrix(V,VV)
+}
+
  vector event_list(real matrix glvl, tlvl){
  	real matrix toreturn
 	real scalar i,j
@@ -638,8 +543,8 @@ mata:
 // Think how to save all elements.
 		
 void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg, 
-				time0, glvl_, tlvl_, bb_, ss_, clvar_, wboot_ , cband, 
-				real scalar ci, reps, wbtype ) {	
+				time0, glvl_, tlvl_, bb_, ss_, clvar_, wboot_ , cband ) {	
+					
     real matrix rifgt , rifwt, wgt, t0, glvl, tlvl
 	real scalar i,j,k,h
 	rifgt	= st_data(.,rifgt_)
@@ -687,15 +592,15 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 	//VV-VV1
 	
 	if (wboot_==" ") {
-		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, wboot_ ,VV1 , cband, ci, reps, wbtype)
+		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, wboot_ ,VV1 , cband)
 		st_matrix("b_attgt",bb)
 		st_matrix("V_attgt",VV)
 	}
 	else             {
-		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, " "    ,VV1, cband, ci, reps, wbtype )
+		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, " ",VV1, cband )
 		st_matrix("b_attgt",bb)
 		st_matrix("V_attgt",VV)
-		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, wboot_ ,VV1 , cband, ci, reps, wbtype)
+		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, wboot_ ,VV1 , cband)
 	}
 	
 	//if (wboot_!=" ") make_tbl( (rifgt,rifwt) ,bb,VV,clvar_, wboot_ , VV1)
@@ -710,7 +615,10 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 				k++
 				// G <= T
  				if ( (glvl[i]<=tlvl[j]) & (ind_wt[k]!=0) ) {
+					//ag_rif=ag_rif, rifgt[.,k]
+					//ag_wt =ag_wt , rifwt[.,i]
 					ind_gt=ind_gt,k
+//	ind_wt=ind_wt,i
 				}
  			}
 		}
@@ -718,7 +626,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 		ag_rif = rifgt[.,ind_gt]
 		ag_wt  = rifwt[.,ind_gt]
 		aux = aggte(ag_rif, ag_wt)
-		make_tbl(aux ,bb,VV,clvar_, wboot_ , VV1, cband, ci, reps, wbtype)
+		make_tbl(aux ,bb,VV,clvar_, wboot_ , VV1, cband)
 		coleqnm = "ATT"
 	}
 	/////////////////////////////////////////simple pretrend
@@ -776,7 +684,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 			}	
 		}
 		// get table elements		
-		make_tbl(aux ,bb,VV,clvar_, wboot_ ,VV1, cband, ci, reps, wbtype)
+		make_tbl(aux ,bb,VV,clvar_, wboot_ ,VV1, cband)
 	}	
 	/////////////////////////////////////////
 
@@ -814,7 +722,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 			}
 		}	
 		// get table elements		
-		make_tbl(aux ,bb,VV,clvar_, wboot_ ,VV1, cband, ci, reps, wbtype )
+		make_tbl(aux ,bb,VV,clvar_, wboot_ ,VV1, cband )
 	}
 	
 	if (agg=="event") {
@@ -856,7 +764,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 			}	
 		}	
 		// get table elements		
-		make_tbl(aux ,bb,VV,clvar_, wboot_ ,VV1, cband, ci, reps, wbtype)
+		make_tbl(aux ,bb,VV,clvar_, wboot_ ,VV1, cband)
 	}
 	
 	st_matrix(bb_,bb)
@@ -871,8 +779,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , wgt_, agg,
 	
 }
 
-void make_tbl(real matrix rif,bb,VV, clv , wboot ,VV1 , string scalar cband_,
-			  real scalar ci, reps, wbtype){
+void make_tbl(real matrix rif,bb,VV, clv , wboot ,VV1 , string scalar cband_){
 	real matrix aux, nobs, clvar
 	real scalar cln
 	bb=mean(rif)
@@ -884,23 +791,17 @@ void make_tbl(real matrix rif,bb,VV, clv , wboot ,VV1 , string scalar cband_,
 	// cluster std
 	if ((clv!=" ") & (wboot==" ")) {
 		clvar=st_data(.,clv)
-		clusterse((rif:-bb),clvar,VV)
+		clusterse((rif:-bb),clvar,VV,cln)
 	}
 	real matrix cband
 	// wboot no cluster
 	if ( wboot!=" ") {
-		mboot(rif,bb, VV, cband, clv, VV1,  ci, reps, wbtype)
+		mboot(rif,bb, VV, cband, clv, VV1)
 		st_matrix(cband_, cband)
 	}
-	if (clv!=" ") {
-	    cln = rows(uniqrows(st_data(.,clv)))
-	}
-	st_numscalar("clnm",cln)
-
-	
  } 
 
-void clusterse(real matrix iiff, cl, V){
+void clusterse(real matrix iiff, cl, V, real scalar cln){
     /// estimates Clustered Standard errors
     real matrix ord, xcros, ifp, info, vv 
 	//1st get the IFS and CL variable. 
@@ -920,7 +821,7 @@ void clusterse(real matrix iiff, cl, V){
 	nt=rows(iiff)
 	nc=rows(info)
 	V =	xcros/(nt^2)
- 
+	cln=nc
 	// Esto es para ver como hacer clusters.
 	//*nc/(nc-1)
 	//st_matrix(V,    vv)
@@ -1043,14 +944,13 @@ real vector qtp(real matrix y, real scalar p) {
 	return(qq)
 }
 
-void mboot(real matrix rif,mean_rif, vv, cband, string scalar clv, real matrix vv1, 
-			real scalar ci, reps, wbtype) {
-    
+void mboot(real matrix rif,mean_rif, vv, cband, string scalar clv, real matrix vv1) {
+    //, real scalar reps, bwtype, ci 
     real matrix fr
-	//real scalar reps, wbtype
-	//reps   = 999
-	//wbtype =   1
-	//ci     = 0.95
+	real scalar reps, wbtype
+	reps   = 999
+	wbtype =   1
+	ci     = 0.95
 	real matrix ifse , ccb
 	// this gets the Bootstraped values
 	if (clv ==" ") {
@@ -1079,7 +979,6 @@ void mboot(real matrix rif,mean_rif, vv, cband, string scalar clv, real matrix v
 	//sqrt(variance(fr))
 	//st_matrix(vv,iqrse(fr)^2)
 	//st_matrix(cband,ccb)
-	
 }
 
 
