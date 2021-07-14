@@ -355,55 +355,87 @@ Now, I dont want to re-estimate this model again, but I'm interested in other ag
 
 ```
 .  use rif_example, clear
+
 .  csdid_stats simple , wboot rseed(1)
-------------------------------------------------------------------------------
-             | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
--------------+----------------------------------------------------------------
-         ATT |  -.0417518   .0111832    -3.73   0.000    -.0636704   -.0198331
-------------------------------------------------------------------------------
+----------------------------------------------------------------------
+             | Coefficient  Std. err.      t      [95% conf. interval]
+-------------+--------------------------------------------------------
+         ATT |  -.0417518   .0111832    -3.73    -.0627803   -.0207233
+----------------------------------------------------------------------
 
 . csdid_stats calendar, wboot rseed(1)
-------------------------------------------------------------------------------
-             | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
--------------+----------------------------------------------------------------
-       T2004 |  -.0145297   .0234217    -0.62   0.535    -.0604354    .0313761
-       T2005 |  -.0764219   .0278336    -2.75   0.006    -.1309747   -.0218691
-       T2006 |  -.0461757   .0217366    -2.12   0.034    -.0887787   -.0035727
-       T2007 |  -.0395822   .0129156    -3.06   0.002    -.0648962   -.0142681
-------------------------------------------------------------------------------
+----------------------------------------------------------------------
+             | Coefficient  Std. err.      t      [95% conf. interval]
+-------------+--------------------------------------------------------
+       T2004 |  -.0145297   .0219889    -0.66    -.0582209    .0291616
+       T2005 |  -.0764219    .026394    -2.90    -.1326498    -.020194
+       T2006 |  -.0461757    .022042    -2.09    -.0886126   -.0037388
+       T2007 |  -.0395822   .0119995    -3.30    -.0637637   -.0154006
+----------------------------------------------------------------------
 
-. csdid_stats group , wboot
-------------------------------------------------------------------------------
-             | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
--------------+----------------------------------------------------------------
-       G2004 |  -.0845759   .0235067    -3.60   0.000    -.1306482   -.0385037
-       G2006 |  -.0201666   .0176825    -1.14   0.254    -.0548238    .0144905
-       G2007 |  -.0287814   .0169083    -1.70   0.089    -.0619211    .0043584
-------------------------------------------------------------------------------
+csdid_stats group, wboot rseed(1)
+----------------------------------------------------------------------
+             | Coefficient  Std. err.      t      [95% conf. interval]
+-------------+--------------------------------------------------------
+       G2004 |  -.0845759   .0239044    -3.54    -.1317318   -.0374201
+       G2006 |  -.0201666   .0171841    -1.17    -.0541214    .0137881
+       G2007 |  -.0287814   .0160165    -1.80    -.0590851    .0015224
+----------------------------------------------------------------------
 
-. csdid_stats event , wboot
-------------------------------------------------------------------------------
-             | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
--------------+----------------------------------------------------------------
-         T-3 |   .0267278   .0142834     1.87   0.061    -.0012671    .0547227
-         T-2 |  -.0036165   .0140355    -0.26   0.797    -.0311256    .0238927
-         T-1 |   -.023244    .014844    -1.57   0.117    -.0523378    .0058498
-           T |  -.0210604   .0116786    -1.80   0.071      -.04395    .0018293
-         T+1 |  -.0530032   .0173973    -3.05   0.002    -.0871012   -.0189052
-         T+2 |  -.1404483   .0365071    -3.85   0.000     -.212001   -.0688957
-         T+3 |  -.1069039    .034774    -3.07   0.002    -.1750597   -.0387481
-------------------------------------------------------------------------------
+csdid_stats event, wboot rseed(1)
+----------------------------------------------------------------------
+             | Coefficient  Std. err.      t      [95% conf. interval]
+-------------+--------------------------------------------------------
+         T-3 |   .0267278   .0138167     1.93     .0007082    .0527474
+         T-2 |  -.0036165   .0128959    -0.28    -.0298632    .0226302
+         T-1 |   -.023244   .0145381    -1.60    -.0527278    .0062398
+         T+0 |  -.0210604   .0114842    -1.83    -.0423346    .0002139
+         T+1 |  -.0530032    .016063    -3.30    -.0844554    -.021551
+         T+2 |  -.1404483   .0348762    -4.03    -.2097142   -.0711825
+         T+3 |  -.1069039   .0315282    -3.39    -.1680153   -.0457924
+----------------------------------------------------------------------
 
 ```
 
-And done! Much faster, and hopefully No bugs! 
-Please, let me know if you have any questions!
+What about those graphs? Starting from the previous setup, I can re-estimate the event statistics, and then just call on `csdid_plot`.
+
+```
+qui:csdid_stats event, wboot rseed(1)
+csdid_plot
+```
+<img src="https://friosavila.github.io/playingwithstata/drdid/fig1.png" width=40%>
+
+I could, however, do something similar but for the each cohort/group:
+
+```
+qui:csdid_stats attgt, wboot rseed(1)
+csdid_plot, group(2004) name(m1,replace) title("Group 2004")
+csdid_plot, group(2006) name(m2,replace) title("Group 2006")
+csdid_plot, group(2007) name(m3,replace) title("Group 2007")
+graph combine m1 m2 m3, xcommon scale(0.8)
+```
+<img src="https://friosavila.github.io/playingwithstata/drdid/fig2.png" width=70%>
+
+
+Or estimate the ATTS by cohort and year.
+
+```
+qui:csdid_stats group, wboot rseed(1)
+csdid_plot, name(m1,replace) 
+qui:csdid_stats calendar, wboot rseed(1)
+csdid_plot, name(m2,replace) 
+graph combine m1 m2, xcommon xsize(10) ysize(5)
+```
+
+<img src="https://friosavila.github.io/playingwithstata/drdid/fig3.png" width=70%>
+
+And after this is done, you can use `addplot` (`ssc install addplot`) to do further figure edits.
 
 ## What is next?
 
-1. Some stress testing. I have done a few for now, But as questions arrive, more fixes will be possible. The command has been tested for crossection and for unbalance panel. In contrast with `DID`, this version will use all 2x2 balance data, even if some are not observed for all periods. 
+1. More stress testing. I have done a few more. Thanks to all the people reporting the different bugs and errors!
 2. Some verification. Many data verifications have been added. But some checks may be missing. For instance, right now the command doesnt check if your weights are fixed for panel ID (which should be). 
-3. Help files. And of course...Graphs! Right now, you can get very crude graphs with coefplot, or with -event_plot-. But I ll make sure our Graphic's Guru gets his hands on this.
+3. Help files. The hardest part...it seems. More flexible graphs! but that is for another time!
    
 
    
