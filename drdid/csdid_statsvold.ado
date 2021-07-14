@@ -27,79 +27,8 @@ program csdid_stats,
 		csdid_est `0'
 end 
 
-program _Parse_Wildboot, rclass 
-	syntax 			, [			///
-					   WBOOT1				///
-					   WBOOT(str)			///
-					   reps(integer 999) 	///
-					   rseed(string) 		///
-					   wbtype(string)		///
-					   cluster(string)		///
-					   ]
-
-	marksample touse 
-	if ("`wboot1'"=="" & "`wboot'"!="") {
-	    _Parse2_wboot, `wboot'
-		return scalar reps= `r(reps)'
-		return local  seed `r(seed)'
-		return scalar wbtype= `r(wbtype)'
-		return local  cluster `r(cluster)'
-		
-	}
-	else if ("`wboot1'"!="") {
-		return scalar reps = `reps'
-		return local seed 	   `rseed'
-		if ("`wbtype'"=="") {
-		    local wbtypen = 1
-		}
-		else if ("`wbtype'"=="mammen") {
-		    local wbtypen = 1
-		}
-		else if ("`wbtype'"=="rademacher") {
-		    local wbtypen = 2
-		}
-		else if ("`wbtype'"!="rademacher" & "`wbtype'"!="mammen") {
-		    display as error "invalid {bf:wbtype()}"
-			di as txt "{p 4 4 2}"                           
-			di as smcl as err ///
-			"{bf:wbtype()} should be one of {bf:mammen} or " ///
-			"{bf:rademacher}."      
-			di as smcl as err  "{p_end}"
-			exit 198 
-		}
-		return scalar wbtype = `wbtypen' 
-		if ("`cluster'"!="") {
-		    tempvar nclust wncl0
-			capture confirm numeric variable `cluster'
-			local rc = _rc
-			if (`rc') {
-				capture destring `rest', generate(`nclust')
-				local rc = _rc 
-				if (`rc') {
-					display in red "option {bf:cluster()} incorrectly specified"
-					exit 198
-				}
-				capture confirm numeric variable `nclust'
-				local rc = _rc 
-				if (`rc') {
-					display in red "option {bf:cluster()} incorrectly specified"
-					exit 198
-				}
-			}
-		}
-		return local cluster `cluster'
-	}
-end 
-
-
 program csdid_est, rclass
-	syntax [anything],  [   WBOOT(str) 				///
-							WBOOT1					///
-							reps(int 999) 			///
-							wbtype(str)  			/// Hidden option
-							rseed(str)				/// set seed
-							Level(int 95)			/// CI level
-							] [estore(name) esave(name) replace]
+	syntax [anything],  [wboot] [estore(name) esave(name) replace]
 	
 	local  `:char _dta[note11]'
 	
@@ -125,36 +54,15 @@ program csdid_est, rclass
 		exit 10
 	}
 	
-	//////////////////////////////////
-	_Parse_Wildboot, wboot(`wboot') `wboot1' reps(`reps') wbtype(`wbtype') rseed(`rseed') cluster(`cluster')
-	
-	if "`wboot'`wboot1'"!="" {
-	    local cluster 	`r(cluster)'
-		local ocluster 	`r(cluster)'
-		local seed 		`r(seed)'
-		if "`wbtype'"=="" local owbtype mammen
-		local owbtype   `wbtype' 
-		local wbtype 	`r(wbtype)'
-		local reps 		`r(reps)'
-		local vcetype 	WBoot
-	}
-	else {
-	    local wbtype 1
-	}
-	if "`seed'"!="" set seed `seed'
-	
-	//////////////////////////////////
 	*matrix `cband'=1
 	** New idea. Hacerlo todo desde makerif	
 	*mata:makerif("`rifgt'","`rifwt'","__wgt__","`b'","`v'","`cluster' ")
-	local ci = `level'/100
-	
+
 	noisily mata: makerif2("`rifgt'" , "`rifwt'","`agg'",  ///
 						    "`glvls'","`tlvls'", ///
 							"`b1'",  /// `b2' `b3' `b4' `b5' `b6'
 							"`s1'",  ///  `s2' `s3' `s4' `s5' `s6'
-							"`clvar' ", "`vcetype' ", "`cband'", /// 
-									`ci', `reps', `wbtype')
+							"`clvar' ", "`wboot' ", "`cband'")
 	tempname b V
 	matrix `b' = `b1'
 	matrix `V' = `s1'
@@ -187,7 +95,7 @@ program csdid_est, rclass
 	adde local agg		 `agg'
 	adde scalar neqr =   `neqr'
 
-	if "`wboot'`wboot1'"!="" {
+	if "`wboot'"!="" {
 		adde local vcetype "WBoot"
 		tempname ccband
 		matrix `ccband'=`cband'
@@ -247,8 +155,7 @@ mata:
 // Think how to save all elements.
 		
 void makerif2(string scalar rifgt_ , rifwt_ , agg, 
-				glvl_, tlvl_, bb_, ss_, clvar_, wboot , cband_,
-				real scalar ci, reps, wbtype ) {	
+				glvl_, tlvl_, bb_, ss_, clvar_, wboot , cband_) {	
 					
     real matrix rifgt , rifwt, wgt, t0, glvl, tlvl
 	real scalar i,j,k,h
@@ -272,7 +179,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , agg,
 	/////////////////////////////////////////
 	// Always make attgt, even if not shown. 
 	if (agg=="attgt") {
-		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_,wboot, cband_, ci, reps, wbtype)
+		make_tbl( (rifgt,rifwt) ,bb,VV,clvar_,wboot, cband_)
  	}
 	/////////////////////////////////////////
 	if (agg=="simple") {
@@ -297,7 +204,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , agg,
 		ag_rif = rifgt[.,ind_gt]
 		ag_wt  = rifwt[.,ind_gt]
 		aux = aggte(ag_rif, ag_wt)
-		make_tbl(aux ,bb,VV,clvar_,wboot, cband_,ci, reps, wbtype)
+		make_tbl(aux ,bb,VV,clvar_,wboot, cband_)
 		coleqnm = "ATT"
 	}
 	/////////////////////////////////////////
@@ -332,7 +239,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , agg,
 		}
  
 		// get table elements		
-		make_tbl(aux ,bb,VV,clvar_,wboot, cband_,ci, reps, wbtype)
+		make_tbl(aux ,bb,VV,clvar_,wboot, cband_)
 	}	
 	/////////////////////////////////////////
 	
@@ -371,7 +278,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , agg,
  			}
 		}	
 		// get table elements		
-		make_tbl(aux ,bb,VV,clvar_,wboot, cband_,ci, reps, wbtype)
+		make_tbl(aux ,bb,VV,clvar_,wboot, cband_)
 	}
 	
 	if (agg=="event") {
@@ -412,7 +319,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , agg,
 			}
 		}	
 		// get table elements		
-		make_tbl(aux ,bb,VV,clvar_,wboot, cband_, ci, reps, wbtype)
+		make_tbl(aux ,bb,VV,clvar_,wboot, cband_)
 	}
 	
 	st_matrix(bb_,bb)
@@ -430,8 +337,7 @@ void makerif2(string scalar rifgt_ , rifwt_ , agg,
 	
 }
 
-void make_tbl(real matrix rif,bb,VV, clv , string  scalar wboot, cband_,
-				real scalar ci, reps, wbtype){
+void make_tbl(real matrix rif,bb,VV, clv , string  scalar wboot, cband_){
 	real matrix aux, nobs, clvar
 	real scalar cln
 	bb=mean(rif)
@@ -449,7 +355,7 @@ void make_tbl(real matrix rif,bb,VV, clv , string  scalar wboot, cband_,
 	real matrix cband
 	// wboot no cluster
 	if (wboot!=" ") {
-		mboot(rif,bb, VV, cband, clv, ci, reps, wbtype)
+		mboot(rif,bb, VV, cband, clv)
 		st_matrix(cband_,cband)
 	}
  } 
@@ -584,14 +490,13 @@ real vector qtp(real matrix y, real scalar p) {
 	return(qq)
 }
  
-void mboot(real matrix rif,mean_rif, vv, cband, string scalar clv,
-			real scalar ci, reps, wbtype) {
+void mboot(real matrix rif,mean_rif, vv, cband, string scalar clv) {
     //, real scalar reps, bwtype, ci 
     real matrix fr
-	///real scalar reps, wbtype
-	///reps   = 999
-	///wbtype =   1
-	///ci     = 0.95
+	real scalar reps, wbtype
+	reps   = 999
+	wbtype =   1
+	ci     = 0.95
 	real matrix ifse , ccb
 	// this gets the Bootstraped values
 	if (clv ==" ") {

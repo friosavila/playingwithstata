@@ -282,7 +282,7 @@ program csdid_r, sortpreserve eclass
 		local ocluster 	`r(cluster)'
 		local seed 		`r(seed)'
 		if "`wbtype'"=="" local owbtype mammen
-		local owbtype   rademacher 
+		local owbtype   `wbtype' 
 		local wbtype 	`r(wbtype)'
 		local reps 		`r(reps)'
 		local vcetype 	WBoot

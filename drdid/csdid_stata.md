@@ -1,11 +1,11 @@
-# CSDID Version 1.5
+# CSDID Version 1.6
 
 ## Prolog
-Yes, `CSDID` v1.5 is here!. And Im very excited about this!. It took some time for me to handle a few things, in particular the "slowness" related to the aggregations. In particular, using nlcom is fast for most cases (few coefficients and few equations), but it quickly gets slow when you have too many coefficients and equations. The reason for that is that it uses numerical derivatives to apply the delta method. The solution: use analytical derivatives!. Sounds easy, and once you figure out how to track indices within a matrix, walk through the park.
+`CSDID` v1.6 is here!. Not much change with respect to v1.5, but some improvements have been made. Namely, some improvements of efficiency, I added the WB Confidence intervals, and the option `seed` so one can replicate results.
 
-In other words, its conditionally easy. The condition, however, was harder to figure out. One more time is one of those steps that help figuring out the rest. And presto, a faster `CSDID` is born.
+The other addition. A simple `csdid_plot`. It is still quite limited, but it will allow you to make plots for event studies (like `event_plot` does), as well as plotting group ATT's and Calendar ATT's. Also, if you combine the results with Ben Jann's `addplot`, you can customize the results quite easily!.
 
-For for my own notes, and perhaps your understanding, A very quick revision of what `CSDID` and its "friend" `DRDID` do. You can skip the next section, if you are just interested in how `CSDID` works.
+For my own notes, and perhaps your understanding, A very quick revision of what `CSDID` and its "friend" `DRDID` do. You can skip the next section, if you are just interested in how `CSDID` works.
 
 ## DID design
 
@@ -19,11 +19,11 @@ The parameter $\theta$ tries to estimate an average difference comparing the sam
 
 To my understanding, the first difference (changes across time), its still a good first approach. In fact, the way Sant'Anna and Zhao (2020) doubly robust estimator (implemented in `DRDID`) operates when using panel data is to estimate the within unit difference first, before using reweighthing methods to estimate the ATT. 
 
-Now, the second difference is problematic. First, one should understand what groups are being comapred:
+Now, the second difference is problematic. First, one should understand what groups are being compared:
 
 1. Treated units vs Never treated units: These are good comparisons
 2. Treated units vs not yet treated units: These are also good, unless you think there are anticipation problems.
-3. Later treated units vs earlier treated units: These are the bad ones. Because you are using as controls, observations that were already treated. 
+3. Later treated units vs earlier treated units: These are the bad ones. Because you are using as controls observations that were already treated. 
 
 > Why is the third kind of comparison a bad average? 
 
@@ -31,7 +31,7 @@ Perhaps saying "bad" is harsh. A better word would be a "potentially innapropria
 
 #### **Not so bad**
 
-If you believe that the treatment effect is homogenous, and has a one time shock on the outcome (in other words a one time shift upwards on the potential outcomes), then the standard TWFE is approprite. Even comparison 3 is non problematic, and the earlier treated units are good "controls". 
+If you believe that the treatment effect is homogenous, and has a one time shock on the outcome (in other words a one time shift upwards on the potential outcomes), then the standard TWFE is appropriate. Even comparison 3 is non problematic, and the earlier treated units are good "controls". 
 
 #### **Definately bad**
 
@@ -55,7 +55,7 @@ Now, if you compare earlier treated units and later treated units you have the f
 
 $$ ATT =\sum \left( w1 * Y(treated,t) - w0 * Y (treated earlier,t) \right) $$
 
-Because the "earlier" treated unit is used as control, it is entering the equation substracting from the later treated one. However, at time t, it has already been treated, so it is receiveing a "negative" weight!, when it should be possitive. And this is the source of the problem. TWFE would put "negative" weights on some treated units, because it uses them as "controls".  
+Because the "earlier" treated unit is used as control, it is entering the equation substracting from the later treated one. However, at time t, it has already been treated, so it is receiving a "negative" weight!, when it should be possitive. And this is the source of the problem. TWFE would put "negative" weights on some treated units, because it uses them as "controls".  
 
 > So what is the solution? 
 
@@ -69,23 +69,25 @@ As I mentioned before, `CSDID` works together with `DRDID` to obtain the best es
 
 $$ ATT(g,t) = \bigg[ EY(g)_t-EY(NT)_t \bigg] - \bigg[ EY(g)_{g-1}-EY(NT)_{g-1} \bigg]$$
 
-Here, **NT** stands for "never treated", which can almost always be used a good control group. $EY(c)_t$ is the expected value of the oucome at time $t$, for group $c$. The first parenthesis calculates the differences in outcomes at time $t$, while the second parenthesis estimate the outcome difference at time $g-1$, which is the period before the treatment took place. 
+Here, **NT** stands for "never treated", which can almost always be used a good control group. $EY(c)_t$ is the expected value of the oucome at time $t$, for group $c$. The first parenthesis calculates the differences in outcomes at time $t$, while the second parenthesis estimates the outcome difference at time $g-1$, which is the period before the treatment took place. 
 
 When $t < g$, the $ATT(g,t)$ are simply defined as:
 
 $$ ATT(g,t) = \bigg[ EY(g)_t-EY(NT)_t \bigg] - \bigg[ EY(g)_{t-1}-EY(NT)_{t-1} \bigg]$$
 
-Which can be used to check if the parallel trends assumptions hold by looking if the period-to-period outcome change. 
+Which can be used to check if the parallel trends assumptions hold by looking if the period-to-period outcome changes. 
 
 Now, you can see that this easily creates a large number of potential $ATT's$ to look at. Some could be interesting, but some would be too small to say anything about them. Here is where the step aggregation comes. 
 
-For any of the aggregations proposed in Callaway and Sant'Anna (2021), the general formula for the aggregations is:
+For any of the aggregations proposed in Callaway and Sant'Anna (2021), the general formula is:
 
 $$ AGGTT = \frac{\sum ( w_{g,t} * ATT(g,t))}{\sum ( w_{g,t})} $$
 
-where $w_{g,t}$ is a weight of how much information was used to estimate $ATT(g,t)$. Larger and more precise estimators should receive more weights, whereas those based on just a handful of observations, should be downeighted. Thus, to obtain standard errors for this parameter, we need to rely on the delta method, differentiating the above expression with respect to each $ATT(g,t)$ and each $w_{g,t}$. Needless to say, it can become a very long expression to track.
+where $w_{g,t}$ is a weight of how much information was used to estimate $ATT(g,t)$. Larger and more precise estimators should receive more weights, whereas those based on just a handful of observations, should be downweighted. 
 
-In the previous iteraton of `CSDID`, this was done using `nlcom`. `nlcom` uses the delta method to estimate SE for nonlinear combination of parameters. It is usally pretty fast, but when you are trying to evaluate expressions with a large number of parameters, it can turn slow pretty quick. Furthermore, there is a limit in how many equations you can tell nlcom to keep track. A few people contacted me already reporting this problem.
+To obtain standard errors for this parameter, we need to rely on the delta method, differentiating the above expression with respect to each $ATT(g,t)$ and each $w_{g,t}$. Needless to say, it can become a very long expression to keep track of.
+
+In the previous iteraton of `CSDID`, this was done using `nlcom`. `nlcom` uses the delta method to estimate SE for nonlinear combination of parameters. It is usally pretty fast, but when you are trying to evaluate expressions with a large number of parameters, it can turn slow pretty quickly. Furthermore, there is a limit of how many equations you can tell `nlcom` to keep track. A few people contacted me already reporting this problem.
 
 #### **Is there a solution?**
 
@@ -106,6 +108,7 @@ First, in order to use `CSDID` you will need five sets of files:
 - [csdid_estat.ado](https://friosavila.github.io/playingwithstata/drdid/csdid_estat.ado). This file will be used as a post-estimation program. It does the work that `aggte` and `summarize` does. And it now does it quickly, because it only uses the info left by `csdid`. 
 - [csdid_stats.ado](https://friosavila.github.io/playingwithstata/drdid/csdid_stats.ado). This is a new program that joins the `CSDID` family. (It may still recive a name change). This program will do mostly the same that `csdid_estat.ado` does, with a small difference. It will not work on your current dataset, it will work on a new dataset that you can create and store all the Influence functions created in `CSDID`. This is my attempt to simulate R's capacity to "save" entire datsets within objects for later use. 
 - [csdid_table.ado](https://friosavila.github.io/playingwithstata/drdid/csdid_table.ado). This program works whenever `wboot` is called. It simply posts the Wildbootstrap confidence intervals. 
+- [csdid_plot.ado](https://friosavila.github.io/playingwithstata/drdid/csdid_plot.ado). This is the newst companion to the `csdid` package. A dedicated plotting command. It is simple to use, but it does impose a few restrictions on how much you want to modify on the plots. However, if you use `addplot` by Ben Jann, you can get very nice plots, quite easily.
 
 In contrast with **`DID`**, my command uses **`drimp`** as the default estimator method. However, all other estimators within **`drdid`** will be allowed (except `all` and `stdipwra`). They key is to declare the method using option **`method()`**. Interestingly enough, **`DID`** uses `dripw` as the default. So I will use that for the following replication.
 
@@ -118,7 +121,9 @@ Yes, I promise, at some point a proper helpfile will be created.
 The general syntaxis of the command will be as follows:
 
 ```
-csdid depvar indepvar [if] [in] [iw], ivar(varname) time(year) gvar(group_var) method(drdid estimator) [notyet] [saverif(file) replace cluster(varname) wboot agg(aggregation method)]
+csdid depvar indepvar [if] [in] [iw], ivar(varname) time(year) gvar(group_var) ///
+        method(drdid estimator) [notyet] [saverif(file) replace cluster(varname) ///
+        wboot agg(aggregation method) reps(#) rseed(#) wbtype(wbtype)] 
 ```
 
 Here an explanation of all the pieces:
@@ -141,8 +146,11 @@ New options:
 
 - **`saverif(new file)`**: This option allows you to save all the Recentered Influence functions created by `CSDID` into a new datafile. If you are familar with the `ster` files in Stata, this file will work in a similar way, where important information left by `CSDID` is stored for later use. It requires you to provide a new file name. It can be combined with **`replace`**, if the data-file already exists.
 - **`cluster(varname)`**: You can use this to declare a variable to obtained clustered standard errors. If you declare **`ivar`** make sure that **`cluster`** remains constant within panel ID (cluster is nested)
-- **`wboot`**: This option requests the estimation of Wild Bootstrap Standard errors. When using this option, Covariances across parameters are not estimated. And Confidence intervals are obtained based on Normal distribution. Future updates will allow you use a "seed" for replication, select CI , and allow alternative Confidence interval methods. 
-- **`agg(aggregation method)`**: this is the newest option. You can request `csdid` to directly produce any of the aggregations of interest, rather than report the `attgt's`. This can be combined with `wboot`, and `saverif()`. In all cases, however, I recommend using the `saverif()` option to keep a copy of the RIFs, for later inspection, even if you want to produce any aggregations from the start.
+- **`wboot`**: This option requests the estimation of Wild Bootstrap Standard errors. When using this option, Covariances across parameters are not estimated. In the newest update, the correct CI are displayed. 
+- **`reps(#)`**: This allows you to choose how many repetitions you want to use for the WBootstrap SE. The default its 999.
+- **`rseed(#)`**: With this, you can set a seed that would allow you to get replicable results. Of course, you can obtaine the same using `set seed #` before the command is excecuted. 
+- **`wbtype()`**: You can now choose from two types of WB multipliers. The default is `mammen`, but you can also use `rademacher`.
+- **`agg(aggregation method)`**: this option allows you to request `csdid` to directly produce any of the aggregations of interest, rather than report the `attgt's`. This can be combined with `wboot`, and `saverif()`. In all cases, however, I recommend using the `saverif()` option to keep a copy of the RIFs, for later inspection, even if you want to produce any aggregations from the start.
 
 **`csdid_estat`**
 
@@ -168,7 +176,7 @@ All comands after estat, with the exception of `pretrend`, leave an `r(table)` e
   
 **`csdid_stats`**
 
-This is the newest command on this package. The purpose of this command is to work like `csdid_estat`, but when you are using a file previosly saved using the option `saverif()`. It works pretty much the same as `csdid_estat`, except that you can request analytical standard errors, as well as WildBootstrap standard errors.  Compared to `csdid_estat`, this may be slower because it reproduces all Standard errors directly from the RIFs.
+The purpose of this command is to do what `csdid_estat` does, but when you are using a file previosly saved using the option `saverif()`. It works pretty much the same as `csdid_estat`, except that you can request analytical standard errors, as well as WildBootstrap standard errors.  Compared to `csdid_estat`, this may be slower because it reproduces all Standard errors directly from the RIFs.
 
 ```
 csdid_stats [subcommand], [estore(name) esave(name) replace]
@@ -176,17 +184,33 @@ csdid_stats [subcommand], [estore(name) esave(name) replace]
 
 And this are the options:
 
-- **`pretrend`**: This tests if all the pre-treatment effects are all equal to 0.
 - **`simple`**: Estimates the simple aggregation of all post treatment effects.
 - **`group`**: Estimates the group average treatment effects
 - **`calendar`**: Estimates the calendar time average treatment effects 
 - **`event`**: Estimates the dynamic aggregation/event study effects. If you use `event`, it is also possible to combine it with :
   **`estore(name)`**: It allows you to save output table as an estimation equation. 
 - **`esave(name)`**: It allows you to save output table as an `ster` file. It can be combined with `replace`.
-- **`wboot`**: Request the Wbootstrap Standard errors.
+- **`wboot`**: Request the Wbootstrap Standard errors. it can be combined with `rseed(#)`, `reps(#)` and `wbtype()`.
 
 All comands, with the exception of `pretrend`, leave an `r(table)` element, as well as `r(b)` and `r(V)` matrices. 
  
+**`csdid_plot`**
+
+This command is my alternative to `event_plot` and perhaps similar to `DID's ggplot` option. It can be used as a post estimation, after `csdid`, `csdid_estat`, and `csdid_stats`.
+
+The general syntax is as follows:
+
+```
+csdid_plot , [style(styleoption) title(str) name(str) group(#) ///
+							 ytitle(str) xtitle(str) ]
+```
+
+Most options are self exaplanatory:
+
+-**`style`**. Allows you to change the style of the plot. The options are `rspike` (default), `rarea`, `rcap` and `rbar`. 
+-**`title`**, **`ytitle`**, **`xtitle`** are all two way graph options to modify the title, xaxis title, and y axis title. 
+-**`name`**, Use if you want to store a figure in memory.
+-**`group(#)`** Use only after reporting the `attgt's`. One needs to use the group number to plot the dynamic effects with respect that that group.
 
 ## Replication
 
@@ -300,26 +324,27 @@ What If i wanted to get the event aggregation to begin with?
 I can do this, from the csdid command line. I can also store the RIF's in a new file. and request Wild Bootstrap Standard errors.
 
 ```
- csdid  lemp lpop , ivar(countyreal) time(year) gvar(first_treat) method(dripw) agg(event) saverif(rif_example) wboot replace 
-File rif_example.dta will be replaced
+csdid  lemp lpop , ivar(countyreal) time(year) gvar(first_treat) method(dripw) ///
+agg(event) saverif(rif_example) wboot replace rseed(1)
+File rif_example.dta will be used to save all RIFs
 ............
+(file rif_example.dta not found)
 file rif_example.dta saved
 
 Difference-in-difference with Multiple Time Periods
 Outcome model  : least squares
 Treatment model: inverse probability
-------------------------------------------------------------------------------
-             |                WBoot
-             | Coefficient  std. err.      z    P>|z|     [95% conf. interval]
--------------+----------------------------------------------------------------
-         T-3 |   .0267278    .014263     1.87   0.061    -.0012272    .0546828
-         T-2 |  -.0036165   .0135835    -0.27   0.790    -.0302397    .0230067
-         T-1 |   -.023244   .0140833    -1.65   0.099    -.0508467    .0043587
-           T |  -.0210604   .0107957    -1.95   0.051    -.0422196    .0000989
-         T+1 |  -.0530032   .0166204    -3.19   0.001    -.0855786   -.0204279
-         T+2 |  -.1404483   .0349942    -4.01   0.000    -.2090357   -.0718609
-         T+3 |  -.1069039   .0316514    -3.38   0.001    -.1689394   -.0448684
-------------------------------------------------------------------------------
+----------------------------------------------------------------------
+             | Coefficient  Std. err.      t      [95% conf. interval]
+-------------+--------------------------------------------------------
+         T-3 |   .0267278   .0145166     1.84    -.0004601    .0539157
+         T-2 |  -.0036165   .0128202    -0.28     -.030182     .022949
+         T-1 |   -.023244   .0152288    -1.53    -.0524744    .0059864
+         T+0 |  -.0210604   .0118453    -1.78    -.0441373    .0020166
+         T+1 |  -.0530032   .0161958    -3.27    -.0841509   -.0218555
+         T+2 |  -.1404483    .036125    -3.89    -.2145895   -.0663072
+         T+3 |  -.1069039   .0349244    -3.06    -.1711649   -.0426429
+----------------------------------------------------------------------
 Control: Never Treated
 
 See Callaway and Sant'Anna (2021) for details
@@ -329,14 +354,15 @@ See Callaway and Sant'Anna (2021) for details
 Now, I dont want to re-estimate this model again, but I'm interested in other aggregations, and able to save the RIF's from before. What I can do now is obtain the Wildbootstrap estimates. 
 
 ```
-.  csdid_stats simple , wboot
+.  use rif_example, clear
+.  csdid_stats simple , wboot rseed(1)
 ------------------------------------------------------------------------------
              | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-         ATT |  -.0417518   .0112599    -3.71   0.000    -.0638208   -.0196827
+         ATT |  -.0417518   .0111832    -3.73   0.000    -.0636704   -.0198331
 ------------------------------------------------------------------------------
 
-. csdid_stats calendar, wboot 
+. csdid_stats calendar, wboot rseed(1)
 ------------------------------------------------------------------------------
              | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
 -------------+----------------------------------------------------------------
