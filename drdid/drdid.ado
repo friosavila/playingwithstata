@@ -1,4 +1,4 @@
-*! Ver 1.51 Change in check for 2x2 data
+*! Ver 1.6 Change in check for 2x2 data. And updated site!
 * Ver 1.5   New output, with panel GMM estimators. Also WB standard errors with cluster
 * Ver 1.38  Adding Cluster Stantandard errors
 * version 1.37 2jun2021 Add extra messages of 2x2 balance. Checks that you indeed have panel data
@@ -93,8 +93,8 @@ end
 
 program define drdid_wh, eclass sortpreserve byable(recall)
 	syntax varlist(fv numeric) [if] [in] [iw],			///
-							[ivar(varname)] 			///
-							time(varname) 				///
+							[Ivar(varname)] 			///
+							Time(varname) 				///
 							TReatment(varname) 			///
 							[noisily 					///
 							drimp 						///

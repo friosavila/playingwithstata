@@ -158,7 +158,7 @@ cscript
 use rif, clear
 ** Si uno hace el llamado por wboot, seria necesario tener los CI modificados
 csdid_stats attgt,  
-csdid_stats simple
+csdid_stats simple, wboot rseed(1)
 csdid_stats calendar,  
 csdid_stats group,  
 csdid_stats event,  
@@ -189,4 +189,7 @@ two rspike  k5 k6 t if t<0, pstyle(p1) color(%50) lw(3) || scatter k1 t if t<0 ,
 
 
 
-
+csdid_plot, group(2004) name(m1,replace) title("Group 2004")
+csdid_plot, group(2006) name(m2,replace) title("Group 2006")
+csdid_plot, group(2007) name(m3,replace) title("Group 2007")
+graph combine m1 m2 m3, xcommon scale(0.8)

@@ -24,8 +24,8 @@
  
 /*program csdid_check,
 syntax varlist(fv ) [if] [in] [iw], /// Basic syntax  allows for weights
-										[ivar(varname)]  ///
-										time(varname)    ///
+										[Ivar(varname)]  ///
+										Time(varname)    ///
 										[gvar(varname)]  /// Ppl either declare gvar
 										[trvar(varname)] /// or declare treat var, and we create gvar. Only works if Panel data
 										[att_gt]  ///
@@ -253,9 +253,9 @@ end
 
 program csdid_r, sortpreserve eclass
 	syntax varlist(fv ) [if] [in] [iw], 			/// Basic syntax  allows for weights
-							[ivar(varname)] 		///
-							time(varname)  			///
-							gvar(varname)  			/// Ppl either declare gvar
+							[Ivar(varname)] 		///
+							Time(varname)  			///
+							Gvar(varname)  			/// Ppl either declare gvar
 							[cluster(varname)] 		/// 
 							[notyet] 				/// att_gt basic option. May prepare others as Post estimation
 							[saverif(name) replace ] ///
@@ -322,7 +322,7 @@ program csdid_r, sortpreserve eclass
 	
 	if `mintime'>=`mingvar' {
 		display "Units always treated found. These will be excluded"
-		replace `touse'=0 if (`gvar'<=`mintime') & (`gvar'>0) & `touse'
+		qui:replace `touse'=0 if (`gvar'<=`mintime') & (`gvar'>0) & `touse'
 	}
 	
 	
@@ -338,12 +338,6 @@ program csdid_r, sortpreserve eclass
 	    if "`ivar'"!="" {
 			** First check if data is Panel
 			tempname ispan
-			/*mata:ispanel("`ivar' `time'", "`touse'", "`ispan'") 
-			if scalar(`ispan')>1 {
-				display in red 	"{p}Repeated time values within panel `ivar'{p_end}" _n ///
-								"{p}You may want to use Repeated crosssection estimators {p_end}"
-				exit 451
-			}*/
 			
 			capture xtset
 			if _rc!=0 {
@@ -408,6 +402,12 @@ program csdid_r, sortpreserve eclass
 								ivar(`ivar') time(`time') treatment(`tr') ///
 								`method' stub(__) replace
 					if _rc!=0 local	bad bad
+					if _rc == 1 {
+						display in red "Stopped by user"
+						capture drop `vlabrif'
+						capture drop __att
+						error 11882
+					}
 					
 					matrix `gtt'=nullmat(`gtt')\[`i',`time1',`j',_rc]
 					sdots, mydots(`mydots') `bad'
@@ -436,7 +436,12 @@ program csdid_r, sortpreserve eclass
 													ivar(`ivar') time(`time') treatment(`tr') `method' stub(__) replace
 					
 					if _rc!=0 local	bad bad
-					
+					if _rc == 1 {
+						display in red "Stopped by user"
+						capture drop `vlabrif'
+						capture drop __att
+						error 11882
+					}
 					matrix `gtt'=nullmat(`gtt')\[`i',`time1',`j',_rc]
 					sdots, mydots(`mydots') `bad'
 					local bad
