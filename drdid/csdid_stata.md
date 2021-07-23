@@ -140,7 +140,7 @@ Here an explanation of all the pieces:
   - **`stdipw`** Estimates the Standard IPW estimator.
   - **`ipw`** Estimates the estimator similar to Abadies (2005)
 
-- **`notyet`** request using not yet treated variables as controls, rather than never-treated observations.
+- **`notyet`** request using not yet treated observations as controls, rather than never-treated observations only. This would imply a larger control group for the estimation of the treatment effects. 
 
 New options:
 
