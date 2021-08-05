@@ -1,5 +1,5 @@
 cscript
- use lalonde, clear
+use https://friosavila.github.io/playingwithstata/drdid/lalonde.dta, clear
 gen trt=experimental==1
 gen tmt=year==1978
 keep if treated==0 | sample==2
