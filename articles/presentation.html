@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Matching ATUS - CE:(D/I)</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Fernando Rios-Avila" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Matching ATUS - CE:(D/I)
+## Matching Evaluation
+### Fernando Rios-Avila
+### Levy Economics Institute
+### 2022/3/9
+
+---
+
+
+## Introduction
+
+- Over the last month, we have focused on matching ATUS with the CE, in order to impute Time-use data into the CE.
+
+   - Specifically we have worked on using three types of matching:
+   
+   $$ ATUS \rightarrow CE-Diary $$
+   $$ ATUS \rightarrow CE-Interview $$
+
+   $$ ATUS-Weekend \rightarrow (CE-Diary / CE-Interview) $$
+   $$ ATUS-Weekday \rightarrow (CE-Diary / CE-Interview) $$
+   
+- We Match on both **Interview** and **Dairy** surveys, so users can have access to imputed time data using either sample. 
+- We also suggest the `\(weekend/weekday\)` match is superior to the `\(full\)` Match. Imputed time use may better represent weekly activities compared to a single day sampling.
+
+---
+
+## Introduction
+
+- On this iteration of the matching, we explore some of the questions raised as concerned regarding the matching procedure. Specifically:
+  - Who are left unmatched for later round? 
+  &gt; We find that there are no groups that are systematically left out unmatched. 
+  - Can we add more Family Structure in the data?
+  &gt; In contrast with the report, Today we show Statistics that better account for matching.
+  - Can we avoid using ***small** cells for matching?
+  &gt; This has also been done. Avoiding small cells reduces match rate in earlier rounds, but we can still match nearly 90% of the data in the first 10 rounds. 
+
+---
+
+## Methodology: Overview on Statistical Matching
+
+### Matching Goal
+
+&gt; The goal of the SM procedure is to link observations of **individuals** in the ATUS and CE, so that Time use of the donor (ATUS) can be used as imputed data for the recipients. This is done for all individuals 15 years of age or older. 
+
+&gt; Household level Aggregates will be obtained in the CE sample only, based on imputed data.
+
+---
+
+## Methodology: Overview on Statistical Matching
+
+### Methodological Overview
+
+- Step 1: Alignment. We need to identify and standardize definitions of all variables that will be used in the matching. 
+  - We also need to verify that distributions of individual and household level data  are similar across surveys.
+- Step 2: Identification of Strata, secondary strata, and Clusters. 
+  - ***Strata***: Gender and Any Children presence. SM is constrained within this groups, avoiding matches outside of this restriction.
+  - ***Secondary Strata***: Work status, and Children Composition. SM is partially constrained on these groups, but cross linking are possible in later *rounds*
+  - ***kClusters (different sizes)***: *Optimal Kclusters* are used to maximize the use of demographic characteristics in identifying homogeneous groups to implement matching.
+  - ***Clusters***: Identified based on Strata, substrata and kclusters.
+- Step 3: Propensity Score: Additional information to improve on matching. 
+- Step 4: Implement constrained Matching 
+
+---
+
+## Method: Alignment
+
+- We use two types of data for matching. 
+  - Own characteristics: Age, education, Self-Employment, Race
+  - Household Characteristics:
+      - Household Head(s): Sex, age, education, employment status, Race
+      
+      &gt; Singles: *Var*1; *Var*2=0
+      
+      &gt; Couples (Diff Sex): Male: *Var*1 ; Female: *Var*2 
+      
+      &gt; Couples (Same Sex): Older: *Var*1 ; younger: *Var*2
+      
+      - Household Structure: D-couple; HH-Tenure; #children (0-5;6-12;13-17); #M-Adults; #F-Adults; #O-Adults; #E-Adults
+      
+      - Family Income group
+    
+---
+
+## Alignment
+
+Comparison of Sample Sizes and Weighted observations. We only consider individuals 15 years of age or Older
+
+|Sample	|       Weighted Obs.	|N|
+|----|---|---|
+|CE Interview|	  263,293,078 |	52,130|
+|CE Diary	  |    262,847,086 |	20,841|
+|ATUS	     |     263,362,392 |	 9,435|
+|ATUS Weekday|	  263,653,004 |	 4,642|
+|ATUS Weekend|	  262,635,719 |	 4,793|
+
+---
+
+## Alignment
+
+![Figure1](./fig/fig1.png)
+- Go [Matching](#matching)
+
+---
+
+## Alignment
+
+![Figure2](./fig/fig2.png)
+
+
+---
+
+## Alignment
+
+![Figure3](./fig/fig3.png)
+
+---
+
+## Alignment
+
+![Figure4](./fig/fig4.png)
+
+---
+
+## Alignment
+
+![Figure5](./fig/fig5.png)
+
+---
+
+name: matching 
+
+## Matching
+
+- To address some of the deviations observed in the alignment, we implement an IPW approach within Main Strata.
+
+- The goal is to adjust ATUS to CE. 
+
+- To address concerns of Small cells, we restrict matching to have at least **0.1%** of the data. 
+
+- **[NEW]** Current Match uses # of Children (0,1,2,3) as strata in the match.
+
+- Matching Rates by round are similar across surveys, so I only show match for `\(CE-Interview\)` and `\(CE-Diary\)` with full ATUS data, with and without Small Cell Restriction. 
+
+---
+
+## Matching 
+
+![Figure6](./fig/fig6.png)
+
+---
+
+## Matching 
+
+![Figure7](./fig/fig7.png)
+
+---
+
+## Matching 
+
+![Figure8](./fig/fig8.png)
+
+---
+
+## Matching Results
+
+The next step to evaluate the matching is to analyze how well imputed data distribution compares to observed distribution.
+
+In other words, how `\(CE-imputed\)` compares to `\(Atus-observed\)`.
+
+![Figure8](./fig/bxplot1.png)
+---
+
+## Matching Results
+
+Results for avoiding Small cells are just as good:
+
+![Figure9](./fig/bxplot2.png)
+
+---
+
+## Matching Results
+
+More compelling. Look at distribution of hours of household production. We focus on 3 Statistics: **mean**, **median**, and **standard error**. 
+
+![Figure10](./fig/gap_1.png)
+
+However, there are a few cases with large gaps. More details in Excel file.
+
+---
+
+## Matching Results:
+
+Groups of Particular Interest:
+- By numbers of Children:
+
+![Figure11](./fig/qplot1.png)
+
+---
+
+## Matching Results:
+
+Controlling for # of Children (regardless age, seems to help)
+
+![Figure12](./fig/qplot2.png)
+
+---
+
+## Next Steps
+
+- Analyze results using RP approach. Using RP will make it easier to preserve mean moments across the distribution. But subject to parametric constrains.
+
+- Consider matching by **Reference month**
+
+  - May be important if month-to-month variations in time-use are sizable.
+  - However, we need to relax definition of "match". 
+  - `\(ATUS\)` may not be large enough by month. (~400obs per month and day). Weights may also need adjustment.
+    - Trade off: better **time** consistency, but more **dis-similar** matches. 
+    
+- For SE estimation, current match unfeasible. But, It may be possible if we use Strata variables only, and add noise through the PS ranks.
+
+- Currently, we match 2 days to each person. Weekday and weekend.
+  - Under the assumption both days represent similar weeks, weekly hours can be produced.
+  - Under stronger assumptions, users could use those as monthly/yearly. 
+  - Thus, we will include that such type of claims are hard to justify. 
+  
+---
+
+## Variation of Time use by month
+
+Very little variation when looking at Total HP
+![Figure13](./fig/thp_month1.png)
+---
+
+## Variation of Time use by month
+
+Or Total HP + Sup Child Care
+![Figure13](./fig/thp_month2.png)
+---  
+
+## Variation of Time use by month
+
+THP doesn't change much even for families with children.
+![Figure14](./fig/thp_month3.png)
+
+---
+
+
+## Variation of Time use by month
+
+However, we do see differences when looking at THP+ (June)
+![Figure15](./fig/thp_month4.png)
+---
+
+
+## Variation of Time use by month
+
+Because Supervisory care does Jump in in June
+
+![Figure15](./fig/thp_month6.png)
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"ratio": "11:8",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
