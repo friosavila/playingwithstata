@@ -1,0 +1,151 @@
+---
+title: "How to make Waffles: The `ado` way"
+author: "Fernando Rios-Avila"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:10
+      countIncrementalSlides: false
+---
+
+ 
+![This is the way](https://i.pinimg.com/originals/98/c6/99/98c6997145f363265959daf84b656057.jpg)
+
+---
+
+# Disclaimer
+
+I should start by saying that what I will be presenting here is ***not*** the only way. Just they way I like to make this kind of plot, specially after some programming muscle flexing, and when I do not want to type the same text over and over again.
+
+That being said. A step by step guide on this plot can be found [here](https://medium.com/the-stata-guide/stata-graphs-waffle-charts-32afc7d6f6dd). 
+
+Learning how to do it step-by-step gives your more flexibility, but I hope you will find that using [`waffle_i`](www.goog.com) is sufficiently flexible for most of your purposes.
+
+So let me start
+ 
+---
+
+## What is a waffle plot?
+
+A *waffle* plot is a kind of *pie* chart (how interesting we like to name them as food), because it can be used to visualize sample compositions. It can also be considered as a stacked ***bar*** chart.
+
+In contrast with a pie chart, where the information is displayed as pieces of a circle, a waffle plot shows the composition as dots in a box. Incidentally, it does look like a waffle...
+
+```{r, echo=FALSE, out.width="40%", fig.cap="", center}
+knitr::include_graphics("https://assets.epicurious.com/photos/60637186ceabd6ae3d2ebc7f/4:3/w_4136,h_3102,c_limit/CrispyWaffles_HERO_v2_032521_12048_JD_final.jpg")
+```
+
+---
+
+## But what are they, really? 
+
+If you want a more insider look of a waffle plot. They are nothing else than a ***scatter*** plot within a box, where all points and horizontally and vertically equidistant.
+
+So at its core Waffle plots are easy to make. But they can be a bit time consumming. 
+
+Thus, what I decided to do was write a small `ado` that makes creating this plots easily. 
+
+In the next slides, I will show you how to use `waffle_i` to make this type of plots, in Stata!. But first...
+
+1. Get a copy of [`waffle_i`](www.asd.com) in your computer.
+2. Get Asjad `schemepack` from SSC. I really like `white_tableau` scheme. 
+
+---
+
+## Simple waffle plot
+
+Say that you want to do a waffle plot, and want to show that 27% of individuals do something. If so, you will type:
+
+```Stata
+waffle_i 27
+```
+![waffle_1](./waffle_i_files/waffle_1.png)
+
+---
+
+## Beautify
+
+Good first attempt, but just not nice enough. So lets increase marker size, change marker symbol and get add labels.
+
+
+```Stata 
+waffle_i 27, msize(7)        /// Increase size of Dots
+              msymbol(square) /// and change them to Squares
+      legend(order(1 "The blues" 2 "The rest")) // ads Labels
+```
+---
+
+## Beautify
+
+Good first attempt, but just not nice enough. So lets increase marker size, change marker symbol and get add labels.
+
+
+![waffle_1](./waffle_i_files/waffle_2.png)
+
+
+---
+
+## Beautify
+
+You could also add more than one group and change colors
+
+
+```Stata 
+waffle_i 27 15 12, msize(7)        /// Increase size of Dots
+              msymbol(square) /// and change them to Squares
+              legend(off)  /// No labels
+              color0(gs15) /// Color for the "rest"
+              color(navy%80 navy%40 navy%20) ///colors
+      			  title("What is this?") // Title
+```
+---
+
+## Beautify
+
+You could also add more than one group and change colors
+
+
+![waffle_1](./waffle_i_files/waffle_3.png)
+
+---
+
+## Beautify
+
+Or change from Square to Long Rectangular figure
+
+```Stata 
+waffle_i 27 15 12, msize(4.5)        /// Increase size of Dots
+              msymbol(square) /// and change them to Squares
+              legend(off)  /// No labels
+              color0(gs15) /// Color for the "rest"
+              color(navy%80 navy%40 navy%20) ///colors
+      		    xnobs(25) ynobs(12) /// Changes Dimensions 
+			        title("Who said no rectangles")
+```
+---
+
+## Beautify
+
+Or change from Square to Long Rectangular figure
+
+![waffle_1](./waffle_i_files/waffle_4.png)
+---
+
+## Conclusions?
+
+What else can I do?
+
+Because `waffle_i` is just a collection of scatter plots, you can use most `twoway graph` options with this command. Although I have not tried all of them. So handle with care.
+
+In any case, this command does the heavy lifiting, you can do the fineness.
+
+But what is next?
+
+Right now you can only "feed" values to command. Perhaps next, I ll make it so you can add variables. We will see!.
+
+Comments? suggestions? Drop me a message!
+
+![WeeMee](https://friosavila.github.io/playingwithstata/img/WeeMee.jpg)
