@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Paraguay: Estimation of the Impact of Transfer programs</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Fernando Rios-Avila" />
+    <meta name="date" content="2022-03-10" />
+    <script src="libs/header-attrs-2.12/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Paraguay: Estimation of the Impact of Transfer programs
+## Pytyvo and Ñangareko (2019-2020)
+### Fernando Rios-Avila
+### 2022-03-10
+
+---
+
+
+## Introduction
+
+The goal of this presentation is to provide preliminary estimations of the impact of two transfer programs that were implemented in Paraguay in 2020, in response to the Covid Pandemic.
+
+This are the Pytyvo and Ñangareko.
+
+To do this, we will use the panel component from the Household Surveys in Panama, evaluating the impact of this transfers using data for those individuals who were followed across time.
+
+Given the data structure, we will be implementing a simple 2x2 DID estimator. 
+
+
+---
+class: left
+
+## Data 
+
+We will concentrate on population age 17-69 in 2019. This will keep the comparison samples homogeneous in terms of age structure.
+
+General Structure of data:
+
+
+| Survay Year | Obs| Linked Obs | Tr Pytyvo | Tr Ñangareko|
+|------:|---:|---:|---:|
+| 2019 | 11473| 4293 |  1144 |  179 |
+| 2020 | 11099| 4293 | 1144 |  179 |
+
+As outcomes, we will concentrate on few outcome variables:
+1. Employment status (work or does not work)
+2. Hours of work. (As extensive margin effect)
+3. Earnings (For those with earnings in both periods)
+---
+
+## Model
+
+2x2  DID Simple:
+
+$$ ATT =E(\Delta Y|D=1) - E(\Delta Y|D=1) $$
+
+2x2 IPW and IPWRA
+
+$$ ATT =E(\Delta Y|D=1,X) - E(\Delta Y|D=0,X) $$
+
+In both cases, the control group will be those who do not declare to have received ANY of the Cash transfers.
+
+---
+
+# Results
+
+```stata
+Ñangareko Trt=121 cntr = 3028
+     tr1 |     dwork     dtime      dinc
+---------+------------------------------
+       0 | -.0052761 -5.128723  .1910545
+       1 |  .0247636 -7.483465 -.1465863
+---------+------------------------------
+
+Pytyvo trt=1086  cntr = 3028
+     tr2 |     dwork     dtime      dinc
+---------+------------------------------
+       0 | -.0052761 -5.128723  .1910545
+       1 | -.0280861 -7.332173 -.0598658
+----------------------------------------
+```
+Message: With no controls
+- Ñangareko: PPl work more, but for fewer hours and less income
+- Pytyvo: PPl work less,  fewer hours, and less income
+
+---
+
+# Results
+
+There is reason to believe the effect is weaker among males:
+
+```stata
+
+     tr1 |     dwork     dtime      dinc  MEN: TR 54 ctr 1517
+---------+------------------------------
+       0 | -.0019686 -4.400197   .202349
+       1 | -.0004724 -1.382756 -.1251587
+---------+------------------------------
+     tr2 |     dwork     dtime      dinc
+---------+------------------------------
+       0 | -.0019686 -4.400197   .202349  MEN: TR 521 ctr 1517
+       1 |  .0041619  -4.98802 -.0150683
+---------+------------------------------
+   Total | -.0003776 -4.558148  .1422306
+----------------------------------------
+```
+
+---
+
+# Results
+
+But stronger among females:
+
+```stata
+     tr1 |     dwork     dtime      dinc WOMEN: TR 67 ctr 1511
+---------+------------------------------
+       0 |  -.008605 -6.148167  .1735808
+       1 |  .0435609 -15.65439 -.1889944
+---------+------------------------------
+     tr2 |     dwork     dtime      dinc WOMEN: TR 565 ctr 1511
+---------+------------------------------
+       0 |  -.008605 -6.148167  .1735808
+       1 | -.0567016 -10.28253 -.1376682
+---------+------------------------------
+```
+
+---
+#Results:Ñangareko
+
+&lt;style type="text/css"&gt;
+.small   { /*Change made here*/
+  font-size: 80% !important;
+}
+&lt;/style&gt;
+
+Effect Treated for Men Nothing happens!
+
+.small[
+|            |     (1)   |     (2  ) |      (3)  |     (4)   |     (5)   |
+| ---------- | :-------: | :-------: | :-------: | :-------: | :-------: |
+| ATET       |           |           |           |           |           |
+| work      |  -0.00923 |  -0.00701 |  -0.00673 |  -0.00663 |  -0.00880 |
+|            |  (0.0275) |  (0.0274) |  (0.0282) |  (0.0282) |  (0.0284) |
+|  Hrs of work  |     3.230 |     3.341 |     3.126 |     3.127 |     2.768 |
+|            |   (3.610) |   (3.602) |   (3.659) |   (3.651) |   (3.684) |
+|  Income  |    -0.231 |    -0.236 |    -0.207 |    -0.227 |    -0.199 |
+|            |   (0.140) |   (0.145) |   (0.138) |   (0.145) |   (0.148) |
+| *Control*  |           |           |           |           |           |
+| edad       |           |         x |         x |         x |         x |
+| aedu       |           |           |         x |         x |         x |
+| Relation   |           |           |           |         x |         x |
+| married    |           |           |           |           |     x     |
+| *N*        |      1571 |      1571 |      1533 |      1533 |      1533 |
+]
+---
+#Results:Ñangareko
+
+Effect Treated for Women
+Seems that they are more likely to work, but work fewer hours, and lower wages.
+Estimations on Hrs of work are Statistically Significant
+.small[
+|            |     (1)   |     (2  ) |      (3)  |     (4)   |     (5)   |
+| ---------- | :-------: | :-------: | :-------: | :-------: | :-------: |
+| Work  |    0.0242 |    0.0248 |    0.0276 |    0.0270 |    0.0272 |
+|            |  (0.0661) |  (0.0656) |  (0.0663) |  (0.0663) |  (0.0664) |
+| Hrs Work  |    -10.05 |    -10.01 |    -8.208 |    -8.299 |    -8.317 |
+|            |   (4.197) |   (4.192) |   (4.220) |   (4.238) |   (4.235) |
+| Income  |    -0.255 |    -0.243 |    -0.163 |    -0.155 |    -0.155 |
+|            |   (0.223) |   (0.225) |   (0.222) |   (0.218) |   (0.214) |
+| *Control*  |           |           |           |           |           |
+| edad       |           |         x |         x |         x |         x |
+| aedu       |           |           |         x |         x |         x |
+| 3.rel      |           |           |           |         x |         x |
+| married    |           |           |           |           |     x     |
+| *N*        |      1571 |      1571 |      1533 |      1533 |      1533 |
+]
+
+---
+#Results:Pytyvo Men
+
+As before, effects are small and imprecise.
+
+.small[
+|            |     (1)   |     (2  ) |      (3)  |     (4)   |     (5)   |
+| ---------- | :-------: | :-------: | :-------: | :-------: | :-------: |
+| ATET       |           |           |           |           |           |
+| work       |  0.000368 |  0.000807 |  0.000654 |   0.00116 |  0.000748 |
+|            |  (0.0170) |  (0.0169) |  (0.0175) |  (0.0173) |  (0.0172) |
+|  Hrs of work |  0.0273 |    0.0433 |   -0.0152 |    -0.106 |    -0.153 |
+|            |   (1.166) |   (1.165) |   (1.177) |   (1.176) |   (1.174) |
+|  Income    |     -0.115 |    -0.115 |    -0.107 |   -0.0981 |   -0.0972 |
+|            |   (0.138) |   (0.138) |   (0.135) |   (0.133) |   (0.133) |
+| *Control*  |           |           |           |           |           |
+| edad       |           |         x |         x |         x |         x |
+| aedu       |           |           |         x |         x |         x |
+| Relation   |           |           |           |         x |         x |
+| married    |           |           |           |           |     x     |
+| *N*        |      1571 |      1571 |      1533 |      1533 |      1533 |
+]
+
+---
+#Results:Pytyvo Women
+
+Work, effect are small but negative; Womenwork fewer hours, and earn less.
+
+.small[
+|            |     (1)   |     (2  ) |      (3)  |     (4)   |     (5)   |
+| ---------- | :-------: | :-------: | :-------: | :-------: | :-------: |
+| ATET       |           |           |           |           |           |
+| work        |   -0.0368  |   -0.0368  |   -0.0319  |   -0.0321  |   -0.0323  |
+|            |  (0.0258)  |  (0.0259)  |  (0.0271)  |  (0.0272)  |  (0.0271)  |
+|  Hrs of work  |    -4.339* |    -4.331* |    -3.383+ |    -3.435+ |    -3.450+ |
+|            |   (1.532)  |   (1.533)  |   (1.590)  |   (1.585)  |   (1.595)  |
+|  Income    |    -0.308+ |    -0.293+ |    -0.216  |    -0.209  |    -0.205  |
+|            |   (0.132)  |   (0.135)  |   (0.132)  |   (0.130)  |   (0.125)  |
+| *Control*  |           |           |           |           |           |
+| edad       |           |         x |         x |         x |         x |
+| aedu       |           |           |         x |         x |         x |
+| Relation   |           |           |           |         x |         x |
+| married    |           |           |           |           |     x     |
+| *N*        |      1571 |      1571 |      1533 |      1533 |      1533 |
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
