@@ -22,7 +22,7 @@ I should start by saying that what I will be presenting here is ***not*** the on
 
 That being said. A step by step guide on this plot can be found [here](https://medium.com/the-stata-guide/stata-graphs-waffle-charts-32afc7d6f6dd). 
 
-Learning how to do it step-by-step gives your more flexibility, but I hope you will find that using [`waffle_i`](www.goog.com) is sufficiently flexible for most of your purposes.
+Learning how to do it step-by-step gives your more flexibility, but I hope you will find that using [`waffle_i`]() is sufficiently flexible for most of your purposes.
 
 So let me start
  
@@ -44,7 +44,7 @@ knitr::include_graphics("https://assets.epicurious.com/photos/60637186ceabd6ae3d
 
 If you want a more insider look of a waffle plot. They are nothing else than a ***scatter*** plot within a box, where all points and horizontally and vertically equidistant.
 
-So at its core Waffle plots are easy to make. But they can be a bit time consumming. 
+So at its core Waffle plots are easy to make. But they can be a bit time consuming. 
 
 Thus, what I decided to do was write a small `ado` that makes creating this plots easily. 
 

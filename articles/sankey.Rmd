@@ -1,0 +1,312 @@
+---
+title: "How to make Sankey plots"
+subtitle: "The `ado` way"
+author: "Fernando Rios-Avila"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      ratio: 13:9
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+![This is the way](https://i.pinimg.com/originals/98/c6/99/98c6997145f363265959daf84b656057.jpg)
+
+<style>
+.center2 {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+</style>
+---
+
+# Disclaimer
+
+I should start by saying that what I will be presenting here is ***not*** the only way. Just they way I like to make this kind of plot, specially after some programming muscle flexing, and when I do not want to type the same text over and over again.
+
+That being said. A step by step guide on this plot can be found [here](https://medium.com/the-stata-guide/stata-graphs-sankey-diagram-ecddd112aca1). 
+
+Learning how to do it step-by-step gives your more flexibility, but I hope you will find that using [`sankey_i2`](./sankey_files/sankey_i2.ado) is sufficiently flexible for most of your purposes.
+
+Also, I just found out that there is a python application that was linked to Stata! You can find a link to application [here](https://www.mjcrowther.co.uk/software/sankey/)
+
+So let me start
+ 
+---
+
+## What are Sankey plots?
+
+According to Wikipedia, Sankey plots are :
+
+> A type of flow diagram in which the width of the arrows is proportional to the flow rate.
+
+> And are often used in the visualization of material flow analysis.
+
+<img src= https://www.theinformationlab.co.uk/wp-content/uploads/2018/03/Final-Dashboard.png
+width=50%  class="center2">
+
+---
+
+## But what they, really?
+
+When you think about it, at its core, Sankey plots are nothing more then graphs of connected coordinates. 
+
+You have the origin point $(x0,y0)$ and the destiny point $(x1,y1)$, and you simply connect them with a line. Sounds Familiar? 
+
+If that is the case, you could easily plot "ugly" Sankey plots using `Stata` command `pcspike`. The caveat: `pcspikes` draws straight lines, but Sankey uses nice smooth ones.
+
+.pull-left[
+<img src="./sankey_files/sankey_1a.png"  >
+]
+.pull-right[
+<img src="./sankey_files/sankey_1b.png" >
+]
+
+---
+
+## But what they, really?
+
+There are smaller details that go with it, but, as long as you have a set of pair coordinates, you can easily connect them, and voila! Sankey plot.
+
+Getting the curved lines, however, may seem like a hassle. And even more trying to keep track of all the elements connections, colors, etc.
+
+Thus, what I decided to do was write a small `ado` that makes creating this plots easy. 
+
+In the next slides, I will show you how to use `sankey_i2` to make this type of plots, in Stata!. But first...
+
+1. Get a copy of [`sankey_i2`](./sankey_files/sankey_i2.ado) and [`sankey_i`](./sankey_files/sankey_i.ado) in your computer.
+2. Get Asjad `schemepack` from SSC. I really like `white_tableau` scheme. 
+
+`sankey_i` and `sankey_i2` are independent from each other, but it will help you understand the data structure, and how the command works.
+
+---
+```{r xaringan-panelset, echo=FALSE}
+xaringanExtra::use_panelset()
+```
+
+## Simple Sankey plot
+
+Before we start with the heavy duty Sankey plot, Lets see how it actually works with a toy example.
+
+Say that you want to Sankey-sh connection between two points. (0,0)-(1,1). 
+What you would do is:
+
+.panelset[
+  .panel[.panel-name[Code]
+  
+  ```Stata
+  sankey_i 0  0  1  1
+    *->   x0 y0 x1 y1
+  ```
+  Notice with this command, you *feed* information for the two points you want to connect (x0,y0) to (x1,y1).
+  
+  The plot now will be almost identical to the one I produced before. The difference is that we can also play with other graph properties
+  ]
+  
+  .panel[.panel-name[Plot]
+  .center2[
+   ![sankey_3](./sankey_files/sankey_2.png)
+   ]
+  ]
+  
+   .panel[.panel-name[Code]
+  
+  ```Stata
+  sankey_i 0  0  1  -3  0.2 0.5
+    *->   x0 y0 x1 y1   W0  w1
+  ```
+  In this example, I change the second coordinate, and add two other values. W0 (for width at point 1) and W1 for width at point 2.
+  ]
+  
+   .panel[.panel-name[Plot2]
+  
+   .center[![sankey_4](./sankey_files/sankey_3.png)]
+  
+  ]
+  
+]
+
+---
+
+## More Complex Sankey Plot
+
+Alright, the idea of using `sankey_i`, is for you to become familiar with the order of the data you will need to have to produce a Sankey plot. 
+
+Namely, you will need data for each pair of *links* you want to make (say `x0, y0, x1, y1`), but also variables with information about the Widths.
+
+The basic syntax of the command, then will be:
+
+```stata
+  sankey_i2 vx0 vy0 vx1 vy0, <--necessary
+  [width0(varname) <-- Var with WIDTH point0
+   width1(varname) <-- Var with WIDTH point1 
+   color(varname)  <-- Var with color 
+   pstyle(varname) <-- Var with pstyle
+   adjust          <-- Adjusts Nodes possition
+   Other options]  <-- other code options
+```
+
+---
+
+## More Complex Sankey Plot 
+
+So we are almost ready to do your first Sankey plot.
+
+First, I ll create some data, before making any plots
+
+.panelset[
+   .panel[.panel-name[Input Data]
+Input the data:   
+   
+```stata
+ input x0  y0  x1  y1   wd0  wd1 str10 color  str10 pstyle 
+       0   0   2    2   0.5  0.2  "navy%50"  "p1"
+	   0   0   2   -2   0.5  0.2  "brown%50"  "p1"
+	   2   2   4    2   0.2  0.5  "navy%40"  "p2"
+	   2   2   4    5   0.2  0.5  "brown%40"  "p2"
+ end
+```
+   
+   ]
+   
+   .panel[.panel-name[plot code]
+Create a simple sankey plot. the coordinates should be added in the same order as with `sankey_i`.
+
+```stata
+sankey_i2 x0 y0 x1 y1
+```
+
+]
+   
+      
+   .panel[.panel-name[plot]
+  
+  .pull-left[ ![sankey_5](./sankey_files/sankey_4.png)]
+  .pull-right[
+  
+    Voila! First Sankey plot, with caveats.
+    
+- Lines are too thin
+- Legend is Ugly
+- and colors are Random.
+    
+  ]
+
+   
+   ]
+]
+
+---
+
+## Beatify
+
+.panelset[
+   .panel[.panel-name[Goal]
+
+The next step will be to make the plot better looking.
+- How to change width's
+- Adjust graph to width's
+- Assign colors
+- And assign styles
+
+So lets do All of this at once!
+   ]
+   
+   .panel[.panel-name[code]
+
+The new code now has more information. 
+
+- I can specify using different width's (at x0,y0 or x1,y1)
+- Change color using a variable with color characteristics
+- or adjust the flow positions.
+
+```stata
+sankey_i2 x0 y0 x1 y1, /// As before, we provide all coordinates
+  width0(wd0)    /// Specifies the width at point1 
+  width1(wd1)    /// If you ignore this, it will be set to wd0
+  color(color)   /// Here you use a variable with the "colors" you want
+  adjust         // and this adjusts the possitions (try it on)
+```
+
+   ]
+   
+   .panel[.panel-name[plot]
+
+  .center2[ ![sankey_6](./sankey_files/sankey_5.png)]
+  
+It does look much better. Also, I could have created the same figure without adjustment, or using styles rather than color.
+   ]
+   
+   .panel[.panel-name[plot2]
+
+  .pull-left[ ![sankey_7a](./sankey_files/sankey_6.png)
+  Here I use pstyle rather than color option
+  ]
+  
+  .pull-right[ ![sankey_7b](./sankey_files/sankey_7.png)
+  Here I use color, but drop `adjust`.
+  ]
+  
+]
+   
+]
+
+---
+
+## Beatify 2
+
+.panelset[
+
+.panel[.panel-name[Goal]
+   
+Alright, our sankey plot is ***DONE***! 
+
+...or almost done. 
+
+There is still need to add more information for a proper sankey plot. For now, those can be added using other `twoway` options.
+
+At some point, It will be added to the command! but for now, lets see how to do it by hand
+
+]
+
+.panel[.panel-name[code]
+
+```stata
+sankey_i2 x0 y0 x1 y1, width0(wd0) width1(wd1) ///
+  adjust color(color) ///
+	xlabel("") ylabel("") legend(off) /// 
+	text(0 0 "Beginning" 2 2 "Node 1" ///
+	-2 2 "Node 2" 2 4 "Win" 5 4 "Loss", box width(15) ///
+	orientation(vertical)) ///
+	title("Your first sankey, the ado way") ///
+	subtitle("This is the way")
+```
+So, we will use the option `text` to add the additional information we need.
+As a reminder, text uses (y,x) coordinates to add the information.
+]
+
+.panel[.panel-name[plot]
+
+![sankey_8](./sankey_files/sankey_8.png)]
+
+
+]
+
+---
+
+## Conclusions
+
+This was fun to code, and flex my programming muscles.
+
+More important, I wanted make an "easy" way to construct this figures.
+
+There is still some details to address. Specifically, Really would like to add the "text" automatically, but that is yet to be programmed. 
+
+Comments? suggestions? Drop me a message!
+
+.center2[![WeeMee](https://friosavila.github.io/playingwithstata/img/WeeMee.jpg)]
+
