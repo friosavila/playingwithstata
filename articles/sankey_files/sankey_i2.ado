@@ -1,3 +1,4 @@
+*! v1.11 by FRA Sorts
 *! v1.1 by FRA allows Extra Adjustment
 * v1.01 by FRA allows for NO coordinates
 capture program drop get_coordinates
@@ -33,7 +34,7 @@ program get_coordinates, rclass
 end
 
 capture program drop adjust_coordinates
-program adjust_coordinates
+program adjust_coordinates, sortpreserve
 	syntax varlist, [width(varlist)] 
 	
 	gettoken x0 rest:varlist
@@ -55,22 +56,23 @@ program adjust_coordinates
 		}
 	}		
 	*sum `width0' `width1'
-	
+	tempvar sort
+	gen `_sort' = _n
 	tempvar yy0 yy1
 	clonevar `yy0' = `y0'
 	clonevar `yy1' = `y1'
 	tempvar tw0 tw1
-	bysort `yy0' `x0' (`yy1'):egen `tw0'=sum(`width0'*2)
-	bysort `yy1' `x1' (`yy0'):egen `tw1'=sum(`width1'*2)
+	bysort `yy0' `x0' (`yy1' `_sort'):egen `tw0'=sum(`width0'*2)
+	bysort `yy1' `x1' (`yy0' `_sort'):egen `tw1'=sum(`width1'*2)
 	
 	*sort `yy0' `yy1'
- 	bysort `yy0' `x0' (`yy1'): replace `y0'=`y0'-`tw0'*.5+sum(`width0'*2)-`width0'
-	bysort `yy1' `x1' (`yy0'): replace `y1'=`y1'-`tw1'*.5+sum(`width1'*2)-`width1'
+ 	bysort `yy0' `x0' (`yy1' `_sort'): replace `y0'=`y0'-`tw0'*.5+sum(`width0'*2)-`width0'
+	bysort `yy1' `x1' (`yy0' `_sort'): replace `y1'=`y1'-`tw1'*.5+sum(`width1'*2)-`width1'
 end
 
 
 capture program drop extra_adjust
-program extra_adjust
+program extra_adjust, sortpreserve
 	syntax varlist, [width(varlist)] 
 	
 	gettoken x0 rest:varlist
@@ -100,11 +102,14 @@ program extra_adjust
 	gen `ww0'=`width0'*2.5
 	gen `ww1'=`width1'*2.5
 	
+	tempvar sort
+	gen `_sort' = _n 
+	
 	tempvar td mm0 mm1
-	sort `g0'
+	sort `g0' `_sort'
 	gen `td'=sum(`ww0')
 	by `g0':gen `mm0'=(`td'[_N]-`td'[1]-`ww0'[1])/2+`td'[1]
-	sort `g1'
+	sort `g1' `_sort'
 
 	replace `td'=sum(`ww1')
 	by `g1':gen `mm1'=(`td'[_N]-`td'[1]-`ww1'[1])/2+`td'[1]
@@ -127,16 +132,16 @@ end
 
 capture program drop sankey_i2
 program sankey_i2
-syntax varlist, [width0(varname) width1(varname) color(varname) pstyle(varname) * adjust noline extra]  
+syntax varlist, [width0(varname) width1(varname) color(varname) pstyle(varname) * adjust noline extra ]  
 	
 	tempname new
 	local nn = _N
 	
- 
+	
 	
  	frame put `varlist' `color' `pstyle' `width0' `width1' , into(`new')
 	frame `new': {
-		
+			
 		if "`extra'"!="" qui:extra_adjust `varlist',  width(`width0' `width1') 
 		if "`adjust'"!="" qui:adjust_coordinates `varlist',  width(`width0' `width1') 
 		
