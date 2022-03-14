@@ -57,17 +57,17 @@ program adjust_coordinates, sortpreserve
 	}		
 	*sum `width0' `width1'
 	tempvar sort
-	gen `_sort' = _n
+	gen `sort' = _n
 	tempvar yy0 yy1
 	clonevar `yy0' = `y0'
 	clonevar `yy1' = `y1'
 	tempvar tw0 tw1
-	bysort `yy0' `x0' (`yy1' `_sort'):egen `tw0'=sum(`width0'*2)
-	bysort `yy1' `x1' (`yy0' `_sort'):egen `tw1'=sum(`width1'*2)
+	bysort `yy0' `x0' (`yy1' `sort'):egen `tw0'=sum(`width0'*2)
+	bysort `yy1' `x1' (`yy0' `sort'):egen `tw1'=sum(`width1'*2)
 	
 	*sort `yy0' `yy1'
- 	bysort `yy0' `x0' (`yy1' `_sort'): replace `y0'=`y0'-`tw0'*.5+sum(`width0'*2)-`width0'
-	bysort `yy1' `x1' (`yy0' `_sort'): replace `y1'=`y1'-`tw1'*.5+sum(`width1'*2)-`width1'
+ 	bysort `yy0' `x0' (`yy1' `sort'): replace `y0'=`y0'-`tw0'*.5+sum(`width0'*2)-`width0'
+	bysort `yy1' `x1' (`yy0' `sort'): replace `y1'=`y1'-`tw1'*.5+sum(`width1'*2)-`width1'
 end
 
 
@@ -103,13 +103,13 @@ program extra_adjust, sortpreserve
 	gen `ww1'=`width1'*2.5
 	
 	tempvar sort
-	gen `_sort' = _n 
+	gen `sort' = _n 
 	
 	tempvar td mm0 mm1
-	sort `g0' `_sort'
+	sort `g0' `sort'
 	gen `td'=sum(`ww0')
 	by `g0':gen `mm0'=(`td'[_N]-`td'[1]-`ww0'[1])/2+`td'[1]
-	sort `g1' `_sort'
+	sort `g1' `sort'
 
 	replace `td'=sum(`ww1')
 	by `g1':gen `mm1'=(`td'[_N]-`td'[1]-`ww1'[1])/2+`td'[1]
