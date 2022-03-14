@@ -1,6 +1,7 @@
 *! v1.11 by FRA Sorts
 *! v1.1 by FRA allows Extra Adjustment
 * v1.01 by FRA allows for NO coordinates
+* Think about Floor adjustment
 capture program drop get_coordinates
 program get_coordinates, rclass
 	syntax varlist, [width(varlist)] [n(int 1)]
@@ -35,7 +36,7 @@ end
 
 capture program drop adjust_coordinates
 program adjust_coordinates, sortpreserve
-	syntax varlist, [width(varlist)] 
+	syntax varlist, [width(varlist)  ] 
 	
 	gettoken x0 rest:varlist
 	gettoken y0 rest:rest
@@ -62,12 +63,13 @@ program adjust_coordinates, sortpreserve
 	clonevar `yy0' = `y0'
 	clonevar `yy1' = `y1'
 	tempvar tw0 tw1
-	bysort `yy0' `x0' (`yy1' `sort'):egen `tw0'=sum(`width0'*2)
-	bysort `yy1' `x1' (`yy0' `sort'):egen `tw1'=sum(`width1'*2)
+	bysort `yy0' `x0' (`sort' `yy1' ):egen `tw0'=sum(`width0'*2)
+	bysort `yy1' `x1' (`sort' `yy0'  ):egen `tw1'=sum(`width1'*2)
 	
 	*sort `yy0' `yy1'
- 	bysort `yy0' `x0' (`yy1' `sort'): replace `y0'=`y0'-`tw0'*.5+sum(`width0'*2)-`width0'
-	bysort `yy1' `x1' (`yy0' `sort'): replace `y1'=`y1'-`tw1'*.5+sum(`width1'*2)-`width1'
+ 	bysort `yy0' `x0' (`sort' `yy1'  ): replace `y0'=`y0'-`tw0'*.5+sum(`width0'*2)-`width0'
+	bysort `yy1' `x1' (`sort' `yy0'  ): replace `y1'=`y1'-`tw1'*.5+sum(`width1'*2)-`width1'
+
 end
 
 
@@ -132,7 +134,7 @@ end
 
 capture program drop sankey_i2
 program sankey_i2
-syntax varlist, [width0(varname) width1(varname) color(varname) pstyle(varname) * adjust noline extra ]  
+syntax varlist, [width0(varname) width1(varname) color(varname) pstyle(varname) * adjust noline extra floor]  
 	
 	tempname new
 	local nn = _N
@@ -143,7 +145,7 @@ syntax varlist, [width0(varname) width1(varname) color(varname) pstyle(varname) 
 	frame `new': {
 			
 		if "`extra'"!="" qui:extra_adjust `varlist',  width(`width0' `width1') 
-		if "`adjust'"!="" qui:adjust_coordinates `varlist',  width(`width0' `width1') 
+		if "`adjust'"!="" qui:adjust_coordinates `varlist',  width(`width0' `width1')   
 		
 		
 		tempvar x y
@@ -173,8 +175,7 @@ syntax varlist, [width0(varname) width1(varname) color(varname) pstyle(varname) 
 				local toplot `toplot' (rarea yy0_`j' yy1_`j' xx_`j', color(`col') pstyle(`pst') `lcl')		
 				 
 		}
-	
-		
+			
 		two `toplot'   , `options'
 	}
 	
