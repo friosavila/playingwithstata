@@ -4,7 +4,7 @@
     <title>Paraguay: Estimation of the Impact of Transfer programs</title>
     <meta charset="utf-8" />
     <meta name="author" content="Fernando Rios-Avila" />
-    <meta name="date" content="2022-03-10" />
+    <meta name="date" content="2022-03-16" />
     <script src="libs/header-attrs-2.12/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
@@ -16,20 +16,24 @@ class: center, middle, inverse, title-slide
 # Paraguay: Estimation of the Impact of Transfer programs
 ## Pytyvo and Ñangareko (2019-2020)
 ### Fernando Rios-Avila
-### 2022-03-10
+### 2022-03-16
 
 ---
 
 
+&lt;style type="text/css"&gt;
+.small   { /*Change made here*/
+  font-size: 80% !important;
+}
+&lt;/style&gt;
+ 
 ## Introduction
 
-The goal of this presentation is to provide preliminary estimations of the impact of two transfer programs that were implemented in Paraguay in 2020, in response to the Covid Pandemic.
+The goal of this presentation is to provide preliminary estimations exploring the targeting success of two transfer programs implemented in Paraguay.
 
 This are the Pytyvo and Ñangareko.
 
-To do this, we will use the panel component from the Household Surveys in Panama, evaluating the impact of this transfers using data for those individuals who were followed across time.
-
-Given the data structure, we will be implementing a simple 2x2 DID estimator. 
+Because these two programs were aiming to help people who have lost their main source of income, we will use the panel component from the Household Surveys in Paraguay. The idea is to explore if those who should have received this transfer indeed do so.
 
 
 ---
@@ -47,184 +51,191 @@ General Structure of data:
 | 2019 | 11473| 4293 |  1144 |  179 |
 | 2020 | 11099| 4293 | 1144 |  179 |
 
-As outcomes, we will concentrate on few outcome variables:
-1. Employment status (work or does not work)
-2. Hours of work. (As extensive margin effect)
-3. Earnings (For those with earnings in both periods)
+Because these two transfers were similar. We will analyze them simultaneously.
+
 ---
 
 ## Model
 
-2x2  DID Simple:
+To analyze if the transfers targeting was implemented correctly we would like to have information on Labor and Income Status after Covid but before transfers were implemented.
 
-$$ ATT =E(\Delta Y|D=1) - E(\Delta Y|D=1) $$
+`$$2019 \rightarrow covid  \rightarrow DATA!  \rightarrow transfers  \rightarrow 2020$$`
+Unfortunately, we only have data for either 2019 or 2020. 
 
-2x2 IPW and IPWRA
+The assumption: If transferences were temporary, what we observe in 2020 may be as close to the situation before transfers took place.
 
-$$ ATT =E(\Delta Y|D=1,X) - E(\Delta Y|D=0,X) $$
+Thus, we will use that data to see, after the fact, if those who should have received the transfer indeed do so.
 
-In both cases, the control group will be those who do not declare to have received ANY of the Cash transfers.
-
----
-
-# Results
-
-```stata
-Ñangareko Trt=121 cntr = 3028
-     tr1 |     dwork     dtime      dinc
----------+------------------------------
-       0 | -.0052761 -5.128723  .1910545
-       1 |  .0247636 -7.483465 -.1465863
----------+------------------------------
-
-Pytyvo trt=1086  cntr = 3028
-     tr2 |     dwork     dtime      dinc
----------+------------------------------
-       0 | -.0052761 -5.128723  .1910545
-       1 | -.0280861 -7.332173 -.0598658
-----------------------------------------
-```
-Message: With no controls
-- Ñangareko: PPl work more, but for fewer hours and less income
-- Pytyvo: PPl work less,  fewer hours, and less income
+Caveat. If a group recovered from the **Covid** shock faster others (men vs women), we may not be able to measure this relationship.
 
 ---
 
 # Results
 
-There is reason to believe the effect is weaker among males:
+Share of people who received the transfer by Transition and gender
 
-```stata
+|          | NE`-&gt;`E | NE`-&gt;`NE | E`-&gt;`E  | E`-&gt;`NE | Total |
+| -------- | ----- | ------ | ----- | ----- | ----- |
+| sexo     |       |        |       |       |       |
+|   Hombre | 0.282 | 0.108  | 0.282 | 0.239 | 0.262 |
+|   Mujer  | 0.365 | 0.227  | 0.275 | 0.401 | 0.285 |
+|   Total  | 0.337 | 0.200  | 0.280 | 0.350 | 0.274 |
 
-     tr1 |     dwork     dtime      dinc  MEN: TR 54 ctr 1517
----------+------------------------------
-       0 | -.0019686 -4.400197   .202349
-       1 | -.0004724 -1.382756 -.1251587
----------+------------------------------
-     tr2 |     dwork     dtime      dinc
----------+------------------------------
-       0 | -.0019686 -4.400197   .202349  MEN: TR 521 ctr 1517
-       1 |  .0041619  -4.98802 -.0150683
----------+------------------------------
-   Total | -.0003776 -4.558148  .1422306
-----------------------------------------
-```
+Message: 
+- Those who lost jobs (E-&gt;NE) have the largest rates of receiving the transfers. 
+- However, there are many people who didn't lose their jobs and yet received the transfer 
 
 ---
 
 # Results
 
-But stronger among females:
+By formal employment
 
-```stata
-     tr1 |     dwork     dtime      dinc WOMEN: TR 67 ctr 1511
----------+------------------------------
-       0 |  -.008605 -6.148167  .1735808
-       1 |  .0435609 -15.65439 -.1889944
----------+------------------------------
-     tr2 |     dwork     dtime      dinc WOMEN: TR 565 ctr 1511
----------+------------------------------
-       0 |  -.008605 -6.148167  .1735808
-       1 | -.0567016 -10.28253 -.1376682
----------+------------------------------
-```
+|          | Not Employed       | Informal | Formal   | Total    |
+| -------- | -------- | -------- | -------- | -------- |
+| sexo     |          |          |          |          |
+|   Hombre | .169 | .357 | .094 | .262 |
+|   Mujer  | .260 | .383  | .095 | .285 |
+|   Total  | .237 | .368 | .095 | .274 |
+
+Transfer were concentrated mostly on ppl with informal jobs in 2019. Especially among women. 
+ 
 
 ---
-#Results:Ñangareko
 
-&lt;style type="text/css"&gt;
-.small   { /*Change made here*/
-  font-size: 80% !important;
-}
-&lt;/style&gt;
+# Results
+Here we show by change in income distribution. (Monthly income per capita)
+`&lt;-2q` means they moved 2 positions in the quintiles. Say from q3 to q1.
 
-Effect Treated for Men Nothing happens!
+|          | &lt;- 2q | &lt;- 1q | no change | 1q -&gt; | 2q -&gt; | Total |
+| -------- | ----- | ----- | --------- | ----- | ----- | ----- |
+| sexo     |       |       |           |       |       |       |
+|   Hombre | 0.313 | 0.306 | 0.234     | 0.261 | 0.306 | 0.262 |
+|   Mujer  | 0.344 | 0.324 | 0.251     | 0.297 | 0.341 | 0.285 |
+|   Total  | 0.328 | 0.315 | 0.243     | 0.279 | 0.325 | 0.274 |
 
-.small[
-|            |     (1)   |     (2  ) |      (3)  |     (4)   |     (5)   |
-| ---------- | :-------: | :-------: | :-------: | :-------: | :-------: |
-| ATET       |           |           |           |           |           |
-| work      |  -0.00923 |  -0.00701 |  -0.00673 |  -0.00663 |  -0.00880 |
-|            |  (0.0275) |  (0.0274) |  (0.0282) |  (0.0282) |  (0.0284) |
-|  Hrs of work  |     3.230 |     3.341 |     3.126 |     3.127 |     2.768 |
-|            |   (3.610) |   (3.602) |   (3.659) |   (3.651) |   (3.684) |
-|  Income  |    -0.231 |    -0.236 |    -0.207 |    -0.227 |    -0.199 |
-|            |   (0.140) |   (0.145) |   (0.138) |   (0.145) |   (0.148) |
-| *Control*  |           |           |           |           |           |
-| edad       |           |         x |         x |         x |         x |
-| aedu       |           |           |         x |         x |         x |
-| Relation   |           |           |           |         x |         x |
-| married    |           |           |           |           |     x     |
-| *N*        |      1571 |      1571 |      1533 |      1533 |      1533 |
-]
----
-#Results:Ñangareko
-
-Effect Treated for Women
-Seems that they are more likely to work, but work fewer hours, and lower wages.
-Estimations on Hrs of work are Statistically Significant
-.small[
-|            |     (1)   |     (2  ) |      (3)  |     (4)   |     (5)   |
-| ---------- | :-------: | :-------: | :-------: | :-------: | :-------: |
-| Work  |    0.0242 |    0.0248 |    0.0276 |    0.0270 |    0.0272 |
-|            |  (0.0661) |  (0.0656) |  (0.0663) |  (0.0663) |  (0.0664) |
-| Hrs Work  |    -10.05 |    -10.01 |    -8.208 |    -8.299 |    -8.317 |
-|            |   (4.197) |   (4.192) |   (4.220) |   (4.238) |   (4.235) |
-| Income  |    -0.255 |    -0.243 |    -0.163 |    -0.155 |    -0.155 |
-|            |   (0.223) |   (0.225) |   (0.222) |   (0.218) |   (0.214) |
-| *Control*  |           |           |           |           |           |
-| edad       |           |         x |         x |         x |         x |
-| aedu       |           |           |         x |         x |         x |
-| 3.rel      |           |           |           |         x |         x |
-| married    |           |           |           |           |     x     |
-| *N*        |      1571 |      1571 |      1533 |      1533 |      1533 |
-]
+Other than women showing higher rates of receiving the transfers, we see that regardless how much much income they may changed (moving up or down the distribution) there is not much change in the rate of receiving the transfer
 
 ---
-#Results:Pytyvo Men
 
-As before, effects are small and imprecise.
+# Results
+However, conditioning only on those who were working in 2019 (and may be loosing their jobs), we see a larger share of ppl who received the transfer if they lost a lot of their income.
 
+We see this more for women than men.
+
+|          | &lt;- 2q    | &lt;- 1q    | no change | 1q -&gt;    | 2q -&gt;    | Total    |
+| -------- | -------- | -------- | --------- | -------- | -------- | -------- |
+| sexo     |       |       |           |       |       |       |
+|   Hombre | 0.327 | 0.335 | 0.248     | 0.275 | 0.305 | 0.279 |
+|   Mujer  | 0.445 | 0.335 | 0.262     | 0.312 | 0.335 | 0.302 |
+|   Total  | 0.372 | 0.335 | 0.254     | 0.290 | 0.319 | 0.289 |
+
+
+
+---
+
+## Model
+
+As a diagnostic for whether the transfer was well targeted, we will use a binomial model (logit) and explore to what extent the likelihood of receiving the transfer (trt=1) changes based on other characteristics:
+
+$$ p(trt=1|X) = f(demo)+ f(J Stat, \Delta Emp, \Delta income) $$
+We repeat this for the full sample, and for men and women separately.
+ 
+&gt;Controls: Urban/Rural, age, years of education, Head/Spouse vs other, is married.
+
+---
+
+#Results
+
+| Marginal effects     |        Todos    |      Hombres    |      Mujeres    |
+| -------------------- | :-------------: | :-------------: | :-------------: |
+| NE-&gt;E                |       0.0557*   |      0.00708    |       0.0760**  |
+|                      |     (0.0301)    |     (0.0496)    |     (0.0387)    |
+| NE-&gt;NE               |      -0.0626*** |       -0.156*** |      -0.0385    |
+|                      |     (0.0194)    |     (0.0302)    |     (0.0252)    |
+| E-&gt;E                 |            0    |            0    |            0    |
+|                      |          (.)    |          (.)    |          (.)    |
+| E-&gt;NE                |       0.0736**  |      -0.0329    |        0.119*** |
+|                      |     (0.0287)    |     (0.0456)    |     (0.0367)    |
+
+Among women, job looser received the transfer more often. However, that isnt the case for men. 
+
+Those who remain unemployed are less likely to get the transfer. For men, Those who didnt loos their jobs are more likely to have received the bonus
+
+---
+
+## Results
+
+On the other hand, people working in formal sector were far less likely to receive the transfers.
+
+
+| Marginal effects     |      Todos    |      Hombres    |      Mujeres    |
+| -------------------- | :-------------: | :-------------: | :-------------: |
+| Informal             |            0    |            0    |            0    |
+|                      |          (.)    |          (.)    |          (.)    |
+| Formal               |       -0.286*** |       -0.282*** |       -0.293*** |
+|                      |     (0.0174)    |     (0.0219)    |     (0.0288)    |
+
+---
+
+## Results
+
+Looking at the changes in the distribution:
+
+1. In all cases, relative declines or increases in income increase the changes of receiving this transfer,
+
+2. Only when the changes were negative (Fall in income) were the estimations significant. 
 .small[
-|            |     (1)   |     (2  ) |      (3)  |     (4)   |     (5)   |
-| ---------- | :-------: | :-------: | :-------: | :-------: | :-------: |
-| ATET       |           |           |           |           |           |
-| work       |  0.000368 |  0.000807 |  0.000654 |   0.00116 |  0.000748 |
-|            |  (0.0170) |  (0.0169) |  (0.0175) |  (0.0173) |  (0.0172) |
-|  Hrs of work |  0.0273 |    0.0433 |   -0.0152 |    -0.106 |    -0.153 |
-|            |   (1.166) |   (1.165) |   (1.177) |   (1.176) |   (1.174) |
-|  Income    |     -0.115 |    -0.115 |    -0.107 |   -0.0981 |   -0.0972 |
-|            |   (0.138) |   (0.138) |   (0.135) |   (0.133) |   (0.133) |
-| *Control*  |           |           |           |           |           |
-| edad       |           |         x |         x |         x |         x |
-| aedu       |           |           |         x |         x |         x |
-| Relation   |           |           |           |         x |         x |
-| married    |           |           |           |           |     x     |
-| *N*        |      1571 |      1571 |      1533 |      1533 |      1533 |
+
+| Marginal effectgs    |        Todos    |      Hombres    |      Mujeres    |
+| -------------------- | :-------------: | :-------------: | :-------------: |
+| &lt;- 2q                |       0.0919*** |       0.0910**  |       0.0920**  |
+|                      |     (0.0308)    |     (0.0431)    |     (0.0441)    |
+| &lt;- 1q                |       0.0650*** |       0.0673**  |       0.0626**  |
+|                      |     (0.0209)    |     (0.0297)    |     (0.0293)    |
+| no change            |            0    |            0    |            0    |
+| 1q -&gt;                |       0.0302    |       0.0222    |       0.0393    |
+|                      |     (0.0210)    |     (0.0292)    |     (0.0302)    |
+| 2q -&gt;                |       0.0727*   |       0.0780    |       0.0645    |
+|                      |     (0.0373)    |     (0.0521)    |     (0.0526)    |
+
 ]
 
 ---
-#Results:Pytyvo Women
 
-Work, effect are small but negative; Womenwork fewer hours, and earn less.
+## Results
+
+However, if we condition of having a job in 2019, we observe that only those whose income declined were reciving the transfer.
 
 .small[
-|            |     (1)   |     (2  ) |      (3)  |     (4)   |     (5)   |
-| ---------- | :-------: | :-------: | :-------: | :-------: | :-------: |
-| ATET       |           |           |           |           |           |
-| work        |   -0.0368  |   -0.0368  |   -0.0319  |   -0.0321  |   -0.0323  |
-|            |  (0.0258)  |  (0.0259)  |  (0.0271)  |  (0.0272)  |  (0.0271)  |
-|  Hrs of work  |    -4.339* |    -4.331* |    -3.383+ |    -3.435+ |    -3.450+ |
-|            |   (1.532)  |   (1.533)  |   (1.590)  |   (1.585)  |   (1.595)  |
-|  Income    |    -0.308+ |    -0.293+ |    -0.216  |    -0.209  |    -0.205  |
-|            |   (0.132)  |   (0.135)  |   (0.132)  |   (0.130)  |   (0.125)  |
-| *Control*  |           |           |           |           |           |
-| edad       |           |         x |         x |         x |         x |
-| aedu       |           |           |         x |         x |         x |
-| Relation   |           |           |           |         x |         x |
-| married    |           |           |           |           |     x     |
-| *N*        |      1571 |      1571 |      1533 |      1533 |      1533 |
+
+| Marginal effectgs    |        Todos    |      Hombres    |      Mujeres    |
+| -------------------- | :-------------: | :-------------: | :-------------: |
+| &lt;- 2q                |        0.114*** |       0.0858*   |        0.168*** |
+|                      |     (0.0365)    |     (0.0456)    |     (0.0598)    |
+| &lt;- 1q                |       0.0652*** |       0.0749**  |       0.0517    |
+|                      |     (0.0246)    |     (0.0329)    |     (0.0371)    |
+| no change            |            0    |            0    |            0    |
+| 1q -&gt;                |       0.0221    |       0.0176    |       0.0299    |
+|                      |     (0.0257)    |     (0.0331)    |     (0.0401)    |
+| 2q -&gt;                |       0.0392    |       0.0680    |     -0.00367    |
+|                      |     (0.0454)    |     (0.0595)    |     (0.0696)    |
+
+
 ]
+
+---
+
+# Conclusion
+
+The evidence suggests that the transfers well reasonably well targeted. Specially for women who experience a loss of income and job.
+
+However, some results suggests not everybody who received the transfer qualified for it. 
+&gt; Formal workers and those who didnt loose their jobs.
+
+Caveats:
+1. Men Labor market conditions improved faster than for women, which may explain part of the results.
+2. We do not have information right before or after the Transfer was provided. Using a 2019 and 2020 as proxies may create a bias.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
