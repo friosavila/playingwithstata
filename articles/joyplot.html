@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>How to make Joyplots</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Fernando Rios-Avila" />
+    <script src="libs/header-attrs-2.12/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+    <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset-0.2.6/panelset.js"></script>
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# How to make Joyplots
+## The <code>ado</code> way
+### Fernando Rios-Avila
+
+---
+
+
+![This is the way](https://i.pinimg.com/originals/98/c6/99/98c6997145f363265959daf84b656057.jpg)
+
+&lt;style&gt;
+.center2 {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 60%;
+}
+&lt;/style&gt;
+---
+
+# Disclaimer
+
+I should start by saying that what I will be presenting here is ***not*** the only way. Just they way I like to make this kind of plot, specially after some programming muscle flexing, and when I do not want to type the same text over and over again.
+
+That being said. A step by step guide on this kind of plot can be found [here](https://medium.com/the-stata-guide/covid-19-visualizations-with-stata-part-8-joy-plots-ridge-line-plots-dbe022e7264d). 
+
+Learning how to do it step-by-step gives your more flexibility, but I hope you will find that using [`joyplot`](./joyplot_files/joyplot.ado) is sufficiently flexible for most of your purposes. 
+
+I should also mention, `joyplot` only produces kernel density type type of plots. But at some point I will add the option for ridge "time/line" plots.
+
+So let me start
+ 
+---
+
+## What are Joyplots?
+
+Googling the word joyplots suggest they are:
+
+&gt;a series of histograms, density plots or time series for a number of data segments, all aligned to the same horizontal scale and presented with a slight overlap.
+
+In my opinion, it seems that this kind of plots can be used to compare across many groups, providing a better visual tool than simply combining kernel density plots. 
+
+Oh, seems now a days, people call this ridgeplots. But I will keep it as Joy.
+&lt;img src= https://analyticsindiamag.com/wp-content/uploads/2022/02/image-114-1024x768.png
+width=50%  class="center2"&gt;
+
+---
+
+## But what they, really?
+
+Compare to my other implementations, **joyplots** are not a mystery. They are simply stacked kernel densities that could be stack together, with different sets of colors that are pleasing to the eye.
+
+If that is the case, the basic way to do a `joyplot` would be using `kdensity`, and use those results:
+.panelset[
+  .panel[.panel-name[Code]
+  ```stata
+  sysuse auto
+  two kdensity price if foreign==1, recast(area) color(%80) ///
+   || kdensity price if foreign==0, recast(area) color(%80)
+  ```
+  This simply creates two kernel densities, for prices, and recasts them as area plots
+  ]
+  .panel[.panel-name[plot]
+  .center2[
+   ![joy_2](./joyplot_files/joyplot_1.png)
+   ]
+  ]
+]
+
+---
+
+## If they are so simple. then why write a code?
+
+Again, making this type of plots is easy, when all are plotted at the floor. However keeping track of colors, heights, etc, can be hard. 
+
+And, if you want to do this type of graphs often, then it really gets messy.
+
+Thus, what I decided to do was write a small `ado` that makes creating this plots easy. 
+
+In the next slides, I will show you how to use `joyplot` to make this type of plots, in Stata!. But first...
+
+1. Get a copy of [`joyplot`](./joyplot_files/joyplot.ado)  in your computer.
+2. Install Ben Jann's colorpalette commands:
+```stata
+net install palettes, replace ///
+from("https://raw.githubusercontent.com/benjann/palettes/master/")
+net install colrspace, replace ///
+from("https://raw.githubusercontent.com/benjann/colrspace/master/")
+```
+
+This is a very powerful command that makes working with colors really easy!
+
+---
+
+
+## Simple Joyplot
+
+Before we start with the heavy duty joyplot, Lets see how it actually works with a toy example. 
+
+Specifically, lets start with the `auto.dta` dataset.
+
+.panelset[
+  .panel[.panel-name[Code]
+  
+  ```Stata
+  joyplot price, byvar(foreign) 
+  ```
+  Notice this is very similar to kdensity, except that you indicate the groups using `byvar()`
+  ]
+  
+  .panel[.panel-name[Plot]
+  .pull-left[
+   ![joy_2](./joyplot_files/joyplot_2.png)
+   ]
+   
+  .pull-right[
+    The most note worty points from this graph. There is no y-axis. and the height of all plots have been normalized. 
+    
+  Thus you can still compare them
+    
+  ]
+  ]
+  
+   
+  
+]
+
+---
+
+## More Complex Sankey Plot
+
+Alright, this first example is just to provide the most basic version of the joyplot. 
+
+There are however, many options you can play with to make your plot better looking.
+
+```stata
+joyplot varname [if] [in] [aw/], /// you can select a sample, 
+                                     and use weights
+[byvar(varname) /// Variable over which create the kdensities.
+dadj(real 1)   /// Adjustment to density. (Stacking)
+bwadj(0&lt;#&lt;1)   /// Adj on BW. 0 uses average, 1 uses individual bw's
+bwadj2(#)      /// Adj all BW
+kernel(string)   /// kernel function
+notext textopt(string) /// Notext omits text on y axis.
+                       /// and textopt allows for other options
+colorpalette(string) /// Uses Benjans Colors with all the options. 
+ gap0 /// If you want all densities to be on floor
+lcolor(passthru) lwidth(passthru) ] /// Options for line
+
+```
+
+---
+
+## More Complex JoyPlot 
+
+So we are ready for some Joy!
+
+.panelset[
+   .panel[.panel-name[Code]
+
+Lets start by getting some data
+
+```stata
+webuse nlswork
+```
+
+and create a simple joyplot for wages across race
+
+```stata
+joyplot ln_wage [w=wt], byvar(race) ///
+    title("Log Wages by Race")
+```
+
+   ]
+   
+  .panel[.panel-name[plot]
+  
+  .pull-left[ ![joy_3](./joyplot_files/joyplot_3.png) ]
+  .pull-right[
+  
+ Basic joyplot with caveats
+    
+- There no overlapping
+- Colors could be better
+- allow for transparency?
+
+  ]
+
+   
+   ]
+]
+
+---
+
+## Beatify
+
+.panelset[
+   .panel[.panel-name[Goal]
+
+The next step will be to make the plot better looking.
+- How to change the stacking option (to allow for overlapping)
+- Change bandwidths.
+- change colors
+So lets do All of this ~!
+   ]
+   
+   .panel[.panel-name[code]
+
+```stata
+joyplot ln_wage , byvar(race) ///
+  bwadj(1) /// &lt;- uses Individually estimated BW
+	dadj(2) /// &lt;- allows to overlap plots
+	colorpalette(viridis, opacity(70)) /// &lt;- Using Collorpalette!
+    title("Log Wages by Race")
+```
+
+   ]
+   
+   .panel[.panel-name[plot]
+
+  .center2[ ![joy_4](./joyplot_files/joyplot_4.png) ]
+  
+It does look much better! So lets do one even more colorful
+   ]
+   
+   .panel[.panel-name[plot2]
+.pull-right[  ![joy_5](./joyplot_files/joyplot_5.png) ]
+.pull-left[
+Here I use a code that changes colors, using Year of birth for groups
+
+```stata
+joyplot ln_wage if ///
+inrange(birth_yr,42,53) ///
+, byvar(birth_yr) bwadj(1) ///
+dadj(3)  ///
+colorpalette(gold red, opacity(80)) ///
+title("Log Wages by Race") 
+```
+]
+]  
+]
+   
+]
+
+---
+
+## Conclusions
+
+This was fun to code, and flex my programming muscles.
+
+More important, I wanted make an "easy" way to construct this figures.
+
+There is still some details to address. Specifically, allow for histograms, and time lines. I also want to add labels automatically. but everything step by step
+
+Comments? suggestions? Drop me a message!
+
+.center2[![WeeMee](https://friosavila.github.io/playingwithstata/img/WeeMee.jpg)]
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"ratio": "13:9",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
