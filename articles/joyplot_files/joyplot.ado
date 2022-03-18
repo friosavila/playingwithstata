@@ -1,3 +1,4 @@
+*! v1.1 Wages by Race. Fixes kden
 *! v1 Wages by Race
 capture program drop joyplot
 program joyplot
@@ -79,7 +80,7 @@ program joyplot
 			local cn     = `cn'+1
 			tempvar f`cn'
 			*display in w "kdensity `varlist' if `byvar'==`i'  , gen(`f`cn'') kernel(`kernel') at(`rvar') bw(`bw`cn'') nograph"
-			kdensity `varlist' if `byvar'==`i'  , gen(`f`cn'') kernel(`kernel') at(`rvar') bw(`bw`cn'') nograph
+			kdensity `varlist' if `byvar'==`i'   `wgtx' , gen(`f`cn'') kernel(`kernel') at(`rvar') bw(`bw`cn'') nograph
 			qui:sum `f`cn''
 			if r(max)>`fmax' local fmax = r(max)
 		}
