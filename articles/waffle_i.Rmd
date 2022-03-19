@@ -22,7 +22,7 @@ I should start by saying that what I will be presenting here is ***not*** the on
 
 That being said. A step by step guide on this plot can be found [here](https://medium.com/the-stata-guide/stata-graphs-waffle-charts-32afc7d6f6dd). 
 
-Learning how to do it step-by-step gives your more flexibility, but I hope you will find that using [`waffle_i`]() is sufficiently flexible for most of your purposes.
+Learning how to do it step-by-step gives your more flexibility, but I hope you will find that using [`waffle_i`](./waffle_i_files/waffle_i.ado) is sufficiently flexible for most of your purposes.
 
 So let me start
  
@@ -50,7 +50,7 @@ Thus, what I decided to do was write a small `ado` that makes creating this plot
 
 In the next slides, I will show you how to use `waffle_i` to make this type of plots, in Stata!. But first...
 
-1. Get a copy of [`waffle_i`](www.asd.com) in your computer.
+1. Get a copy of [`waffle_i`](./waffle_i_files/waffle_i.ado) in your computer.
 2. Get Asjad `schemepack` from SSC. I really like `white_tableau` scheme. 
 
 ---

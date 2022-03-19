@@ -4,7 +4,7 @@
     <title>How to make Waffles: The ado way</title>
     <meta charset="utf-8" />
     <meta name="author" content="Fernando Rios-Avila" />
-    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.12/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
   </head>
@@ -29,7 +29,7 @@ I should start by saying that what I will be presenting here is ***not*** the on
 
 That being said. A step by step guide on this plot can be found [here](https://medium.com/the-stata-guide/stata-graphs-waffle-charts-32afc7d6f6dd). 
 
-Learning how to do it step-by-step gives your more flexibility, but I hope you will find that using [`waffle_i`](https://friosavila.github.io/playingwithstata/articles/waffle_i.ado) is sufficiently flexible for most of your purposes.
+Learning how to do it step-by-step gives your more flexibility, but I hope you will find that using [`waffle_i`](./waffle_i_files/waffle_i.ado) is sufficiently flexible for most of your purposes.
 
 So let me start
  
@@ -49,13 +49,13 @@ In contrast with a pie chart, where the information is displayed as pieces of a 
 
 If you want a more insider look of a waffle plot. They are nothing else than a ***scatter*** plot within a box, where all points and horizontally and vertically equidistant.
 
-So at its core Waffle plots are easy to make. But they can be a bit time consumming. 
+So at its core Waffle plots are easy to make. But they can be a bit time consuming. 
 
 Thus, what I decided to do was write a small `ado` that makes creating this plots easily. 
 
 In the next slides, I will show you how to use `waffle_i` to make this type of plots, in Stata!. But first...
 
-1. Get a copy of [`waffle_i`](https://friosavila.github.io/playingwithstata/articles/waffle_i.ado) in your computer.
+1. Get a copy of [`waffle_i`](./waffle_i_files/waffle_i.ado) in your computer.
 2. Get Asjad `schemepack` from SSC. I really like `white_tableau` scheme. 
 
 ---
