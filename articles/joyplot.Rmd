@@ -52,9 +52,9 @@ width=50%  class="center2">
 
 ---
 
-## But what they, really?
+## But what are they, really?
 
-Compare to my other implementations, **joyplots** are not a mystery. They are simply stacked kernel densities that could be stack together, with different sets of colors that are pleasing to the eye.
+Compare to my other implementations, **`joyplots`** are not a mystery. They are simply stacked kernel densities that could be stack together, with different sets of colors that are pleasing to the eye.
 
 If that is the case, the basic way to do a `joyplot` would be using `kdensity`, and use those results:
 .panelset[
@@ -135,9 +135,9 @@ Specifically, lets start with the `auto.dta` dataset.
 
 ---
 
-## More Complex Sankey Plot
+## More Complex JoyPlot
 
-Alright, this first example is just to provide the most basic version of the joyplot. 
+Alright, this first example is just to provide the most basic version of a `joyplot`. 
 
 There are however, many options you can play with to make your plot better looking.
 
@@ -188,7 +188,7 @@ joyplot ln_wage [w=wt], byvar(race) ///
   
  Basic joyplot with caveats
     
-- There no overlapping
+- There is no overlapping
 - Colors could be better
 - allow for transparency?
 
@@ -203,6 +203,7 @@ joyplot ln_wage [w=wt], byvar(race) ///
 ## Beatify
 
 .panelset[
+
    .panel[.panel-name[Goal]
 
 The next step will be to make the plot better looking.
@@ -212,7 +213,7 @@ The next step will be to make the plot better looking.
 So lets do All of this ~!
    ]
    
-   .panel[.panel-name[code]
+   .panel[ .panel-name[code]
 
 ```stata
 joyplot ln_wage , byvar(race) ///
@@ -222,7 +223,7 @@ joyplot ln_wage , byvar(race) ///
     title("Log Wages by Race")
 ```
 
-   ]
+   
    
    .panel[.panel-name[plot]
 
