@@ -12,8 +12,8 @@ program joyplot
 	nobs(int 200)  ///
 	colorpalette(string) /// Uses Benjans Colors with all the options. 
 	strict notext textopt(string) ///
-	rangeasis gap0 ///
-	lcolor(passthru) lwidth(passthru)   * ]
+	rangeasis gap0 alegend ///
+	lcolor(passthru) lwidth(passthru)  iqr * ]
 	
 	marksample touse
 	if "`kernel'"=="" local kernel gaussian
@@ -25,6 +25,13 @@ program joyplot
 	
 	qui:frame `frame': {
 		
+		capture confirm numeric var `byvar'
+		if _rc!=0 {
+			tempvar nb
+			encode `byvar', gen(`nb')
+			local byvar `nb'
+		}
+		
 		if "`rangeasis'"=="" {
 			** S1: Readjust range
 			sum `varlist', meanonly
@@ -35,7 +42,9 @@ program joyplot
 			** S2: Create the Range So Kdensities can be ploted
 			tempname rvar
 			range `rvar' `vmin' `vmax' `nobs'
-			label var `rvar' "`:var label `varlist''"
+			if "`:var label `varlist''"!="" label var `rvar' "`:var label `varlist''"
+			else label var `rvar' `varlist'
+			
 		}
 		else {
 			tempvar tk
@@ -43,7 +52,9 @@ program joyplot
 			tempname rvar
 			local vmin2 = `varlist'[1]
 			clonevar `rvar' = `varlist' if `tk'==1
-			label var `rvar' "`:var label `varlist''"
+			if "`:var label `varlist''"!="" label var `rvar' "`:var label `varlist''"
+			else label var `rvar' `varlist'
+			
 		}
 		** S3: First pass BWs	
 		if "`byvar'"=="" {
@@ -85,7 +96,11 @@ program joyplot
 			if r(max)>`fmax' local fmax = r(max)
 		}
 		if "`gap0'"=="" local gp=1
-		else            local gp=0 
+		else     {
+			local fmax=1
+			local gp=0 
+		}
+
 		** s5: Rescale Densities
 		local cnt = `cn'
 		local cn = 0
@@ -97,8 +112,30 @@ program joyplot
 			tempvar f0`cn'
 			gen `f0`cn'' =1/`cnt'*(`cnt'-`cn')*`gp' if `rvar'!=.
 		}
+						
+		
+		****************************
+		** IQR
+		if "`iqr'"!="" {
+			local cn     = 0
+			
+			foreach i of local lvl {
+				local cn     = `cn'+1
+				tempvar prng`cn' pt`cn' p0`cn'
+				qui:pctile `prng`cn''=`varlist' if `byvar'==`i'   `wgtx', n(4) 
+				kdensity `varlist' if `byvar'==`i'   `wgtx' , gen(`pt`cn'') ///
+															  kernel(`kernel') at(`prng`cn'') bw(`bw`cn'') nograph
+ 
+				replace `pt`cn''=(`pt`cn''/`fmax')*`dadj'/`cnt'+1/`cnt'*(`cnt'-`cn')*`gp'	in 1/3
+				gen `p0`cn''=1/`cnt'*(`cnt'-`cn')*`gp'	in 1/3
+				
+			}	
+		}
+		****************************
+		
+		
 		keep if `rvar'!=.
-		** Text part
+		** Text part (if no text)
 		if "`text'"=="" {
 			local cn = 0
 			foreach i of local lvl {
@@ -107,6 +144,17 @@ program joyplot
 				local totext `totext' `=`f0`cn''+0.5/`cnt'' `vmin2'  `"`lbl'"'
 			}
 		}	
+		** Auto Legend
+		if "`alegend'"!="" {
+			local cn = 1
+			if "`iqr'"!="" local uno 1
+			foreach i of local lvl {
+				
+				local lbl: label (`byvar') `i', `strict'
+				local aleg `aleg' `cn' `"`lbl'"'
+				local cn     = `cn'+1+0`uno' 
+			}
+		}
 		** colors
 		if strpos( "`colorpalette'" , ",") == 0 local colorpalette `colorpalette', nograph n(`cnt')
 		else local colorpalette `colorpalette' nograph n(`cnt') 
@@ -119,14 +167,21 @@ program joyplot
 		foreach i of local lvl {
 			local cn = `cn'+1
 			local ll:word `cn' of `r(p)'
-			local joy `joy' (rarea `f`cn'' `f0`cn'' `rvar', color("`ll'")  `lcolor' `lwidth' ) 
+			if "`iqr'"!="" local iqrline (rspike `pt`cn'' `p0`cn'' `prng`cn'', color("`ll'") lwidth(.5) pstyle(p`cn'))
+			
+			local joy `joy' (rarea `f`cn'' `f0`cn'' `rvar', color("`ll'")  `lcolor' `lwidth' pstyle(p`cn'))  `iqrline'
 		}
 		
-		if strpos( "`options'" , "legend")==0 local leg legend(off)
-		else local leg 
+		if "`alegend'"!="" local leg   legend(order(`aleg'))
+		else if strpos( "`options'" , "legend")==0 local leg legend(off)
+		else local leg
+		
+		if "`gap0'"!="" local ylabx 
+		else local ylabx ylabel("")
+		
 		two `joy' , ///
 			text(`totext' , `textopt') ///
-			`options' `leg' ylabel("") 
+			`options' `leg' `ylabx' 
 
 		
 	}
