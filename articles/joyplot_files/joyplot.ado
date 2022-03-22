@@ -1,14 +1,45 @@
 *! v1.1 Wages by Race. Fixes kden
 *! v1 Wages by Race
 capture program drop joyplot
+capture program drop _rangevar
+
+program _rangevar, sortpreserve rclass
+	syntax varlist, [radj(real 0.0) nobs(real 0.0) rvar(string) rangeasis]
+	
+		if "`rangeasis'"=="" {
+			** S1: Readjust range
+			sum `varlist', meanonly
+			local vmin  = r(min)-(r(max)-r(min))*`radj'
+			local vmin2 = r(min)-(r(max)-r(min))*(`radj'+.05)
+			*display in w "`vmin':`vmin2'"
+			local vmax = r(max)+(r(max)-r(min))*`radj'
+			** S2: Create the Range So Kdensities can be ploted
+			
+			range `rvar' `vmin' `vmax' `nobs'
+			if "`:var label `varlist''"!="" label var `rvar' "`:var label `varlist''"
+			else label var `rvar' `varlist'			
+		}
+		else {
+			tempvar tk
+			bysort `varlist':gen `tk'=_n==_N
+			
+			local vmin2 = `varlist'[1]
+			clonevar `rvar' = `varlist' if `tk'==1
+			if "`:var label `varlist''"!="" label var `rvar' "`:var label `varlist''"
+			else label var `rvar' `varlist'			
+		}
+	return local vmin =`vmin'
+	return local vmin2=`vmin2'
+	return local vmax =`vmax'
+end
+
 program joyplot
-	syntax varname [if] [in] [aw/], [byvar(varname) ///
+	syntax varname [if] [in] [aw/], [BYvar(varname) ///
 	radj(real 0)   /// Range Adjustment. How much to add or substract to the top bottom.
 	dadj(real 1)   /// Adjustment to density. Baseline. 1/grps
 	bwadj(numlist >=0 <=1)  /// Adj on BW 0 uses average, 1 uses individual bw's
 	bwadj2(real 1)  /// Adj on BW 0 uses average, 1 uses individual bw's
 	kernel(string)   ///
-	frame(name)    /// IF want to save data.
 	nobs(int 200)  ///
 	colorpalette(string) /// Uses Benjans Colors with all the options. 
 	strict notext textopt(string) ///
@@ -17,50 +48,36 @@ program joyplot
 	
 	marksample touse
 	if "`kernel'"=="" local kernel gaussian
-	if "`frame'"=="" tempvar frame
-	
 	if "`bwadj'"=="" local bwadj=0
 	
+	tempname frame
 	frame put `varlist' `byvar' `exp' `ovar' if `touse', into(`frame') 
 	
+
 	qui:frame `frame': {
 		
-		capture confirm numeric var `byvar'
+ 		capture confirm numeric var `byvar'
 		if _rc!=0 {
 			tempvar nb
 			encode `byvar', gen(`nb')
 			local byvar `nb'
 		}
 		
-		if "`rangeasis'"=="" {
-			** S1: Readjust range
-			sum `varlist', meanonly
-			local vmin = r(min)-r(mean)*`radj'
-			local vmin2 = r(min)-r(mean)*(`radj'+.05)
-			*display in w "`vmin':`vmin2'"
-			local vmax = r(max)+r(mean)*`radj'
-			** S2: Create the Range So Kdensities can be ploted
-			tempname rvar
-			range `rvar' `vmin' `vmax' `nobs'
-			if "`:var label `varlist''"!="" label var `rvar' "`:var label `varlist''"
-			else label var `rvar' `varlist'
-			
-		}
-		else {
-			tempvar tk
-			bysort `varlist':gen `tk'=_n==_N
-			tempname rvar
-			local vmin2 = `varlist'[1]
-			clonevar `rvar' = `varlist' if `tk'==1
-			if "`:var label `varlist''"!="" label var `rvar' "`:var label `varlist''"
-			else label var `rvar' `varlist'
-			
-		}
+		tempname rvar
+		
+		** Create Rage var
+ 		_rangevar `varlist', radj(`radj') nobs(`nobs') rvar(`rvar')
+		local vmin = r(vmin)
+		local vmin2 = r(vmin2)
+		local vmax = r(vmax)
+		
+		*display in w "`vmin':`vmax'"
 		** S3: First pass BWs	
 		if "`byvar'"=="" {
 			tempvar byvar
 			gen byte `byvar' = 1
 		}	
+		
 		levelsof `byvar', local(lvl)
 		local bwmean = 0
 		local cn     = 0
@@ -68,16 +85,15 @@ program joyplot
 		if "`exp'"=="" local wgtx
 		if "`exp'"!="" local wgtx [aw=`exp']
 		
+		
 		foreach i of local lvl {
 			local cn = `cn'+1
 			kdensity `varlist' if `byvar'==`i'  `wgtx', kernel(`kernel')   nograph
-			local bw`cn' = r(bwidth)
-			
+			local bw`cn' = r(bwidth)			
 			if `bwmean'==0 local bwmean = r(bwidth)
-			else {
-				local bwmean = `bwmean'*(`cn'-1)/`cn'+r(bwidth)/`cn'
-			}
+			else local bwmean = `bwmean'*(`cn'-1)/`cn'+r(bwidth)/`cn'
 		}
+
 		** S4: Second pass. recalc BW's
 		local cn     = 0
 		foreach i of local lvl {
@@ -90,11 +106,11 @@ program joyplot
 		foreach i of local lvl {
 			local cn     = `cn'+1
 			tempvar f`cn'
-			*display in w "kdensity `varlist' if `byvar'==`i'  , gen(`f`cn'') kernel(`kernel') at(`rvar') bw(`bw`cn'') nograph"
-			kdensity `varlist' if `byvar'==`i'   `wgtx' , gen(`f`cn'') kernel(`kernel') at(`rvar') bw(`bw`cn'') nograph
+ 			kdensity `varlist' if `byvar'==`i'   `wgtx' , gen(`f`cn'') kernel(`kernel') at(`rvar') bw(`bw`cn'') nograph
 			qui:sum `f`cn''
 			if r(max)>`fmax' local fmax = r(max)
 		}
+		
 		if "`gap0'"=="" local gp=1
 		else     {
 			local fmax=1
