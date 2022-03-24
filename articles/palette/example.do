@@ -98,9 +98,9 @@ Moonrise1 Moonrise2  Moonrise3 Cavalcanti1  GrandBudapest1 GrandBudapest2  Isleo
 	local rar
 	display in w "`nn'"
 	forvalues j=1/`nn' {
-		local rar `rar' (rarea f1`j' f0`j' x, horizontal )
+		local rar `rar' (rarea f1`j' f0`j' x, horizontal fintensity(100))
 	}
-	two `rar', legend(off) xlabel("") ylabel("") xtitle("") ytitle("") title("Violin: `i'")
+	two `rar', legend(off) xlabel("") ylabel("") xtitle("") ytitle("") title("Violin: `i'") 
 	}
 	graph export `i'_vio.png, replace
 }
