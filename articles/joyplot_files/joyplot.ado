@@ -172,22 +172,31 @@ program joyplot
 			}
 		}
 		** colors
-		if strpos( "`colorpalette'" , ",") == 0 local colorpalette `colorpalette', nograph n(`cnt')
-		else local colorpalette `colorpalette' nograph n(`cnt') 
-		
-		colorpalette `colorpalette'
-		** Putting all together
-		
-		
-		local cn = 0 
-		foreach i of local lvl {
-			local cn = `cn'+1
-			local ll:word `cn' of `r(p)'
-			if "`iqr'"!="" local iqrline (rspike `pt`cn'' `p0`cn'' `prng`cn'', color("`ll'") lwidth(.5) pstyle(p`cn'))
-			
-			local joy `joy' (rarea `f`cn'' `f0`cn'' `rvar', color("`ll'")  `lcolor' `lwidth' pstyle(p`cn'))  `iqrline'
+		if "`colorpalette'"!="" {
+			if strpos( "`colorpalette'" , ",") == 0 local colorpalette `colorpalette', nograph n(`cnt')
+			else local colorpalette `colorpalette' nograph n(`cnt') 		
+			colorpalette `colorpalette'
+			** Putting all together
+			local cn = 0 
+			foreach i of local lvl {
+				local cn = `cn'+1
+				local ll:word `cn' of `r(p)'
+				if "`iqr'"!="" local iqrline (rspike `pt`cn'' `p0`cn'' `prng`cn'', color("`ll'") lwidth(.3) /*pstyle(p`cn')*/)
+				
+				local joy `joy' (rarea `f`cn'' `f0`cn'' `rvar', color("`ll'")  `lcolor' `lwidth' /*pstyle(p`cn')*/)  `iqrline'
+			}
 		}
-		
+		else {
+			local cn = 0 
+			foreach i of local lvl {
+				local cn = `cn'+1
+ 
+				if "`iqr'"!="" local iqrline (rspike `pt`cn'' `p0`cn'' `prng`cn'', lwidth(.3) pstyle(p`cn'))
+				
+				local joy `joy' (rarea `f`cn'' `f0`cn'' `rvar',  `lcolor' `lwidth' )  `iqrline'
+			}
+		}
+		***************************************************************************************************************
 		if "`alegend'"!="" local leg   legend(order(`aleg'))
 		else if strpos( "`options'" , "legend")==0 local leg legend(off)
 		else local leg
