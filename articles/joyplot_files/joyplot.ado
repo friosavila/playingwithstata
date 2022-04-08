@@ -192,8 +192,7 @@ program joyplot
 				local cn = `cn'+1
  
 				if "`iqr'"!="" local iqrline (rspike `pt`cn'' `p0`cn'' `prng`cn'', lwidth(.3) pstyle(p`cn'))
-				
-				local joy `joy' (rarea `f`cn'' `f0`cn'' `rvar',  `lcolor' `lwidth' )  `iqrline'
+				local joy `joy' (rarea `f`cn'' `f0`cn'' `rvar',  `lcolor' `lwidth' pstyle(p`cn'))  `iqrline'
 			}
 		}
 		***************************************************************************************************************

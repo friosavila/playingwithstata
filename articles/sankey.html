@@ -4,7 +4,7 @@
     <title>How to make Sankey plots</title>
     <meta charset="utf-8" />
     <meta name="author" content="Fernando Rios-Avila" />
-    <script src="libs/header-attrs-2.12/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.13/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
     <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
@@ -28,7 +28,7 @@ class: center, middle, inverse, title-slide
   display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 50%;
+  width: 90%;
 }
 &lt;/style&gt;
 ---
@@ -39,7 +39,7 @@ I should start by saying that what I will be presenting here is ***not*** the on
 
 That being said. A step by step guide on this plot can be found [here](https://medium.com/the-stata-guide/stata-graphs-sankey-diagram-ecddd112aca1). 
 
-Learning how to do it step-by-step gives your more flexibility, but I hope you will find that using [`sankey_i2`](./sankey_files/sankey_i2.ado) is sufficiently flexible for most of your purposes.
+Learning how to do it step-by-step gives your more flexibility, but I hope you will find that using [`sankey_plot`](./sankey_files/sankey_plot.ado) is sufficiently flexible for most of your purposes. Of course, you should also download the helpfile [`sankey_plot`](./sankey_files/sankey_plot.sthlp) since it has more examples inside. Here I just cover basics
 
 Also, I just found out that there is a python application that was linked to Stata! You can find a link to application [here](https://www.mjcrowther.co.uk/software/sankey/)
 
@@ -56,7 +56,7 @@ According to Wikipedia, Sankey plots are :
 &gt; And are often used in the visualization of material flow analysis.
 
 &lt;img src= https://www.theinformationlab.co.uk/wp-content/uploads/2018/03/Final-Dashboard.png
-width=50%  class="center2"&gt;
+width=50%  class="center2" class="center2"&gt;
 
 ---
 
@@ -79,18 +79,21 @@ If that is the case, you could easily plot "ugly" Sankey plots using `Stata` com
 
 ## But what they, really?
 
-There are smaller details that go with it, but, as long as you have a set of pair coordinates, you can easily connect them, and voila! Sankey plot.
+There are smaller details that go with it, but, as long as you have a set of pair coordinates, you can easily connect them, and voila! **Sankey plot**.
 
-Getting the curved lines, however, may seem like a hassle. And even more trying to keep track of all the elements connections, colors, etc.
+Getting the curved lines, however, may seem like a hassle. And even more if you are trying to keep track of all the elements connections, colors, etc. Thus, what I decided to do was write a small `ado` that makes creating this plots easy. 
 
-Thus, what I decided to do was write a small `ado` that makes creating this plots easy. 
+In the next slides, I will show you how to use `sankey_plot` to make this type of plots, in Stata!. But first...
 
-In the next slides, I will show you how to use `sankey_i2` to make this type of plots, in Stata!. But first...
-
-1. Get a copy of [`sankey_i2`](./sankey_files/sankey_i2.ado) and [`sankey_i`](./sankey_files/sankey_i.ado) in your computer.
-2. Get Asjad `schemepack` from SSC. I really like `white_tableau` scheme. 
-
-`sankey_i` and `sankey_i2` are independent from each other, but it will help you understand the data structure, and how the command works.
+1. Get a copy of [`sankey_plot`](./sankey_files/sankey_plot.ado) and [`sankey_i`](./sankey_files/sankey_i.ado) in your computer. 
+2. Get a copy of [`sankey_plot.sthlp`](./sankey_files/sankey_plot.sthlp).
+3. Get Asjad `schemepack` from SSC. Not necessary, but the white background is handy.
+4. Get some of the example datasets: 
+  - [dogs_and_happiness.dta](./sankey_files/dogs_and_happiness.dta)
+  - [immigration.dta](./sankey_files/immigration.dta)
+  - [jobmarket.dta](./sankey_files/jobmarket.dta)
+  
+`sankey_i` and `sankey_plot` are independent from each other, but it will help you understand the data structure, and how the command works.
 
 ---
 
@@ -148,43 +151,51 @@ Namely, you will need data for each pair of *links* you want to make (say `x0, y
 The basic syntax of the command, then will be:
 
 ```stata
-  sankey_i2 vx0 vy0 vx1 vy0, &lt;--necessary
+  sankey_plot vx0 vy0 vx1 vy0, &lt;--necessary
   [width0(varname) &lt;-- Var with WIDTH point0
    width1(varname) &lt;-- Var with WIDTH point1 
    color(varname)  &lt;-- Var with color 
    pstyle(varname) &lt;-- Var with pstyle
-   adjust          &lt;-- Adjusts Nodes possition
+   adjust extra    &lt;-- Adjusts Nodes possition
    Other options]  &lt;-- other code options
 ```
+
+for more details on syntax, see the helpfile.
 
 ---
 
 ## More Complex Sankey Plot 
 
-So we are almost ready to do your first Sankey plot.
-
-First, I ll create some data, before making any plots
-
 .panelset[
    .panel[.panel-name[Input Data]
-Input the data:   
+Lets load some data:
    
 ```stata
- input x0  y0  x1  y1   wd0  wd1 str10 color  str10 pstyle 
-       0   0   2    2   0.5  0.2  "navy%50"  "p1"
-	   0   0   2   -2   0.5  0.2  "brown%50"  "p1"
-	   2   2   4    2   0.2  0.5  "navy%40"  "p2"
-	   2   2   4    5   0.2  0.5  "brown%40"  "p2"
- end
+ use immigration.dta
+ list in 1/10, sep(0)
+      +-------------------------------------------------------+
+     |            from                to     value   x0   x1 |
+     |-------------------------------------------------------|
+  1. |          Africa            Africa   3.14247    1    2 |
+  2. |       East Asia         East Asia     1.631    1    2 |
+  3. |      South Asia         East Asia   .525881    1    2 |
+  4. | South East Asia         East Asia   .145264    1    2 |
+  5. |          Africa            Europe   2.10788    1    2 |
+  6. |       East Asia            Europe   .601265    1    2 |
+  7. |          Europe            Europe   2.40148    1    2 |
+  8. |   Latin America            Europe   1.76259    1    2 |
+  9. |   North America            Europe   1.21593    1    2 |
+ 10. |         Oceania            Europe    .17037    1    2 |
+     |-------------------------------------------------------|
 ```
    
    ]
    
    .panel[.panel-name[plot code]
-Create a simple sankey plot. the coordinates should be added in the same order as with `sankey_i`.
+Create a simple sankey plot. the coordinates should be added in the same order as with `sankey_i`. In this case, y0 and y1 are "from" and "to"
 
 ```stata
-sankey_i2 x0 y0 x1 y1
+sankey_plot x0 from x1 to
 ```
 
 ]
@@ -192,17 +203,8 @@ sankey_i2 x0 y0 x1 y1
       
    .panel[.panel-name[plot]
   
-  .pull-left[ ![sankey_5](./sankey_files/sankey_4.png)]
-  .pull-right[
-  
-    Voila! First Sankey plot, with caveats.
+  .center[ ![sankey_5](./sankey_files/sankey_4.png)]
     
-- Lines are too thin
-- Legend is Ugly
-- and colors are Random.
-    
-  ]
-
    
    ]
 ]
@@ -214,91 +216,141 @@ sankey_i2 x0 y0 x1 y1
 .panelset[
    .panel[.panel-name[Goal]
 
-The next step will be to make the plot better looking.
+The first plot was not very nice looking, so here I will just make it look nicer, by adding some options:
+
 - How to change width's
 - Adjust graph to width's
 - Assign colors
-- And assign styles
+- change labels
 
 So lets do All of this at once!
    ]
    
    .panel[.panel-name[code]
 
-The new code now has more information. 
-
-- I can specify using different width's (at x0,y0 or x1,y1)
-- Change color using a variable with color characteristics
-- or adjust the flow positions.
 
 ```stata
-sankey_i2 x0 y0 x1 y1, /// As before, we provide all coordinates
-  width0(wd0)    /// Specifies the width at point1 
-  width1(wd1)    /// If you ignore this, it will be set to wd0
-  color(color)   /// Here you use a variable with the "colors" you want
-  adjust         // and this adjusts the possitions (try it on)
+sankey_plot x0 from x1 to, ///
+width0(value) /// Adds Width info
+extra adjust /// Adjusts coordinates
+colorpalette(viridis, opacity(40)) /// adds color options(if installed)
+gap(0.1) noline /// adds spaces between nodes, and drops lines in flows
+xlabel(1 "Source" 2 "Destination", nogrid) // Modifies Xlabels
+
 ```
 
    ]
    
    .panel[.panel-name[plot]
 
-  .center2[ ![sankey_6](./sankey_files/sankey_5.png)]
-  
-It does look much better. Also, I could have created the same figure without adjustment, or using styles rather than color.
+  .center[ ![sankey_6](./sankey_files/sankey_5.png)]
+
    ]
    
-   .panel[.panel-name[plot2]
-
-  .pull-left[ ![sankey_7a](./sankey_files/sankey_6.png)
-  Here I use pstyle rather than color option
-  ]
-  
-  .pull-right[ ![sankey_7b](./sankey_files/sankey_7.png)
-  Here I use color, but drop `adjust`.
-  ]
-  
 ]
    
 ]
 
 ---
 
-## Beatify 2
+##  What about Multiple levels?
 
 .panelset[
 
-.panel[.panel-name[Goal]
+.panel[.panel-name[Mlevels]
    
-Alright, our sankey plot is ***DONE***! 
+The first example shows you how to do a Sankey plot across 2 levels. (source and destination). 
 
-...or almost done. 
-
-There is still need to add more information for a proper sankey plot. For now, those can be added using other `twoway` options.
-
-At some point, It will be added to the command! but for now, lets see how to do it by hand
+However, you could also try doing this for multiple levels.
+For this, lets use the jobmarket data
 
 ]
 
-.panel[.panel-name[code]
+.panel[.panel-name[Data]
 
 ```stata
-sankey_i2 x0 y0 x1 y1, width0(wd0) width1(wd1) ///
-  adjust color(color) ///
-	xlabel("") ylabel("") legend(off) /// 
-	text(0 0 "Beginning" 2 2 "Node 1" ///
-	-2 2 "Node 2" 2 4 "Win" 5 4 "Loss", box width(15) ///
-	orientation(vertical)) ///
-	title("Your first sankey, the ado way") ///
-	subtitle("This is the way")
+use jobmarket,clear
+. list in 1/10, sep(0)
+     +----------------------------------------------------------------------------------+
+     | y0   y1   week0   week1                 label0                 label1   candid~s |
+     |----------------------------------------------------------------------------------|
+  1. |  1    1       0       1     Jobs Applied to 32             Replies 15         15 |
+  2. |  1    2       0       1     Jobs Applied to 32           Rejections 5          5 |
+  3. |  1    3       0       1     Jobs Applied to 32            No Reply 12         12 |
+  4. |  1    1       1       2             Replies 15   Initial Interviews 9          9 |
+  5. |  1    2       1       2             Replies 15     Replied too late 6          6 |
+  6. |  1    1       2       3   Initial Interviews 9       Task Requested 4          4 |
+  7. |  1    2       2       3   Initial Interviews 9     No Task Required 1          1 |
+  8. |  1    3       2       3   Initial Interviews 9       Rejected by me 2          2 |
+  9. |  1    4       2       3   Initial Interviews 9           Rejections 2          2 |
+ 10. |  1    1       3       4       Task Requested 4      Final Interview 5          4 |
+
 ```
-So, we will use the option `text` to add the additional information we need.
-As a reminder, text uses (y,x) coordinates to add the information.
+
 ]
 
-.panel[.panel-name[plot]
+.panel[.panel-name[Code]
 
-![sankey_8](./sankey_files/sankey_8.png)]
+```Stata
+sankey_plot week0 y0 week1 y1, width0(candidates) /// adds width
+adjust extra /// adjusts coordinates 
+xlabel(0 " " 1 "Week 1" 2 "Week 2" 3 "Week 3" ///
+4 "Week 4" 5 "Week 5" 6 "Week 6", nogrid) /// Modifies xlabels
+fillcolor(gs12%50) /// changes colors
+label0(label0) label1(label1) /// adds labels 
+xsize(10) ysize(6) // and changes sizes
+```
+]
+.panel[.panel-name[plot]
+.center2[![sankey_7](./sankey_files/sankey_6.png)]]
+
+
+]
+
+---
+## Using Wide Data structure
+
+.panelset[
+
+  .panel[.panel-name[Wide Data]
+
+The other option for using `sankey_plot` is with wide data.
+
+In this case, levels are not defined by "x0 x1" but rather by the number of variables in your data.
+
+Consider the dog and happiness dataset
+```stata
+use dogs_and_happiness, clear
+list
+     +------------------------------------------+
+     |     married       pet       happy   freq |
+     |------------------------------------------|
+  1. | Married:Yes   Pet:Yes   Happy:Yes      5 |
+  2. | Married:Yes   Pet:Yes   Happy:Yes      4 |
+  3. | Married:Yes    Pet:No   Happy:Yes      3 |
+  4. |  Married:No   Pet:Yes   Happy:Yes      2 |
+  5. |  Married:No    Pet:No    Happy:No      1 |
+     +------------------------------------------+
+```
+  ]
+  
+.panel[.panel-name[code]
+In this case, we have 3 levels (defined by married, pet, and happy). 
+
+If you want to use this, you NEED to use "wide" option. You also need to provide a `width`.Here I also add other options to make the graph look pretty:
+
+```Stata
+sankey_plot married pet happy , wide width(freq) /// Basic for wide data
+  fillcolor(%50) /// Some color properties
+  xlabel("",nogrid) gap(0.1) tight /// more of a gap, with tight groups
+  title("The Secret to  Happyness") /// Title and 
+  subtitle("Have Pets: Nora and Bruce!") /// subtitle
+  note("Nora and Bruce belong to my wife and I") // and a note
+```
+]
+.panel[.panel-name[plot]
+  .center[![sankey_8](./sankey_files/sankey_7.png)]
+]
 
 
 ]
@@ -309,13 +361,13 @@ As a reminder, text uses (y,x) coordinates to add the information.
 
 This was fun to code, and flex my programming muscles.
 
-More important, I wanted make an "easy" way to construct this figures.
+More important, I wanted make an "easy" way to construct these figures in `Stata`.
 
-There is still some details to address. Specifically, Really would like to add the "text" automatically, but that is yet to be programmed. 
+Many details have been addressed, but always open to add other options.
 
 Comments? suggestions? Drop me a message!
 
-.center2[![WeeMee](https://friosavila.github.io/playingwithstata/img/WeeMee.jpg)]
+.center[![WeeMee](https://friosavila.github.io/playingwithstata/img/WeeMee.jpg)]
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
