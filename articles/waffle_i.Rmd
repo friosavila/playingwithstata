@@ -216,7 +216,8 @@ sysuse voter, clear
 xi, noomit:waffle_plot i.cand [w=pop], /// Notice weights, and "factor"
 color(cranberry*0.7 navy*0.7 forest_green*.5) /// Special colors
 sctopt(msize(4) mlcolor(black%50)) ///
-by(inc, title("1992 President Elections") subtitle("by Family Income")) /// legend(order(1 "Clinton" 2 "Bush" 3 "Perot") cols(3))
+by(inc, title("1992 President Elections") subtitle("by Family Income")) ///
+legend(order(1 "Clinton" 2 "Bush" 3 "Perot") cols(3))
 ```
 
 ]
