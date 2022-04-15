@@ -1,3 +1,5 @@
+*! v1.2  Compatible with new Group Averages
+* v1.1  Problem with TM TP
 /*capture program drop  csdid_plot
 capture program drop  adds
 capture program drop csdid_default
@@ -43,26 +45,37 @@ program csdid_plot
 	csdid_agg_cat, agg(`agg') ragg(`r(agg)') eagg(`e(agg)')
 	
 	if `s(agg_cat)'==2 {
+		
 		if "`e(agg)'"=="event" {
 			 qui:csdid
 			 local evlist = subinstr("`:colname e(b)'","T","",.)
+			 local evlist = subinstr("`evlist'","m","-",.)
+			 local evlist = subinstr("`evlist'","p","+",.)
 			 matrix `mm'=r(table)'
+			 matrix `mm'=`mm'[3...,....]
 		}
 		else if "`r(agg)'"=="event" {		 
 			 local evlist = subinstr("`:colname r(b)'","T","",.)
+			 local evlist = subinstr("`evlist'","m","-",.)
+			 local evlist = subinstr("`evlist'","p","+",.)
 			 matrix `mm'=r(table)'
+			 matrix `mm'=`mm'[3...,....]
+		}
+		tempvar mm1 mm2 mm3 mm4 mm5 mm6
+		qui:tsvmat `mm', name(`mm1' `mm2' `mm3' `mm4' `mm5' `mm6')
+		qui:gen `kk' =.
+ 		foreach i of local evlist {
+		 	if !inlist("`i'","Pre_avg","Post_avg")  {
+				local k = `k'+1
+				qui:replace `kk'=`i' in `k'
+			} 	
 		}
 		
-		qui:svmat `mm'
-		qui:gen `kk' =.
-		foreach i of local evlist {
-		 	local k = `k'+1
-		 	qui:replace `kk'=`i' in `k'
-		}
 		csdid_default, `options' `style'
-		csdid_plot_event `kk'  `mm'1  `mm'5 `mm'6	, ///
+		
+		csdid_plot_event `kk'  `mm1'  `mm5' `mm6'	, ///
 					style(`r(style)') `title' `name'  `ytitle'	`xtitle' `legend'	   
-		drop `mm'? 
+		*drop `mm'? 
 	}
 	
 	else if `s(agg_cat)'==4 {
@@ -76,7 +89,9 @@ program csdid_plot
 			 matrix `mm'=r(table)'
 		}
 		
-		qui:svmat `mm'
+		tempvar mm1 mm2 mm3 mm4 mm5 mm6
+		qui:tsvmat `mm', name(`mm1' `mm2' `mm3' `mm4' `mm5' `mm6')
+		
 		qui:gen str `kk' =""
 		foreach i of local evlist {
 		 	local k = `k'+1
@@ -86,9 +101,9 @@ program csdid_plot
 		qui:encode `kk', gen(`k2')
 		 
 		csdid_default, `options' `style'
-		csdid_plot_group `k2'  `mm'1  `mm'5 `mm'6	, ///
+		csdid_plot_group `k2'  `mm1'  `mm5' `mm6'	, ///
 					style(`r(style)')	  `title' `name'  `ytitle'	`xtitle' `legend'	   
-		drop `mm'? 
+		*drop `mm'? 
 	}
 	
 	else if `s(agg_cat)'==3 {
@@ -102,7 +117,9 @@ program csdid_plot
 			 matrix `mm'=r(table)'
 		}
 		
-		qui:svmat `mm'
+		tempvar mm1 mm2 mm3 mm4 mm5 mm6
+		qui:tsvmat `mm', name(`mm1' `mm2' `mm3' `mm4' `mm5' `mm6')
+		
 		qui:gen str `kk' =""
 		foreach i of local evlist {
 		 	local k = `k'+1
@@ -112,9 +129,9 @@ program csdid_plot
 		qui:encode `kk', gen(`k2')
 		 
 		csdid_default, `options' `style'
-		csdid_plot_calendar `k2'  `mm'1  `mm'5 `mm'6	, ///
+		csdid_plot_calendar `k2'  `mm1'  `mm5' `mm6'	, ///
 					style(`r(style)')	  `title' `name'  `ytitle'	`xtitle' `legend'		   
-		drop `mm'? 
+		*drop `mm'? 
 	}
 	
 	else if `s(agg_cat)'==1 {
@@ -145,11 +162,14 @@ program csdid_plot
  		}
 //////////////////////////
 // Break down matrix and create list. 
-		tempvar nmm
+		tempname nmm
 		_matrix_list, group(`group') matrix(`mm')  nmatrix(`nmm')
 		local evlist `s(mt0t1)'
 		adds local mt0t1
-		qui:svmat `nmm'
+		
+		tempvar nmm1 nmm2 nmm3 nmm4 nmm5 nmm6
+		qui:tsvmat `nmm', name(`nmm1' `nmm2' `nmm3' `nmm4' `nmm5' `nmm6')
+						
 		qui:gen `kk' =.
 		foreach i of local evlist {
 		 	local k = `k'+1
@@ -159,9 +179,9 @@ program csdid_plot
 		
 		csdid_default, `options' `style'
 		*sum `kk'  `nmm'1  `nmm'5 `nmm'6
-		csdid_plot_event `kk'  `nmm'1  `nmm'5 `nmm'6	, ///
+		csdid_plot_event `kk'  `nmm1'  `nmm5' `nmm6' , ///
 					style(`r(style)')	  `title' `name'  `ytitle'	`xtitle' `legend'		   
-		drop `nmm'? 	
+		*drop `nmm'? 	
 		
 	}
 end
@@ -192,12 +212,14 @@ program _matrix_list, sclass
 		}
 	}
 	local tlist:rowname `mm'
-	foreach i of local tlist {
-		local j: word 2 of `=subinstr(subinstr("`i'","t","",.),"_"," ",.)'
-		local t0t1 `t0t1' `=`j'-`group''
+	foreach i in `e(tlev)' {
+		*local j1: word 1 of `=subinstr(subinstr("`i'","t","",.),"_"," ",.)'
+		*local j2: word 2 of `=subinstr(subinstr("`i'","t","",.),"_"," ",.)'
+		local t0t1 `t0t1' `=`i'-`group''
 	}
 		
 	matrix `nmatrix'   = `mm'
+	
 	sreturn local  mt0t1 `t0t1'
 end
 

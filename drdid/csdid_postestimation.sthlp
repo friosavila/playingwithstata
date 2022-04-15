@@ -4,14 +4,14 @@
 
 {it:{bf:Aggregations and Pretrend testing}}
 
-There are two commands that can be used as post estimation tools. These are {cmd:csdid_estat} and {cmd:csdid_stats}.
+{p}There are two commands that can be used as post estimation tools. These are {cmd:csdid_estat} and {cmd:csdid_stats}.
 Both can be used to obtain similar statistics. The first one, {cmd:csdid_estat}, works when using 
-{cmd: estat}, after the model estimation via {help csdid}. 
+{cmd: estat}, after the model estimation via {help csdid}. {p_end}
 
-The second one {cmd:csdid_stats} works in a similar way but when using the "saved" RIF file. It can be used to produced 
-wild Bootstrap SE.
+{p}The second one {cmd:csdid_stats} works similarly but when using the "saved" RIF file. It can be used to produce 
+wild Bootstrap SE.{p_end}
 
-Below the syntax for both commands are discussed.
+Below the syntax for both commands is discussed.
 
 {marker syntax}{...}
 {title:Syntax}
@@ -28,6 +28,9 @@ Below the syntax for both commands are discussed.
 {synoptline}
 {synopt :{opt pretrend}}Estimates the chi2 statistic of the null hypothesis that ALL pretreatment ATTGT's are 
 statistically equal to zero.{p_end}
+
+{synopt :{opt pretrend, window(#1 #2)}}Estimates the chi2 statistic of the null hypothesis that ALL pretreatment ATTGT's within window are 
+statistically equal to zero.{p_end}
  
 Aggregation subcommands.
  
@@ -37,10 +40,13 @@ Aggregation subcommands.
 
 {synopt:{opt calendar}}Estimates the ATT for each period, across all groups or cohorts {p_end}
 
-{synopt:{opt event}}Estimates the dynamic ATT's. ATT's are estimated using all period relative to the 
-period of first treatment, across all cohorts.{p_end}
+{synopt:{opt event}}Estimates the dynamic ATT's. ATT's are estimated using all periods relative to the 
+period of the first treatment, across all cohorts.{p_end}
 
 {synopt:{opt event, window(#1 #2)}}Same as above, but request only events between #1 and #2 to be estimated. {p_end}
+
+{synopt:{opt cevent, window(#1 #2)}}Estimates Censored Event averages. It estimates the average across all ATTGT's that correspond 
+to periods between T#1 and T#2, inclusive. For example estat cevent , window(0 0) simply reproduces the effect at T+0.{p_end}
 
 {synopt:{opt all}}Produces all aggregations. Not available with csdid_stats. And cannot be combined with estore() nor esave() {p_end}
 
@@ -53,6 +59,9 @@ period of first treatment, across all cohorts.{p_end}
 {synopt:{opt esave(name)}}When using any of the 4 types of aggregations, request saving the outcome in disk. {p_end}
 
 {synopt:{opt replace}}Request to replace {it:ster} file, if the a file already exists.{p_end}
+{synoptline}
+
+{synopt:{opt post}}Request posting the results in e().{p_end}
 {synoptline}
 
 {syntab:{bf: Standard Error Options}}
@@ -71,10 +80,11 @@ was estimated requesting Wbootstrap standard errors. {p_end}
 {synopt:wboot}Request Estimation of Standard errors using a multiplicative WildBootstrap procedure.
 The default uses 999 repetitions using mammen approach. {p_end}
 
-{synopt:reps(#)}Specifies the number of repetitions to be used for the Estimaton of the WBoot SE. Default is 999 {p_end}
+{synopt:wboot(reps(#))}Specifies the number of repetitions to be used for the Estimation of the WBoot SE. Default is 999 {p_end}
 
-{synopt:wtype(type)}Specifies the type of Wildbootstrap procedure. The default is "mammen", but "rademacher" is also 
+{synopt:wboot(wtype(type))}Specifies the type of Wildbootstrap procedure. The default is "mammen", but "rademacher" is also 
 avilable.{p_end}
+
 
 {synopt:rseed(#)}Specifies the seed for the WB procedure. Use for replication purposes.{p_end}
 
@@ -111,11 +121,11 @@ plots for each group/cohort. In that case, one needs to indicate which {it:group
 {title:Remarks}
 
 {pstd}
-The command {cmd:csdid_plot} is an easy to use command to plot different ATT aggregations, either across groups,
+The command {cmd:csdid_plot} is an easy-to-use command to plot different ATT aggregations, either across groups,
 across time, or dynamic effects, (event plot). It has, however, limited flexibility{p_end}
 {pstd}
 If you want to further modify this figure, I suggest using the community contributed command {help addplot} by Benn Jan.
-If you do, pleace his software. See references section.
+If you do, please cite his software. See references section.
 
  
 {marker examples}{...}
@@ -181,6 +191,9 @@ friosavi@levy.org
 {pstd}Pedro H. C. Sant'Anna {break}
 Vanderbilt University{p_end}
 
+{pstd}Brantly Callaway {break}
+University of Georgia{p_end}
+
 {marker references}{...}
 {title:References}
 
@@ -188,12 +201,17 @@ Vanderbilt University{p_end}
 "Semiparametric Difference-in-Differences Estimators." 
 {it:The Review of Economic Studies} 72 (1): 1–19.{p_end}
 
+{phang2}Callaway, Brantly and Sant'Anna, Pedro H. C. 2021. 
+"Difference-in-Differences with multiple time periods." , 225(2):200-230.
+{it:Journal of Econometrics}.{p_end}
+
 {phang2}Sant’Anna, Pedro H. C., and Jun Zhao. 2020. 
 "Doubly Robust Difference-in-Differences Estimators." 
 {it:Journal of Econometrics} 219 (1): 101–22.{p_end}
 
 {phang2}Rios-Avila, Fernando, 
-and Pedro H. C. Sant'Anna 2021.
+Pedro H. C. Sant'Anna, 
+and Brantly Callaway, 2021.
  “CSDID: Difference-in-Differences with Multiple periods.” 
 {p_end}
 
@@ -207,13 +225,12 @@ and Pedro H. C. Sant'Anna 2021.
 
 {pstd}This command was built using the DID command from R as benchmark, originally written by Pedro Sant'Anna and Brantly Callaway. {p_end}
 
-{pstd}Many thanks to Pedro for helping understanding the inner workings on the estimator.{p_end}
+{pstd}Many thanks to Pedro for helping me understand the inner workings of the estimator.{p_end}
 
-{pstd}Thanks also to Enrique, who helped with the display set up, plus other questions that popup while working on this{p_end}
+{pstd}Thanks also to Enrique, who helped with the display set up, plus other questions that pop up while working on this{p_end}
 
 {title:Also see}
 
 {p 7 14 2}
 Help:  {help drdid}, {help csrdid}, {help csdid postesimation}, {help xtdidregress} {p_end}
-
 
