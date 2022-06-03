@@ -830,7 +830,7 @@ Jann, Ben. 2008. "The Blinder-Oaxaca decomposition for linear regression models.
 xaringanExtra::use_xaringan_extra(c("tile_view",
                                     "share_again",
                                     "panelset","tachyons",
-                                    "clipboard"))
+                                    "clipboard","scribble"))
 ```
 
 ```{css echo=FALSE}
