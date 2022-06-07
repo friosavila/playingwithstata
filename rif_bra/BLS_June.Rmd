@@ -26,7 +26,7 @@ class: center, middle, inverse
 
 ## Valuation of HP: Summary
 
-- During the last meeting we described, in general terms, our procedure for valuing Household production.
+During the last meeting we described, in general terms, our procedure for valuing Household production.
 
 .pull-left[
 **Preferred**: Use of Specialized wage, to differentiate across different types of activities ]
@@ -42,11 +42,11 @@ class: center, middle, inverse
 
 ## HP types and aggregation
 
-- In our efforts to construct an internally consistent measure of consumed household production into the following categories:
+In our efforts to construct an internally consistent measure of consumed household production into the following categories:
 
 .pull-left[
 - Cooking and related activities
-- Other Household production not including Care for others
+- Other housework (except cooking) and shopping
 - Active Child care
 - Adult Care
   ]
@@ -63,10 +63,10 @@ class: center, middle, inverse
 
 - And aggregated at the household level (Scaling down Sup-care)
 
-- All imputation methods (**RP, RPP and SM**) use similar structure except for Sup-Care overlapping
+- All imputation methods (**RP, RP+ and SM**) use similar structure except for Sup-Care overlapping
 
   - For SM, we use .red[*imputed/transferred*] values from ATUS
-  - For RP and RPP we use conditional means
+  - For RP and RP+ we use conditional means
 
 ---
 
@@ -89,10 +89,12 @@ class: center, middle, inverse
 
 Simple accounting:
 
-$$HPC_i = \sum  w_j * ht_{ij} \ \forall \ j=[ck, othp, cc, aa, ecc, eac, sc]$$
-- For preferred method, we use $w_j$ is different by activity.
+$$HPC_i = \sum  w_j * ht_{ij}$$
+$\forall \ j=$ Cooking, Other HW, child care, Adult Care, External Child Care, External Adult Care, and Supervisory Child Care.
 
-- For BEA method, $w_j=w_g$ for all but j=[ecc, eac, sc]. For this, activities $w_j=0$.
+- For preferred method, $w_j$ is different for each activity.
+
+- For BEA method, $w_j=w_{generalist}$ for all but External Care and Supervisory care. These activities receive a wage of zero $w_j=0$.
 
 ---
 
@@ -121,10 +123,10 @@ class: center, middle, inverse
 > Generalist wages will only be available at Division level.
 ---
 
-## Avg. value of HP
+## Avg. value of Weekly Household Time Consumption
 
 
-|	|Pr-RP |Pr-RP+	|Pr-SM	|Bea-RP	|Bea-RP+		|Bea-SM|
+|	|Pr-RP |Pr-RP+	|Pr-SM	|BEA-RP	|BEA-RP+		|BEA-SM|
 |-|-|-|-|-|-|
 |CE interview|	722|	723	|709|	577|	577|	551|
 |CE diary	|717|	716|	702|	575|	576|	548|
@@ -133,9 +135,9 @@ This represents between 34% to 45% of average household income.
 
 --
 
-Across the distribution:
+Across the distribution (Interview Sample):
 
-|	|Pr-RP |Pr-RP+	|Pr-SM	|Bea-RP	|Bea-RP+		|Bea-SM|
+|	|Pr-RP |Pr-RP+	|Pr-SM	|BEAa-RP	|BEA-RP+		|BEA-SM|
 |-|-|-|-|-|-|
 | Mean|	722|	723|	709|	577|	577|	551|
 |SD|	494|	565|	601|	305|	395|	417|
@@ -161,7 +163,7 @@ Hours per week
 |	|Preferred	|BEA|	Cooking	|Other HW |	C. Care	| A. Care | 	Ext CCare |  Ext ACare| Sup.Care no-over |	Sup. care over|
 |--|--|--|--|--|--|--|--|--|--|--|
 |RP|	56.4	|43.3|	9.0|	27.0|	6.2|	1.0	|1.2	|0.5	|8.0	|3.4|
-|RPP|	56.4	|43.4|	9.1|	27.0|	6.2|	1.0	|1.2	|0.5	|8.0|	3.4|
+|RP+|	56.4	|43.4|	9.1|	27.0|	6.2|	1.0	|1.2	|0.5	|8.0|	3.4|
 |SM|	56.0	|41.3|	8.5|	25.6|	6.3|	0.9	|1.2	|0.5	|8.9|	4.0|
 	
 Value per week
@@ -169,7 +171,7 @@ Value per week
 |	|Preferred	|BEA|	Cooking	|Other HW |	C. Care	| A. Care | 	Ext CCare |  Ext ACare| Sup.Care no-over |	Sup. care over|
 |--|--|--|--|--|--|--|--|--|--|--|
 |RP|	719.5|	576.2	|119.7|	359.7|	102.9	|15.6|	20.0|	7.8|	66.2|	27.7|
-|RPP|	719.6|	576.5	|120.1|	359.6	|103.3	|15.3	|20.0|	7.8|	65.9|	27.7|
+|RP+|	719.6|	576.5	|120.1|	359.6	|103.3	|15.3	|20.0|	7.8|	65.9|	27.7|
 |SM	|705.2|	549.2	|113.2	|340.5	|103.8	|13.3	|20.0|	7.8|	73.5|	33.1|
 
 ---
@@ -181,7 +183,7 @@ Gini Decomposition
 |	|BEA|	Pref Hrs	|Pref Wages	| Pref| D Hrs| D wages|
 |-|-|-|-|-|-|-|
 |RP|	0.293	|0.383	|0.307	|0.368|0.090|0.014|
-|RPP	|0.375|	0.430	|0.386	|0.420|0.055|0.011|
+|RP+	|0.375|	0.430	|0.386	|0.420|0.055|0.011|
 |SM	|0.400	|0.457	|0.409	|0.444|0.057|0.010|
 
 ---
@@ -189,35 +191,6 @@ Gini Decomposition
 ## What explains the inequality?
 
 .panelset[
-.panel[.panel-name[RP]
-
-| RP                        | Share | Gini  | Contribution |
-|---------------------------|-------|-------|--------------|
-| Cooking                   | 0.165 | 0.305 | 0.116        |
-| Other House work          | 0.499 | 0.257 | 0.235        |
-| Child Care                | 0.144 | 0.794 | 0.295        |
-| Adult Care                | 0.021 | 0.599 | 0.020        |
-| External Child Care       | 0.028 | 0.877 | 0.058        |
-| External Adult Care       | 0.011 | 0.983 | 0.012        |
-| Sup. care nonoverlapping  | 0.092 | 0.803 | 0.189        |
-| Sup. care overlapping     | 0.039 | 0.770 | 0.075        |
-
-]
-.panel[.panel-name[RPP]
-
-| RPP                        | Share | Gini  | Contribution |
-|---------------------------|-------|-------|--------------|
-| Cooking                   | 0.165 | 0.493 | 0.122        |
-| Other House work          | 0.497 | 0.391 | 0.319        |
-| Child Care                | 0.145 | 0.834 | 0.262        |
-| Adult Care                | 0.021 | 0.910 | 0.023        |
-| External Child Care       | 0.028 | 0.877 | 0.047        |
-| External Adult Care       | 0.011 | 0.983 | 0.010        |
-| Sup. care not overlapping | 0.093 | 0.833 | 0.159        |
-| Sup. care overlapping     | 0.039 | 0.770 | 0.059        |
-
-]
-
 .panel[.panel-name[SM]
 
 | SM                        | Share | Gini  | Contribution |
@@ -232,6 +205,37 @@ Gini Decomposition
 | Sup. care overlapping     | 0.047 | 0.831 | 0.079        |
 
 ]
+
+.panel[.panel-name[RP]
+
+| RP                        | Share | Gini  | Contribution |
+|---------------------------|-------|-------|--------------|
+| Cooking                   | 0.165 | 0.305 | 0.116        |
+| Other House work          | 0.499 | 0.257 | 0.235        |
+| Child Care                | 0.144 | 0.794 | 0.295        |
+| Adult Care                | 0.021 | 0.599 | 0.020        |
+| External Child Care       | 0.028 | 0.877 | 0.058        |
+| External Adult Care       | 0.011 | 0.983 | 0.012        |
+| Sup. care nonoverlapping  | 0.092 | 0.803 | 0.189        |
+| Sup. care overlapping     | 0.039 | 0.770 | 0.075        |
+
+]
+.panel[.panel-name[RP+]
+
+| RP+                        | Share | Gini  | Contribution |
+|---------------------------|-------|-------|--------------|
+| Cooking                   | 0.165 | 0.493 | 0.122        |
+| Other House work          | 0.497 | 0.391 | 0.319        |
+| Child Care                | 0.145 | 0.834 | 0.262        |
+| Adult Care                | 0.021 | 0.910 | 0.023        |
+| External Child Care       | 0.028 | 0.877 | 0.047        |
+| External Adult Care       | 0.011 | 0.983 | 0.010        |
+| Sup. care not overlapping | 0.093 | 0.833 | 0.159        |
+| Sup. care overlapping     | 0.039 | 0.770 | 0.059        |
+
+]
+
+
 ]
 
 ---
