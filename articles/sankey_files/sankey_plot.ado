@@ -1,10 +1,12 @@
 ** Need to make Colors easier.
 ** and Separate Colros for RBAR from RAREA
 
-*! v1.3 by FRA adds more control and transform data
-*! v1.2 by FRA Adjusts Labels
-*! v1.11 by FRA Sorts
-*! v1.1 by FRA allows Extra Adjustment
+*! v1.32 by FRA fix wide and adds update
+* v1.31 by FRA fix for varabbref
+* v1.3 by FRA adds more control and transform data
+* v1.2 by FRA Adjusts Labels
+* v1.11 by FRA Sorts
+* v1.1 by FRA allows Extra Adjustment
 * v1.01 by FRA allows for NO coordinates
 * Think about Floor adjustment
 /*capture program drop encode2
@@ -22,14 +24,25 @@ capture program drop sankey_wide
 capture mata mata  drop sdlong()*/
 
 program sankey_plot
-	syntax anything(everything), [* wide tight]
-	if "`wide'"!="" {
-		sankey_wide `anything', `tight' `options'
+	syntax anything(everything), [* wide tight update]
+	varabbrev  {
+		if `c(stata_version)'<16 {
+			display "You need Stata 16 or higher to use this command"
+			error 9
+		}
+		
+		if "`update'"!="" {
+			ssc install sankey_plot, replace
+			capture:program drop sankey_plot
+		}
+		if "`wide'"!="" {
+			sankey_wide `anything', `tight' `options'
+		}
+		else {		
+			sankey_i2 `anything', `options'	 
+		}
+		
 	}
-	else {
-		sankey_i2 `anything', `options'
-	}
-	
 	if runiform()<0.001 {
 		easter_egg
 	}
@@ -38,20 +51,37 @@ end
 
 
 program sankey_wide
-	syntax varlist (min=3), width(varname) [tight newframe(name) drop *]
+	syntax varlist (min=2) [if] [in],  [width(varname) tight  ///
+										newframe(name) drop *]
 	if "`newframe'"=="" tempname newframe
 	capture frame `drop' `newframe'
-	frame put `varlist' `width', into(`newframe')
-	qui:frame `newframe':{
-		foreach i in `varlist' {
+	*display "`varlist' `width'  `label0' `label1' `if' `in'"
+	frame put `varlist' `width'  `label0' `label1' `if' `in', into(`newframe')
+		qui:frame `newframe':{
+		if "`width'"=="" {
+			tempname width
+			gen byte `width'=1
+		}
+ 		foreach i in `varlist' {
 			local cnt = `cnt'+1
-			gen xx`cnt'=`i'
-			local x`cnt' `i'
-			qui:tostring xx`cnt', replace
-			
+			** is numeric
+			capture confirm  numeric var `i'
+			if _rc!=0 {
+				clonevar xx`cnt'=`i'				
+			}
+			else {
+				if "`:variable label `i''"!="" {
+					decode `i', gen(xx`cnt')
+				}
+				else {
+					tostring `i', gen(xx`cnt')
+				}
+			}		
 			local vlist  `vlist' xx`cnt'
 		}
-		qui:recast str100 `vlist'
+ 		
+		 
+		*qui:recast str100 `vlist'
 		local fcnt=`cnt'-1
 		gen __id=_n
 		expand `fcnt'
@@ -77,10 +107,11 @@ program sankey_wide
 			tempvar wt
 			bysort _x0 _x1 _y0 _y1:egen `wt'=sum(`width')
 			replace `width'=`wt'
+			keep _x0 _x1 _y0 _y1 `width' 
+			duplicates drop
 		}
-		keep _x0 _x1 _y0 _y1 `width'
-		duplicates drop
-		sankey_i2 	_x0 _y0 _x1  _y1 , width0(`width') `options' extra adjust
+		keep _x0 _x1 _y0 _y1 `width' 
+		sankey_i2 _x0 _y0 _x1 _y1 , width0(`width') `options' extra adjust 
 	}
 end
 
@@ -446,7 +477,7 @@ syntax varlist [if],  [width0(varname) width1(varname) sharp(real 7) ///
 				 label0(varname) label1(varname)  gap(real 0.01) ///
 				 noline nobar extra colorpalette(passthru) fillcolor(str asis) ///
 				 newframe(string) bwidth(real 0.025) bheight(numlist >0 max=1) bcolor(string asis) blcolor(string asis) blwidth(string asis) ///
-				 labangle(real 0) labpos(string asis) labsize(string asis) labcolor(string asis) labgap(string asis)]  
+				 labangle(real 0) labpos(string asis) labsize(string asis) labcolor(string asis) labgap(string asis) xaxis(passthru)]  
 	
 	if "`newframe'"=="" tempname newframe
 	local nn = _N
@@ -535,7 +566,7 @@ syntax varlist [if],  [width0(varname) width1(varname) sharp(real 7) ///
 					local totext `totext' `=y0_cnt[`j']'  `=x_or_[`j']' (`pos') "`=lb0b_[`j']'"
 				}
 				
-			local totext (scatteri `totext', msymbol(none) mlabangle(`labangle') mlabsize(`labsize') mlabcolor(`labcolor') mlabgap(`labgap'))
+			local totext (scatteri `totext', msymbol(none) mlabangle(`labangle') mlabsize(`labsize') mlabcolor(`labcolor') mlabgap(`labgap') `xaxis')
 		}
 		*display `"`rrbarr'"'
 		two `toplot' `rrbarr' `totext'  , `options' ylabel("") legend(off)
