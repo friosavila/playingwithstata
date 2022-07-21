@@ -51,6 +51,7 @@ syntax, [*]
 		
 		qui:gen __event__ =  `e(tvar)'-`e(gvar)' if __tr__==1 & `aux'<`e(gvar)'
 		margins , dydx(__tr__) over(__event__) `options'
+		
 		matrix rr=r(table)
 		return matrix table = rr
 		capture drop __event__
