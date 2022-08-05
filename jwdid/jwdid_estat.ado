@@ -1,3 +1,4 @@
+*! v1 8/5/2022 FRA. Adds margins the right way
 program jwdid_estat, sortpreserve   
 	version 14
     syntax anything, [*]
@@ -17,9 +18,10 @@ end
 
 program jwdid_simple, rclass
 		syntax, [*]
-		tempvar aux
-		qui:bysort `e(ivar)':egen `aux'=min(`e(tvar)') if e(sample)
-		margins if __tr__==1 & `aux'<`e(gvar)', dydx(__tr__)  `options'
+		//tempvar aux
+		//qui:bysort `e(ivar)':egen `aux'=min(`e(tvar)') if e(sample)
+		margins  ,  subpop(if __etr__==1) at(__tr__=(0 1)) ///
+					noestimcheck contrast(atcontrast(r)) `options' 
 end
 
 program jwdid_group, rclass
@@ -27,8 +29,9 @@ program jwdid_group, rclass
 		tempvar aux
 		qui:bysort `e(ivar)':egen `aux'=min(`e(tvar)') if e(sample)
 		capture drop __group__
-		qui:clonevar __group__ =  `e(gvar)' if __tr__==1 & `aux'<`e(gvar)'
-		margins , dydx(__tr__) over(__group__) `options'
+		qui:clonevar __group__ =  `e(gvar)' if __etr__==1 & `aux'<`e(gvar)'
+		margins , subpop(if __etr__==1) at(__tr__=(0 1)) ///
+				  over(__group__) noestimcheck contrast(atcontrast(r)) `options'
 		
 		capture drop __group__
 end
@@ -38,8 +41,10 @@ syntax, [*]
 		capture drop __calendar__
 		tempvar aux
 		qui:bysort `e(ivar)':egen `aux'=min(`e(tvar)') if e(sample)
-		qui:clonevar __calendar__ =  `e(tvar)' if __tr__==1 & `aux'<`e(gvar)'
-		margins , dydx(__tr__) over(__calendar__) `options'
+		qui:clonevar __calendar__ =  `e(tvar)' if __etr__==1 & `aux'<`e(gvar)'
+		margins , subpop(if __etr__==1) at(__tr__=(0 1)) ///
+				over(__calendar__) noestimcheck contrast(atcontrast(r)) `options'
+
 		capture drop __calendar__
 end
 
@@ -49,8 +54,10 @@ syntax, [*]
 		tempvar aux
 		qui:bysort `e(ivar)':egen `aux'=min(`e(tvar)') if e(sample)
 		
-		qui:gen __event__ =  `e(tvar)'-`e(gvar)' if __tr__==1 & `aux'<`e(gvar)'
-		margins , dydx(__tr__) over(__event__) `options'
+		qui:gen __event__ =  `e(tvar)'-`e(gvar)' 
+		
+		margins , subpop(if __etr__==1) at(__tr__=(0 1)) ///
+				over(__event__) noestimcheck contrast(atcontrast(r)) `options'
 		
 		matrix rr=r(table)
 		return matrix table = rr
