@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Econometrics 101 - Part I</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Fernando Rios-Avila" />
+    <meta name="date" content="2022-08-24" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/tachyons/tachyons.min.css" rel="stylesheet" />
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <script type="application/json" id="xaringanExtra-editable-docid">{"id":"a2a585ed06c64e63b6ec1070ac75f9b6","expires":14}</script>
+    <script src="libs/himalaya/himalaya.js"></script>
+    <script src="libs/js-cookie/js.cookie.js"></script>
+    <link href="libs/editable/editable.css" rel="stylesheet" />
+    <script src="libs/editable/editable.js"></script>
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <script src="libs/fabric/fabric.min.js"></script>
+    <link href="libs/xaringanExtra-scribble/scribble.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-scribble/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#FF0000"],"pen_size":3,"eraser_size":30,"palette":[]}) })</script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Econometrics 101 - Part I
+## The Hardest Class You will have at Levy
+### Fernando Rios-Avila
+### 2022-08-24
+
+---
+
+
+
+
+class: center, middle
+
+## Look to your left
+--
+
+## Look to your right
+--
+
+## Look in front of you
+--
+
+## One of you will pass the class with flying colors
+--
+
+## But one of you, will finish the semester with more questions than answers
+--
+
+## So be ready...
+
+---
+
+## Do you know what econometrics is? have you use it before?
+
+- It is a set of tools economist (and other social scientists) use to analyze
+data, estimate (economic) relationships, test theories, evaluate
+policies.
+
+For example? What have you use it for before? (or want to use it in the future)
+.pull-left[
+.can-edit.key-likes[
+- 
+]
+]
+.pull-right[
+.can-edit.key-likes[
+- 
+]
+]
+
+--
+
+- So what makes it different from Statistics, and **Data Science**.
+
+--
+  
+  - Econometrics pays attention not only to the data, but also to the Problems the data may have.
+  
+  - After all .red[Data] doesn't come up from labs, but from people. 
+  
+--
+
+- Why is it important?
+
+  - In the words of Gregory House MD
+    
+---
+.small[ ![fig1](https://www.teahub.io/photos/full/123-1235678_lies-dr-house-and-house-image-house-all.jpg) ]
+
+Or, agents are strategic on what they do, and how they react to other agents
+---
+But:
+![fig2](https://www.teahub.io/photos/full/185-1850304_house-md-everybody-lies-everybody-lies-dr-house.jpg)
+We use the data and as Economist/econometricians, we make the best of it to answer our questions
+
+---
+
+## Why should you learn Econometrics?
+
+- It is important to be able to test economic theory to real world
+Data. 
+
+  - Is the theory correct? are the assumptions plausible? are firms profit maximizers? or cost minimizers? Does Printing money generates inflation?
+
+--
+
+- Or to answer less typically economic questions: 
+
+  - Do children get better grades if you pay them? Do Sumo Wrestlers Cheat? If a butterfly flaps its wings in Japan, does it rain in Brazil?
+
+--
+
+- It may also help you answer questions, when theory is ambiguous:
+
+  - Does Minimum wage increase unemployment? or decrease it?  Does Increased LF participation reduce Domestic violence? 
+  
+  - What was first, the Egg or the Chicken?
+
+--
+
+- It may also be useful Forecasting economic variables.
+
+  - What will inflation be in the next 3 months? what will housing prices
+behave a year from now? what will the Covid19 infection rate be in
+the next weeks?
+
+---
+
+class: center , middle
+
+## Did you notice I say mixture of Econometrics and Economic Theory?
+
+--
+
+### Its not an accident
+
+--
+
+### In econometrics we care about a number (Estimates), and the story (theory) behind that number
+
+---
+
+class: center , middle, inverse
+
+# How do you elaborate an empirical analysis?
+
+--
+
+## Carefully~~~
+
+---
+
+## 5 (basic) Steps for an Empirical Analysis
+
+- **Research Question**
+
+Is it an interesting question? can it be answered? is it an interesting answer?
+
+--
+
+- **Economic Model**
+
+How does the question translate into a model? Do you know the moving parts? do you know how X `\(-&gt;\)` Y?
+
+--
+
+- **Econometric model**
+
+How are you measuring your data? what assumptions are you using to define their relationship? and functional forms?
+
+--
+
+- **Collect the data**
+
+Is the data available? or do you need to collect your own data? How long will it take to get the data ready?
+
+--
+
+- **Apply Econometric** 
+
+Analyze  your data and answer your research question.
+
+---
+
+class: center, middle, inverse
+
+## Crime and Punishment: An Economic Approach
+### by Gary Becker (1968)
+
+---
+
+## Research Question
+
+Broad Topic:
+
+&gt;What factors explain criminal behavior? How does it fit in within the utility maximizing framework?
+
+--
+
+Better 
+
+&gt; Does increase in crime punishment reduces crime activity?
+
+---
+
+## Economic Model:
+
+What factors determine criminal behavior?
+(What is crime a function of?)
+.pull-left[
+
+- **wage** of illegal activities
+
+- **wage** of legal activities
+
+- Other income
+
+- age
+
+]
+
+
+.pull-right[
+
+- **Pr** being caught
+
+- **Pr** conviction
+
+- Sentence severity
+
+- other factors 
+
+]
+
+Here, consider, how these factors affect Crime?
+
+--
+
+And If you like (heard of) DAG's, where is where you get to draw one.
+
+---
+
+## Econometric analysis:
+
+We have the X's, now we need a function, easiest Linear function:
+
+$$y = b_0 + b_1 x_1 + b_2 x_2 + ... + e $$
+
+--
+
+On its own, this function packs a large set of assumptions. 
+
+But for now, suffice to say that what we are interested in are the `\(\beta's\)`. 
+
+--
+
+It is here where you also need to check how your variables relate to the "conceptual" factors.
+
+This includes understanding what else is packed in "e"
+
+---
+
+## Data
+
+The fourth step requires the collection of data. 
+
+- Namely, is the data available? do you need to collect it yourself? or secondary data?
+
+- If Secondary source, is it easily accessible? or does it have a paywall? is it easy to process?
+
+- Does it contains all the information that you need/want?
+
+- Different types of data may require different approaches
+
+---
+
+class: center, middle, inverse
+
+## Types of Data
+
+---
+
+## Cross-section
+
+.pull-left[
+- Sample of individuals, households, firms, cities, states, countries, or at
+a given point of time.
+
+- Cross-sectional data is typically encountered in applied
+microeconomics: CPS, ACS, ATUS, HBS, OHS, census, etc.
+
+- Cross-sectional observations are more or less independent if sample is
+random (assumption that may be violated)
+
+- If data is collected at random, we may be able to learn something on
+the population
+]
+
+.pull-right[
+  ![fig1](figures/c1_f1.png)
+]
+
+
+---
+
+## Time-Series
+
+.pull-left[
+
+
+- Observations for a single individual, country, firm, or entity across time.
+
+- We only observe a "time window" in history 
+
+- Time-series data is usually serially correlated. Past `\(\rightarrow\)` Present `\(\rightarrow\)` Future.
+
+- Typically useful in applied macroeconomic analysis and financial analysis
+]
+
+.pull-right[
+
+![fig2](figures/c1_f2.png)
+
+]
+
+---
+
+## Pooled Crossection
+
+.pull-left[
+
+
+- Two or more Cross-section data (different periods) combined in one data-set.
+
+- Cross-section data are typically independent of each other.
+
+- Typically used in micro analysis to evaluate policy changes, based on
+nonexperimental settings.
+]
+
+.pull-right[
+![fig3](figures/c1_f3.png)
+]
+
+---
+
+## Panel Data
+
+.pull-left[
+
+
+- Panel data set has a structure similar to a pooled cross section. But, panel data follows same units (people, houses,
+schools, and so on) over time.
+
+- Data has time and crossectional dimensions.
+
+- Panel data can be used to account for time-invariant unobservables.
+
+- Or model lagged responses
+]
+
+.pull-right[
+![fig4](figures/c1_f4.png)
+]
+
+---
+
+## Analysis: The Causality Problem
+
+.center[
+![](https://i.pinimg.com/originals/af/0b/b1/af0bb1a61b295958802a79b3700d8fe4.gif)
+]
+
+---
+
+## Analysis: The Causality Problem
+
+We need to distinguish between causation and correlation. 
+
+In econometrics, we are interested in causation. But differentiating between both can be hard.
+
+- How can we know that more education increases wages?
+
+We first need to have a clear concept of what **Causal effect** is.
+
+--
+
+&gt; **Causal effect**: What happens to `\(y\)` when `\(x\)` changes, but everything else remains constant (*ceteris paribus*)
+
+--
+
+- Correlations are suggestive, but rarely conclusive. We need to design a scenario where all factors (but `\(X\)`) are fixed!
+
+---
+
+## Example: Police vs Crime
+
+**Research Question**: By how much will crime decrease if there are more police officers in the streets?
+
+--
+
+**Assumption**: Other factors that *could* affect crime are held constant. 
+
+How can you make sure of this?
+
+--
+
+**Identification**: Arbitrary increase allocation of police officers in random areas in a city. (Randomized Experiment)
+
+This works if assignment is **Random**. 
+
+---
+
+## Example: Nutrition and health
+
+**Research Question**: How much healthier are people who eat a balance diet?
+
+--
+
+**Assumption**: People are identical in all aspects but dietary choices.
+
+How can you make sure of this?
+
+--
+
+**Identification**: We cannot randomly make people eat healthier foods. 
+
+Perhaps we can give people vouchers, and half of the vouchers to buy only **healthy** food.
+
+This works if voucher assignment is **Random**, and people actually use them. 
+
+---
+
+class: center, middle, inverse
+
+## First Tool: Simple Regression Model (SRM)
+
+---
+
+## First Tool: Simple Regression Model (SRM)
+
+The first tool we will learn is probably the one you will use the least, but teach you the most.
+
+--
+
+It is call SRM, because its goal is to quantify the relationships between 2 variables:
+
+- `\(y\)`: Dependent, explained, response, predicted variable, regresand.
+
+- `\(X\)`: Independent, explanatory, control, predictor variable, regressor.
+
+--
+
+This is an over-simplification, because almost **NO** model that respect itself uses only two variables to identify effects.
+
+--
+
+Nevertheless, it will help you learn the basics.
+
+---
+
+## SRM with Crossectional Data
+
+- Assume CS data that comes from a random sample, and assume you have only 2 variables: `\(y\)`(wages) and `\(x\)`(education).
+
+- Even in this framework, you need to address three issues:
+
+.pull-left[
+  .pull-left[
+  How do we allow other factors in the model?
+  ]
+  .pull-right[
+  What kind of relationship exist between `\(y\)` and `\(x\)`?
+  ]
+]
+.pull-right[
+  .pull-left[
+  How can we make sure the *ceteris paribus* assumption hold?
+  ]
+]
+
+--
+
+Any guesses?
+
+--
+
+.navy.center.f3[By assumption]
+
+---
+
+## First Steps: Know your Data
+
+.panelset[ 
+
+.panel[.panel-name[Message]
+- One important advantage of starting with a SRM, is that you can always start your analysis with visual inspection of the data.
+
+- In other words, plot your data! and see if there are outliers, or if the relationship you are looking for makes sense.
+
+- Lets do some .red[**`R`**]
+
+
+
+.panel[.panel-name[code]
+
+- First, You will need to have `tidyverse` installed. But you only need to do that once.
+- What you need to do everytime you start *`R`*, however, is load it everytime.
+
+```
+install.packages("tidyverse")
+library("tidyverse")
+library("wooldridge")
+```
+
+- and for now, we will only load one dataset: **`wage1`**
+
+```
+data(starwars)
+```
+- Research question: The older you are, the taller you are?
+
+]
+
+.panel[.panel-name[code]
+
+- Start by exploring your dataset:
+
+```
+names(wage1)
+ [1] "wage"     "educ"     "exper"    "tenure"   "nonwhite" "female"   "married"  "numdep"  
+ [9] "smsa"     "northcen" "south"    "west"     "construc" "ndurman"  "trcommpu" "trade"   
+[17] "services" "profserv" "profocc"  "clerocc"  "servocc"  "lwage"    "expersq"  "tenursq"  
+```
+- But lets concentrate only on 2 variables wages and education
+
+```
+ggplot(data=wage1,aes(y=wage,x=educ))+
+  geom_point()
+```
+
+]
+
+.panel[.panel-name[Graph]
+
+
+&lt;img src="class_1_files/figure-html/unnamed-chunk-1-1.png" width="576" height="100%" /&gt;
+]
+
+]
+
+.panel[.panel-name[Graph2]
+Why do you need to do a plot? -- Because it can help you decide on how to analyze the data!
+
+![dino](https://blog.revolutionanalytics.com/downloads/DataSaurus%20Dozen.gif)
+
+]
+
+
+
+]
+
+---
+
+## SRM: Mechanics
+
+We start with the assumption that the population DGP is given by:
+
+`$$y_i=f(x_i,e_i)$$`
+Which is a nonlinear function. So, we need to impose some functional form:
+
+`$$y_i = \beta_0 + \beta_1 x_i + e_i \rightarrow E(y_i|x_i)=\beta_0 +\beta_1 x$$`
+This expression packs a lot of assumptions and information. 
+
+--
+
+&gt; How do we allow other factors in the model? `\(e_i\)` contains all those factors
+
+--
+
+&gt; What kind of relationship exist between `\(y\)` and `\(x\)`? Assumed linear
+
+--
+
+&gt; How can we make sure the *ceteris paribus* assumption hold? Assume that `\(e_i\)` is independent of `\(x\)`. (at least in average: 
+`\(E(u|X)=0\)`)
+
+--
+
+Different question: *How reasonable are these assumptions?*
+
+---
+
+## Mechanics behind SRM.
+
+- Given data on `\(X\)` and `\(y\)`, how can we estimate the parameters of interest `\(\beta's\)`?
+
+--
+
+- How many candidates are there? 
+
+--
+
+More than you can count!
+
+$$ y = \beta_0 + \beta_1 x + e$$
+You could use any value for `\((\beta_0,\beta_1)\)` and you will get *something*. However, some of those candidates may be great, some may be awful.
+
+--
+
+- So how do we decide?
+
+--
+
+We should choose the **best**, that fulfills certain properties.
+
+---
+
+## Mechanics behind SRM
+
+So how are this `\(\beta's\)` estimated?
+
+We *simply* need to choose the set of betas that:
+
+1. Provide the best fit (of the observed data)
+
+2. Restricts the relationship between `\(X's\)` and `\(e\)` (that we never observe). 
+
+**Easy** task that has many  options:
+
+--
+
+1. Method of Moments (**MM** and **GMM**)
+
+2. Ordinary Least Squares (**OLS**, **WLS**, **FGLS**, etc)
+
+3. Maximum Likelihood Estimators (**MLE**)
+
+4. Bayesian approach (**???**)
+
+--
+
+We will cover a bit of (1), lots of (2) and a glimpse of (3)
+
+
+---
+
+## Mechanics behind SRM
+
+But wait, we never see `\(e\)` -&gt; we **make one up**:
+
+$$ \hat e = y - \hat \beta_0 - \hat \beta_1 x$$
+Now `\(\hat e\)` is a function of `\((\hat \beta_0 , \hat \beta_1)\)`, which can be chosen arbitrarily.
+
+---
+
+## How are Betas estimated? GMM
+
+For the SRM, GMM is probably the easiest approach.
+The idea of the method is to simply find `\(\beta's\)` that make the **moments** of the model true.
+
+Specifically, choose `\(\hat \beta_0\)` and `\(\hat \beta_1\)`, such that:
+
+The net effect of errors is zero (so we at least can get *means* right)
+
+`$$E(e)=0 \rightarrow E(y-\beta_0 - \beta_1 x)=0$$`
+And that makes the errors orthogonal (linearly independent) of X.
+
+`$$E(ex)=0 \rightarrow E(x [ y-\beta_0 - \beta_1 x])=0$$`
+Thus:
+
+`$$\hat\beta_{gmm}, s.t. E(\hat e)=0;E(\hat e x)=0$$`
+---
+
+## How are Betas estimated? MLE 
+
+MLE is a Second Option that can be used for this. It requires extra assumptions. Specifically, you need to impose some distributional assumption on the errors (normality?).
+
+Once that is done, you choose betas that maximize the goodness of fit of your data:
+
+`$$\hat\beta_{MLE} = max \prod f(\hat e_i(\hat \beta))$$`
+And we usually assume `\(e\sim normal(0,\sigma)\)`. So we need to add `\(\sigma\)` to the set of parameters to be estimated.
+
+--
+
+Simple maximization problem
+
+---
+
+## Ordinary Least Squares - OLS
+
+The last one, which we will use very often, finds the optimal `\(\beta's\)` by minimizing the square errors:
+
+`$$\hat\beta_{ols}=min \sum \hat u(\hat \beta)^2 =min \sum(y_i-\hat\beta_0 -\hat\beta_1 x)^2$$`
+In other words, we are trying to find the best model, by minimizing the errors. Simple system of equations.
+
+NOTE: This is a simple Minimization problem
+
+---
+
+class: center, middle, inverse
+
+## 3 paths that lead to Rome
+
+---
+
+## How are Betas Estimated?
+
+Surprisingly, all the methods I described give you the same solution!
+
+`$$\hat \beta_0 = \bar y - \hat \beta_1 \bar x$$`
+`$$\hat \beta_1 = \frac{\sum (x_i-\bar x)(y_i-\bar y_i)}{\sum(x_i-\bar x)^2} = \frac{cov(x,y)}{var(x)}= \hat \rho_{xy}\frac{\sigma_y}{\sigma_x}$$`
+
+**Rough interpretation: **
+
+- `\(\hat\beta_0\)` is the predicted value of `\(y\)` when `\(x=0\)`.
+
+- `\(\hat\beta_1\)` is how Y is expected to change when `\(x\)` changes in 1 unit.
+
+---
+
+## Example
+
+.panelset[
+
+.panel[
+
+```r
+ data(wage2)  
+ wage2$wage_hr=wage2$wage/wage2$hours
+ # wage per hour
+ y=wage2$wage/wage2$hours
+ # education
+ x=wage2$educ
+ b1=sum((x-mean(x))*(y-mean(y)))/ sum((x-mean(x))^2)
+ b0=mean(y)-b1*mean(x)
+ c(b0,b1)
+[1] 5.669935 1.229938
+```
+]
+
+.panel[.panel-name[1line]
+One liner?
+```stata
+bcuse wage2
+gen wage_hr=wage/hours
+reg wage_hr educ
+```
+]
+ 
+
+.panel[.panel-name[Interpretation]
+
+- Someone without education may earn 5.87$ per hour. 
+
+- Each additional year of education increases his/her wage by 1.22$ per hour.
+
+- Are these numbers reasonable?
+
+]
+
+]
+
+---
+
+## Goodness of Fit
+
+Now that you have your model, you may also want to know How good is it explaining the data?
+
+&lt;img src="figures/ols4.png" margin-left=auto margin-right=auto height="450"&gt;
+
+---
+
+## Goodness of Fit
+
+There is actually a tight relationship:
+
+- We at least have to get means right `\(E(y)=E(\hat y)\)`
+
+- But, there is an erro: `\(y=\hat y + \hat e\)`
+
+- We can rewrite this in terms of diffeences:
+
+`$$y-E(y) = \hat y -E(\hat y) + \hat e - E(\hat e)$$`
+
+- Now, square both sides and sum:
+
+`$$\sum(y-\bar y)^2=\sum(\hat y-\bar y)^2 + \sum\hat e^2$$`
+$$ SST = SSE + SSR $$
+Finally, How good is your mode?
+
+$$ R^2 = \frac{SSE}{SST} = 1-\frac{SSR}{SST}$$
+How much of Total variation of Y is explained by the model.
+
+---
+
+class: center, middle, inverse
+
+## BUT: High R2 Does not make a good model!
+
+--
+
+## And low R2 Does not make a bad one either
+
+---
+
+class: center, inverse
+
+background-image: url("figures/6fjwau.jpg")
+
+---
+
+## Assumptions:
+
+So far, we have learn **how** to estimate a SRM (also using R). However, that is not enough.
+
+For us to interpret the model appropietly, we need to at least be aware of the underlying assumptions.
+
+**SRL1**: The population model is linear in Parameters
+
+$$y=\beta_0 + \beta_1 x + e \ or \ E(y|x)=\beta_0 + \beta_1 x $$
+Translation, you should know something about the population DGP.
+
+---
+
+## Assumptions:
+
+**SRL2**: Sample is obtained true Random sampling
+
+Translation: Your sample should represent the population. (rather than Small samples)
+
+![ols4](figures/ols5.png)
+
+---
+
+
+## Assumptions:
+
+**SRL3**: There is variation in the Explanatory variable
+
+`$$Var(X)&gt;0 \ \ \sum(X-\bar x)^2&gt;0$$`
+Without variation, there is nothing to identify effects
+
+---
+
+## Assumptions:
+
+**SRL4**: Zero Conditional mean
+
+For us to capture a casual relationship, changes in `\(X\)` HAVE to be independent from changes in `\(e\)`.
+
+`$$E(e|x)=0$$`
+
+Translation:
+
+- This is the *ceteris paribus* assumption. We need to assume that any other factor that isn't explicit in the model, but in `\(e\)`, is independent of `\(X\)`. 
+
+---
+
+## Assumptions (1-4) `\(\rightarrow\)` unbiased coefficients!
+
+- Because we are using random samples, estimated coefficients will be different every time.
+
+- But, if SRL1-4 hold, and we repeat the process over, and over, and over again, On average, we will get estimates that are similar to the population parameters.
+
+MATH:
+
+`$$\hat \beta_1 = \frac{\sum \tilde x \tilde y}{\sum \tilde x^2} \ with \ \tilde x=x-\bar x$$`
+`$$\hat \beta_1 = \frac{\sum \tilde x (\beta_1 \tilde x + e) }{\sum \tilde x^2}=\beta_1 + \frac{\sum \tilde x e}{\sum \tilde x^2}=\beta_1$$`
+For the constant (exercise)
+
+---
+
+## Assumptions (1-4) `\(\rightarrow\)` unbiased coefficients!
+
+![ols5](figures/ols6.png)
+
+---
+
+## Assumptions
+
+Visually, the previous figure shows you the size of the sample variability (how much the estimations fluctuate)
+
+In general, to have a better idea of the magnitude of variability, we need an additional assumption:
+
+**SSLR5** Homoskedasticity: the value of the explanatory variable must contain no information about the variablity of unobserved factors.
+
+`$$E(e^2|X)=\sigma^2_e$$`
+
+Translation: The variation of unobserved factors should not depend on the variables we are controlling for,
+
+---
+
+## Assumptions
+
+![ols7](figures/ols7.png)
+---
+
+## Assumptions
+
+Homoskedasiticy assumption helps (mathematically) to obtain standard errors of the estimated coefficients:
+
+`$$Var(\hat \beta_1)=Var \left( \beta_1 + \frac{\sum(\tilde x e)}{\sum \tilde x^2} \right)=Var( \beta_1) + Var \left(\frac{\sum(\tilde x e)}{\sum \tilde x^2}\right)$$`
+`$$Var(\hat \beta_1)= \frac{\sum \tilde x^2 \sigma^2_e}{\left(\sum \tilde x^2 \right)^2}=
+\frac{\sigma_e^2}{\sum \tilde x^2}=\frac{\sigma^2_e}{SST_x}$$`
+`$$\hat \sigma_e^2 =\frac{SSR}{N-2}$$`
+---
+
+## Assumptions
+
+```stata
+bcuse wage2, clear
+reg wage_hr educ
+```
+
+
+---
+
+class: center, middle, inverse
+
+## Can we do better with the SRM? 
+and how far can we take it?
+
+--
+
+### yes we can!
+
+---
+
+## Moving a bit further:
+
+- Regressions without a constant: `\(\beta_0=0\)` Not be recommended! (except in very few cases)
+
+Why?
+
+--
+
+- Changing Scales and shifting variables. Some times, it may be important for you to change the scale of variables, to make better sense of results.
+
+These are called affine transformations `\(\beta^*=a+c\beta\)`. They only change scales of slopes or the intercept. 
+
+&gt; Instead of measuring wages in ***Imperial credit credits per parsec***, you may want do use Dollars per hour.
+
+--
+
+- You can stay within linear regression, but have models nonlinear in variables: 
+
+`$$y=a_0+a_1f(x)+e \ or \ g(y)=a_0+a_1 x+e$$` 
+The most common example using natural logs. -- (not always appropriate)
+
+This, however, changes the model, and interpretation. You move from linear effects to elasticities, and semi elasticities!.
+
+---
+
+## Logs in the model:
+
+Different options with different interpretations
+
+$$lin-lin \ model: y = b_0 + b_1 x +e \rightarrow \frac{dy}{dx}=b_1 $$
+$$log-lin \ model: log(y) = b_0 + b_1 x +e \rightarrow \frac{\%dy}{dx}=b_1 $$
+$$lin-log \ model: y = b_0 + b_1 log(x) +e \rightarrow \frac{dy}{\%dx}=b_1/100 $$
+$$log-log \ model: log(y) = b_0 + b_1 log(x) +e \rightarrow \frac{\%dy}{\%dx}=b_1 $$
+---
+
+class: center, middle, inverse
+
+background-image: url("https://static.wikia.nocookie.net/looneytunes/images/e/e1/All.jpg")
+
+---
+
+class: center, middle, inverse
+
+background-image: url("figures/6flp77.jpg")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+.title-slide {
+  background-image: url(https://upload.wikimedia.org/wikipedia/commons/3/39/Naruto_Shiki_Fujin.svg);
+  background-size: cover;
+}
+&lt;/style&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%",
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

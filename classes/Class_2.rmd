@@ -1,0 +1,628 @@
+---
+title: "Multiple Linear Regression"
+subtitle: "A New Hope"  
+author: 
+  - "Fernando Rios-Avila"
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      slideNumberFormat: "%current%"
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+      countIncrementalSlides: false
+ 
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(
+  fig.width=8, fig.height=6, fig.retina=3,
+  out.height = "100%",
+  cache = FALSE,
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  hiline = TRUE
+)
+library(tidyverse)
+library(wooldridge)
+library(fixest)
+```
+
+class: center, middle, inverse
+background-image: url(https://starwarsblog.starwars.com/wp-content/uploads/2020/04/star-wars-backgrounds-25.jpg)
+background-size: cover;
+
+## Add Youtube Video
+During the last class we stated that one of the main objectives in econometrics is to identify Causal Effects: How X affect Y. We were introduced to our first tool: The Simple Linear Regression.
+
+This tool allows you to capture causal effects in a model with only control variable, under very strict assumptions.
+
+Those assumptions are too strong, and may fall under minimal scrutiny. We need something better and more flexible...
+
+Today, we will expand on SRM and call into Multiple Linear Regression, allowing more controls in your model.
+
+With this added flexibility, we may be able to capture casual effects, although nothing is certain...
+
+<iframe width="1152" height="698" src="http://play.starwars.com/html5/starwars_crawlcreator/?cid=null" frameborder="0" scrolling="no"></iframe>
+
+
+---
+
+## Motivation
+
+- When we introduced SLR, we started with a simple model such as:
+
+$$y = \beta_0 + \beta_1 x +u$$
+
+This is an over simplification of the relationships between $x$ and $y$. Because of this the assumptions may be easily violated. 
+
+Among other things, there could be many factors in $u$ that could be related (cause) $x$ and $y$. For example $z$. Examples?
+
+--
+
+- Multiple Linear Regression helps coping with this limitation, because you can simply **add** $z$ to the model.
+
+$$y = \beta_0 + \beta_1 x +\beta_2 z +u$$
+
+This way you can explicity account for $z$: it doesn't matter if $corr(x,z)\neq 0$,  Because by controlling for it, you can treat it as constant for your analysis!
+
+> There are some limitations to this.
+
+---
+
+## Motivation
+
+What do we need to know about the linear regression?
+
+$$y=\beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_k x_k + u $$
+
+--
+
+- $y$ is your dep variable, $x_1, x_2, ..., x_k$ are your $k$ independent variables, and $u$ is your error term, or unobservables.
+
+--
+
+- $\beta_0$ is your intercept, $\beta_1, \beta_2,...,\beta_k$ are the slope parameters.
+
+--
+
+So what are the motivations behind MLR?
+
+--
+
+- Incorporate more explanatory factors in your model.
+
+--
+
+- This allows to explicitly hold those factors "fixed", which otherwise would be in $u$.
+
+--
+
+- This also allows you to use more flexible functional forms (nonlinear?)
+
+---
+
+class: center, middle , inverse
+
+## Example: Determinants of Student's Performance
+
+---
+
+## Does expenditure affect Student's Performance
+
+- Definition: We will assume Student's Performance is given by their avg. GPA 
+
+- And expenditure will be per student expenditure, a proxy for education quality.
+
+- So, what is GPA (0-4) a function of?
+
+$$GPA = \beta_0 + \beta_1 log(exp_{ps})+u$$
+--
+
+- What is the ideal experiment? 
+
+--
+
+- But ideal Experiment isn't possible, so we control for some factors:
+
+$$GPA = \beta_0 + \beta_1 log(exp_{ps}) + \beta_2 log(hhinc) +  \beta_3 parent\_educ + \beta_4 hrs\_study + \beta_5 hrs\_study^2 + u$$
+
+- Factors like Household income, and parents education may be related to School expenditure. Some others, like hours of study may not, but it is still useful to add them to the model.
+
+
+- Now, how do you interpret the results? We will see this soonish...
+
+
+---
+
+
+class: center , middle, inverse
+
+## How would your assumptions change?
+
+--
+
+### Same as before, but different
+
+--
+
+### More flexible, doesnt mean there is nothing to worry.
+
+---
+
+## Assumptions
+
+Before we learn how to **estimate** these kind of models (nothing really new about it), we need to understand the assumptions needed to make causal interpretations of the model.
+
+--
+
+> **A1** Linear in parameters: $y=\beta_0+\beta_1 x_1 + ... + \beta_k x_k + u$$
+
+You assume that, for the population (what we are after), the relationship between $x's$ and $y$ (or more specifically between $E(y|x)$) is linear in parameters (coefficients)
+
+Even If you use nonlinear functions of $x$ (say $g(x)$), the model is still linear.
+
+--
+
+> **A2** Random Sampling: Thus sample is representative of the population
+
+This also implies that observation $i$ and $j$ are independent from each other (if $u_i$ changes, $u_j$ remains constant) Example?
+
+---
+
+## Assumptions
+
+> **A3** No Perfect Collinearity
+
+Two interpretations: 
+
+1. None of the indep variables is constant (has some variation)
+2. And no variable is a **linear** combination of other variables in the model (Has unique variation)
+
+--
+
+In other words, if you want to a coefficient, you need .red[variation].
+
+--
+
+- Some correlation is allowed (and unavoidable). 
+
+- If two (or more) Variables are perfectly correlated, one may be dropped. In reality you cannot estimate coefficients for all!
+
+
+---
+
+## Assumptions
+
+The most Important! 
+
+--
+
+> **A4** Zero Conditional mean: $E(u_i|x_1,x_2,...,x_3)=0$
+
+Explanatory variables should have no information about hte mean of the unobserved factors. 
+
+--
+
+**Translation**: there is nothing in $u_i$ that will affect $X's$. 
+
+In MLR, you are closer to fulfill this assumption, because you are **move** more factors from $u$ to the explicit model specification.
+
+--
+
+Further Interpretations
+
+- If $X's$ are correlated with $u$, those variables are called **endogenous**, otherwise they are called **exogenous**
+
+--
+
+- A4 Holds if **ALL** variables are exogenous. 
+
+---
+
+## Unbiasedness of OLS
+
+> If Assumptions 1-4 hold, then OLS will generate unbiased estimators for $\beta's$
+
+Again, this doesn't mean sample estimates are the same as the population, but in average, they will converge to the population parameters.
+
+---
+
+## Other Assumptions
+
+> **A5** Homoskedasticity: $Var(u|x's)=\sigma^2$
+
+The explanatory variables must not be correlated with the information about the variance of unobserved factors. 
+
+**Translation**: Errors distributions is the same for everyone, regardless of $X's$
+
+--
+
+With this assumption, it is possible to estimate Variance of OLS coefficients...easily:
+
+$$Var(\beta_j) = \frac{\sigma^2}{SST_j (1-R_j^2) }$$
+
+Where 
+
+$$SST_j = \sum(x_j - \bar x_j)^2 \ and \ \hat \sigma^2=\frac{\sum \hat u^2}{N-(k+1)} $$
+--
+
+If A1-A5 holds, then $\hat\sigma^2$ is an unbiased estimator of $\sigma^2$
+
+
+ 
+
+
+---
+
+
+class: center , middle, inverse
+
+## Estimation
+
+--
+
+### Same as before, but different
+
+---
+
+## OLS with MLR
+
+As with SLR, you can use many methods to estimate the coefficients: **GMM**, **MLE**, or **OLS**. But since they all give you the same result, we will stick to OLS.
+
+SO how to proceed? 
+
+--
+
+- For a given *guess* for $\beta's$ estimate residuals $\hat u$
+
+$$\hat u = y-\hat\beta_0-\hat\beta_1 x_1 -\hat\beta_2 x2 - ... - \hat\beta_k x_k$$
+--
+
+- To choose **best** $\beta's$, find the ones that minimizes the sum of squared errors. for a model with $k+1$ unknown parameters.
+
+$$\hat\beta = min \sum_{i=1}^n \hat u_i(\hat\beta)^2$$
+Simple enough.
+
+---
+
+## OLS with MLR
+
+Objective function
+
+$$SSR=\sum_{i=1}^n(y-\hat\beta_0-\hat\beta_1 x_1 -\hat\beta_2 x_2 - ... - \hat\beta_k x_k)^2$$
+--
+
+- First order Conditions (FOC)
+
+$$\frac{\partial SSR}{\partial \hat \beta_0} = -2 \sum \hat u = 0$$
+$$\frac{\partial SSR}{\partial \hat \beta_j} = -2 \sum \hat x_j \hat u = 0$$
+
+This is a .blue[simple] system of equations. 
+
+Note: I may or nor ask to estimate a simple OLS by hand! so know how to get this.
+
+---
+
+## OLS for MLR: Matrix way
+
+$$y=X\beta+e$$
+FOC
+
+$$X'(y-X\beta) = 0$$
+Solution:
+
+$$\hat\beta=(X'X)^{-1} X'y$$
+
+You will see this very often so keep it on your back pocket.
+
+---
+
+class: center, middle, inverse
+
+## SLR tries finding the LINE of best fit.
+
+--
+
+## MLR instead tries finding the .red[*hyper*]plane of best fit.
+
+---
+
+class: center , middle, inverse
+
+## More variables, more power
+
+--
+
+## But may be more difficult to interpret?
+
+---
+
+## Interpretation of MRL
+
+Consider the following model
+
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_2^2 + \beta_4 log(x_3) +u$$
+$$ln(wage) = \beta_0 + \beta_1 educ + \beta_2 exp + \beta_3 exp^2 + \beta_4 log(dist\_work) +u$$
+--
+
+How do we interpret the effects? (For now, lets put the theory behind)
+
+--
+
+Lets assume that $u$ is homoskedastic, and rewrite the effect as follows:
+
+$$y=\beta_0 + g_1(x_1)+ g_2(x_2) + g_3(x_3) + u$$
+So how do we estimate effects of change of $X$ on $y$? $\rightarrow$ Your old friend, partial derivative.
+
+--
+
+Question: Why does it matter that the errors are homoskedastic? 
+
+---
+
+## Partial effects:
+
+Some times the effect is constant regardless of $x_1$ values
+
+$$\frac{\partial y_i}{\partial x_1}=\frac{\partial g_1(x_1)}{\partial x_1}=\beta_1$$
+--
+
+But when the function is nonlinear, the effect will depend on values of $x$.
+
+$$\frac{\partial y_i}{\partial x_{i2}}=\frac{\partial g_2(x_{i2})}{\partial x_{i2}}=\beta_2+2\beta_3 x_{i2}$$
+--
+
+Log is a special case. You can use either of this:
+
+$$\frac{\partial y_i}{\partial x_{i3}}=\frac{\partial g_3(x_{i3})}{\partial x_{i3}}=\beta_4 \frac{1}{x_{i3}} ; \frac{\partial y_i}{ \partial log(x_{i3}) } = \beta_4$$
+---
+
+## Partial effects:
+
+What if you want only 1 value? something that represents the sample, not each individual?
+
+what do you do? and do you always need to worry about it?
+
+--
+
+Not always: Case 1, and perhaps Case 3
+
+--
+
+In all other cases, you need to use either Partial effects at Means, or Average partial effects
+
+--
+
+APE: 
+
+$$E\left( \frac{\partial y_i}{\partial x_{i2}}\right) = \beta_2+2\beta_3 \bar x_2$$
+
+--
+
+PE at Means:
+
+$$\frac{\partial y_i}{\partial x_{2}} |_{x_2=\bar x_2}   = \beta_2+2\beta_3 \bar x_2$$
+In this case, they are the same, but they may not in general cases.
+
+---
+
+## How do we do this in practice?
+
+- While I encourage you to know how to do this by hand, `Stata` can easily estimate this using `margins`
+
+```stata
+use http://fmwww.bc.edu/RePEc/bocode/o/oaxaca.dta, clear
+reg lnwage educ age c.educ#c.age
+margins, dydx(educ age)
+margins, dydx(educ age) atmeans
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        educ |     .07623   .0050608    15.06   0.000     .0663025    .0861574
+         age |    .015485   .0011212    13.81   0.000     .0132856    .0176844
+------------------------------------------------------------------------------
+```
+- But what if the model is MORE complex??? (look into `f_able`)
+
+---
+
+## In summary
+
+![](figures/6rja6n.jpg)
+
+---
+
+class: center , middle, inverse
+
+# What is partialling out?
+
+--
+
+## Alternative view to interpretation
+
+---
+
+## partialling-out = partial effects?
+
+- One of the interpretations of marginal effects is to obtain the partial effect of $X$ on $y$:
+  - keeping other factors constant.
+  - after accounting for the effect of all other factors.
+  
+--
+
+- These two interpretations are slightly different, even though they arrive to the same result:
+
+  - 1st: Effects are obtained by obtaining the changes in the predicted values changing the values of a single variable.
+  - 2nd: Effects are obtained by re-estimating the model using residuals variation of the outcome and variables of interest only.
+  - This residual variation no longer depends on the variables that were left out of the model. 
+  
+--
+  
+  - The later is known as the Frisch-Waugh-Lovell Theorem
+
+---
+
+## Stata Example
+
+.panelset[
+.panel[.panel-name[code]
+```stata
+use http://fmwww.bc.edu/RePEc/bocode/o/oaxaca.dta, clear
+eststo m1:reg lnwage educ exper tenure
+eststo m2:reg lnwage educ
+eststo m3:reg lnwage exper
+eststo m4:reg lnwage tenure
+esttab m1 m2 m3 m4
+```
+]
+.panel[.panel-name[results]
+```stata
+. esttab m1 m2 m3 m4, se
+----------------------------------------------------------------------------
+                      (1)             (2)             (3)             (4)   
+                   lnwage          lnwage          lnwage          lnwage   
+----------------------------------------------------------------------------
+educ               0.0870***       0.0800***                                
+                (0.00516)       (0.00539)                                   
+
+exper              0.0113***                       0.0124***                
+                (0.00154)                       (0.00137)                   
+
+tenure            0.00837***                                       0.0157***
+                (0.00188)                                       (0.00168)   
+
+_cons               2.140***        2.434***        3.195***        3.234***
+                 (0.0650)        (0.0636)        (0.0226)        (0.0190)   
+----------------------------------------------------------------------------
+N                    1434            1434            1434            1434   
+----------------------------------------------------------------------------
+Standard errors in parentheses
+%* p<0.05, ** p<0.01, *** p<0.001
+```
+]
+.panel[.panel-name[results]
+```stata
+ reg lnwage educ exper
+ predict rlnwage, res
+ reg tenure educ exper
+ predict rtenure, res
+ reg rlnwage rtenure
+       Source |       SS           df       MS      Number of obs   =     1,434
+-------------+----------------------------------   F(1, 1432)      =     19.92
+       Model |  4.35836453         1  4.35836453   Prob > F        =    0.0000
+    Residual |  313.284687     1,432  .218774223   R-squared       =    0.0137
+-------------+----------------------------------   Adj R-squared   =    0.0130
+       Total |  317.643052     1,433  .221662981   Root MSE        =    .46773
+
+------------------------------------------------------------------------------
+     rlnwage | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     rtenure |   .0083675   .0018747     4.46   0.000     .0046901     .012045
+       _cons |   5.09e-10   .0123516     0.00   1.000    -.0242292    .0242292
+------------------------------------------------------------------------------
+
+```
+]
+.panel[.panel-name[results]
+![](figures/c2_f1.png)
+]
+]
+
+---
+
+class: center , middle, inverse
+
+## How good my model is?
+
+--
+
+### Goodness of FIT: $R^2$
+
+---
+
+## Goodness of FIT 
+
+- Goodness of FIT, or $R^2$ is a measure used to evaluate how well does the model fit the data. 
+
+- Higher $R^2$ more variation is explained!. 
+
+  - But doesnt necessarily mean your model is "better"
+  
+- But how do we obtain it?
+
+--
+
+$$SST=SSE+SSR$$
+$$R^2 = \frac{SSE}{SST} = 1- \frac{SSR}{SST}$$
+
+- We either measure how much of $SST$ we can explain, or "1-" how much we cannot explain.
+
+--
+
+$$R^2 = \frac{Cov(y,\hat y)^2}{Var(y)Var(\hat y)}=\rho^2(y,\hat y)$$
+---
+
+background-image: url(https://i.imgflip.com/6rjq0f.jpg)
+
+---
+
+## High R2: Overfitting
+![](figures/c2_f2.png)
+
+---
+
+class: center , middle, inverse
+
+## That's All for today
+
+--
+
+## Next Week: Statistical inference
+
+### To be Normal or not to be normal
+
+
+
+```{r xaringanExtra, echo=FALSE}
+xaringanExtra::use_xaringan_extra(c("tile_view","editable","scribble",
+                                    "panelset","tachyons",
+                                    "clipboard","freezeframe",
+                                    "extra_styles"))
+
+#xaringanExtra::use_logo(  image_url =xaringanExtra::use_freezeframe() "https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/xaringan.png")
+#,"freezeframe","share_again"
+```
+
+
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_accent(base_color = "#1b0303", 
+ colors = c(
+  red = "#f34213",
+  purple = "#3e2f5b",
+  orange = "#ff8811",
+  green = "#136f63",
+  white = "#FFFFFF"),
+text_font_size = "1.1em"
+
+ )
+
+##code_font_google   = google_font("Fira Mono")
+
+```
+
+```{css echo=FALSE}
+.title-slide {
+  background-image: url(https://starwarsblog.starwars.com/wp-content/uploads/2020/04/star-wars-backgrounds-25.jpg);
+  background-size: cover;
+}
+```

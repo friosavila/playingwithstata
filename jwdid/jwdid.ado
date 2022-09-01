@@ -1,4 +1,5 @@
-*! v1 FRA 8/5/2022 Has almost everything we need
+*! v1.1 FRA 8/5/2022 Redef not yet treated. 
+*! v1   FRA 8/5/2022 Has almost everything we need
 program jwdid, eclass
 	syntax varlist [if] [in] [pw], Ivar(varname) Tvar(varname) Gvar(varname) [never group method(name)]
 	marksample  touse
@@ -6,10 +7,20 @@ program jwdid, eclass
 	gettoken y x:varlist 
 	
 	** Count gvar
+	/*qui:count if `gvar'==0 & `touse'==1 
+	if `r(N)'==0 {
+		*qui:sum `gvar' if `touse'==1 , meanonly
+		
+	}*/
+	** Take out of sample units that have always been treated.
+	tempvar tvar2
+	qui:bysort `touse' `ivar': egen long `tvar2'=min(`tvar')
+	qui:replace `touse'=0 if `touse'==1 & `tvar2'>=`gvar' & `gvar'!=0 & `tvar'>=`gvar'
+	** If no never treated
 	qui:count if `gvar'==0 & `touse'==1 
 	if `r(N)'==0 {
 		qui:sum `gvar' if `touse'==1 , meanonly
-		replace `touse'=0 if `touse'==1 & `tvar'>=r(max)
+		qui:replace `touse'=0 if `touse'==1 & `tvar'>=`r(max)' 
 	}
 	qui:capture drop __tr__
 	qui:gen byte __tr__=0 if `touse'
