@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Statistical Matching</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Fernando Rios-Avila" />
+    <meta name="date" content="2022-09-21" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+    <script src="libs/fabric/fabric.min.js"></script>
+    <link href="libs/xaringanExtra-scribble/scribble.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-scribble/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#FF0000"],"pen_size":3,"eraser_size":30,"palette":[]}) })</script>
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Statistical Matching
+## TUS &amp; DHS
+### Fernando Rios-Avila
+### Levy Economics Institute
+### 2022-09-21
+
+---
+
+
+
+
+class: center middle
+# Putting data together
+
+--
+
+## Even if they were created appart
+
+
+???
+background-image: url(https://madeinshoreditch.co.uk/wp-content/uploads/2016/01/long-distance-relationship-korean-couple-photo-collage-half-shiniart-e.jpg)
+url(https://upload.wikimedia.org/wikipedia/commons/b/be/Sharingan_triple.svg)
+---
+
+## What is Statistical Matching
+
+- Statistical matching is a methodology that can be used to **link** datasets together.
+
+--
+
+- The goal is to create a **synthetic** dataset that has variables that would otherwise not be observed simultaneously. (time use and Patriarcal perceptions)
+
+--
+
+- This type of analysis can be viewed as an imputation methodology when data is missing by design. 
+
+--
+
+  1. Each survey represents the population
+  2. Each survey contains variables that the other doesn't.
+  3. They both share a set of common variables that could be used to **link** them together.
+
+--
+
+- And once the data is put together, it could be used to draw some conclusions on otherwise unobserved relationships.
+
+---
+
+## Why not Linking 
+
+- When referring to Matching and linking, it is common to relate SM to linking datasets with deterministic or stochastic identifiers.
+
+--
+
+- Deterministic identifiers, for example, use universal identifying variables (ID card numbers, Social Security, other) to link records across different databases.
+
+--
+
+- Stochastic identifiers work similarly to SM in that records are linked if they share very similar characteristics (age, sex, place residence, name, etc). Neverteless the potentially linked variables should refer to the **same** individuals across time. 
+
+--
+
+- When datasets belong collect to different individuals, the approaches above do not work, and we require a different method: Imputation.
+
+- Specifically, we propose the application of Statistical Matching to link observations with similar characteristics from the population.
+
+---
+
+## Statistical Matching: Generalities
+
+- Assume that you are interested in analyzing the joint distribution of three variables `\(F(x,y,z)\)`. 
+
+- Unfortunately, variables are not collected in the same dataset. Instead, one has access to two datasets: `\(D\)` and `\(R\)`.
+
+  - Dataset `\(D\)` has data for `\((x,z)\)`, whereas `\(R\)` has data for `\((y,z)\)`
+
+--
+
+- If both samples collect information from the same underlying population, it would be possible to analyze the joint distribution, via the following simplification:
+
+`$$f(x,y,z)=f(x,y|z)f(z) \rightarrow f(x|z)f(y|z)f(z)$$`
+--
+
+This has strong implications. 
+
+--
+
+- For Statistical matching to work (and most other Imputations), we need to impose the conditional independence assumption. `\(f(x,y|z)=f(x|z)f(y|z)\)`
+
+--
+
+- In other words, we need that conditional on `\(z\)`, `\(x\)` and `\(y\)` are as good as independent. Thus, all interdependence between them is captured via `\(z\)`.
+
+---
+
+## Statistical Matching: Implementation
+
+- Under CIA, Statistical matching is as simple as substituting the population conditional distributions with the sample based distributions:
+
+`$$\hat f_R(x,y|z) \hat f_R(z)= \hat  f_R(x|z) \hat f_D(y|z) \hat f_R(z)$$`
+--
+
+- Empirically we require to **transfer/copy** records from the *Donor* to the *Recipient* if they have sufficiently close Characteristics.
+
+--
+
+- However, three aspects should be considered before implementation:
+
+---
+
+## SM: Samples should representing the same population
+
+- This is a testable assumption. 
+- If both samples represent the same population, we can simply use the samples as is, before linking records across surveys. 
+  `$$f(x,y,z) = f_R(x,y,z) = f_D(x,y,z)$$`
+  
+  - This can be tested by comparing the distributions of Z
+
+--
+
+- However, if the distributions of Z differ, one may need to do further adjustments before applying SM (re-weighting):
+
+---
+
+## SM: Samples should representing the same population
+
+
+![](libs/fig1.png)
+
+---
+
+## SM: Accounting for High Dimensional Z
+
+- When `\(Z\)` is low dimensional, it is easy to "best" candidates for matching.
+
+- However with high dimensional `\(z\)`, finding "best" matching candidates may be difficult, if not impossible. 
+  - Finding another **you** in the population may not be feasible.
+  
+--
+
+- The alternative is to "reduce" data dimensionality before proceed into the matching. We consider a 3 Step procedure:
+
+  1. Principal Component Analysis: Data reduction technique that identifies few components that maximizes correlation with variables of Interest: `\(Z^K \rightarrow PCA  \rightarrow z^k\)`
+  
+  1. Cluster analysis: Uses `\(z^k\)` to identify observations that are ***similar*** to each other.
+  
+  1. Propensity Score Estimation. Find `\(P(D|z)\)` using a logit/LPM, etc. `\(Z^K \rightarrow logit  \rightarrow z^1\)`
+
+---
+
+## SM: Accounting for High Dimensional Z: PCA
+
+![](libs/fig2.png)
+
+---
+
+## SM: Accounting for High Dimensional Z: PCA
+
+![](libs/fig3.png)
+---
+## SM: Cluster Analysis
+
+![](libs/fig5.png)
+---
+
+## SM: pscore and cluster Analysis
+
+![](libs/fig6.png)
+
+---
+
+## SM: Matching Approach: Constrained vs Unconstrained
+
+- The last consideration depends on what is the best approach for matching: Constrained vs unconstrained
+
+--
+
+- Unconstrained: Finding the "Best" match for each observation (closest in characteristics). 
+  - Some units used multiple times, some none.
+  - May not replicate the distribution of the "transferred" variable.
+  
+- Constrained: Finding the "Best" ranked match for each observation, but not the best for the observation.
+  - All units are used once (weight wise)
+  - It potentially replicates the full distribution of the "transferred" variable.
+  - Raised the question of how to treat weighted Samples (best split sa)
+  
+---
+
+## SM: Matching Approach: Constrained vs Unconstrained
+
+![](libs/fig7.png)
+---
+
+## SM: Matching Approach: Constrained with Weight Split
+
+![](libs/fig8.png)
+
+
+---
+
+## SM: Matching TUS to DHS (and HBS)
+
+- For the African countries Case, we have a slightly more difficult scenario:
+
+  - TUS is for most cases our Recipient data (Interest in intra-household interactions). 
+    
+  - Donor DHS. Complex survey that collects info for families, women, men, children. 
+  
+--
+  
+    - But not necessarily in the same household.
+    
+--  
+  
+- Solution: Double Match. DHS-Women -&gt; TUS women; DHS-Men -&gt; TUS Men
+
+  - Balance characteristics only among eligible individuals (15-49 women 15-59 Men). 
+  
+  - Thus assumes CIA of "answers" regarding DHS intra household information.
+  
+--
+
+- Data is also back linked to HBS (household Budget Survey) to obtain data on Consumption/Income and Construct LIMPTIP.
+
+  - HBS -&gt; TUS : Difficult to obtain household Data based on individual information
+  - TUS -&gt; HBS : Requires assuming CIA on time allocation 
+
+---
+
+class: center, middle
+
+# Thank you
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
