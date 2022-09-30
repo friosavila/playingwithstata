@@ -1,0 +1,14 @@
+CENSUS2000.DES
+
+
+state     puma      educ      lweekinc  exper     expersq
+
+
+  obs:    29,501                          
+
+state                   State (ICPSR code)
+puma                    Public Use Microdata Area
+educ                    educational attainment
+lweekinc                log(weekly income)
+exper                   years workforce experience
+expersq                 exper^2

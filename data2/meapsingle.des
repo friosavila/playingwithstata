@@ -1,0 +1,25 @@
+meapsingle.des
+
+dcode      bcode      math4     read4     enroll    exppp     free     reduced     lunch
+medinc     totchild   married   single    pctsgle   zipcode   lenroll  lexppp      lmedinc
+
+  Obs:      229                          
+
+    1. dcode                  district code
+    2. bcode                  building code
+    3. math4                  % satisfactory, 4th grade math
+    4. read4                  % satisfactory, 4th grade reading
+    5. enroll                 school enrollment
+    6. exppp                  expenditures per pupil, $
+    7. free                   % eligible, free lunch
+    8. reduced                % eligible, reduced lunch
+    9. lunch                  free + reduced
+   10. medinc                 zipcode median family, $ (1999)
+   11. totchild               # of children (in zipcode)
+   12. married                # of children in married-couple families
+   13. single                 # of children not in married-couple families
+   14. pctsgle                % of children not in married-couple families
+   15. zipcode                school zipcode
+   16. lenroll                log(enroll)
+   17. lexppp                 log(exppp)
+   18. lmedinc                log(medinc)

@@ -1,0 +1,14 @@
+beveridge.des
+
+month    urate    vrate    t        urate_1  vrate_1  curate   cvrate
+
+obs:           135                          
+ 
+month                       dec 200 through feb 2012 
+urate                       unemployment rate, percent
+vrate                       vacancy rate, percent
+t                           linear time trend
+urate_1                     urate_1
+vrate_1                     vrate_1
+curate                      urate - urate_1
+cvrate                      vrate - vrate_1

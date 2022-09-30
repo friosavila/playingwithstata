@@ -1,0 +1,24 @@
+approval.des
+
+id         month    year        sp500         cpi    cpifood        approve   gasprice   
+unemploy   katrina  rgasprice   lrgasprice    sep11  iraqinvade     lsp500    lcpifood
+                          
+
+  Obs:      78
+                         
+    1. id                     id
+    2. month                  month
+    3. year                   year
+    4. sp500                  S&P 500 index
+    5. cpi                    Consumer Price Index
+    6. cpifood                CPI for food
+    7. approve                Gallup approval rate, percent
+    8. gasprice               average gas price, cents
+    9. unemploy               unemployment rate, percent
+   10. katrina                =1 for three months after Hurricane Katrina
+   11. rgasprice              real gas price, 100*(gasprice/cpi)
+   12. lrgasprice             log(rgasprice)
+   13. sep11                  =1 for 09/2001 and two months following
+   14. iraqinvade             =1 for three months after Iraq invasion
+   15. lsp500                 log(sp500)
+   16. lcpifood               log(cpifood)

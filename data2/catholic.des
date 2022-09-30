@@ -1,0 +1,19 @@
+catholic.des
+
+id      read12    math12    female    asian     hispan    black     motheduc  fatheduc  lfaminc   hsgrad    cathhs    parcath
+
+  Obs:      7,430   
+                       
+    1. id                  person identifier
+    2. read12              reading standardized score
+    3. math12              mathematics standardized score
+    4. female              =1 if female
+    5. asian               =1 if Asian
+    6. hispan              =1 if Hispanic
+    7. black               =1 if black
+    8. motheduc            mother's years of education
+    9. fatheduc            father's years of education
+   10. lfaminc             log of family income
+   11. hsgrad              =1 if graduated from high school by 1994
+   12. cathhs              =1 if attended Catholic HS
+   13. parcath             =1 if a parent reports being Catholic
