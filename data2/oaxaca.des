@@ -1,0 +1,26 @@
+OAXACA.DES
+
+lnwage    educ      exper     tenure    isco      female    lfp       age       agesq     single    married   divorced  kids6     kids714   wt
+
+
+ Observations:         1,647                  Excerpt from the Swiss Labor Market Survey 1998
+    Variables:            15                  30 Jun 2022 08:03
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+
+lnwage          float   %9.0g                 log hourly wages
+educ            float   %9.0g                 years of education
+exper           float   %9.0g                 years of work experience
+tenure          float   %9.0g                 years of job tenure
+isco            byte    %9.0g                 occupation (ISCO)
+female          byte    %9.0g                 sex of respondent (1=female)
+lfp             byte    %9.0g                 labor force participation
+age             byte    %9.0g                 age of respondent
+agesq           int     %10.0g                age squared
+single          byte    %9.0g                 single
+married         byte    %9.0g                 married
+divorced        byte    %9.0g                 divorced
+kids6           byte    %9.0g                 number of childern ages 6 and younger
+kids714         byte    %9.0g                 number of children ages 7 to 14
+wt              double  %10.0g                sampling weights

@@ -1,0 +1,29 @@
+ECONMATH.DES
+
+age       study     colgpa    acteng    act       male      attexc    fathcoll  score
+work      econhs    hsgpa     actmth    mathscr   calculus  attgood   mothcoll
+
+
+ Observations:           856                  
+    Variables:            17                  9 Aug 2015 12:21
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+
+age             byte    %8.0g                 age in years
+work            float   %9.0g                 hours worked per week
+study           float   %9.0g                 hours studying per week
+econhs          byte    %8.0g                 =1 if economics in high school
+colgpa          float   %9.0g                 college GPA, beginning semester
+hsgpa           float   %9.0g                 high school GPA
+acteng          byte    %8.0g                 ACT English score
+actmth          byte    %8.0g                 ACT math score
+act             byte    %8.0g                 ACT composite
+mathscr         byte    %9.0g                 math quiz score, 0-10
+male            byte    %9.0g                 =1 if male
+calculus        byte    %9.0g                 =1 if taken calculus course
+attexc          byte    %9.0g                 =1 if past attndce 'excellent'
+attgood         byte    %9.0g                 =1 if past attndce 'good'
+fathcoll        byte    %9.0g                 =1 if father has BA
+mothcoll        byte    %9.0g                 =1 if mother has BA
+score           float   %9.0g                 course score, in percent

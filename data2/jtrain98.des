@@ -1,0 +1,21 @@
+JTRAIN98.DES
+
+train    age      educ     black    hisp     married  earn96   unem96   earn98   unem98   
+
+ Observations:         1,130                  
+    Variables:            10                  21 Dec 2018 17:08
+ 
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+ 
+train           byte    %9.0g                 =1 if in job training
+age             byte    %9.0g                 in years
+educ            byte    %9.0g                 years of schooling
+black           byte    %9.0g                 =1 if black
+hisp            byte    %9.0g                 =1 if Hispanic
+married         byte    %9.0g                 =1 if married
+earn96          float   %9.0g                 earnings in 1996, $1000s
+unem96          byte    %9.0g                 =1 if unemployed all of 1995
+earn98          float   %9.0g                 earnings in 1998, $1000s
+unem98          byte    %9.0g                 =1 if unemployed all of 1998
+

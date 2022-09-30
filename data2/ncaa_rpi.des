@@ -1,0 +1,25 @@
+NCAA_RPI.DES
+
+team         year         conference   postrpi      prerpi       postrpi_1    postrpi_2    recruitrank  wins         losses       winperc      tourney      coachexper   power5
+
+ Observations:           336                  
+    Variables:            14                  21 Dec 2018 17:07
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+
+team            str20   %20s                  Name
+year            str9    %9s                   Year
+conference      str8    %9s                   Conference
+postrpi         int     %10.0g                Post Rank
+prerpi          int     %10.0g                Preseason Rank
+postrpi_1       int     %10.0g                Post Rank 1 yr ago
+postrpi_2       int     %10.0g                Post Rank 2 yrs ago
+recruitrank     int     %10.0g                Recruits Rank
+wins            byte    %10.0g                Number of games won
+losses          byte    %10.0g                Number of games lost
+winperc         double  %14.2f                Winning Percentage
+tourney         byte    %10.0g                Tournament dummy
+coachexper      byte    %10.0g                Coach Experience
+power5          byte    %10.0g                PowerFive Dummy
+

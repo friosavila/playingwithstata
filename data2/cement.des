@@ -1,0 +1,43 @@
+cement.des
+
+year     prccem   prcpet   rnonc    rdefs    gprc     gprcpet  gnon     gdefs    jan      mar      may      jul      sep      nov
+month    ipcem    rresc    ip       milemp   gcem     gres     gip      gmilemp  feb      apr      jun      aug      oct      dec
+
+
+
+ Observations:           312                  
+    Variables:            30                  25 Jul 2005 15:24
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+year            int     %9.0g                 1964-1989
+month           byte    %9.0g                 1-12
+prccem          int     %9.0g                 BLS ppi for cement
+ipcem           float   %9.0g                 industrial prod. index, cement
+prcpet          float   %9.0g                 ppi for crude petroleum
+rresc           float   %9.0g                 real residential construction
+rnonc           float   %9.0g                 real nonres. construction
+ip              float   %9.0g                 aggregate index of indus. prod.
+rdefs           float   %9.0g                 real defense spending
+milemp          int     %9.0g                 military employment
+gprc            float   %9.0g                 log(prccem) - log(prccem[_n-1])
+gcem            float   %9.0g                 log(ipcem) - log(ipcem[_n-1])
+gprcpet         float   %9.0g                 log(prcpet) - log(prcpet[_n-1])
+gres            float   %9.0g                 log(rresc) - log(rresc[_n-1])
+gnon            float   %9.0g                 log(rnonc) - log(rnonc[_n-1])
+gip             float   %9.0g                 log(ip) - log(ip[_n-1])
+gdefs           float   %9.0g                 log(rdefs) - log(rdefs[_n-1])
+gmilemp         float   %9.0g                 log(milemp) - log(milemp[_n-1])
+jan             byte    %9.0g                 =1 if month == 1
+feb             byte    %9.0g                 =1 if month == 2
+mar             byte    %9.0g                 =1 if month == 3
+apr             byte    %9.0g                 =1 if month == 4
+may             byte    %9.0g                 =1 if month == 5
+jun             byte    %9.0g                 =1 if month == 6
+jul             byte    %9.0g                 =1 if month == 7
+aug             byte    %9.0g                 =1 if month == 8
+sep             byte    %9.0g                 =1 if month == 9
+oct             byte    %9.0g                 =1 if month == 10
+nov             byte    %9.0g                 =1 if month == 11
+dec             byte    %9.0g                 =1 if month == 12
+

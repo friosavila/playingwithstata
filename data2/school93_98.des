@@ -1,0 +1,34 @@
+SCHOOL93_98.DES
+
+distid     lunch      exppp      year       y94        y96        y98        found      lrexpp
+schid      enrol      math4      y93        y95        y97        rexpp      lenrol     lavgrexpp
+     
+
+
+ Observations:        10,668                  
+    Variables:            18                  4 May 2016 06:45
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+
+distid          float   %9.0g                 
+schid           int     %9.0g                 
+lunch           float   %9.0g                 % eligible for free lunch
+enrol           int     %9.0g                 number of students
+exppp           int     %9.0g                 exp per pupil
+math4           float   %9.0g                 
+year            int     %9.0g                 1993 = school year 1992-1993
+y93             byte    %9.0g                 
+y94             byte    %9.0g                 
+y95             byte    %9.0g                 
+y96             byte    %9.0g                 
+y97             byte    %9.0g                 
+y98             byte    %9.0g                 
+rexpp           float   %9.0g                 (exppp/cpi)1.605:  1997 $
+found           int     %9.0g                 
+lenrol          float   %9.0g                 log(enrol)
+lrexpp          float   %9.0g                 log(rexpp)
+lavgrexpp       float   %9.0g                 log((rexpp + L.rexpp)/2)
+
+
+
