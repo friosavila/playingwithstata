@@ -1,0 +1,18 @@
+Ozone    Solar_R  Wind     Temp     Month    Day
+
+Contains data from airquality.dta
+ Observations:           153                  Data downloaded from R base
+    Variables:             6                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Ozone           long    %9.0g                 Ozone
+Solar_R         long    %9.0g                 Solar.R
+Wind            double  %9.0g                 Wind
+Temp            long    %9.0g                 Temp
+Month           long    %9.0g                 Month
+Day             long    %9.0g                 Day
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

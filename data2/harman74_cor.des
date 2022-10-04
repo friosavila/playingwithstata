@@ -1,0 +1,40 @@
+cov_Visual~n  cov_Flags     cov_Senten~n  cov_Addition  cov_Straig~s  cov_Figure~n  cov_Figure~d  cov_Proble~g  center
+cov_Cubes     cov_Genera~n  cov_WordCl~n  cov_Code      cov_WordRe~n  cov_Object~r  cov_Deduct~n  cov_Series~n  n_obs
+cov_PaperF~d  cov_Pargra~n  cov_WordMe~g  cov_Counti~s  cov_Number~n  cov_Number~e  cov_Numeri~s  cov_Arithm~s
+
+Contains data from harman74.cor.dta
+ Observations:            24                  Data downloaded from R base
+    Variables:            26                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+cov_VisualPer~n double  %9.0g                 cov.VisualPerception
+cov_Cubes       double  %9.0g                 cov.Cubes
+cov_PaperForm~d double  %9.0g                 cov.PaperFormBoard
+cov_Flags       double  %9.0g                 cov.Flags
+cov_GeneralIn~n double  %9.0g                 cov.GeneralInformation
+cov_PargraphC~n double  %9.0g                 cov.PargraphComprehension
+cov_SentenceC~n double  %9.0g                 cov.SentenceCompletion
+cov_WordClass~n double  %9.0g                 cov.WordClassification
+cov_WordMeaning double  %9.0g                 cov.WordMeaning
+cov_Addition    double  %9.0g                 cov.Addition
+cov_Code        double  %9.0g                 cov.Code
+cov_CountingD~s double  %9.0g                 cov.CountingDots
+cov_StraightC~s double  %9.0g                 cov.StraightCurvedCapitals
+cov_WordRecog~n double  %9.0g                 cov.WordRecognition
+cov_NumberRec~n double  %9.0g                 cov.NumberRecognition
+cov_FigureRec~n double  %9.0g                 cov.FigureRecognition
+cov_ObjectNum~r double  %9.0g                 cov.ObjectNumber
+cov_NumberFig~e double  %9.0g                 cov.NumberFigure
+cov_FigureWord  double  %9.0g                 cov.FigureWord
+cov_Deduction   double  %9.0g                 cov.Deduction
+cov_Numerical~s double  %9.0g                 cov.NumericalPuzzles
+cov_ProblemRe~g double  %9.0g                 cov.ProblemReasoning
+cov_SeriesCom~n double  %9.0g                 cov.SeriesCompletion
+cov_Arithmeti~s double  %9.0g                 cov.ArithmeticProblems
+center          double  %9.0g                 center
+n_obs           double  %9.0g                 n.obs
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

@@ -1,0 +1,15 @@
+height  age     Seed
+
+Contains data from loblolly.dta
+ Observations:            84                  Data downloaded from R base
+    Variables:             3                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+height          double  %9.0g                 height
+age             double  %9.0g                 age
+Seed            long    %9.0g      Seed       Seed
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

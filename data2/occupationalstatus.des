@@ -1,0 +1,16 @@
+origin       destination  Freq
+
+Contains data from occupationalstatus.dta
+ Observations:            64                  Data downloaded from R base
+    Variables:             3                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+origin          long    %9.0g      origin     origin
+destination     long    %9.0g      destination
+                                              destination
+Freq            long    %9.0g                 Freq
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

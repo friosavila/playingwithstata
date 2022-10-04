@@ -1,0 +1,16 @@
+Air_Flow    Water_Temp  Acid_Conc_  stack_loss
+
+Contains data from stackloss.dta
+ Observations:            21                  Data downloaded from R base
+    Variables:             4                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Air_Flow        double  %9.0g                 Air.Flow
+Water_Temp      double  %9.0g                 Water.Temp
+Acid_Conc_      double  %9.0g                 Acid.Conc.
+stack_loss      double  %9.0g                 stack.loss
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

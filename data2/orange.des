@@ -1,0 +1,15 @@
+Tree          age           circumfere~e
+
+Contains data from orange.dta
+ Observations:            35                  Data downloaded from R base
+    Variables:             3                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Tree            long    %9.0g      Tree       Tree
+age             double  %9.0g                 age
+circumference   double  %9.0g                 circumference
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

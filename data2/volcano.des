@@ -1,0 +1,74 @@
+X1   X3   X5   X7   X9   X11  X13  X15  X17  X19  X21  X23  X25  X27  X29  X31  X33  X35  X37  X39  X41  X43  X45  X47  X49  X51  X53  X55  X57  X59  X61
+X2   X4   X6   X8   X10  X12  X14  X16  X18  X20  X22  X24  X26  X28  X30  X32  X34  X36  X38  X40  X42  X44  X46  X48  X50  X52  X54  X56  X58  X60
+
+Contains data from volcano.dta
+ Observations:            87                  Data downloaded from R base
+    Variables:            61                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+X1              double  %9.0g                 X1
+X2              double  %9.0g                 X2
+X3              double  %9.0g                 X3
+X4              double  %9.0g                 X4
+X5              double  %9.0g                 X5
+X6              double  %9.0g                 X6
+X7              double  %9.0g                 X7
+X8              double  %9.0g                 X8
+X9              double  %9.0g                 X9
+X10             double  %9.0g                 X10
+X11             double  %9.0g                 X11
+X12             double  %9.0g                 X12
+X13             double  %9.0g                 X13
+X14             double  %9.0g                 X14
+X15             double  %9.0g                 X15
+X16             double  %9.0g                 X16
+X17             double  %9.0g                 X17
+X18             double  %9.0g                 X18
+X19             double  %9.0g                 X19
+X20             double  %9.0g                 X20
+X21             double  %9.0g                 X21
+X22             double  %9.0g                 X22
+X23             double  %9.0g                 X23
+X24             double  %9.0g                 X24
+X25             double  %9.0g                 X25
+X26             double  %9.0g                 X26
+X27             double  %9.0g                 X27
+X28             double  %9.0g                 X28
+X29             double  %9.0g                 X29
+X30             double  %9.0g                 X30
+X31             double  %9.0g                 X31
+X32             double  %9.0g                 X32
+X33             double  %9.0g                 X33
+X34             double  %9.0g                 X34
+X35             double  %9.0g                 X35
+X36             double  %9.0g                 X36
+X37             double  %9.0g                 X37
+X38             double  %9.0g                 X38
+X39             double  %9.0g                 X39
+X40             double  %9.0g                 X40
+X41             double  %9.0g                 X41
+X42             double  %9.0g                 X42
+X43             double  %9.0g                 X43
+X44             double  %9.0g                 X44
+X45             double  %9.0g                 X45
+X46             double  %9.0g                 X46
+X47             double  %9.0g                 X47
+X48             double  %9.0g                 X48
+X49             double  %9.0g                 X49
+X50             double  %9.0g                 X50
+X51             double  %9.0g                 X51
+X52             double  %9.0g                 X52
+X53             double  %9.0g                 X53
+X54             double  %9.0g                 X54
+X55             double  %9.0g                 X55
+X56             double  %9.0g                 X56
+X57             double  %9.0g                 X57
+X58             double  %9.0g                 X58
+X59             double  %9.0g                 X59
+X60             double  %9.0g                 X60
+X61             double  %9.0g                 X61
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

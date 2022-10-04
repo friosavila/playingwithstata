@@ -1,0 +1,16 @@
+Hair  Eye   Sex   Freq
+
+Contains data from haireyecolor.dta
+ Observations:            32                  Data downloaded from R base
+    Variables:             4                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Hair            long    %9.0g      Hair       Hair
+Eye             long    %9.0g      Eye        Eye
+Sex             long    %9.0g      Sex        Sex
+Freq            double  %9.0g                 Freq
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

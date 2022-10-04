@@ -1,0 +1,15 @@
+breaks   wool     tension
+
+Contains data from warpbreaks.dta
+ Observations:            54                  Data downloaded from R base
+    Variables:             3                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+breaks          double  %9.0g                 breaks
+wool            long    %9.0g      wool       wool
+tension         long    %9.0g      tension    tension
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

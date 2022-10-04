@@ -1,0 +1,17 @@
+decrease   rowpos     colpos     treatment
+
+Contains data from orchardsprays.dta
+ Observations:            64                  Data downloaded from R base
+    Variables:             4                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+decrease        double  %9.0g                 decrease
+rowpos          double  %9.0g                 rowpos
+colpos          double  %9.0g                 colpos
+treatment       long    %9.0g      treatment
+                                              treatment
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

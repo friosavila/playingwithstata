@@ -1,0 +1,14 @@
+eruptions  waiting
+
+Contains data from faithful.dta
+ Observations:           272                  Data downloaded from R base
+    Variables:             2                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+eruptions       double  %9.0g                 eruptions
+waiting         double  %9.0g                 waiting
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

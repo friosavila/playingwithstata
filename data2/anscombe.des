@@ -1,0 +1,20 @@
+x1  x2  x3  x4  y1  y2  y3  y4
+
+Contains data from anscombe.dta
+ Observations:            11                  Data downloaded from R base
+    Variables:             8                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+x1              double  %9.0g                 x1
+x2              double  %9.0g                 x2
+x3              double  %9.0g                 x3
+x4              double  %9.0g                 x4
+y1              double  %9.0g                 y1
+y2              double  %9.0g                 y2
+y3              double  %9.0g                 y3
+y4              double  %9.0g                 y4
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

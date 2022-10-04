@@ -1,0 +1,15 @@
+Run      conc     density
+
+Contains data from dnase.dta
+ Observations:           176                  Data downloaded from R base
+    Variables:             3                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Run             long    %9.0g      Run        Run
+conc            double  %9.0g                 conc
+density         double  %9.0g                 density
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

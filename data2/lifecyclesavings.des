@@ -1,0 +1,17 @@
+sr     pop15  pop75  dpi    ddpi
+
+Contains data from lifecyclesavings.dta
+ Observations:            50                  Data downloaded from R base
+    Variables:             5                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+sr              double  %9.0g                 sr
+pop15           double  %9.0g                 pop15
+pop75           double  %9.0g                 pop75
+dpi             double  %9.0g                 dpi
+ddpi            double  %9.0g                 ddpi
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

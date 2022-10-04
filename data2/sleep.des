@@ -1,0 +1,15 @@
+extra  group  ID
+
+Contains data from sleep.dta
+ Observations:            20                  Data downloaded from R base
+    Variables:             3                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+extra           double  %9.0g                 extra
+group           long    %9.0g      group      group
+ID              long    %9.0g      ID         ID
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

@@ -1,0 +1,19 @@
+GNP_deflator  GNP           Unemployed    Armed_Forces  Population    Year          Employed
+
+Contains data from longley.dta
+ Observations:            16                  Data downloaded from R base
+    Variables:             7                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+GNP_deflator    double  %9.0g                 GNP.deflator
+GNP             double  %9.0g                 GNP
+Unemployed      double  %9.0g                 Unemployed
+Armed_Forces    double  %9.0g                 Armed.Forces
+Population      double  %9.0g                 Population
+Year            long    %9.0g                 Year
+Employed        double  %9.0g                 Employed
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

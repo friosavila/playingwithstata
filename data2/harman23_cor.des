@@ -1,0 +1,22 @@
+cov_height    cov_arm_span  cov_forearm   cov_lower_~g  cov_weight    cov_bitro_~r  cov_ches~rth  cov_ches~dth  center        n_obs
+
+Contains data from harman23.cor.dta
+ Observations:             8                  Data downloaded from R base
+    Variables:            10                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+cov_height      double  %9.0g                 cov.height
+cov_arm_span    double  %9.0g                 cov.arm.span
+cov_forearm     double  %9.0g                 cov.forearm
+cov_lower_leg   double  %9.0g                 cov.lower.leg
+cov_weight      double  %9.0g                 cov.weight
+cov_bitro_dia~r double  %9.0g                 cov.bitro.diameter
+cov_chest_girth double  %9.0g                 cov.chest.girth
+cov_chest_width double  %9.0g                 cov.chest.width
+center          double  %9.0g                 center
+n_obs           double  %9.0g                 n.obs
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

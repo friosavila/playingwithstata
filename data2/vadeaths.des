@@ -1,0 +1,16 @@
+Rural_Male    Rural_Female  Urban_Male    Urban_Female
+
+Contains data from vadeaths.dta
+ Observations:             5                  Data downloaded from R base
+    Variables:             4                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Rural_Male      double  %9.0g                 Rural.Male
+Rural_Female    double  %9.0g                 Rural.Female
+Urban_Male      double  %9.0g                 Urban.Male
+Urban_Female    double  %9.0g                 Urban.Female
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

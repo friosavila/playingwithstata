@@ -1,0 +1,19 @@
+rating      complaints  privileges  learning    raises      critical    advance
+
+Contains data from attitude.dta
+ Observations:            30                  Data downloaded from R base
+    Variables:             7                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+rating          double  %9.0g                 rating
+complaints      double  %9.0g                 complaints
+privileges      double  %9.0g                 privileges
+learning        double  %9.0g                 learning
+raises          double  %9.0g                 raises
+critical        double  %9.0g                 critical
+advance         double  %9.0g                 advance
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

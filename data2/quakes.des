@@ -1,0 +1,17 @@
+lat       long      depth     mag       stations
+
+Contains data from quakes.dta
+ Observations:         1,000                  Data downloaded from R base
+    Variables:             5                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+lat             double  %9.0g                 lat
+long            double  %9.0g                 long
+depth           long    %9.0g                 depth
+mag             double  %9.0g                 mag
+stations        long    %9.0g                 stations
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

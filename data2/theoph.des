@@ -1,0 +1,17 @@
+Subject  Wt       Dose     Time     conc
+
+Contains data from theoph.dta
+ Observations:           132                  Data downloaded from R base
+    Variables:             5                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Subject         long    %9.0g      Subject    Subject
+Wt              double  %9.0g                 Wt
+Dose            double  %9.0g                 Dose
+Time            double  %9.0g                 Time
+conc            double  %9.0g                 conc
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

@@ -1,0 +1,15 @@
+Subject  time     conc
+
+Contains data from indometh.dta
+ Observations:            66                  Data downloaded from R base
+    Variables:             3                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Subject         long    %9.0g      Subject    Subject
+time            double  %9.0g                 time
+conc            double  %9.0g                 conc
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

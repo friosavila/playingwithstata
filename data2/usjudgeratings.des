@@ -1,0 +1,24 @@
+CONT  INTG  DMNR  DILG  CFMG  DECI  PREP  FAMI  ORAL  WRIT  PHYS  RTEN
+
+Contains data from usjudgeratings.dta
+ Observations:            43                  Data downloaded from R base
+    Variables:            12                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+CONT            double  %9.0g                 CONT
+INTG            double  %9.0g                 INTG
+DMNR            double  %9.0g                 DMNR
+DILG            double  %9.0g                 DILG
+CFMG            double  %9.0g                 CFMG
+DECI            double  %9.0g                 DECI
+PREP            double  %9.0g                 PREP
+FAMI            double  %9.0g                 FAMI
+ORAL            double  %9.0g                 ORAL
+WRIT            double  %9.0g                 WRIT
+PHYS            double  %9.0g                 PHYS
+RTEN            double  %9.0g                 RTEN
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

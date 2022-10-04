@@ -1,0 +1,16 @@
+day    time   temp   activ
+
+Contains data from beaver1.dta
+ Observations:           114                  Data downloaded from R base
+    Variables:             4                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+day             double  %9.0g                 day
+time            double  %9.0g                 time
+temp            double  %9.0g                 temp
+activ           double  %9.0g                 activ
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

@@ -1,0 +1,17 @@
+y             lag_quarte~e  price_index   income_level  market_pot~l
+
+Contains data from freeny.dta
+ Observations:            39                  Data downloaded from R base
+    Variables:             5                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+y               double  %9.0g                 y
+lag_quarterly~e double  %9.0g                 lag.quarterly.revenue
+price_index     double  %9.0g                 price.index
+income_level    double  %9.0g                 income.level
+market_potent~l double  %9.0g                 market.potential
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

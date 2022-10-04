@@ -1,0 +1,15 @@
+Girth   Height  Volume
+
+Contains data from trees.dta
+ Observations:            31                  Data downloaded from R base
+    Variables:             3                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Girth           double  %9.0g                 Girth
+Height          double  %9.0g                 Height
+Volume          double  %9.0g                 Volume
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

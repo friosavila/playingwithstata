@@ -1,0 +1,13 @@
+UKDriverDe~s
+
+Contains data from ukdriverdeaths.dta
+ Observations:           192                  Data downloaded from R base
+    Variables:             1                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+UKDriverDeaths  double  %9.0g                 UKDriverDeaths
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

@@ -1,0 +1,16 @@
+area   peri   shape  perm
+
+Contains data from rock.dta
+ Observations:            48                  Data downloaded from R base
+    Variables:             4                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+area            long    %9.0g                 area
+peri            double  %9.0g                 peri
+shape           double  %9.0g                 shape
+perm            double  %9.0g                 perm
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

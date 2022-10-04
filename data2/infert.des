@@ -1,0 +1,21 @@
+education     age           parity        induced       case          spontaneous   stratum       pooled_str~m
+
+Contains data from infert.dta
+ Observations:           248                  Data downloaded from R base
+    Variables:             8                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+education       long    %9.0g      education
+                                              education
+age             double  %9.0g                 age
+parity          double  %9.0g                 parity
+induced         double  %9.0g                 induced
+case            double  %9.0g                 case
+spontaneous     double  %9.0g                 spontaneous
+stratum         long    %9.0g                 stratum
+pooled_stratum  double  %9.0g                 pooled.stratum
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

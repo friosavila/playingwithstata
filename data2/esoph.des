@@ -1,0 +1,17 @@
+agegp      alcgp      tobgp      ncases     ncontrols
+
+Contains data from esoph.dta
+ Observations:            88                  Data downloaded from R base
+    Variables:             5                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+agegp           long    %9.0g      agegp      agegp
+alcgp           long    %9.0g      alcgp      alcgp
+tobgp           long    %9.0g      tobgp      tobgp
+ncases          double  %9.0g                 ncases
+ncontrols       double  %9.0g                 ncontrols
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

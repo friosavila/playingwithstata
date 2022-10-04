@@ -1,0 +1,16 @@
+Admit   Gender  Dept    Freq
+
+Contains data from ucbadmissions.dta
+ Observations:            24                  Data downloaded from R base
+    Variables:             4                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Admit           long    %9.0g      Admit      Admit
+Gender          long    %9.0g      Gender     Gender
+Dept            long    %9.0g      Dept       Dept
+Freq            double  %9.0g                 Freq
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

@@ -1,0 +1,23 @@
+mpg   cyl   disp  hp    drat  wt    qsec  vs    am    gear  carb
+
+Contains data from mtcars.dta
+ Observations:            32                  Data downloaded from R base
+    Variables:            11                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+mpg             double  %9.0g                 mpg
+cyl             double  %9.0g                 cyl
+disp            double  %9.0g                 disp
+hp              double  %9.0g                 hp
+drat            double  %9.0g                 drat
+wt              double  %9.0g                 wt
+qsec            double  %9.0g                 qsec
+vs              double  %9.0g                 vs
+am              double  %9.0g                 am
+gear            double  %9.0g                 gear
+carb            double  %9.0g                 carb
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

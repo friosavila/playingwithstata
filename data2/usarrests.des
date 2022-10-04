@@ -1,0 +1,16 @@
+Murder    Assault   UrbanPop  Rape
+
+Contains data from usarrests.dta
+ Observations:            50                  Data downloaded from R base
+    Variables:             4                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Murder          double  %9.0g                 Murder
+Assault         long    %9.0g                 Assault
+UrbanPop        long    %9.0g                 UrbanPop
+Rape            double  %9.0g                 Rape
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

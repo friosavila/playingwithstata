@@ -1,0 +1,18 @@
+Fertility     Agriculture   Examination   Education     Catholic      Infant_Mor~y
+
+Contains data from swiss.dta
+ Observations:            47                  Data downloaded from R base
+    Variables:             6                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Fertility       double  %9.0g                 Fertility
+Agriculture     double  %9.0g                 Agriculture
+Examination     long    %9.0g                 Examination
+Education       long    %9.0g                 Education
+Catholic        double  %9.0g                 Catholic
+Infant_Mortal~y double  %9.0g                 Infant.Mortality
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

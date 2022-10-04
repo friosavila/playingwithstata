@@ -1,0 +1,19 @@
+N_Amer    Europe    Asia      S_Amer    Oceania   Africa    Mid_Amer
+
+Contains data from worldphones.dta
+ Observations:             7                  Data downloaded from R base
+    Variables:             7                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+N_Amer          double  %9.0g                 N.Amer
+Europe          double  %9.0g                 Europe
+Asia            double  %9.0g                 Asia
+S_Amer          double  %9.0g                 S.Amer
+Oceania         double  %9.0g                 Oceania
+Africa          double  %9.0g                 Africa
+Mid_Amer        double  %9.0g                 Mid.Amer
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

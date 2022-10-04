@@ -1,0 +1,17 @@
+Class     Sex       Age       Survived  Freq
+
+Contains data from titanic.dta
+ Observations:            32                  Data downloaded from R base
+    Variables:             5                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Class           long    %9.0g      Class      Class
+Sex             long    %9.0g      Sex        Sex
+Age             long    %9.0g      Age        Age
+Survived        long    %9.0g      Survived   Survived
+Freq            double  %9.0g                 Freq
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

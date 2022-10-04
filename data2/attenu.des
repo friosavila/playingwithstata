@@ -1,0 +1,17 @@
+event    mag      station  dist     accel
+
+Contains data from attenu.dta
+ Observations:           182                  Data downloaded from R base
+    Variables:             5                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+event           double  %9.0g                 event
+mag             double  %9.0g                 mag
+station         long    %9.0g      station    station
+dist            double  %9.0g                 dist
+accel           double  %9.0g                 accel
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

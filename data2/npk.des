@@ -1,0 +1,17 @@
+block  N      P      K      yield
+
+Contains data from npk.dta
+ Observations:            24                  Data downloaded from R base
+    Variables:             5                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+block           long    %9.0g      block      block
+N               long    %9.0g      N          N
+P               long    %9.0g      P          P
+K               long    %9.0g      K          K
+yield           double  %9.0g                 yield
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

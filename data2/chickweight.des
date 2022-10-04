@@ -1,0 +1,16 @@
+weight  Time    Chick   Diet
+
+Contains data from chickweight.dta
+ Observations:           578                  Data downloaded from R base
+    Variables:             4                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+weight          double  %9.0g                 weight
+Time            double  %9.0g                 Time
+Chick           long    %9.0g      Chick      Chick
+Diet            long    %9.0g      Diet       Diet
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

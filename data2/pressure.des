@@ -1,0 +1,14 @@
+temperature  pressure
+
+Contains data from pressure.dta
+ Observations:            19                  Data downloaded from R base
+    Variables:             2                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+temperature     double  %9.0g                 temperature
+pressure        double  %9.0g                 pressure
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

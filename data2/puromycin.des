@@ -1,0 +1,15 @@
+conc   rate   state
+
+Contains data from puromycin.dta
+ Observations:            23                  Data downloaded from R base
+    Variables:             3                  
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+conc            double  %9.0g                 conc
+rate            double  %9.0g                 rate
+state           long    %9.0g      state      state
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
