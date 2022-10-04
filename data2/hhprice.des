@@ -1,0 +1,33 @@
+
+rooms         distance      bedroom2      car           buildingarea  lattitude     prop_count    price1000     sellerg2      region_code
+price         postcode      bathroom      landsize      yearbuilt     longtitude    type_h        suburb        date          council_code
+
+
+ Observations:        10,376                  
+    Variables:            20                  4 Oct 2022 10:53
+ 
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+ 
+rooms           byte    %8.0g                 Number of rooms
+price           long    %12.0g                Price in Australian dollars
+distance        float   %5.2f                 Distance from CBD in Kilometres
+postcode        int     %10.0g                Postcode
+bedroom2        byte    %8.0g                 Scraped # of Bedrooms (from different source)
+bathroom        byte    %8.0g                 Number of Bathrooms
+car             byte    %8.0g                 Number of carspots
+landsize        int     %12.0g                Land Size in Metres
+buildingarea    float   %9.0g                 Building Size in Metres
+yearbuilt       int     %8.0g                 Year the house was built
+lattitude       float   %9.0g                 Lattitude
+longtitude      float   %9.0g                 Longtitude
+prop_count      int     %10.0g                Number of properties that exist in the suburb.
+type_h          byte    %9.0g                 =0 if house, =1 TownHouse
+price1000       float   %9.0g                 Price in 1000$
+suburb          int     %18.0g     suburb2    Suburb
+sellerg2        int     %27.0g     sellerg2   Real Estate Agent
+date            int     %td                   
+region_code     byte    %26.0g     region_code
+                                              General Region (West, North West, North, North east …etc)
+council_code    byte    %30.0g     council_code
+                                              CouncilArea
