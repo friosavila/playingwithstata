@@ -26,8 +26,10 @@ type_h          byte    %9.0g                 =0 if house, =1 TownHouse
 price1000       float   %9.0g                 Price in 1000$
 suburb          int     %18.0g     suburb2    Suburb
 sellerg2        int     %27.0g     sellerg2   Real Estate Agent
-date            int     %td                   
+date            int     %td                   Date of Sell
 region_code     byte    %26.0g     region_code
                                               General Region (West, North West, North, North east …etc)
 council_code    byte    %30.0g     council_code
                                               CouncilArea
+
+											  
