@@ -1,0 +1,15 @@
+fish     station  seen
+
+Contains data from fish_encounters.dta
+ Observations:           114                  Data downloaded from R tidyverse
+    Variables:             3                  4 Oct 2022 22:04
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+fish            byte    %9.0g      fish       fish
+station         byte    %9.0g      station    station
+seen            byte    %9.0g                 seen
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

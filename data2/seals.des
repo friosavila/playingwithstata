@@ -1,0 +1,16 @@
+latitud     longitud    delta_long  delta_lat
+
+Contains data from seals.dta
+ Observations:         1,155                  Data downloaded from R tidyverse
+    Variables:             4                  4 Oct 2022 22:05
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+latitud         double  %9.0g                 lat
+longitud        double  %9.0g                 long
+delta_long      double  %9.0g                 delta_long
+delta_lat       double  %9.0g                 delta_lat
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

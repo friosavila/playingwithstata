@@ -1,0 +1,17 @@
+geoid     name      variable  estimate  moe
+
+Contains data from us_rent_income.dta
+ Observations:           104                  Data downloaded from R tidyverse
+    Variables:             5                  4 Oct 2022 22:04
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+geoid           str2    %2s                   GEOID
+name            str20   %20s                  NAME
+variable        str6    %6s                   variable
+estimate        long    %9.0g                 estimate
+moe             int     %9.0g                 moe
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

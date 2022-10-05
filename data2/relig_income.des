@@ -1,0 +1,24 @@
+religion      x_10_20k      x_30_40k      x_50_75k      x_100_150k    don_t_know~d
+x__10k        x_20_30k      x_40_50k      x_75_100k     x_150k
+
+Contains data from relig_income.dta
+ Observations:            18                  Data downloaded from R tidyverse
+    Variables:            11                  4 Oct 2022 22:04
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+religion        str23   %23s                  religion
+x__10k          int     %9.0g                 X..10k
+x_10_20k        int     %9.0g                 X.10.20k
+x_20_30k        int     %9.0g                 X.20.30k
+x_30_40k        int     %9.0g                 X.30.40k
+x_40_50k        int     %9.0g                 X.40.50k
+x_50_75k        int     %9.0g                 X.50.75k
+x_75_100k       int     %9.0g                 X.75.100k
+x_100_150k      int     %9.0g                 X.100.150k
+x_150k          int     %9.0g                 X.150k
+don_t_know_re~d int     %9.0g                 Don.t.know.refused
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

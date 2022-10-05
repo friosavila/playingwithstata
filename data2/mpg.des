@@ -1,0 +1,24 @@
+manufacturer  displ         cyl           drv           hwy           class
+model         year          trans         cty           fl
+
+Contains data from mpg.dta
+ Observations:           234                  Data downloaded from R tidyverse
+    Variables:            11                  4 Oct 2022 22:04
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+manufacturer    str10   %10s                  manufacturer
+model           str22   %22s                  model
+displ           double  %9.0g                 displ
+year            int     %9.0g                 year
+cyl             byte    %9.0g                 cyl
+trans           str10   %10s                  trans
+drv             str1    %1s                   drv
+cty             byte    %9.0g                 cty
+hwy             byte    %9.0g                 hwy
+fl              str1    %1s                   fl
+class           str10   %10s                  class
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

@@ -1,0 +1,22 @@
+carat    cut      color    clarity  depth    table    price    x        y        z
+
+Contains data from diamonds.dta
+ Observations:        53,940                  Data downloaded from R tidyverse
+    Variables:            10                  4 Oct 2022 22:04
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+carat           float   %9.0g                 carat
+cut             byte    %9.0g      cut        cut
+color           byte    %9.0g      color      color
+clarity         byte    %9.0g      clarity    clarity
+depth           float   %9.0g                 depth
+table           float   %9.0g                 table
+price           int     %9.0g                 price
+x               float   %9.0g                 x
+y               float   %9.0g                 y
+z               float   %9.0g                 z
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

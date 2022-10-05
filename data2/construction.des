@@ -1,0 +1,22 @@
+year          x1_unit       x5_units_o~e  midwest       west
+month         x2_to_4_un~s  northeast     south
+
+Contains data from construction.dta
+ Observations:             9                  Data downloaded from R tidyverse
+    Variables:             9                  4 Oct 2022 22:04
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+year            int     %9.0g                 Year
+month           str9    %9s                   Month
+x1_unit         int     %9.0g                 X1.unit
+x2_to_4_units   byte    %9.0g                 X2.to.4.units
+x5_units_or_m~e int     %9.0g                 X5.units.or.more
+northeast       int     %9.0g                 Northeast
+midwest         int     %9.0g                 Midwest
+south           int     %9.0g                 South
+west            int     %9.0g                 West
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

@@ -1,0 +1,24 @@
+name          vore          conservation  sleep_rem     awake         bodywt
+genus         order         sleep_total   sleep_cycle   brainwt
+
+Contains data from msleep.dta
+ Observations:            83                  Data downloaded from R tidyverse
+    Variables:            11                  4 Oct 2022 22:04
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+name            str30   %30s                  name
+genus           str13   %13s                  genus
+vore            str7    %7s                   vore
+order           str15   %15s                  order
+conservation    str12   %12s                  conservation
+sleep_total     double  %9.0g                 sleep_total
+sleep_rem       double  %9.0g                 sleep_rem
+sleep_cycle     double  %9.0g                 sleep_cycle
+awake           double  %9.0g                 awake
+brainwt         double  %9.0g                 brainwt
+bodywt          double  %9.0g                 bodywt
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

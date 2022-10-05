@@ -1,0 +1,17 @@
+subject  time     age      weight   height
+
+Contains data from smiths.dta
+ Observations:             2                  Data downloaded from R tidyverse
+    Variables:             5                  4 Oct 2022 22:04
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+subject         str10   %10s                  subject
+time            byte    %9.0g                 time
+age             byte    %9.0g                 age
+weight          byte    %9.0g                 weight
+height          double  %9.0g                 height
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

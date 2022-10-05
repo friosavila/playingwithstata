@@ -1,0 +1,43 @@
+pid           poptotal      popamerind~n  percblack     popadults     poppoverty~n  percadultp~y
+county        popdensity    popasian      percamerin~n  perchsd       percpovert~n  percelderl~y
+state         popwhite      popother      percasian     percollege    percbelowp~y  inmetro
+area          popblack      percwhite     percother     percprof      percchildb~t  category
+
+Contains data from midwest.dta
+ Observations:           437                  Data downloaded from R tidyverse
+    Variables:            28                  4 Oct 2022 22:04
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+pid             int     %9.0g                 PID
+county          str14   %14s                  county
+state           str2    %2s                   state
+area            double  %9.0g                 area
+poptotal        long    %9.0g                 poptotal
+popdensity      double  %9.0g                 popdensity
+popwhite        long    %9.0g                 popwhite
+popblack        long    %9.0g                 popblack
+popamerindian   int     %9.0g                 popamerindian
+popasian        long    %9.0g                 popasian
+popother        long    %9.0g                 popother
+percwhite       double  %9.0g                 percwhite
+percblack       double  %9.0g                 percblack
+percamerindan   double  %9.0g                 percamerindan
+percasian       double  %9.0g                 percasian
+percother       double  %9.0g                 percother
+popadults       long    %9.0g                 popadults
+perchsd         double  %9.0g                 perchsd
+percollege      double  %9.0g                 percollege
+percprof        double  %9.0g                 percprof
+poppovertyknown long    %9.0g                 poppovertyknown
+percpovertykn~n double  %9.0g                 percpovertyknown
+percbelowpove~y double  %9.0g                 percbelowpoverty
+percchildbelo~t double  %9.0g                 percchildbelowpovert
+percadultpove~y double  %9.0g                 percadultpoverty
+percelderlypo~y double  %9.0g                 percelderlypoverty
+inmetro         byte    %9.0g                 inmetro
+category        str3    %3s                   category
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

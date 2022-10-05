@@ -1,0 +1,22 @@
+year       month      sales      volume     median     listings   inventory  date       city_code
+
+Contains data from txhousing.dta
+ Observations:         8,602                  Data downloaded from R tidyverse
+    Variables:             9                  4 Oct 2022 22:04
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+year            int     %9.0g                 year
+month           byte    %9.0g                 month
+sales           int     %9.0g                 sales
+volume          double  %9.0g                 volume
+median          long    %9.0g                 median
+listings        long    %9.0g                 listings
+inventory       double  %9.0g                 inventory
+date            double  %9.0g                 date
+city_code       byte    %21.0g     city_code
+                                              city
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.

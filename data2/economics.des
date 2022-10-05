@@ -1,0 +1,18 @@
+date      pce       pop       psavert   uempmed   unemploy
+
+Contains data from economics.dta
+ Observations:           574                  Data downloaded from R tidyverse
+    Variables:             6                  4 Oct 2022 22:04
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+date            int     %9.0g                 date
+pce             double  %9.0g                 pce
+pop             double  %9.0g                 pop
+psavert         double  %9.0g                 psavert
+uempmed         double  %9.0g                 uempmed
+unemploy        int     %9.0g                 unemploy
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
