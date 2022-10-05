@@ -1,0 +1,19 @@
+state      year       cigsale    lnincome   beer       age15to24  retprice
+
+Contains data from smoking.dta
+ Observations:         1,209                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:             7                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+state           byte    %14.0g     state      State no
+year            int     %9.0g                 Year
+cigsale         float   %9.0g                 Cigarette sale per capita (in packs)
+lnincome        float   %9.0g                 Log state per capita GDP
+beer            float   %9.0g                 Beer consumption per capita
+age15to24       float   %9.0g                 Percent of state population aged 15–24 years
+retprice        float   %9.0g                 Retail price of cigarettes
+-------------------------------------------------------------------------------------------------------------
+Sorted by: year

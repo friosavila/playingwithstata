@@ -1,0 +1,40 @@
+personid  age       female    excel     fair      adl       sretire   age2      agechr
+private   hisp      educyear  vegood    poor      retire    hhincome  hstatusg  agewhi
+eprhi     white     married   good      chronic   seprhi    ins       agefem
+
+Contains data from hrs.dta
+ Observations:         3,206                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            26                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+personid        long    %12.0g                Person ID in HRS survey
+private         byte    %9.0g                 Person has private insurance
+eprhi           byte    %12.0g                Employer sponsored private insurance
+age             byte    %12.0g                Age in years
+hisp            byte    %12.0g                Ethnicity Hispanic
+white           byte    %12.0g                Ethnicity white
+female          byte    %12.0g                Female
+educyear        byte    %12.0g                Years of education
+married         byte    %12.0g                Married
+excel           byte    %12.0g                Health status excellent
+vegood          byte    %12.0g                Health status very good
+good            byte    %12.0g                Health status good
+fair            byte    %12.0g                Health status fair
+poor            byte    %12.0g                Health status poor
+chronic         byte    %12.0g                Number of chronic conditions
+adl             byte    %12.0g                Activity limitation
+retire          byte    %12.0g                Retired
+seprhi          byte    %12.0g                Has separate health insurance
+sretire         byte    %12.0g                Spouse is retired
+hhincome        float   %9.0g                 Total household income
+ins             byte    %9.0g                 Person has private insurance
+age2            int     %9.0g                 Age in years squared
+hstatusg        byte    %9.0g                 Health status good
+agefem          byte    %9.0g                 Interaction of age and female
+agechr          int     %9.0g                 Interaction of age and number of chronic conditions
+agewhi          byte    %9.0g                 Interaction of age and white ethnicity
+-------------------------------------------------------------------------------------------------------------
+Sorted by: hhincome

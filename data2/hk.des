@@ -1,0 +1,29 @@
+mode      crate     dpier     dcharter  ppier     pcharter  qpier     qcharter
+price     dbeach    dprivate  pbeach    pprivate  qbeach    qprivate  income
+
+Contains data from hk.dta
+ Observations:         1,182                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            16                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+mode            byte    %9.0g      modetype   Fishing mode
+price           float   %9.0g                 Price for chosen alternative
+crate           float   %9.0g                 Catch rate for chosen alternative
+dbeach          byte    %9.0g                 Beach mode chosen
+dpier           byte    %9.0g                 Pier mode chosen
+dprivate        byte    %9.0g                 Private boat mode chosen
+dcharter        byte    %9.0g                 Charter boat mode chosen
+pbeach          float   %9.0g                 Price for beach mode
+ppier           float   %9.0g                 Price for pier mode
+pprivate        float   %9.0g                 Price for private boat mode
+pcharter        float   %9.0g                 Price for charter boat mode
+qbeach          float   %9.0g                 Catch rate for beach mode
+qpier           float   %9.0g                 Catch rate for pier mode
+qprivate        float   %9.0g                 Catch rate for private boat mode
+qcharter        float   %9.0g                 Catch rate for charter boat mode
+income          float   %9.0g                 Monthly income in thousands $
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

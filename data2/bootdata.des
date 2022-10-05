@@ -1,0 +1,15 @@
+docvis   age      chronic
+
+Contains data from bootdata.dta
+ Observations:            50                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:             3                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+docvis          byte    %8.0g                 Number of doctor visits
+age             float   %9.0g                 Age in years / 10
+chronic         byte    %8.0g                 Chronic condition
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

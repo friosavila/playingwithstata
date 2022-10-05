@@ -1,0 +1,36 @@
+exp    occ    south  ms     union  blk    id     tdum1  tdum3  tdum5  tdum7
+wks    ind    smsa   fem    ed     lwage  t      tdum2  tdum4  tdum6  exp2
+
+Contains data from psid.dta
+ Observations:         4,165                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            22                  5 Oct 2022 13:07
+                                              (_dta has notes)
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+exp             byte    %9.0g                 Years of full-time work experience
+wks             byte    %9.0g                 Weeks worked
+occ             byte    %9.0g                 Occupation; occ==1 if in a blue-collar occupation
+ind             byte    %9.0g                 Industry; ind==1 if working in a manufacturing industry
+south           byte    %9.0g                 Residence; south==1 if in the South area
+smsa            byte    %9.0g                 smsa==1 if in the standard metropolitan statistical area
+ms              byte    %9.0g                 Marital status
+fem             byte    %9.0g                 Female or male
+union           byte    %9.0g                 If wage set be a union contract
+ed              byte    %9.0g                 Years of education
+blk             byte    %9.0g                 Black
+lwage           float   %9.0g                 log wage
+id              int     %9.0g                 Person ID
+t               byte    %9.0g                 Year index
+tdum1           byte    %8.0g                 t==1.0000
+tdum2           byte    %8.0g                 t==2.0000
+tdum3           byte    %8.0g                 t==3.0000
+tdum4           byte    %8.0g                 t==4.0000
+tdum5           byte    %8.0g                 t==5.0000
+tdum6           byte    %8.0g                 t==6.0000
+tdum7           byte    %8.0g                 t==7.0000
+exp2            int     %9.0g                 Years of experience squared
+-------------------------------------------------------------------------------------------------------------
+Sorted by: id  t

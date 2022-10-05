@@ -1,0 +1,39 @@
+ambexp      educ        ins         fairpoor    lny         lnambx      income      year01      instype_s1
+age         blhisp      vgood       y           dambexp     hospexp     age2        ffs
+female      totchr      good        dy          lambexp     dhospexp    agefem      instype
+
+Contains data from mepsambexp.dta
+ Observations:         3,328                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            25                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+ambexp          float   %9.0g                 Annual ambulatory expenditures
+age             float   %9.0g                 Age in tens of years
+female          byte    %8.0g                 Female
+educ            byte    %8.0g                 Years of education
+blhisp          byte    %9.0g                 Black or Hispanic
+totchr          byte    %8.0g                 Number of chronic conditions
+ins             byte    %9.0g                 
+vgood           byte    %8.0g                 Health status very good
+good            byte    %8.0g                 Health status good
+fairpoor        byte    %8.0g                 Health status fair or poor
+y               float   %9.0g                 ambexp
+dy              byte    %9.0g                 dambexp
+lny             float   %9.0g                 lnambexp with recode if 0<y<=1 - see section 19.4
+dambexp         byte    %9.0g                 ambexp > 0
+lambexp         float   %9.0g                 Natural logarithm of ambexp
+lnambx          float   %9.0g                 Natural logarithm of ambexp or 0 if ambexp==0
+hospexp         long    %12.0g                Annual hospital expenditures
+dhospexp        byte    %8.0g                 hospexp > 0
+income          float   %9.0g                 Annual income in thousands of dollars
+age2            float   %9.0g                 age squared
+agefem          float   %9.0g                 age times female
+year01          byte    %8.0g                 Year is 2001
+ffs             byte    %8.0g                 
+instype         byte    %9.0g                 
+instype_s1      byte    %9.0g                 
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

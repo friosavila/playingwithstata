@@ -1,0 +1,42 @@
+educ      income    hispanic  midwest   firmsize  physlim   year97    year00    famsize   chronic
+docvis    female    married   south     vegood    fairpoor  year98    year01    injury
+age       black     noreast   msa       good      age2      year99    year02    private
+
+Contains data from mepsdocvisyoung.dta
+ Observations:        30,124                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            28                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+educ            byte    %8.0g                 Years of schooling
+docvis          int     %8.0g                 Number of doctor visits
+age             float   %9.0g                 Age in years / 10
+income          float   %9.0g                 Income in $ / 1000
+female          byte    %8.0g                 Female
+black           byte    %8.0g                 Black
+hispanic        byte    %8.0g                 Hispanic
+married         byte    %8.0g                 Married
+noreast         byte    %8.0g                 Northeast
+midwest         byte    %8.0g                 Midwest
+south           byte    %8.0g                 South
+msa             byte    %8.0g                 Metropolitan statistical area
+firmsize        float   %9.0g                 Size of firm/100
+vegood          byte    %8.0g                 Very good health
+good            byte    %8.0g                 Good health
+physlim         byte    %8.0g                 Physical limitation
+fairpoor        byte    %8.0g                 Fair or poor health
+age2            float   %9.0g                 age x age
+year97          byte    %8.0g                 Year 1997
+year98          byte    %8.0g                 Year 1998
+year99          byte    %8.0g                 Year 1999
+year00          byte    %8.0g                 Year 2000
+year01          byte    %8.0g                 Year 2001
+year02          byte    %8.0g                 Year 2003
+famsize         byte    %8.0g                 Family size
+injury          byte    %8.0g                 An injury
+private         byte    %8.0g                 Private insurance
+chronic         byte    %8.0g                 Chronic condition
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

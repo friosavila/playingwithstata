@@ -1,0 +1,52 @@
+black     col4      wage76    agesq76   reg4      reg8      nodaded   famed1    famed5    famed9
+grade76   mcol4     exp76     reg1      reg5      reg9      nomomed   famed2    famed6
+smsa66    col4pub   expsq76   reg2      reg6      momdad14  daded     famed3    famed7
+smsa76    south76   age76     reg3      reg7      sinmom14  momed     famed4    famed8
+
+Contains data from klingdata.dta
+ Observations:         3,010                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            37                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+black           byte    %9.0g                 Race (r0002300)
+grade76         byte    %9.0g                 '76 grade level
+smsa66          byte    %9.0g                 Lived in SMSA in 1966
+smsa76          byte    %9.0g                 Lived in SMSA in 1976
+col4            byte    %9.0g                 If any 4-year college nearby
+mcol4           byte    %9.0g                 If male 4-year college nearby
+col4pub         byte    %9.0g                 If public 4-year college nearby
+south76         byte    %9.0g                 If lived in South in 1976
+wage76          float   %9.0g                 '76 wage
+exp76           byte    %9.0g                 '76 experience (10+age66)-grade76-6
+expsq76         float   %9.0g                 '76 experience = exp76^2/100
+age76           byte    %9.0g                 '76 age (age66+10)
+agesq76         int     %9.0g                 '76 age squared (age76^2)
+reg1            byte    %9.0g                 region==NE
+reg2            byte    %9.0g                 Lived in Region 2 MidAtl
+reg3            byte    %9.0g                 Lived in Region 3 ENC
+reg4            byte    %9.0g                 Lived in Region 4 WNC
+reg5            byte    %9.0g                 Lived in Region 5 SA
+reg6            byte    %9.0g                 Lived in Region 6 ESC
+reg7            byte    %9.0g                 Lived in Region 7 WSC
+reg8            byte    %9.0g                 Lived in Region 8 M
+reg9            byte    %9.0g                 Lived in Region 9 P
+momdad14        byte    %9.0g                 Lived with both parents at age 14
+sinmom14        byte    %9.0g                 Lived with mother only at age 14
+nodaded         byte    %9.0g                 Father has no formal education
+nomomed         byte    %9.0g                 Mother has no formal education
+daded           float   %9.0g                 Mean grade level of father
+momed           float   %9.0g                 Mean grade level of mother
+famed1          byte    %9.0g                 mgrade>12 & fgrade>12
+famed2          byte    %9.0g                 mgrade>=12 & fgrade>=12
+famed3          byte    %9.0g                 mgrade==12 & fgrade==12
+famed4          byte    %9.0g                 mgrade>=12 & fgrade==-1
+famed5          byte    %9.0g                 fgrade>=12
+famed6          byte    %9.0g                 mgrade>=12 & fgrade>-1
+famed7          byte    %9.0g                 mgrade>=9 & fgrade>=9
+famed8          byte    %9.0g                 mgrade>-1 & fgrade>-1
+famed9          byte    %9.0g                 Not in famed1–famed8
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

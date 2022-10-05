@@ -1,0 +1,74 @@
+sampl     houssiz   bpsystol  hct       sizplace  vitaminc  black     hsiz3     region4   highbp
+strata    sex       bpdiast   tibc      finalwgt  zinc      orace     hsiz4     smsa1     agegrp
+psu       race      tcresult  iron      leadwt    copper    fhtatk    hsiz5     smsa2     highlead
+region    age       tgresult  hlthstat  corpuscl  porphyrn  hsizgp    region1   smsa3
+smsa      height    hdresult  heartatk  trnsfern  lead      hsiz1     region2   rural
+location  weight    hgb       diabetes  albumin   female    hsiz2     region3   loglead
+
+Contains data from nhanes.dta
+ Observations:        10,351                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            57                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+sampl           long    %9.0g                 Unique case identifier
+strata          byte    %9.0g                 Stratum identifier, 1–32
+psu             byte    %9.0g                 Primary sampling unit, 1 or 2
+region          byte    %9.0g      region     Region
+smsa            byte    %22.0g     smsa       SMSA type
+location        byte    %9.0g                 Stand number, 1–64
+houssiz         byte    %9.0g                 # persons in household, 1–14
+sex             byte    %9.0g      sex        Sex
+race            byte    %9.0g      race       Race
+age             byte    %9.0g                 Age in years
+height          float   %9.0g                 Height (cm)
+weight          float   %9.0g                 Weight (kg)
+bpsystol        int     %9.0g                 Systolic blood pressure
+bpdiast         int     %9.0g                 Diastolic blood pressure
+tcresult        int     %9.0g                 Serum cholesterol (mg/dL)
+tgresult        int     %9.0g                 Serum triglycerides (mg/dL)
+hdresult        int     %9.0g                 High density lipids (mg/dL)
+hgb             float   %9.0g                 Hemoglobin (g/dL)
+hct             float   %9.0g                 Hematocrit (%)
+tibc            int     %9.0g                 Total iron bind. cap. (mcg/dL)
+iron            int     %9.0g                 Serum iron (mcg/dL)
+hlthstat        byte    %20.0g     hlthstat   Health status
+heartatk        byte    %9.0g                 Heart attack
+diabetes        byte    %9.0g                 Diabetes
+sizplace        byte    %39.0g     sizplace   Size of place
+finalwgt        long    %9.0g                 Sampling weight (except lead)
+leadwt          long    %9.0g                 Sampling weight for lead
+corpuscl        float   %9.0g                 Mean corpuscular volume (fL)
+trnsfern        float   %9.0g                 Transferrin saturation (%)
+albumin         float   %9.0g                 Serum albumin (g/dL)
+vitaminc        float   %9.0g                 Serum vitamin C (mg/dL)
+zinc            int     %9.0g                 Serum zinc (mcg/dL)
+copper          int     %9.0g                 Serum copper (mcg/dL)
+porphyrn        int     %9.0g                 Erythrocyte porphyrin (mcg/dl)
+lead            byte    %9.0g                 Lead (mcg/dL)
+female          byte    %8.0g                 Female
+black           byte    %8.0g                 Black
+orace           byte    %8.0g                 Other race
+fhtatk          byte    %8.0g                 Female heart attack
+hsizgp          byte    %8.0g                 # in household or 5 if #>=5
+hsiz1           byte    %8.0g                 hsizgp==1.0000
+hsiz2           byte    %8.0g                 hsizgp==2.0000
+hsiz3           byte    %8.0g                 hsizgp==3.0000
+hsiz4           byte    %8.0g                 hsizgp==4.0000
+hsiz5           byte    %8.0g                 hsizgp==5.0000
+region1         byte    %8.0g                 region==NE
+region2         byte    %8.0g                 region==MW
+region3         byte    %8.0g                 region==S
+region4         byte    %8.0g                 region==W
+smsa1           byte    %8.0g                 smsa==1.0000
+smsa2           byte    %8.0g                 smsa==2.0000
+smsa3           byte    %8.0g                 smsa==4.0000
+rural           byte    %8.0g                 Rural
+loglead         float   %9.0g                 log(lead)
+highbp          byte    %8.0g                 BP > 140/90
+agegrp          byte    %8.0g      agegrp     Age groups 1–6
+highlead        byte    %8.0g      highlead   lead >= 25
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

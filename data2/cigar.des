@@ -1,0 +1,18 @@
+state   year    lnp     lnpmin  lnc     lny
+
+Contains data from cigar.dta
+ Observations:           300                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:             6                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+state           byte    %9.0g                 U.S. state
+year            byte    %9.0g                 Year 1963 to 1992
+lnp             float   %9.0g                 Log state real price of pack of cigarettes
+lnpmin          float   %9.0g                 Log of min real price in adjoining states
+lnc             float   %9.0g                 Log state cigarette sales in packs per capita
+lny             float   %9.0g                 Log state per capita disposable income
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

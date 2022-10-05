@@ -1,0 +1,50 @@
+shortnam  logem4    temp2     humid1    steplow   drystep   iron      baseco    cons1
+logpgp95  edes1975  temp3     humid2    deslow    drywint   silv      indtime   democ00a
+avexpr    avelf     temp4     humid3    stepmid   landlock  zinc      euro1900  cons00a
+lat_abst  temp1     temp5     humid4    desmid    goldm     oilres    democ1
+
+Contains data from ajr.dta
+ Observations:            64                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            35                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+shortnam        str3    %9s                   3 letter country name
+logpgp95        float   %9.0g                 Log PPP GDP pc in 1995, World Bank
+avexpr          float   %9.0g                 Average protection against expropriation risk
+lat_abst        float   %9.0g                 Abs(latitude of capital)/90
+logem4          float   %9.0g                 Log settler mortality
+edes1975        float   %9.0g                 % of European descent in 1975
+avelf           float   %9.0g                 ethno fract avg 5indic east_lev
+temp1           byte    %9.0g                 First of 5 temperature indicators
+temp2           byte    %9.0g                 Second of 5 temperature indicators
+temp3           byte    %9.0g                 Third of 5 temperature indicators
+temp4           byte    %9.0g                 Fourth of 5 temperature indicators
+temp5           byte    %9.0g                 Fifth of 5 temperature indicators
+humid1          byte    %9.0g                 First of four humidity indicators
+humid2          byte    %9.0g                 Second of four humidity indicators
+humid3          byte    %9.0g                 Third of four humidity indicators
+humid4          byte    %9.0g                 Fourth of four humidity indicators
+steplow         byte    %9.0g                 First of six soil indicators
+deslow          byte    %9.0g                 Second of six soil indicators
+stepmid         byte    %9.0g                 Third of six soil indicators
+desmid          byte    %9.0g                 Fourth of six soil indicators
+drystep         byte    %9.0g                 Fifth of six soil indicators
+drywint         byte    %9.0g                 Sixth of six soil indicators
+landlock        byte    %9.0g                 1 if landlocked
+goldm           byte    %9.0g                 First of five mineral indicators
+iron            float   %9.0g                 Second of five mineral indicators
+silv            byte    %9.0g                 Third of five mineral indicators
+zinc            byte    %9.0g                 Fourth of five mineral indicators
+oilres          float   %9.0g                 Fifth of five mineral indicators
+baseco          byte    %9.0g                 Base sample colonial origins article
+indtime         int     %9.0g                 Years independent: 1995 minus firstyr
+euro1900        float   %9.0g                 European settlers 1900, AJR
+democ1          byte    %9.0g                 Democracy in first year of independence
+cons1           byte    %9.0g                 cons on exec in 1st year indep
+democ00a        byte    %9.0g                 Democracy in 1900
+cons00a         byte    %9.0g                 Constraint on executive in 1900
+-------------------------------------------------------------------------------------------------------------
+Sorted by: shortnam

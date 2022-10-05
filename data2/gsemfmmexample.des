@@ -1,0 +1,19 @@
+numchron  age       privins   male      medicaid  emr       hosp
+
+Contains data from gsemfmmexample.dta
+ Observations:         4,355                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:             7                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+numchron        byte    %9.0g                 Number of chronic conditions
+age             float   %9.0g                 Reported age/10
+privins         byte    %9.0g                 Has private insurance
+male            byte    %9.0g                 Male
+medicaid        byte    %9.0g                 Subject has Medicaid insurance
+emr             byte    %9.0g                 Number of annual emergency room visits
+hosp            byte    %9.0g                 Number of hospital admissions
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

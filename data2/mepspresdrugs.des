@@ -1,0 +1,44 @@
+ssiratio     private      vegood       poverty      firmsz       totchr       age2         blhisp
+age          female       good         lowincome    multlc       black        linc
+educyr       hisp         fair         midincome    income       hi_empunion  vgh
+drugexp      marry        poor         msa          priolist     ldrugexp     fph
+
+Contains data from mepspresdrugs.dta
+ Observations:        10,367                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            29                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+ssiratio        float   %9.0g                 SSI/Income ratio
+age             byte    %8.0g                 Age
+educyr          byte    %8.0g                 Years of education
+drugexp         int     %8.0g                 Presc-drugs expense
+private         byte    %8.0g                 Private insurance
+female          byte    %8.0g                 Female
+hisp            byte    %8.0g                 Hiapanic
+marry           byte    %8.0g                 Married
+vegood          byte    %8.0g                 Very good health
+good            byte    %8.0g                 Good health
+fair            byte    %8.0g                 Fair health
+poor            byte    %8.0g                 Poor health
+poverty         byte    %8.0g                 Poor
+lowincome       byte    %8.0g                 Low income
+midincome       byte    %8.0g                 Middle income
+msa             byte    %8.0g                 Metropolitan stat area
+firmsz          float   %9.0g                 Firm size
+multlc          byte    %8.0g                 Multiple locations
+income          float   %9.0g                 Income
+priolist        byte    %8.0g                 Priority list cond
+totchr          byte    %8.0g                 Total chronic cond
+black           byte    %8.0g                 Black
+hi_empunion     byte    %8.0g                 Insured thro emp/union
+ldrugexp        float   %9.0g                 log(drugexp)
+age2            int     %9.0g                 Age-squared
+linc            float   %9.0g                 log(income)
+vgh             byte    %9.0g                 Very good or good health
+fph             byte    %9.0g                 Fair or poor health
+blhisp          byte    %9.0g                 Black or Hispanic
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

@@ -1,0 +1,80 @@
+person_id     dlotdraw2     dsurvdraw3    deduc3        female_list   ohp_all~2009  ddddraXn~2_3
+household_id  dlotdraw3     dsurvdraw4    deduc4        first_day_~t  tanf_eve~12m  ddddraXn~3_2
+oop           dlotdraw4     dsurvdraw5    demploy2      last_day_l~t  fpl_categ_~2  ddddraXn~3_3
+dowe          dlotdraw5     dsurvdraw6    demploy3      zip_msa_list  fpl_categ_~3  ddddraXn~4_2
+ervisits      dlotdraw6     dsurvdraw7    demploy4      ins_any_12m   fpl_categ_~4  ddddraXn~5_2
+medicaid      dlotdraw7     dsmoke        lottery       ins_ohp_12m   fpl_categ_~5  ddddraXn~6_2
+dhhsize2      dlotdraw8     hhinc         birthyear_~t  ins_medi~12m  dep_scre~12m  ddddraXn~7_2
+dhhsize3      dsurvdraw2    deduc2        english_list  ins_priv~12m  ddddraXn~2_2
+
+Contains data from ohiesmallrecode.dta
+ Observations:        22,679                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            55                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+person_id       float   %9.0g                 Scrambled individual identifier
+household_id    float   %9.0g                 Scrambled household identifier
+oop             float   %9.0g                 Out of pocket costs (cost_tot_oop_mod_12m)
+dowe            byte    %9.0g      yesno      Owe any money for health (cost_any_owe_12m owe_any)
+ervisits        byte    %9.0g                 Emergency room visits (er_num_mod_12m)
+medicaid        byte    %12.0g     enrolled   Ever enrolled in Medicaid from 1st not. date (10mar2008) to
+                                                30sep2009 (ohp_all_e
+dhhsize2        byte    %8.0g                 2 in hh (dddnumhh_li_2)
+dhhsize3        byte    %8.0g                 3 in hh (dddnumhh_li_3)
+dlotdraw2       byte    %8.0g                 draw_lottery==2 (llldraw_lot_2)
+dlotdraw3       byte    %8.0g                 draw_lottery==3 (llldraw_lot_3)
+dlotdraw4       byte    %8.0g                 draw_lottery==4 (llldraw_lot_4)
+dlotdraw5       byte    %8.0g                 draw_lottery==5 (llldraw_lot_5)
+dlotdraw6       byte    %8.0g                 draw_lottery==6 (llldraw_lot_6)
+dlotdraw7       byte    %8.0g                 draw_lottery==7 (llldraw_lot_7)
+dlotdraw8       byte    %8.0g                 draw_lottery==8 (llldraw_lot_8)
+dsurvdraw2      byte    %8.0g                 draw_survey==2 (ddddraw_sur_2)
+dsurvdraw3      byte    %8.0g                 draw_survey==3 (ddddraw_sur_3)
+dsurvdraw4      byte    %8.0g                 draw_survey==4 (ddddraw_sur_4)
+dsurvdraw5      byte    %8.0g                 draw_survey==5 (ddddraw_sur_5)
+dsurvdraw6      byte    %8.0g                 draw_survey==6 (ddddraw_sur_6)
+dsurvdraw7      byte    %8.0g                 draw_survey==7 (ddddraw_sur_7)
+dsmoke          byte    %10.0g     smk_lbl    Currently smoke cigs (smk_curr_12m)
+hhinc           float   %3.0f                 Household income as % of federal poverty line
+                                                (hhinc_pctfpl_12m)
+deduc2          byte    %8.0g                 HS diploma or GED (edu_12m_2)
+deduc3          byte    %8.0g                 Voc or 2yr degree (edu_12m_3)
+deduc4          byte    %8.0g                 Four year degree (edu_12m_4)
+demploy2        byte    %8.0g                 Work < 20 hrs/wk (employ_hrs_12m_2)
+demploy3        byte    %8.0g                 Work 20–29 hrs/wk (employ_hrs_12m_3)
+demploy4        byte    %8.0g                 Work 30+ hrs/wk (employ_hrs_12m_4)
+lottery         byte    %12.0g     lottery    Selected in the lottery
+birthyear_list  int     %9.0g                 Birth year: lottery list data
+english_list    byte    %50.0g     language   Individual requested english-language materials: lottery list
+                                                data
+female_list     byte    %9.0g      sex        Female: lottery list data
+first_day_list  byte    %45.0g     first_day_list
+                                              Signed up for lottery list on first day: lottery list data
+last_day_list   byte    %44.0g     last_day_list
+                                              Signed up for lottery list on last day: lottery list data
+zip_msa_list    byte    %34.0g     zip_msa    Zip code from lottery list is a metropolitan statistical area
+ins_any_12m     byte    %9.0g      yesno      Currently have any type of insurance
+ins_ohp_12m     byte    %9.0g      yesno      Currently have OHP insurance
+ins_medicar~12m byte    %9.0g      binary     Currently have Medicare
+ins_privpay_12m byte    %9.0g      binary     Currently have private insurance
+ohp_all_ev~2009 byte    %12.0g     enrolled   Ever enrolled in Medicaid from matched notification date to
+                                                30sep2009
+tanf_ever_f~12m byte    %9.0g      yesno      Ever personally on TANF between 10mar2008 and 30sep2009
+fpl_categ_12m_2 byte    %8.0g                 fpl_categ_12m==50-75% FPL
+fpl_categ_12m_3 byte    %8.0g                 fpl_categ_12m==75-100% FPL
+fpl_categ_12m_4 byte    %8.0g                 fpl_categ_12m==100-150% of FPL
+fpl_categ_12m_5 byte    %8.0g                 fpl_categ_12m==above 150% of FPL
+dep_screen_12m  byte    %9.0g                 
+ddddraXnum_2_2  byte    %8.0g                 draw_survey_12m==2 & numhh_list==2
+ddddraXnum_2_3  byte    %8.0g                 draw_survey_12m==2 & numhh_list==3
+ddddraXnum_3_2  byte    %8.0g                 draw_survey_12m==3 & numhh_list==2
+ddddraXnum_3_3  byte    %8.0g                 draw_survey_12m==3 & numhh_list==3
+ddddraXnum_4_2  byte    %8.0g                 draw_survey_12m==4 & numhh_list==2
+ddddraXnum_5_2  byte    %8.0g                 draw_survey_12m==5 & numhh_list==2
+ddddraXnum_6_2  byte    %8.0g                 draw_survey_12m==6 & numhh_list==2
+ddddraXnum_7_2  byte    %8.0g                 draw_survey_12m==7 & numhh_list==2
+-------------------------------------------------------------------------------------------------------------
+Sorted by: person_id

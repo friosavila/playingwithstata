@@ -1,0 +1,16 @@
+_ID          _X           _Y           rec_header   shape_order
+
+Contains data from georgia_shp.dta
+ Observations:         4,576                  
+    Variables:             5                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+_ID             int     %12.0g                
+_X              float   %10.0g                
+_Y              float   %10.0g                
+rec_header      str1    %9s                   
+shape_order     byte    %12.0g                
+-------------------------------------------------------------------------------------------------------------
+Sorted by: _ID  shape_order

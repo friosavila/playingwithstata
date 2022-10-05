@@ -1,0 +1,22 @@
+state        year         vote         margin       class        termshouse   termssenate  population
+
+Contains data from rdsenate.dta
+ Observations:         1,390                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:             8                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+state           byte    %9.0g                 State ID
+year            int     %10.0g                Election year
+vote            float   %9.0g                 Democratic vote share in next election
+margin          float   %9.0g                 Democratic margin of victory
+class           byte    %9.0g                 Senate class
+termshouse      byte    %54.0g                Cummulative number of terms served in U.S. House by congress of
+                                                record
+termssenate     byte    %53.0g                Cummulative number of terms served in U.S. Senate by congress
+                                                of record
+population      long    %10.0g                State population
+-------------------------------------------------------------------------------------------------------------
+Sorted by: state  year

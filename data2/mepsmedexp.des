@@ -1,0 +1,47 @@
+dupersid  famsze    private   white     northe    phylim    income    totchr    mnc       suppins   ltotexp
+year03    educyr    retire    hisp      mwest     actlim    injury    omc       ratio     hvgg      hins
+age       totexp    female    marry     south     msa       priolist  hmo       posexp    hfp       hdem
+
+Contains data from mepsmedexp.dta
+ Observations:         3,064                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            33                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+dupersid        long    %12.0g                Subject ID
+year03          byte    %12.0g     year03     Data is from MEPS 2003
+age             byte    %12.0g                Age
+famsze          byte    %12.0g                Size of the family
+educyr          byte    %12.0g                Years of education
+totexp          long    %12.0g                Total medical expenditure
+private         byte    %12.0g     private    Private supplementary insurance
+retire          byte    %12.0g     retire     Retired
+female          byte    %12.0g     female     Female
+white           byte    %12.0g     white      White
+hisp            byte    %12.0g     hisp       Hispanic
+marry           byte    %12.0g     marry      Married
+northe          byte    %12.0g     northe     Northeast area
+mwest           byte    %12.0g     mwest      Midwest area
+south           byte    %12.0g     south      South area (West is excluded)
+phylim          byte    %12.0g     phylim     Has functional limitation
+actlim          byte    %12.0g     actlim     Has activity limitation
+msa             byte    %12.0g     msa        Metropolitan statistical area
+income          float   %12.0g                Annual household income/1000
+injury          byte    %12.0g     injury     Condition is caused by an accident/injury
+priolist        byte    %12.0g     priolist   Has medical conditions that are on the priority list
+totchr          byte    %12.0g                # of chronic problems
+omc             byte    %12.0g     omc        Other managed care (privately insured sample)
+hmo             byte    %12.0g     hmo        Private insurance is HMO (privately insured sample)
+mnc             byte    %12.0g     mnc        Insurance plan is managed care
+ratio           float   %9.0g                 Generated variable using bootstrap
+posexp          byte    %9.0g      posexp     Total expenditure > 0
+suppins         byte    %9.0g      suppins    Has supp priv insurance
+hvgg            byte    %9.0g      hvgg       Health status is excellent, good, or very good
+hfp             byte    %9.0g      hfp        Health status is fair or poor
+ltotexp         float   %9.0g                 ln(totexp) if totexp > 0
+hins            byte    %9.0g                 Excellent health indicator
+hdem            byte    %9.0g                 Demographic group indicator
+-------------------------------------------------------------------------------------------------------------
+Sorted by: ltotexp

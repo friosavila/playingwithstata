@@ -1,0 +1,19 @@
+state  lnp63  lnc63  lnp64  lnc64  lnp65  lnc65
+
+Contains data from cigarwide.dta
+ Observations:            10                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:             7                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+state           byte    %9.0g                 U.S. state
+lnp63           float   %7.1f                 63 lnp
+lnc63           float   %7.1f                 63 lnc
+lnp64           float   %7.1f                 64 lnp
+lnc64           float   %7.1f                 64 lnc
+lnp65           float   %7.1f                 65 lnp
+lnc65           float   %7.1f                 65 lnc
+-------------------------------------------------------------------------------------------------------------
+Sorted by: state

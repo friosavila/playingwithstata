@@ -1,0 +1,32 @@
+earnings      age           dage          gender        lnhours       stateunemp
+lnearnings    lnage         education     educbyage     state         stateincom~c
+dearnings     agesq         educsquared   hours         statefip
+
+Contains data from acs.dta
+ Observations:           872                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            17                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+earnings        float   %9.0g                 Annual earnings in $
+lnearnings      float   %9.0g                 Natural logarighm of earnings
+dearnings       byte    %9.0g                 earnings > 80000
+age             byte    %36.0g                Age in years
+lnage           float   %9.0g                 Natural logarithm of age
+agesq           int     %9.0g                 Age squared
+dage            byte    %9.0g                 age >= 50
+education       byte    %9.0g                 Educational attainment: years of schooling
+educsquared     int     %9.0g                 Education squared
+gender          byte    %8.0g                 Female indicator
+educbyage       int     %9.0g                 Education times age
+hours           byte    %8.0g                 Usual hours worked per week
+lnhours         float   %9.0g                 Natural logarithm of hours
+state           str21   %21s                  State name
+statefip        byte    %57.0g     statefip_lbl
+                                              State (FIPS code)
+stateunemp      float   %9.0g                 State unemplyment rate in 2010
+stateincomepc   long    %12.0g                State income per capita in 2010
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

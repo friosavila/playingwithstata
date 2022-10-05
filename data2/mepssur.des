@@ -1,0 +1,37 @@
+ssiratio  educyr    totslf    medicaid  actlim    age2      totothr   ldrugexp
+year03    drugexp   totexp    private   income    noopexp   loopexp   ltotothr
+age       drugslf   medicare  female    totchr    oopexp    lnoopexp
+
+Contains data from mepssur.dta
+ Observations:         3,384                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            23                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+ssiratio        float   %9.0g                 Ratio of social security income to total income
+year03          byte    %8.0g                 
+age             byte    %8.0g                 Age in years
+educyr          byte    %8.0g                 Years of education
+drugexp         int     %8.0g                 Annual expenditure in prescription drugs
+drugslf         int     %8.0g                 Self paid expenditure on prescription drugs
+totslf          int     %12.0g                Total self-paid expenditure on prescription drugs
+totexp          long    %12.0g                Total expenditure on prescription drugs
+medicare        byte    %8.0g                 Has Medicare coverage
+medicaid        byte    %8.0g                 Has Medicaid coverage
+private         byte    %8.0g                 Has private insurance coverage
+female          byte    %8.0g                 Female
+actlim          byte    %8.0g                 Has activity limitation
+income          float   %9.0g                 Annual income
+totchr          byte    %8.0g                 Total chronic conditions
+age2            int     %9.0g                 Age in years squared
+noopexp         float   %9.0g                 Other out of pocket expenditure
+oopexp          int     %9.0g                 Out of pocket expenditure
+totothr         float   %9.0g                 Total other out of pocket expenditure
+loopexp         float   %9.0g                 log of out of pocket expenditure
+lnoopexp        float   %9.0g                 log of out of pocket expenditure
+ldrugexp        float   %9.0g                 log of total drug expenditure expenditure
+ltotothr        float   %9.0g                 log of total out of pocket expenditure
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

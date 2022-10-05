@@ -1,0 +1,37 @@
+offer         physician     female        totchr        bh            one
+ssiratio      nonphysician  phylim        insured       docvis        docbin
+age           medicaid      actlim        age2          ldocvis
+educyr        private       income        linc          ldocvisa
+
+Contains data from mepsdocvis.dta
+ Observations:         3,677                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            22                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+offer           byte    %8.0g                 Employer offers insurance
+ssiratio        float   %9.0g                 Ratio of SSI income to total income
+age             byte    %8.0g                 Age
+educyr          byte    %8.0g                 Years of education
+physician       int     %8.0g                 # visits to doctor
+nonphysician    int     %8.0g                 # visits to health professional, but not doctor
+medicaid        byte    %8.0g                 Has Medicaid public insurance
+private         byte    %8.0g                 Has private supplementary insurance
+female          byte    %8.0g                 Female
+phylim          byte    %8.0g                 Physical limitation
+actlim          byte    %8.0g                 Activity limitation
+income          float   %9.0g                 Income
+totchr          byte    %8.0g                 # chronic conditions
+insured         byte    %9.0g                 Has private supplementary insurance
+age2            int     %9.0g                 Age-squared
+linc            float   %9.0g                 log(income)
+bh              byte    %9.0g                 Black or Hispanic
+docvis          int     %9.0g                 # doctor visits
+ldocvis         float   %9.0g                 log(docvis) if docvis >0
+ldocvisa        float   %9.0g                 log(docvis+.01)
+one             byte    %9.0g                 1
+docbin          byte    %9.0g                 docvis > 0
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

@@ -1,0 +1,22 @@
+yhrs      female    childu5   visa      expr      fellow    pgradoth  pracsize  logyearn  exprsq
+
+Contains data from mabeldecomp.dta
+ Observations:        17,016                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            10                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+yhrs            float   %9.0g                 Annual hours worked
+female          byte    %9.0g      female     Female
+childu5         byte    %9.0g                 Have dep child udr 5y
+visa            byte    %9.0g      yesno      Temporary resident visa
+expr            float   %9.0g                 Years of medical practice experience
+fellow          byte    %9.0g      fellow     Fellowship of colleges
+pgradoth        byte    %9.0g                 Number of other postgrad qualifications
+pracsize        byte    %10.0g     nmdocbnd   Number of FT/PT doctors in practice: Bands
+logyearn        float   %9.0g                 log of annual earnings
+exprsq          float   %9.0g                 expr squared
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

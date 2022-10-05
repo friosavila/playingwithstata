@@ -1,0 +1,19 @@
+age      private  female   white    income   totchr   docvis
+
+Contains data from meps2003qr.dta
+ Observations:         3,677                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:             7                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+age             byte    %12.0g                Age in years
+private         byte    %12.0g                Has private insurance
+female          byte    %12.0g                Female
+white           byte    %12.0g                White ethnicity
+income          float   %12.0g                Total annual income
+totchr          byte    %12.0g                Total numebr of chronic conditions
+docvis          int     %9.0g                 Total numebr of doctor visits in survey period
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

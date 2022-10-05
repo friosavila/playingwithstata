@@ -1,0 +1,39 @@
+_ID           cname         fips          population    age           unemployment  edeprivation
+_CX           sname         south         ln_populat~n  black         ln_income
+_CY           sfips         hrate         ln_pdensity   femalehead    poverty
+year          cfips         hcount        psize         divorce       gini
+
+Contains data from georgia.dta
+ Observations:           159                  
+    Variables:            25                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+_ID             int     %12.0g                Spatial-unit ID
+_CX             float   %10.0g                x-coordinate of area centroid
+_CY             float   %10.0g                y-coordinate of area centroid
+year            int     %9.0g                 Year
+cname           str13   %13s                  County name
+sname           str7    %9s                   State name
+sfips           byte    %10.0g                State FIPS code
+cfips           int     %10.0g                County FIPS code
+fips            int     %10.0g                Combined state and county FIPS code
+south           byte    %5.0f      lbsouth    Located in the South
+hrate           float   %12.10f               Homicide rate per 100,000
+hcount          float   %12.10f               Homicide count three years average centered on year
+population      long    %7.0f                 County population
+ln_population   float   %12.10f               Log of population size
+ln_pdensity     float   %12.10f               Log of population density
+psize           float   %12.10f               Population size index
+age             float   %12.9f                Median age
+black           float   %12.10f               Percentage of black
+femalehead      float   %12.10f               Percentage of female-headed households
+divorce         float   %12.10f               Divorce rate
+unemployment    float   %12.10f               Unemployment rate
+ln_income       float   %12.10f               Log of median of family income
+poverty         float   %12.10f               Percentage of families below poverty line
+gini            float   %12.10f               Gini index of family income inequality
+edeprivation    float   %12.10f               Economic deprivation index
+-------------------------------------------------------------------------------------------------------------
+Sorted by: _ID

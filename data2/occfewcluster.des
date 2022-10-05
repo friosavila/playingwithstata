@@ -1,0 +1,69 @@
+wage      educ      west      one       uslhrs2   smsa5     sales     transop   whtrade   married   mjind
+lnw       union     south     blsrate   rural     smsabig   clerical  labor     retrade   single    hrspay
+occrate   nonwhite  occ92     jhrate    smsa2     prof      services  minconst  fire      othfamy   wc
+potexp    northe    ind92     age       smsa3     mgr       crafts    mfg       service   wagesam
+potexpsq  midw      occ_id    agesq     smsa4     tech      oper      tcpu      children  mjocc
+
+Contains data from occfewcluster.dta
+ Observations:         1,594                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            53                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+wage            float   %10.0g                Hourly wage in dollars in 1994
+lnw             float   %10.0g                Natural logarithm of wage
+occrate         float   %10.0g                Job injury risk in individual's occupation
+potexp          float   %10.0g                Years of potential work experience
+potexpsq        float   %10.0g                potexp squared
+educ            float   %10.0g                Years of education
+union           byte    %8.0g                 Union member
+nonwhite        byte    %8.0g                 Nonwhite
+northe          byte    %8.0g                 Region North
+midw            byte    %8.0g                 Region Midwest
+west            byte    %8.0g                 Region West
+south           byte    %8.0g                 Region South
+occ92           int     %10.0g                Alternative identifier for individual's occupation
+ind92           int     %10.0g                Identifier for individual's industry
+occ_id          int     %9.0g                 Identifier for individual's occupation
+one             int     %9.0g                 (count) one
+blsrate         float   %10.0g                Job injury risk in individual's industry
+jhrate          float   %10.0g                
+age             byte    %10.0g                
+agesq           int     %10.0g                
+uslhrs2         byte    %10.0g                
+rural           byte    %8.0g                 
+smsa2           byte    %8.0g                 
+smsa3           byte    %8.0g                 
+smsa4           byte    %8.0g                 
+smsa5           byte    %8.0g                 
+smsabig         byte    %8.0g                 
+prof            byte    %8.0g                 
+mgr             byte    %8.0g                 
+tech            byte    %8.0g                 
+sales           byte    %8.0g                 
+clerical        byte    %8.0g                 
+services        byte    %8.0g                 
+crafts          byte    %8.0g                 
+oper            byte    %8.0g                 
+transop         byte    %8.0g                 
+labor           byte    %8.0g                 
+minconst        byte    %8.0g                 
+mfg             byte    %8.0g                 
+tcpu            byte    %8.0g                 
+whtrade         byte    %8.0g                 
+retrade         byte    %8.0g                 
+fire            byte    %8.0g                 
+service         byte    %8.0g                 
+children        byte    %10.0g                
+married         byte    %8.0g                 
+single          byte    %8.0g                 
+othfamy         long    %10.0g                
+wagesam         byte    %8.0g                 
+mjocc           byte    %8.0g                 
+mjind           byte    %8.0g                 
+hrspay          int     %10.0g                
+wc              byte    %8.0g                 
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

@@ -1,0 +1,58 @@
+spell     censor4   tenure    explose   female    age       bluecoll  trade     year85    encen     wscen
+censor1   ui        disrate   stateur   child     schlt12   mining    fire      year87    wncen     mountain
+censor2   reprate   slack     houshead  ychild    schgt12   constr    services  year89    southatl  pacific
+censor3   logwage   abolpos   married   nonwhite  smsa      transp    pubadmin  midatl    escen
+
+Contains data from mccall.dta
+ Observations:         3,343                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            43                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+spell           byte    %8.0g                 Periods jobless: two-week intervals
+censor1         byte    %8.0g                 Reemployed at full-time job
+censor2         byte    %8.0g                 Reemployed at part-time job
+censor3         byte    %8.0g                 Reemployed but left job: pt-ft status unknown
+censor4         byte    %8.0g                 Still jobless
+ui              byte    %8.0g                 Filed UI claim
+reprate         float   %8.0g                 Eligible replacement rate
+logwage         float   %8.0g                 log weekly earnings
+tenure          byte    %8.0g                 Years tenure in lost job
+disrate         float   %8.0g                 Eligible disregard rate
+slack           byte    %8.0g                 Lost job due to slack work
+abolpos         byte    %8.0g                 Lost job due to position abolished
+explose         byte    %8.0g                 Expected to lose job
+stateur         float   %8.0g                 State unemployment rate in year job lost
+houshead        byte    %8.0g                 Head of household
+married         byte    %8.0g                 Married
+female          byte    %8.0g                 Female
+child           byte    %8.0g                 Have children
+ychild          byte    %8.0g                 Have children under 6
+nonwhite        byte    %8.0g                 Nonwhite
+age             byte    %8.0g                 Age at time of survey
+schlt12         byte    %8.0g                 Less than 12 years completed schooling
+schgt12         byte    %8.0g                 More than 12 years completed schooling
+smsa            byte    %8.0g                 Resides in SMSA
+bluecoll        byte    %8.0g                 Lost bluecollar job
+mining          byte    %8.0g                 Lost job in mining
+constr          byte    %8.0g                 Lost job in construction
+transp          byte    %8.0g                 Lost job in transportation
+trade           byte    %8.0g                 Lost job in trade
+fire            byte    %8.0g                 Lost job in finance, insurance, real estate
+services        byte    %8.0g                 Lost job in services
+pubadmin        byte    %8.0g                 Lost job in public administration
+year85          byte    %8.0g                 Lost job in 1985
+year87          byte    %8.0g                 Lost job in 1987
+year89          byte    %8.0g                 Lost job in 1989
+midatl          byte    %8.0g                 Reside in Mid-Atlantic region
+encen           byte    %8.0g                 Reside in East–North–Central region
+wncen           byte    %8.0g                 Reside in West–North–Central region
+southatl        byte    %8.0g                 Reside in South Atlantic region
+escen           byte    %8.0g                 Reside in East–South–Central region
+wscen           byte    %8.0g                 Reside in West–South–Central region
+mountain        byte    %8.0g                 Reside in Mountain region
+pacific         byte    %8.0g                 Reside in Pacific region
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

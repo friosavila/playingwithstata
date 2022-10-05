@@ -1,0 +1,94 @@
+year          pamtoop       jobstat       stroke        penet         construct00   prem3
+baseid        h_age         spmarry       asthma        aapcc         manufac00     prem4
+coverage      h_rpnm01      spwidow       diabetes      commrate      whitecoll~00  prem5
+hmo           h_male        lvalone       cancer        typology04    selfemp00     prem6
+count         h_white       genhelth      bone          nhmo03        govt00        coverage1
+d_covnm1      h_msa         comphlth      mental        nhmo02        urban03
+d_covrx1      h_region      smoknow       nlimit        arfaapcc04    elderly03
+d_moamt1      spchnlnm      smokever      niadl         arfaapcc03    elderly02
+aamttot       spdegrcv      heartd        nadl          arfaapcc02    prem0
+aamtoop       income        heartp        state         noinsur00     prem1
+pamttot       income_c      hyper         county        unemp00       prem2
+
+Contains data from mcbs.dta
+ Observations:         7,664                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            71                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+year            int     %12.0g                
+baseid          str8    %8s                   Unique SP Identification Number
+coverage        str8    %8s                   Medicare/ESI/Medigap/MMC
+hmo             byte    %12.0g                If HMO
+count           byte    %12.0g                # of years observed
+d_covnm1        byte    %12.0g                # of people covered
+d_covrx1        byte    %12.0g                If cover prescribed drug
+d_moamt1        float   %12.0g                Monthly premium per person
+aamttot         float   %12.0g                Total drug expenditure
+aamtoop         float   %12.0g                Out-of-pocket drug expenditure
+pamttot         float   %12.0g                Total health care expenditure
+pamtoop         float   %12.0g                Out-of-pocket health care expenditure
+h_age           int     %12.0g                Age
+h_rpnm01        byte    %12.0g                # of MMC plans in the area
+h_male          byte    %12.0g                If male
+h_white         byte    %12.0g                If white
+h_msa           byte    %12.0g                If metro area
+h_region        str13   %13s                  PSID region
+spchnlnm        byte    %12.0g                Number of children living
+spdegrcv        byte    %12.0g                Highest grade SP completed
+income          byte    %12.0g                Income range of SP
+income_c        long    %12.0g                Actual income of SP
+jobstat         byte    %12.0g                If working now
+spmarry         byte    %12.0g                If married
+spwidow         byte    %12.0g                If widowed
+lvalone         byte    %12.0g                If live alone
+genhelth        byte    %12.0g                Self rated health status
+comphlth        byte    %12.0g                Health compared to one year ago
+smoknow         byte    %12.0g                If smoke now
+smokever        byte    %12.0g                If ever smoked
+heartd          byte    %12.0g                If have heart attack/angina pectoris/other condition
+heartp          byte    %12.0g                If have heart problems with failure/valves/rhythms
+hyper           byte    %12.0g                If have hypertension/harden arteries
+stroke          byte    %12.0g                If had stroke
+asthma          byte    %12.0g                If have asthma
+diabetes        byte    %12.0g                If have diabetes
+cancer          byte    %12.0g                If have cancer
+bone            byte    %12.0g                If have bone problems
+mental          byte    %12.0g                If have mental/brain problems
+nlimit          byte    %12.0g                # of functional limitations
+niadl           byte    %12.0g                # of IADL
+nadl            byte    %12.0g                # of ADL
+state           str2    %2s                   
+county          str11   %11s                  
+penet           float   %12.0g                MMC penetration rate in county from previous year
+aapcc           float   %12.0g                Medicare compensation rate from previous year
+commrate        byte    %12.0g                If community rating of Medigap required
+typology04      str2    %2s                   Economic-dependent typology code, 04
+nhmo03          byte    %12.0g                # HMOs by headquarter location, 03
+nhmo02          byte    %12.0g                # HMOs by headquarter location, 02
+arfaapcc04      float   %12.0g                AAPCC, 04
+arfaapcc03      float   %12.0g                AAPCC, 03
+arfaapcc02      float   %12.0g                AAPCC, 02
+noinsur00       float   %12.0g                % w/o health insurance, 00
+unemp00         float   %12.0g                Unemployment rate, 16+ 00
+construct00     float   %12.0g                % construction workers, 00
+manufac00       float   %12.0g                % manufacturing workers, 00
+whitecollar00   float   %12.0g                % white collar workers, 00
+selfemp00       float   %12.0g                % self-employed workers, 00
+govt00          float   %12.0g                % govt. workers, 00
+urban03         byte    %12.0g                Rural/Urban continuum code, 03
+elderly03       float   %12.0g                % population, 65+ 03
+elderly02       float   %12.0g                % population, 65+ 02
+prem0           byte    %12.0g                Prem. of Medicare
+prem1           float   %12.0g                Prem. of ESI w/ RX
+prem2           float   %12.0g                Prem. of ESI w/o RX
+prem3           float   %12.0g                Prem. of Medigap w/ RX
+prem4           float   %12.0g                Prem. of Medigap w/o RX
+prem5           float   %12.0g                Prem. of MMC w/ RX
+prem6           float   %12.0g                Prem. of MMC w/o RX
+coverage1       byte    %14.0g     coverage1_code
+                                              Insurance & drug coverage
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

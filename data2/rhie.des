@@ -1,0 +1,62 @@
+plan      id        educdec   mentdol   mentvis   ndisease  child     lcoins    xghindx   dmdu
+Site      black     time      inpdol    mdu       physlim   femchild  fmde      linc
+coins     income    outpdol   med       notmdvis  ghindx    lfam      hlthg     lnum
+tookphys  age       drugdol   totadm    num       mdeoff    lpi       hlthf     lnmed
+year      female    suppdol   inpmis    mhi       pioff     idp       hlthp     dmed
+
+Contains data from rhie.dta
+ Observations:        20,186                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            46                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+plan            byte    %9.0g                 HIE plan number
+Site            byte    %9.0g                 Site
+coins           byte    %9.0g                 Coinsurance -- medical
+tookphys        byte    %9.0g                 Took baseline physical
+year            byte    %9.0g                 Study year
+id              float   %9.0g                 Person ID, leading digit is sit
+black           float   %9.0g                 Black
+income          float   %9.0g                 Income based on annual income r
+age             float   %9.0g                 Age that year
+female          byte    %9.0g                 Female
+educdec         float   %9.0g                 Education of decision maker
+time            float   %9.0g                 Time eligible during the year
+outpdol         float   %9.0g                 Outpatient exp. excl. ment and
+drugdol         float   %9.0g                 Drugs purchased, outpatient
+suppdol         float   %9.0g                 Supplies purchased, outpatient
+mentdol         float   %9.0g                 Psychotherapy exp., outpatient
+inpdol          float   %9.0g                 Inpatient exp., facilities & md
+med             float   %9.0g                 Medical exp excl outpatient men
+totadm          byte    %9.0g                 Number of hosp. admissions
+inpmis          byte    %9.0g                 Missing any inpatient charges
+mentvis         byte    %9.0g                 Number psychotherapy visits
+mdu             byte    %9.0g                 Number face-to-fact md visits
+notmdvis        int     %9.0g                 Mumber face-to-face, not-md vis
+num             byte    %9.0g                 Family size
+mhi             float   %9.0g                 Mental health index -- baselin
+ndisease        float   %9.0g                 Count of chronic diseases -- ba
+physlim         float   %9.0g                 Physical limitations -- baselin
+ghindx          float   %9.0g                 General health index -- baselin
+mdeoff          float   %9.0g                 Maximum expenditure offer
+pioff           float   %9.0g                 Participation incentive
+child           byte    %9.0g                 Child
+femchild        byte    %9.0g                 Female child
+lfam            float   %9.0g                 Log of family size
+lpi             float   %9.0g                 Log participation incentive
+idp             byte    %9.0g                 Individual deductible plan
+lcoins          float   %9.0g                 log(coinsurance+1)
+fmde            float   %9.0g                 Function of mdeoff
+hlthg           byte    %9.0g                 Good health
+hlthf           byte    %9.0g                 Fair health
+hlthp           byte    %9.0g                 Poor health
+xghindx         float   %9.0g                 General health index with imputation
+linc            float   %9.0g                 Log of annual family income (in $)
+lnum            float   %9.0g                 
+lnmed           float   %9.0g                 Log outpatient exp. excl....
+dmed            byte    %9.0g                 Any outpatient exp; if mded>0
+dmdu            byte    %9.0g                 Any MD visit; 1 if mdu>0
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

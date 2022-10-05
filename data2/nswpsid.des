@@ -1,0 +1,31 @@
+treat     educ      hisp      re74      re78      u75       educsq    re74sq    u74black
+age       black     marr      re75      u74       agesq     nodegree  re75sq    u74hisp
+
+Contains data from nswpsid.dta
+ Observations:         2,675                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            18                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+treat           byte    %9.0g                 Treated
+age             byte    %9.0g                 Age in years
+educ            byte    %9.0g                 Years of education
+black           byte    %9.0g                 Black
+hisp            byte    %9.0g                 Hispanic
+marr            byte    %9.0g                 Married
+re74            float   %9.0g                 Real annual earnings in 1974 (pretreatment)
+re75            float   %9.0g                 Real annual earnings in 1975 (pretreatment)
+re78            float   %9.0g                 Real annual earnings in 1978 (posttreatment)
+u74             byte    %9.0g                 Unemployed in 1974
+u75             byte    %9.0g                 Unemployed in 1975
+agesq           int     %9.0g                 Age in years squared
+educsq          int     %9.0g                 Education in years squared
+nodegree        byte    %9.0g                 Years of education > 12
+re74sq          float   %9.0g                 Real annual earnings in 1974 squared
+re75sq          float   %9.0g                 Real annual earnings in 1975 squared
+u74black        byte    %9.0g                 Unemployed and black
+u74hisp         byte    %9.0g                 Unemployed and hispanic
+-------------------------------------------------------------------------------------------------------------
+Sorted by: 

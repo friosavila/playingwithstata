@@ -1,0 +1,15 @@
+_ID  _X   _Y
+
+Contains data from columbuscoord.dta
+ Observations:         1,245                  A.C.Cameron & P.K.Trivedi (2021): Microeconometrics using
+                                                Stata, 2e
+    Variables:             3                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+_ID             byte    %12.0g                
+_X              float   %10.0g                
+_Y              float   %10.0g                
+-------------------------------------------------------------------------------------------------------------
+Sorted by: _ID

@@ -1,0 +1,23 @@
+id        wave      yearn     yhrs      female    expr      hospwork  selfempl  lyearn    lyhrs     exprsq
+
+Contains data from mabelunbalsmall.dta
+ Observations:         3,897                  A.C.Cameron & P.K.Trivedi (2022): Microeconometrics Using
+                                                Stata, 2e
+    Variables:            11                  5 Oct 2022 13:07
+-------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-------------------------------------------------------------------------------------------------------------
+id              long    %10.0g                Cross-wave ID
+wave            byte    %9.0g                 Survey wave
+yearn           float   %9.0g                 Gross annual earnings
+yhrs            float   %9.0g                 Annual hours worked
+female          byte    %9.0g      female     Female
+expr            float   %9.0g                 Years of medical practice experience
+hospwork        byte    %9.0g      agree      Do hospital work
+selfempl        byte    %9.0g      selfempl   Self employed GPs and specialists (Principals and Associates)
+lyearn          float   %9.0g                 log of yearn
+lyhrs           float   %9.0g                 log of yhrs
+exprsq          float   %9.0g                 expr^2
+-------------------------------------------------------------------------------------------------------------
+Sorted by: id  wave
