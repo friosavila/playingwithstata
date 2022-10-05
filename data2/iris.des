@@ -7,11 +7,11 @@ Contains data from iris.dta
 Variable      Storage   Display    Value
     name         type    format    label      Variable label
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-Sepal_Length    double  %9.0g                 Sepal.Length
-Sepal_Width     double  %9.0g                 Sepal.Width
-Petal_Length    double  %9.0g                 Petal.Length
-Petal_Width     double  %9.0g                 Petal.Width
-Species         long    %9.0g      Species    Species
+sepal_length    double  %9.0g                 Sepal.Length
+sepal_width     double  %9.0g                 Sepal.Width
+petal_length    double  %9.0g                 Petal.Length
+petal_width     double  %9.0g                 Petal.Width
+species         long    %9.0g      Species    Species
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 Sorted by: 
      Note: Dataset has changed since last saved.

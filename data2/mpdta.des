@@ -1,0 +1,23 @@
+
+.         des, simple
+year         countyreal   lpop         lemp         first_treat  treat
+
+.         des
+
+Contains data from mpdta.dta
+ Observations:         2,500                  Written by R.              
+    Variables:             6                  4 Oct 2022 22:24
+-----------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+-----------------------------------------------------------------------------------------------------------------------
+year            int     %9.0g                 year
+countyreal      long    %9.0g                 countyreal
+lpop            double  %9.0g                 lpop
+lemp            double  %9.0g                 lemp
+first_treat     int     %9.0g                 first.treat
+treat           byte    %9.0g                 treat
+-----------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+
+.         log close

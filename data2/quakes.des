@@ -7,8 +7,8 @@ Contains data from quakes.dta
 Variable      Storage   Display    Value
     name         type    format    label      Variable label
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-lat             double  %9.0g                 lat
-long            double  %9.0g                 long
+latitud         double  %9.0g                 lat
+longitud        double  %9.0g                 long
 depth           long    %9.0g                 depth
 mag             double  %9.0g                 mag
 stations        long    %9.0g                 stations
