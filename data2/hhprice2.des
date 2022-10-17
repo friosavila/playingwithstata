@@ -1,0 +1,34 @@
+
+
+price         bedrooms      stories       mainroad      basement      airconditi~g  furnishing~s
+area          bathrooms     parking       guestroom     hotwaterhe~g  prefarea      log_price
+
+ Observations:           545                  
+    Variables:            14                  12 Oct 2022 09:27
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+
+price           long    %8.0f                 Price of the house
+area            int     %8.0g                 Area in sqrt feet
+bedrooms        byte    %8.0g                 # of bedrooms
+bathrooms       byte    %8.0g                 # of bathrooms
+stories         byte    %8.0g                 # of floors
+parking         byte    %8.0g                 # of parking spaces
+mainroad        byte    %8.0g      mainroadc
+                                              Is on the main road
+guestroom       byte    %8.0g      guestroomc
+                                              Has a guestoom
+basement        byte    %8.0g      basementc
+                                              Has a basement
+hotwaterheating byte    %8.0g      hotwaterheatingc
+                                              Has hot water
+airconditioning byte    %8.0g      airconditioningc
+                                              Has Air conditioning
+prefarea        byte    %8.0g      prefareac
+                                              Is located in a prefered area in the City
+furnishingstatus
+                byte    %14.0g     furnishingstatusc
+                                              Type of house furnishing
+log_price       float   %9.0g                 
+
