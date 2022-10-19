@@ -57,12 +57,13 @@ _at@__event__ |
 ```
 
 And of course the real thing
+
+
+```
 use https://github.com/scunning1975/mixtape/raw/master/baker.dta, clear
 jwdid y, tvar(year) gvar(treat_date) ivar(id)
 estat event
-
-```
-
+[output ommitted]
 ---------------------------------------------------------------
               |            Delta-method
               |   Contrast   std. err.     [95% conf. interval]
