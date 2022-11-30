@@ -1,7 +1,9 @@
 ** Need to make Colors easier.
 ** and Separate Colros for RBAR from RAREA
+** check colors for transitions
 
-*! v1.32 by FRA fix wide and adds update
+*! v1.33 by FRA further imp to wide
+* v1.32 by FRA fix wide and adds update
 * v1.31 by FRA fix for varabbref
 * v1.3 by FRA adds more control and transform data
 * v1.2 by FRA Adjusts Labels
@@ -36,7 +38,7 @@ program sankey_plot
 			capture:program drop sankey_plot
 		}
 		if "`wide'"!="" {
-			sankey_wide `anything', `tight' `options'
+			qui:sankey_wide `anything', `tight' `options'
 		}
 		else {		
 			sankey_i2 `anything', `options'	 
@@ -48,39 +50,90 @@ program sankey_plot
 	}
 end
 
+mata:
+	void gquery(string scalar scm, anything){
+		string matrix any, sch, ssch
+		ssch=cat(scm)
+		any=stritrim(strtrim(tokens(anything)))
+		real scalar i, fnd, nr
+		nr=rows(ssch)
+		fnd=1
+		i=1
+		while(fnd==1){			
+			i++
+			sch=stritrim(tokens(ssch[i,]))
+			if (cols(sch)==3) {
+				if (sch[1]==any[1] & sch[2]==any[2]) {		
+					fnd=0
+					st_local("toreturn",sch[3])
+				}
+			}
+			if (i==nr) {
+				fnd=0
+			}
+		}
+	}
+end
 
+program graphquery, rclass
+	syntax anything, [DEFAULT DEFAULT1(str asis) ]
+	qui:findfile "scheme-`c(scheme)'.scheme"
+	mata:gquery("`r(fn)'","`anything'") 
+	if `"`toreturn'"'=="" & "`default'`default1'"!="" local toreturn `default'`default1'
+	display "`anything':" `"`toreturn'"'
+	
+	return local query   `toreturn'
+end
 
 program sankey_wide
 	syntax varlist (min=2) [if] [in],  [width(varname) tight  ///
-										newframe(name) drop *]
+										newframe(name) drop * levcolor(numlist max=1 >=0)]
+	if "`levcolor'"=="" local levcolor -1									
 	if "`newframe'"=="" tempname newframe
 	capture frame `drop' `newframe'
 	*display "`varlist' `width'  `label0' `label1' `if' `in'"
 	frame put `varlist' `width'  `label0' `label1' `if' `in', into(`newframe')
-		qui:frame `newframe':{
+		frame `newframe':{
 		if "`width'"=="" {
 			tempname width
 			gen byte `width'=1
 		}
+		** get first collapse
+		qui {
+			tempname xxx
+			bysort `varlist' `label0' `label1':egen `xxx'=sum(`width')
+			replace `width'=`xxx'
+			duplicates drop			
+		}
+		** get first color
+		
  		foreach i in `varlist' {
 			local cnt = `cnt'+1
 			** is numeric
 			capture confirm  numeric var `i'
-			if _rc!=0 {
-				clonevar xx`cnt'=`i'				
-			}
-			else {
-				if "`:variable label `i''"!="" {
-					decode `i', gen(xx`cnt')
+			if _rc==0 {
+				if "`:value label `i''"!="" {
+					decode `i', gen(lb`cnt')
+					clonevar xx`cnt'=`i'
 				}
 				else {
-					tostring `i', gen(xx`cnt')
-				}
+					clonevar xx`cnt'=`i'
+					tostring `i', gen(lb`cnt')					
+				}				
+			}
+			else {
+				encode `i', gen(xx`cnt')
+				label drop xx`cnt'
+				ren `i' lb`cnt'
 			}		
-			local vlist  `vlist' xx`cnt'
+			
+			local vlist  `vlist'  xx`cnt'
+			local nvlist  `nvlist'  -xx`cnt'
+			local lblist `lblist' lb`cnt'
 		}
  		
-		 
+		gsort `nvlist' 
+		
 		*qui:recast str100 `vlist'
 		local fcnt=`cnt'-1
 		gen __id=_n
@@ -89,6 +142,7 @@ program sankey_wide
 		gen _x1=_x0+1
 		gen touse=_x0==1
 		*local vlist var1 var2 var3 
+		local v2
 		foreach  i in `vlist'  {
 			local v1 `v2' `i'
 			if `:word count `v1''==2 {
@@ -98,27 +152,95 @@ program sankey_wide
 			}
 			else local v2 `i'
 		}
+		
+		local v2
+		foreach  i in `lblist'  {
+			local v1 `v2' `i'
+			if `:word count `v1''==2 {
+				local v2 `i'
+				local cnt = `cnt'+1
+				local flblist `flblist' `v1' 
+			}
+			else local v2 `i'
+		}
+		display "`vlist'"
+		display "`lblist'"
 		sort _x0 __id
-		mata:sdlong("`fvlist'","touse")
+		** recast opt length 
+		local mstr 0
+		foreach i in `flblist' {
+			local auxstr = subinstr("`:type `i''","str","",.)
+			if `mstr'<`auxstr' local mstr `auxstr'
+		}
+		recast str`mstr' `flblist'
+		recast double    `fvlist'
+		*list `fvlist'
+		*** Color
+		if `levcolor'==0 {
+			tempvar auxc
+			egen `auxc'=group(`fvlist')
+			levelsof `auxc', local(lvcollist)
+			tempvar color0
+			gen str20 `color0'=""
+			foreach i of local lvcollist {
+				local j = `j'+1
+				if `j'>15 local j 1
+				graphquery color p`j'
+				replace `color0'=`""`r(query)'""'  if `auxc'==`i'
+				
+			}
+		}
+		else if `levcolor'>0 {
+			tempvar auxc
+ 
+			egen `auxc'=group(`:word `levcolor' of `varlist'')
+			
+			levelsof `auxc', local(lvcollist)
+			tempvar color0
+			gen str20 `color0'=""
+			foreach i of local lvcollist {
+				local j = `j'+1
+				if `j'>15 local j 1
+				graphquery color p`j'
+				replace `color0'=`""`r(query)'""'  if `auxc'==`i'
+				
+			}
+		}
+		
+		
+		mata:ndlong("`fvlist'","`flblist'","touse")
+		*mata:sdlong("`flblist'","touse")
+		
 		ren xx1 _y0
 		ren xx2 _y1
+		
+		ren lb1 _lab0
+		ren lb2 _lab1
 		qui:compress
 		if "`tight'"!="" {
 			tempvar wt
 			bysort _x0 _x1 _y0 _y1:egen `wt'=sum(`width')
 			replace `width'=`wt'
-			keep _x0 _x1 _y0 _y1 `width' 
-			duplicates drop
+			keep _x0 _x1 _y0 _y1 `width' _lab0 _lab1 `color0'
+			bysort _x0 _x1 _y0 _y1:gen flag=_n
+			keep if flag==1
+			drop flag
+			gsort -_y0 -_y1 
 		}
-		keep _x0 _x1 _y0 _y1 `width' 
-		sankey_i2 _x0 _y0 _x1 _y1 , width0(`width') `options' extra adjust 
+		
+		keep _x0 _x1 _y0 _y1 `width' _lab0 _lab1 `color0'
+		clonevar _width = `width'
+		
+		sankey_i2 _x0 _y0 _x1 _y1 , width0(`width') `options' extra adjust  label0(_lab0) label1(_lab1) color(`color0')
 	}
 end
-
+** This reads the data assuming string.
+** Need to consider being "smarter" and have it read as numeric as well.
 mata:
 
 void sdlong(string scalar fvlist,touse){
 	string matrix a, a1, a2
+	string matrix na, na1, na2
 	real matrix sel
 	a=st_sdata(.,fvlist,touse)
 	sel=J(1,cols(a)/2,(1,0))
@@ -126,8 +248,27 @@ void sdlong(string scalar fvlist,touse){
 	sel=J(1,cols(a)/2,(0,1))
 	a2=vec(select(a,sel))
 	//*a1,a2
+	
 	st_sstore(.,tokens(fvlist)[(1,2)],(a1,a2))
 
+}
+void ndlong(string scalar fvlist,flblist, touse){
+	real matrix a, a1, a2
+	real matrix sel
+	string matrix sa, sa1, sa2
+	
+	a=st_data(.,fvlist,touse)
+	sa=st_sdata(.,flblist,touse)
+	sel=J(1,cols(a)/2,(1,0))
+	a1=vec(select(a,sel))
+	sa1=vec(select(sa,sel))
+	sel=J(1,cols(a)/2,(0,1))
+	a2=vec(select(a,sel))
+	sa2=vec(select(sa,sel))
+	 
+	st_store(.,tokens(fvlist)[(1,2)],(a1,a2))
+	st_sstore(.,tokens(flblist)[(1,2)],(sa1,sa2))
+	
 }
 end
 
@@ -196,18 +337,23 @@ program adjust_coordinates, sortpreserve
 	syntax [if]
 	*sum `width0' `width1'
 	tempvar sort
-	gen `sort' = _n
+	gen `sort' = _n `if'
 	tempvar yy0 yy1
 	clonevar `yy0' = y0_ `if'
 	clonevar `yy1' = y1_ `if'
 	tempvar tw0 tw1
 	** Total width by group
-	bysort `yy0' x0_ (`yy1' `sort' ):egen `tw0'=sum(w0_) `if'
-	bysort `yy1' x1_ (`yy0' `sort' ):egen `tw1'=sum(w1_) `if'
+	** dropint this to "follow up"
+	*bysort `yy0' x0_ (`yy1' `sort' ):egen `tw0'=sum(w0_) `if'
+	*bysort `yy1' x1_ (`yy0' `sort' ):egen `tw1'=sum(w1_) `if'
+	bysort `yy0' x0_ ( `sort' ):egen `tw0'=sum(w0_) `if'
+	bysort `yy1' x1_ ( `sort' ):egen `tw1'=sum(w1_) `if'
 	** Ajdust coordinates so that Y0 and Y1 are centered
 	*sort `yy0' `yy1'
- 	bysort `yy0' x0_ (`yy1'  `sort' ): replace y0_=y0_-`tw0'*.5+sum(w0_)-w0_/2 `if'
-	bysort `yy1' x1_ (`yy0'  `sort' ): replace y1_=y1_-`tw1'*.5+sum(w1_)-w1_/2 `if'
+ 	*bysort `yy0' x0_ (`yy1'  `sort' ): replace y0_=y0_-`tw0'*.5+sum(w0_)-w0_/2 `if'
+	*bysort `yy1' x1_ (`yy0'  `sort' ): replace y1_=y1_-`tw1'*.5+sum(w1_)-w1_/2 `if'
+	bysort `yy0' x0_ ( `sort' ): replace y0_=y0_-`tw0'*.5+sum(w0_)-w0_/2 `if'
+	bysort `yy1' x1_ ( `sort' ): replace y1_=y1_-`tw1'*.5+sum(w1_)-w1_/2 `if'
 
 end
 
@@ -475,7 +621,7 @@ program sankey_i2
 syntax varlist [if],  [width0(varname) width1(varname) sharp(real 7) ///
 				 color(varname) pstyle(varname) * adjust ///
 				 label0(varname) label1(varname)  gap(real 0.01) ///
-				 noline nobar extra colorpalette(passthru) fillcolor(str asis) ///
+				 noline nobar extra colorpalette(passthru) fcolor(passthru) fillcolor(str asis) fintensity(passthru) ///
 				 newframe(string) bwidth(real 0.025) bheight(numlist >0 max=1) bcolor(string asis) blcolor(string asis) blwidth(string asis) ///
 				 labangle(real 0) labpos(string asis) labsize(string asis) labcolor(string asis) labgap(string asis) xaxis(passthru)]  
 	
@@ -493,9 +639,9 @@ syntax varlist [if],  [width0(varname) width1(varname) sharp(real 7) ///
 		qui:label_adjust  ,  `adjust' `colorpalette'
 		
 		local nn2 = _N
-				
+		sort _sort		
 		*drop if _or==0
-		if "`adjust'"!="" qui:adjust_coordinates if _or==1 
+		if "`adjust'"!=""  qui:adjust_coordinates if _or==1 
 		
 		** Create Variables for Labels and Spikes
 		gsort -_or _sort _id
@@ -509,6 +655,7 @@ syntax varlist [if],  [width0(varname) width1(varname) sharp(real 7) ///
 		
 		** From ... to
 		*** Plot Links
+		 
 		forvalues j = 1/`nn' {
 				
 				qui:get_coordinates   ,  n(`j')
@@ -529,7 +676,7 @@ syntax varlist [if],  [width0(varname) width1(varname) sharp(real 7) ///
 				qui:gen xx_`j'  = `x0' + `x' * (`x1'-`x0') 
 				*scatter  yy0_`j' yy1_`j' xx_`j' 
 				*display `"(rarea yy0_`j' yy1_`j' xx_`j', color(`col') pstyle(`pst') `lcl' fintensity(100))"'
-				local toplot `toplot' (rarea yy0_`j' yy1_`j' xx_`j', color(`col') pstyle(`pst') `lcl' fintensity(100))		
+				local toplot `toplot' (rarea yy0_`j' yy1_`j' xx_`j', color(`col') pstyle(`pst') `lcl' `fintensity' `fcolor')		
 				 
 		}
 		** plot bars
@@ -577,3 +724,10 @@ end
  
  
 
+*****
+/*
+For string length
+get all vectors.
+calculate string max length 
+recast to str`max'
+*/
