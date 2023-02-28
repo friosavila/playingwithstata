@@ -1,4 +1,5 @@
-*! v1.3 Corects for Nonlinear models
+*! v1.31 Corrects for Never group
+* v1.3 Corrects for Nonlinear models
 * 8/30/2022 corrects for long variables
 * v1.2 FRA 8/17/2022 Adds Correction unbalanced panel
 * v1.1 FRA 8/5/2022 Redef not yet treated. 
@@ -22,12 +23,14 @@ program jwdid, eclass
 	tempvar tvar2
 	qui:bysort `touse' `ivar': egen long `tvar2'=min(`tvar')
 	qui:replace `touse'=0 if `touse'==1 & `tvar2'>=`gvar' & `gvar'!=0 & `tvar'>=`gvar'
+	
 	** If no never treated
 	qui:count if `gvar'==0 & `touse'==1 
 	if `r(N)'==0 {
 		qui:sum `gvar' if `touse'==1 , meanonly
 		qui:replace `touse'=0 if `touse'==1 & `tvar'>=`r(max)' 
 	}
+	
 	qui:capture drop __tr__
 	qui:gen byte __tr__=0 if `touse'
 	qui:replace  __tr__=1 if `tvar'>=`gvar' & `gvar'>0  & `touse'
@@ -38,7 +41,8 @@ program jwdid, eclass
 	
 	qui:levels `gvar' if `touse' & `gvar'>0, local(glist)
 	sum `tvar' if `touse' , meanonly
-	qui:levels `tvar' if `touse' & `tvar'>r(min), local(tlist)
+	qui:levels `tvar' if `touse' & `tvar'>=r(min), local(tlist)
+	
 	** Center Covariates
 	if "`weight'"!="" local wgt aw
 	if "`x'"!="" {
@@ -51,14 +55,14 @@ program jwdid, eclass
 	foreach i of local glist {
 		foreach j of local tlist {
 			if "`never'"!="" {
+				if (`i'-1)!=`j' {
 				local xvar `xvar' c.__tr__#i`i'.`gvar'#i`j'.`tvar' ///
 							      c.__tr__#i`i'.`gvar'#i`j'.`tvar'#c.(`xxvar') 
 							  
 				local xvar2 `xvar2' i`i'.`gvar'#i`j'.`tvar' 
 				
 				local xvar3 `xvar3' i`i'.`gvar'#i`j'.`tvar'#c.(`xxvar')  
-
- 			
+				}
 			}
 			else if `j'>=`i' {
 				local xvar `xvar' c.__tr__#i`i'.`gvar'#i`j'.`tvar' ///
@@ -75,6 +79,7 @@ program jwdid, eclass
 	foreach i of local glist {
 		local ogxvar `ogxvar' i`i'.`gvar'#c.(`x')
 	}
+	
 	foreach j of local tlist {
 		local otxvar `otxvar' i`j'.`tvar'#c.(`x')
 	}
@@ -164,7 +169,7 @@ program easter_egg
 	display in w "{p}Hi there, thank you for using this command. I hope you are finding this 'easter egg' as a surprised, and not because you " ///
 	"decided to take a peak on the code. But if you did, shame on me for not making a better easter egg {p_end}"
 	display in w "{p}Anyways, This easter egg is for my Daughter! Yes as of August 6th 2022 (Viva Bolivia) my little one was born!. " _n  ///
-		"so if you happen to read this, two things happen. Either you were in the 0.1% lucky to see this, or its my little one birthday. If the latter  please send my little one Abby, a Happy Birthday! {p_end}"
+		"so if you happen to read this, two things happen. Either you were in the 0.1% lucky to see this, or its my little one birthday. If the latter  please send my little one, a Happy Birthday! {p_end}"
 	}
 end
 
