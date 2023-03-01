@@ -249,4 +249,5 @@ rhie 20186 46
 smoking 1209 7
 vlss 27766 12
 hhprice2 545 14
+hhprice 10376 20
 usstatewk 51 6
