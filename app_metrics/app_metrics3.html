@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Playing With Stata - DID: The Fall</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../app_metrics/app_metrics4.html" rel="next">
+<link href="../app_metrics/app_metrics1.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-LCL2C8L3JH"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-LCL2C8L3JH', { 'anonymize_ip': true});
+</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../WeeMee.jpg" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Playing With Stata</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../stataviz/index.html">
+ <span class="menu-text">Stata Viz</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../stata_do/index.html">
+ <span class="menu-text">Stata Do’s Ado’s</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../app_metrics/index.html" aria-current="page">
+ <span class="menu-text">Applied econometrics</span></a>
+  </li>  
+  <li class="dropdown-header">
+ <span class="menu-text">Odds and Ends</span></li>
+  <li class="nav-item">
+    <a class="nav-link" href="../chatgpt.html">
+ <span class="menu-text">Fun with ChatGPT</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html">
+ <span class="menu-text">about</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../cv.html">
+ <span class="menu-text">cv &amp; Papers</span></a>
+  </li>  
+</ul>
+              <div class="quarto-toggle-container">
+                  <a href="" class="quarto-reader-toggle nav-link" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+              </div>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">DID: The Fall</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../app_metrics/index.html" class="sidebar-item-text sidebar-link">Applied Econometrics</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">App Metrics</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../app_metrics/app_metrics5.html" class="sidebar-item-text sidebar-link">2x2 DID: Sant’Anna and Zhao (2020)</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../app_metrics/app_metrics1.html" class="sidebar-item-text sidebar-link">Constructing synthetic Datasets</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../app_metrics/app_metrics3.html" class="sidebar-item-text sidebar-link active">DID: The Fall</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../app_metrics/app_metrics4.html" class="sidebar-item-text sidebar-link">DID: The Revolution</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../app_metrics/app_metrics2.html" class="sidebar-item-text sidebar-link">DRDID/CSDID in Stata</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#did-2x2-canonical-design" id="toc-did-2x2-canonical-design" class="nav-link" data-scroll-target="#did-2x2-canonical-design">DiD 2x2 Canonical Design</a>
+  <ul class="collapse">
+  <li><a href="#how-are-treatetment-effects-estimated" id="toc-how-are-treatetment-effects-estimated" class="nav-link" data-scroll-target="#how-are-treatetment-effects-estimated">How are treatetment effects estimated?</a></li>
+  </ul></li>
+  <li><a href="#multiple-periods-did-txg-design" id="toc-multiple-periods-did-txg-design" class="nav-link" data-scroll-target="#multiple-periods-did-txg-design">Multiple Periods DID TxG Design:</a>
+  <ul class="collapse">
+  <li><a href="#where-things-went-wrong" id="toc-where-things-went-wrong" class="nav-link" data-scroll-target="#where-things-went-wrong">Where things went wrong</a></li>
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup">Setup</a></li>
+  <li><a href="#what-is-the-twfe" id="toc-what-is-the-twfe" class="nav-link" data-scroll-target="#what-is-the-twfe">What is the TWFE?</a></li>
+  <li><a href="#first-the-good" id="toc-first-the-good" class="nav-link" data-scroll-target="#first-the-good">First the Good</a></li>
+  <li><a href="#second-the-bad" id="toc-second-the-bad" class="nav-link" data-scroll-target="#second-the-bad">Second the Bad</a></li>
+  <li><a href="#bad-controls-and-negative-weights-how-bad-can-it-be" id="toc-bad-controls-and-negative-weights-how-bad-can-it-be" class="nav-link" data-scroll-target="#bad-controls-and-negative-weights-how-bad-can-it-be">Bad controls and Negative weights: How bad can it be?</a></li>
+  </ul></li>
+  <li><a href="#this-were-the-problems-but-solutions" id="toc-this-were-the-problems-but-solutions" class="nav-link" data-scroll-target="#this-were-the-problems-but-solutions">This were the problems, but solutions?</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title d-none d-lg-block">DID: The Fall</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<p class="subtitle lead">What went wrong with DID</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Differences-in-Differences has been a popular approach for identifying causal effects of treatments, utilizing data from both treated and untreated units across time. However, in recent years (5? as of 2023), this methodology has come under scrutiny due to several flaws that have been identified, leading to what some refer to as the DID-Revolution. Numerous econometricians, both established and new, have worked on this topic, highlighting the problems associated with the methodology and proposing potential solutions. Additionally, they have suggested extensions to the model to address a wide range of scenarios (The literature has grown…alot).</p>
+<p>As someone who was initially perplexed by these changes, problems, and solutions, I started reading in detail on the topic, and had the opportunity to develop two Stata commands:</p>
+<ul>
+<li><code>csdid</code> and <code>csdid2</code>, which implement <span class="citation" data-cites="callaway_santanna_2021">Callaway and Sant’Anna (<a href="#ref-callaway_santanna_2021" role="doc-biblioref">2021</a>)</span> approach</li>
+<li><code>jwdid</code>, which implements the approach suggested by <span class="citation" data-cites="wooldridge_twoway_2021">Wooldridge (<a href="#ref-wooldridge_twoway_2021" role="doc-biblioref">2021</a>)</span>.</li>
+</ul>
+<p>Through this process of coding and reading, I gained a better understanding of several concepts, particularly why certain strategies, such as the Two-way-Fixed-effect (TWFE), may not yield accurate estimates.</p>
+<p>To simplify things and improve intuition, I will discuss the methodology and its problems and solutions.</p>
+</section>
+<section id="did-2x2-canonical-design" class="level2">
+<h2 class="anchored" data-anchor-id="did-2x2-canonical-design">DiD 2x2 Canonical Design</h2>
+<p>Let’s start with the fundamental building block of the Differences-in-Differences methodology, which is the 2x2 canonical design that is widely used in many papers related to DID models.</p>
+<p>The basic 2x2 DiD design involves observing two groups of observations across two periods in time. During the first period, neither of these groups receive a treatment, and thus, it can be assumed that they have similar experiences up to that point.</p>
+<p>In the second period, one of the groups receives a treatment, such as a training program, medicine, or other types of treatments, while the other remains untreated. By comparing the changes in outcomes between the treated and untreated groups over time, we can estimate the causal effect of the treatment.</p>
+<p>To analyze the data, a simple 2x2 matrix can be designed after the experiment is finalized, which helps to quantify the impact of the treatment.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Time </th>
+<th>TR=0</th>
+<th>TR=1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>T=0</td>
+<td><span class="math inline">\(Y(0,0)\)</span></td>
+<td><span class="math inline">\(Y(1,0)\)</span></td>
+</tr>
+<tr class="even">
+<td>T=1</td>
+<td><span class="math inline">\(Y(0,1)\)</span></td>
+<td><span class="math inline">\(Y(1,1)\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>To simplify notation, I’ll assume that all the <span class="math inline">\(Y(TR,T)\)</span> represent the average outcome for the group -TR- (treated or untreated) at time T (Pre=0 and Post =1).</p>
+<section id="how-are-treatetment-effects-estimated" class="level3">
+<h3 class="anchored" data-anchor-id="how-are-treatetment-effects-estimated">How are treatetment effects estimated?</h3>
+<p>We can begin by noting that the treatment occurred in T=1. One naive estimator that we could use to estimate the treatment effect (TE) would be to simply obtain the difference in outcome between the treated and untreated groups, which is expressed as “<span class="math inline">\(Y(1,1)-Y(0,1)\)</span>” (First D).</p>
+<p>However, this approach is incorrect because it fails to account for the <em>self-selection bias</em> that may exist between the two groups. For instance, the individuals who received the treatment may have been those who would benefit from it the most or needed it the most, which could lead to differences in their average outcomes.</p>
+<p>Another naive approach would be to only examine the treated unit and evaluate how much its outcome has changed after the treatment, which is expressed as “<span class="math inline">\(Y(1,1)-Y(1,0)\)</span>” (the other D). This approach would also be incorrect because the observed change could be due to some natural growth or trend that the unit experienced independent of the treatment.</p>
+<p>To properly estimate the treatment effect (TE) , we need to combine both strategies and obtain the Differences in Differences (DiD). This approach helps to identify the causal effect of the treatment by comparing the changes in outcomes between the treated and untreated groups over time.</p>
+<p>Intuitively, this could be thought in two ways:</p>
+<ol type="1">
+<li>Estimate the TE by comparing the treated-untreated outcomes change in the post period to the pre-period outcome difference.</li>
+</ol>
+<pre><code>TT1=  (y11-y01)  Post-period   Treated vs untreated
+     -(y10-y00)  pre -period   Treated vs untreated</code></pre>
+<p>In essence this captures the TE if the selection bias of the second period is the same as the selection bias observed in the first period.</p>
+<ol start="2" type="1">
+<li>Estimate the TE by comparing the outcome change for the treated group across time to the outcome change experienced by the not-treated group.</li>
+</ol>
+<pre><code>TT2=  (y11-y10)  Treated    Post vs pre
+     -(y01-y00)  Untreated  Post vs pre</code></pre>
+<p>In this case, the TE is estimated if both groups would have experienced the same trends in their outcomes across time.</p>
+<p>Both strategies estimate the same treatment effect, but they rely on different assumptions.</p>
+<ul>
+<li>The first strategy assumes “bias-stability,” which implies that any factors that explain the difference between treated and untreated outcomes after the treatment are also present before the treatment and can be eliminated.</li>
+</ul>
+<p>-The second strategy relies on the “parallel-trends” assumption, which assumes that the treated outcome would have experienced a similar and parallel change in outcome as the untreated units experience.</p>
+<p>This is the vanilla 2x2, piece-of-cake strategy. If the basic assumptions hold, you cannot go wrong with this. The problem, surprisingly or not, is what happens when you have <strong>more</strong> data.</p>
+</section>
+</section>
+<section id="multiple-periods-did-txg-design" class="level2">
+<h2 class="anchored" data-anchor-id="multiple-periods-did-txg-design">Multiple Periods DID TxG Design:</h2>
+<section id="where-things-went-wrong" class="level3">
+<h3 class="anchored" data-anchor-id="where-things-went-wrong">Where things went wrong</h3>
+<p>As I mentioned earlier, the simple case of DiD is straightforward to estimate and get right. We can even use a simple linear regression analysis to calculate the treatment effect (TE) using the formula:</p>
+<p><span class="math display">\[
+y_{it} = a_0 + a_1*tr + a_2*t + \delta * (tr*t) +e_{it}
+\]</span></p>
+<p>However, the challenge arises when the design has multiple time periods and groups, and the treatment occurs at different times. This is known as treatment timing heterogeneity. In the following discussion, I will refer to insights from <span class="citation" data-cites="callaway_santanna_2021">Callaway and Sant’Anna (<a href="#ref-callaway_santanna_2021" role="doc-biblioref">2021</a>)</span> and <span class="citation" data-cites="goodman_bacon_2021">Goodman-Bacon (<a href="#ref-goodman_bacon_2021" role="doc-biblioref">2021</a>)</span> to explain the concepts.</p>
+</section>
+<section id="setup" class="level3">
+<h3 class="anchored" data-anchor-id="setup">Setup</h3>
+<p>Assume that there are four time periods T=1, 2, 3, and 4, and five “groups” G=Never Treated (NT), 1, 2, 3 and 4.</p>
+<p>In the 2x2 design, the treatment identifier “TR” distinguishes treated (1) from untreated (0) units. However, in a design with more time periods, the possibility arises that units can be treated at different points in time or never treated at all.</p>
+<p><span class="citation" data-cites="callaway_santanna_2021">Callaway and Sant’Anna (<a href="#ref-callaway_santanna_2021" role="doc-biblioref">2021</a>)</span> use the letter “G” to identify this variable and represent observations that are never treated as “infinity <span class="math inline">\(\infty\)</span>”. This is done because those units are never treated in the window of time we have access to.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>For simplicity, I will use “NT” to represent never treated units. It is worth noting that groups that are always treated cannot be identified in this design.</p>
+<p>The TxG design can be represented in matrix form as follows:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="did_fig3.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">TxG Design</figcaption><p></p>
+</figure>
+</div>
+<p>In this TxG design, orange cells represent units that have effectivly received treatment, while the blue cells represent potential control units that have not-yet received treatment. The green cells correspond to never treated units that can be used as perfect controls, assuming there are no spill-over effects.</p>
+<p>This design can be thought of as a combination of multiple 2x2 designs, but not all possible combinations are good ones for estimating the treatment effect. This is, infact, where the traditional TWFE model get things wrong.</p>
+<p>A good reference that explains the problem is <span class="citation" data-cites="goodman_bacon_2021">Goodman-Bacon (<a href="#ref-goodman_bacon_2021" role="doc-biblioref">2021</a>)</span>. The intuition behind the paper is that he traditional TWFE model obtains a parameter for TE that is the average of all possible 2x2 designs that could be constructed from the above matrix. However, not all of them are good ones!.</p>
+<p>Some of the 2x2 combinations will provide interesting and meaningful results:</p>
+<ul>
+<li><p>You can use some of them to calculate Treatment effects.</p></li>
+<li><p>Some can be used for testing assumptions regarding parallel trends.</p></li>
+<li><p>Some, however, will be combinations that are not useful, and may lead you to incorrect conclusions.</p></li>
+</ul>
+</section>
+<section id="what-is-the-twfe" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-the-twfe">What is the TWFE?</h3>
+<p>To account for the many periods (T) and treatment-cohorts (G) in the data structure, an extension to the simple linear model was proposed. This involved estimating a linear model that includes controls (fixed effects/dummies) for all available periods in the data, as well as for all panel individuals (or treatment-cohort groups). To capture the treatment effect, researchers would include a dummy variable <span class="math inline">\(D\)</span> that takes the value of 1 after a unit has been treated, and 0 if it was never or not yet treated. This specification can be written as: <span class="math display">\[
+y_{it} = a_i + a_t + \delta D_{it}+e_{it}
+\]</span></p>
+<p>where <span class="math inline">\(a_i\)</span> captures the individual fixed effect (or cohort), <span class="math inline">\(a_t\)</span> captures the time fixed effect, and <span class="math inline">\(\delta\)</span> which was meant to capture an average treatment effect for treated units, across all time periods.</p>
+<p><span class="citation" data-cites="goodman_bacon_2021">Goodman-Bacon (<a href="#ref-goodman_bacon_2021" role="doc-biblioref">2021</a>)</span> discovered that the parameter of interest <span class="math inline">\(\delta\)</span> is a weighted average of all feasible DiD designs that could be constructed from the data. This is because the Ordinary Least Squares method attempts to leverage all possible variation, without taking into account the nuances of which ones are actually useful for identifying causal effects, and which ones are not adequate to do so.</p>
+</section>
+<section id="first-the-good" class="level3">
+<h3 class="anchored" data-anchor-id="first-the-good">First the Good</h3>
+<p>Lets say, we are interested in the treatment effect only for the group that was first treated in period 2 (G=2).</p>
+<p>The first thing to consider is which groups could be used as a “control”, to appropriately identify the TE. The first and easy choice is to compare the G=1 units with observations that were never treated (NT), the “perfect” control group.</p>
+<p>Using the NT as control units, we can construct at least 3 2x2 DiD setups to identify the TE, at periods 2, 3 and 4:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="did_fig5.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">fig3</figcaption><p></p>
+</figure>
+</div>
+<p>A very similar exercise could be done if one is interested in analyzing the TE for other groups (say G3 and G4):</p>
+<p>If a Never treated group were not available, it is also possible, and valid given limited information, to use units from other “treated” groups as controls, as long as they have not yet been treated:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="did_fig6.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">fig4</figcaption><p></p>
+</figure>
+</div>
+<p>Average treatment effects could then be derived by “averaging” this individual treatment effects.</p>
+</section>
+<section id="second-the-bad" class="level3">
+<h3 class="anchored" data-anchor-id="second-the-bad">Second the Bad</h3>
+<p>Just as there are good, there are also bad designs. As described in <span class="citation" data-cites="goodman_bacon_2021">Goodman-Bacon (<a href="#ref-goodman_bacon_2021" role="doc-biblioref">2021</a>)</span>, one of the pitfalls of the TWFE is that it may also try to identify TE by comparing units that are already treated, but at different times.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="did_fig4.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">fig5</figcaption><p></p>
+</figure>
+</div>
+<p>Consider the first panel. It compares data for G3 to those in G2. At T=2, G3 is untreated, whereas G2 is treated both at T=2 and T=3. If the treatment effect were homogenous (a location shift), this may work. However, if the treatment affected both G2 and G3 differently, it would violate the parallel trend assumption, and this 2x2 design will not identify Treatment effects.</p>
+<p>Now, why are these units used as controls?</p>
+<p>From an OLS viewpoint, the reason is that the treatment status for a given unit remains constant across time, thereby making it appear as though the previously treated unit is a good control. Nonetheless, if the treatment effect varies over time, then the parallel trends assumption may be invalidated, and treatment effects will not be identified.</p>
+</section>
+<section id="bad-controls-and-negative-weights-how-bad-can-it-be" class="level3">
+<h3 class="anchored" data-anchor-id="bad-controls-and-negative-weights-how-bad-can-it-be">Bad controls and Negative weights: How bad can it be?</h3>
+<p>The problem describe above can be summarized with a single idea. WHen using OLS, sometimes one uses <strong>bad</strong> controls to estimete Treatment effects, which will affect the identification.</p>
+<p>The other concept that has been used to describe the problem is one about <strong>Negative weights</strong>, which are closely related.</p>
+<p>First the technical part.</p>
+<p>Assume we have balanced panel data, and estimate the following model: <span class="math display">\[
+y_{it} = a_i + a_t + \delta D_{it}+e_{it}
+\]</span></p>
+<p>One way to estimate this effects <em>easily</em> is to apply Frisch–Waugh–Lovell theorem, <strong><em>demean</em></strong> <span class="math inline">\(D_{it}\)</span>, and estimate <span class="math inline">\(\delta\)</span> using the new data:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    \delta^{twfe} &amp;=\frac{\sum \bar{\bar D}_{it} y_{it}}{\sum \bar{\bar D}_{it}^2} \\
+    \bar{\bar D}_{it} &amp;= D_{it}+\bar D-(\bar D_i + \bar D_t)
+\end{aligned}    
+\]</span></p>
+<p>When estimating treatment effects, treated units are expected to receive a positive weight. However, after applying FWL, there is no assurance that <span class="math inline">\(\bar{\bar D}_{it}\)</span> will be positive for already treated units. This happens because <span class="math inline">\(\bar D_t\)</span> is larger in later periods, and <span class="math inline">\(\bar D_i\)</span> is larger for units that were treated earlier. In consequence, units that were treated earlier could incorrectly receive a negative weight, when estimating the treatment effect, it could also be that units that were never treated are incorrectedly assigned a possitive weight, when they should receive negative weights.</p>
+<p>How bad could it be? Consider the following excercise/code:</p>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">clear</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="dv">seed</span> 101</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="kw">obs</span> 100</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> id = <span class="dt">_n</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> gv = runiformint(2,10)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> gv = 0 <span class="kw">if</span> gv&gt;=8</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>expand 10</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">bysort</span> id:<span class="kw">gen</span> t=<span class="dt">_n</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> trt = gv&lt;=t &amp; gv!=0</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="kw">ssc</span> install hdfe</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>hdfe trt, <span class="fu">abs</span>(t id) <span class="kw">gen</span>(trt_d)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="kw">gen</span> <span class="fu">y</span> = 0</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="kw">replace</span> <span class="fu">y</span> = 1 <span class="kw">if</span> trt==1 &amp; trt_d &lt;0 </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>In this case, y is zero for everyone, but for selected treated units at some point in time. You would expect average treatment effects to be possitive. TWFE, would dissagree:</p>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span>:<span class="kw">ssc</span> install reghdfe</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>reghdfe <span class="fu">y</span> trt, <span class="fu">abs</span>(id t)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>(MWFE estimator converged in 2 iterations)
+
+HDFE Linear regression                            Number of obs   =      1,000
+Absorbing 2 HDFE groups                           F(   1,    890) =      44.48
+                                                  Prob &gt; F        =     0.0000
+                                                  R-squared       =     0.5367
+                                                  Adj R-squared   =     0.4799
+                                                  Within R-sq.    =     0.0476
+                                                  Root MSE        =     0.2275
+</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>------------------------------------------------------------------------------</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           y | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-------------+----------------------------------------------------------------</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         trt |</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  -.1770374   .0265457    -6.67   0.000    -.2291368    -.124938</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       _cons |   .1962698   .0145409    13.50   0.000     .1677313    .2248083</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>------------------------------------------------------------------------------</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Absorbed degrees of freedom:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>-------------+---------------------------------------|
+          id |       100           0         100     |</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           t |</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        10           1           9     |
+-----------------------------------------------------+</code></pre>
+</div>
+</div>
+<p>But why is that? The way treatment was assigned, only the units that were treated earlier have a positive treatment, but those are the ones used as controls later on, receiving negative weights. Thus, TWFE uses that and estimates negative TE.</p>
+<div class="cell" data-execution_count="3">
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="app_metrics3_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">FWL-Weights</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="this-were-the-problems-but-solutions" class="level2">
+<h2 class="anchored" data-anchor-id="this-were-the-problems-but-solutions">This were the problems, but solutions?</h2>
+<p>What I provided you here was a brief review of DID, with some of the intution on why TWFE fails. Now, it doesn’t mean there is no solutions moving forward. In fact, by the time you are reading it, you will probaly be aware of many of them.</p>
+<p>Over the last years, there have been many propositions trying provide solutions that would tackle the problems related to TWFE DID. I have been lucky enough to participate in the after programming of couple of them, but also worked closely to understand some of the others: <code>csdid</code>/<code>csdid2</code>; <code>jwdid</code>; <code>did2s</code>; <code>did_imputation</code>; <code>did_multiplegt</code>.</p>
+<p>These new strategies have one thing in commong. They aim to solve the problems of TWFE by either using good 2x2 designs, avoiding wrong 2x2 designs, or adjusting weights to reduce the impact of negative weights.</p>
+<p>I dive a bit into the possible solutions (and may reiterated the problems) in other posts. For now, hope you enjoy this.</p>
+<p>Comments and questions welcome.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
+<div id="ref-callaway_santanna_2021" class="csl-entry" role="doc-biblioentry">
+Callaway, Brantly, and Pedro H. C. Sant’Anna. 2021. <span>“Difference-in-<span>Differences</span> with Multiple Time Periods.”</span> <em>Journal of Econometrics</em>, Themed <span>Issue</span>: <span>Treatment</span> <span>Effect</span> 1, 225 (2): 200–230. <a href="https://doi.org/10.1016/j.jeconom.2020.12.001">https://doi.org/10.1016/j.jeconom.2020.12.001</a>.
+</div>
+<div id="ref-goodman_bacon_2021" class="csl-entry" role="doc-biblioentry">
+Goodman-Bacon, Andrew. 2021. <span>“Difference-in-Differences with Variation in Treatment Timing.”</span> <em>Journal of Econometrics</em>, Themed <span>Issue</span>: <span>Treatment</span> <span>Effect</span> 1, 225 (2): 254–77. <a href="https://doi.org/10.1016/j.jeconom.2021.03.014">https://doi.org/10.1016/j.jeconom.2021.03.014</a>.
+</div>
+<div id="ref-wooldridge_twoway_2021" class="csl-entry" role="doc-biblioentry">
+Wooldridge, Jeffrey M. 2021. <span>“Two-<span>Way</span> <span>Fixed</span> <span>Effects</span>, the <span>Two</span>-<span>Way</span> <span>Mundlak</span> <span>Regression</span>, and <span>Difference</span>-in-<span>Differences</span> <span>Estimators</span>.”</span> {SSRN} {Scholarly} {Paper}. Rochester, NY. <a href="https://doi.org/10.2139/ssrn.3906345">https://doi.org/10.2139/ssrn.3906345</a>.
+</div>
+</div>
+
+
+<!-- -->
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>This suggests they will be treated at some point in the far future<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../app_metrics/app_metrics1.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Constructing synthetic Datasets</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../app_metrics/app_metrics4.html" class="pagination-link">
+        <span class="nav-page-text">DID: The Revolution</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb18" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "DID: The Fall"</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "What went wrong with DID"</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>Differences-in-Differences has been a popular approach for identifying causal effects of treatments, utilizing data from both treated and untreated units across time. However, in recent years (5? as of 2023), this methodology has come under scrutiny due to several flaws that have been identified, leading to what some refer to as the DID-Revolution. Numerous econometricians, both established and new, have worked on this topic, highlighting the problems associated with the methodology and proposing potential solutions. Additionally, they have suggested extensions to the model to address a wide range of scenarios (The literature has grown...alot).</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>As someone who was initially perplexed by these changes, problems, and solutions, I started reading in detail on the topic, and had the opportunity to develop two Stata commands: </span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`csdid`</span> and <span class="in">`csdid2`</span>, which implement @callaway_santanna_2021 approach</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`jwdid`</span>, which implements the approach suggested by @wooldridge_twoway_2021. </span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>Through this process of coding and reading, I gained a better understanding of several concepts, particularly why certain strategies, such as the Two-way-Fixed-effect (TWFE), may not yield accurate estimates.</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>To simplify things and improve intuition, I will discuss the methodology and its problems and solutions.</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## DiD 2x2 Canonical Design</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>Let's start with the fundamental building block of the Differences-in-Differences methodology, which is the 2x2 canonical design that is widely used in many papers related to DID models.</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>The basic 2x2 DiD design involves observing two groups of observations across two periods in time. During the first period, neither of these groups receive a treatment, and thus, it can be assumed that they have similar experiences up to that point.</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>In the second period, one of the groups receives a treatment, such as a training program, medicine, or other types of treatments, while the other remains untreated. By comparing the changes in outcomes between the treated and untreated groups over time, we can estimate the causal effect of the treatment.</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>To analyze the data, a simple 2x2 matrix can be designed after the experiment is finalized, which helps to quantify the impact of the treatment.</span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>| Time \Treatment | TR=0   | TR=1  |</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>|-----------------|--------|------ |</span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>| T=0             | $Y(0,0)$ | $Y(1,0)$|</span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>| T=1             | $Y(0,1)$ | $Y(1,1)$|</span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>To simplify notation, I’ll assume that all the $Y(TR,T)$ represent the average outcome for the group -TR- (treated or untreated) at time T (Pre=0 and Post =1).</span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a><span class="fu">### How are treatetment effects estimated?</span></span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a>We can begin by noting that the treatment occurred in T=1. One naive estimator that we could use to estimate the treatment effect (TE) would be to simply obtain the difference in outcome between the treated and untreated groups, which is expressed as “$Y(1,1)-Y(0,1)$” (First D).</span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a>However, this approach is incorrect because it fails to account for the *self-selection bias* that may exist between the two groups. For instance, the individuals who received the treatment may have been those who would benefit from it the most or needed it the most, which could lead to differences in their average outcomes.</span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a>Another naive approach would be to only examine the treated unit and evaluate how much its outcome has changed after the treatment, which is expressed as “$Y(1,1)-Y(1,0)$” (the other D). This approach would also be incorrect because the observed change could be due to some natural growth or trend that the unit experienced independent of the treatment.</span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a>To properly estimate the treatment effect (TE) , we need to combine both strategies and obtain the Differences in Differences (DiD). This approach helps to identify the causal effect of the treatment by comparing the changes in outcomes between the treated and untreated groups over time.</span>
+<span id="cb18-47"><a href="#cb18-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a>Intuitively, this could be thought in two ways:</span>
+<span id="cb18-49"><a href="#cb18-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-50"><a href="#cb18-50" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>Estimate the TE by comparing the treated-untreated outcomes change in the post period to the pre-period outcome difference. </span>
+<span id="cb18-51"><a href="#cb18-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-52"><a href="#cb18-52" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-53"><a href="#cb18-53" aria-hidden="true" tabindex="-1"></a><span class="in">TT1=  (y11-y01)  Post-period   Treated vs untreated</span></span>
+<span id="cb18-54"><a href="#cb18-54" aria-hidden="true" tabindex="-1"></a><span class="in">     -(y10-y00)  pre -period   Treated vs untreated</span></span>
+<span id="cb18-55"><a href="#cb18-55" aria-hidden="true" tabindex="-1"></a><span class="in">```</span>     </span>
+<span id="cb18-56"><a href="#cb18-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-57"><a href="#cb18-57" aria-hidden="true" tabindex="-1"></a>In essence this captures the TE if the selection bias of the second period is the same as the selection bias observed in the first period. </span>
+<span id="cb18-58"><a href="#cb18-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-59"><a href="#cb18-59" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>Estimate the TE by comparing the outcome change for the treated group across time to the outcome change experienced by the not-treated group.</span>
+<span id="cb18-60"><a href="#cb18-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-61"><a href="#cb18-61" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-62"><a href="#cb18-62" aria-hidden="true" tabindex="-1"></a><span class="in">TT2=  (y11-y10)  Treated    Post vs pre</span></span>
+<span id="cb18-63"><a href="#cb18-63" aria-hidden="true" tabindex="-1"></a><span class="in">     -(y01-y00)  Untreated  Post vs pre</span></span>
+<span id="cb18-64"><a href="#cb18-64" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-65"><a href="#cb18-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-66"><a href="#cb18-66" aria-hidden="true" tabindex="-1"></a>In this case, the TE is estimated if both groups would have experienced the same trends in their outcomes across time.</span>
+<span id="cb18-67"><a href="#cb18-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-68"><a href="#cb18-68" aria-hidden="true" tabindex="-1"></a>Both strategies estimate the same treatment effect, but they rely on different assumptions. </span>
+<span id="cb18-69"><a href="#cb18-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-70"><a href="#cb18-70" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The first strategy assumes "bias-stability," which implies that any factors that explain the difference between treated and untreated outcomes after the treatment are also present before the treatment and can be eliminated. </span>
+<span id="cb18-71"><a href="#cb18-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-72"><a href="#cb18-72" aria-hidden="true" tabindex="-1"></a>-The second strategy relies on the "parallel-trends" assumption, which assumes that the treated outcome would have experienced a similar and parallel change in outcome as the untreated units experience. </span>
+<span id="cb18-73"><a href="#cb18-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-74"><a href="#cb18-74" aria-hidden="true" tabindex="-1"></a>This is the vanilla 2x2, piece-of-cake strategy. If the basic assumptions hold, you cannot go wrong with this. The problem, surprisingly or not, is what happens when you have **more** data.</span>
+<span id="cb18-75"><a href="#cb18-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-76"><a href="#cb18-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-77"><a href="#cb18-77" aria-hidden="true" tabindex="-1"></a><span class="fu">## Multiple Periods DID TxG Design: </span></span>
+<span id="cb18-78"><a href="#cb18-78" aria-hidden="true" tabindex="-1"></a><span class="fu">### Where things went wrong</span></span>
+<span id="cb18-79"><a href="#cb18-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-80"><a href="#cb18-80" aria-hidden="true" tabindex="-1"></a>As I mentioned earlier, the simple case of DiD is straightforward to estimate and get right. We can even use a simple linear regression analysis to calculate the treatment effect (TE) using the formula:</span>
+<span id="cb18-81"><a href="#cb18-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-82"><a href="#cb18-82" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb18-83"><a href="#cb18-83" aria-hidden="true" tabindex="-1"></a>y_{it} = a_0 + a_1*tr + a_2*t + \delta * (tr*t) +e_{it}</span>
+<span id="cb18-84"><a href="#cb18-84" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb18-85"><a href="#cb18-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-86"><a href="#cb18-86" aria-hidden="true" tabindex="-1"></a>However, the challenge arises when the design has multiple time periods and groups, and the treatment occurs at different times. This is known as treatment timing heterogeneity. In the following discussion, I will refer to insights from @callaway_santanna_2021 and @goodman_bacon_2021 to explain the concepts.</span>
+<span id="cb18-87"><a href="#cb18-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-88"><a href="#cb18-88" aria-hidden="true" tabindex="-1"></a><span class="fu">### Setup</span></span>
+<span id="cb18-89"><a href="#cb18-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-90"><a href="#cb18-90" aria-hidden="true" tabindex="-1"></a>Assume that there are four time periods T=1, 2, 3, and 4, and five "groups" G=Never Treated (NT), 1, 2, 3 and 4. </span>
+<span id="cb18-91"><a href="#cb18-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-92"><a href="#cb18-92" aria-hidden="true" tabindex="-1"></a>In the 2x2 design, the treatment identifier "TR" distinguishes treated (1) from untreated (0) units. However, in a design with more time periods, the possibility arises that units can be treated at different points in time or never treated at all.</span>
+<span id="cb18-93"><a href="#cb18-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-94"><a href="#cb18-94" aria-hidden="true" tabindex="-1"></a>@callaway_santanna_2021 use the letter "G" to identify this variable and represent observations that are never treated as "infinity $\infty$". This is done because those units are never treated in the window of time we have access to.^<span class="co">[</span><span class="ot">This suggests they will be treated at some point in the far future</span><span class="co">]</span></span>
+<span id="cb18-95"><a href="#cb18-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-96"><a href="#cb18-96" aria-hidden="true" tabindex="-1"></a>For simplicity, I will use "NT" to represent never treated units. It is worth noting that groups that are always treated cannot be identified in this design.</span>
+<span id="cb18-97"><a href="#cb18-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-98"><a href="#cb18-98" aria-hidden="true" tabindex="-1"></a>The TxG design can be represented in matrix form as follows:</span>
+<span id="cb18-99"><a href="#cb18-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-100"><a href="#cb18-100" aria-hidden="true" tabindex="-1"></a><span class="al">![TxG Design](did_fig3.png)</span></span>
+<span id="cb18-101"><a href="#cb18-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-102"><a href="#cb18-102" aria-hidden="true" tabindex="-1"></a>In this TxG design, orange cells represent units that have effectivly received treatment, while the blue cells represent potential control units that have not-yet received treatment. The green cells correspond to never treated units that can be used as perfect controls, assuming there are no spill-over effects. </span>
+<span id="cb18-103"><a href="#cb18-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-104"><a href="#cb18-104" aria-hidden="true" tabindex="-1"></a>This design can be thought of as a combination of multiple 2x2 designs, but not all possible combinations are good ones for estimating the treatment effect. This is, infact, where the traditional TWFE model get things wrong. </span>
+<span id="cb18-105"><a href="#cb18-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-106"><a href="#cb18-106" aria-hidden="true" tabindex="-1"></a>A good reference that explains the problem is @goodman_bacon_2021. The intuition behind the paper is that he traditional TWFE model obtains a parameter for TE that is the average of all possible 2x2 designs that could be constructed from the above matrix. However, not all of them are good ones!. </span>
+<span id="cb18-107"><a href="#cb18-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-108"><a href="#cb18-108" aria-hidden="true" tabindex="-1"></a>Some of the 2x2 combinations will provide interesting and meaningful results:</span>
+<span id="cb18-109"><a href="#cb18-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-110"><a href="#cb18-110" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>You can use some of them to calculate Treatment effects. </span>
+<span id="cb18-111"><a href="#cb18-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-112"><a href="#cb18-112" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Some can be used for testing assumptions regarding parallel trends.</span>
+<span id="cb18-113"><a href="#cb18-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-114"><a href="#cb18-114" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Some, however, will be combinations that are not useful, and may lead you to incorrect conclusions.</span>
+<span id="cb18-115"><a href="#cb18-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-116"><a href="#cb18-116" aria-hidden="true" tabindex="-1"></a><span class="fu">### What is the TWFE?</span></span>
+<span id="cb18-117"><a href="#cb18-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-118"><a href="#cb18-118" aria-hidden="true" tabindex="-1"></a>To account for the many periods (T) and treatment-cohorts (G) in the data structure, an extension to the simple linear model was proposed. This involved estimating a linear model that includes controls (fixed effects/dummies) for all available periods in the data, as well as for all panel individuals (or treatment-cohort groups). To capture the treatment effect, researchers would include a dummy variable $D$ that takes the value of 1 after a unit has been treated, and 0 if it was never or not yet treated. This specification can be written as:</span>
+<span id="cb18-119"><a href="#cb18-119" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb18-120"><a href="#cb18-120" aria-hidden="true" tabindex="-1"></a>y_{it} = a_i + a_t + \delta D_{it}+e_{it}</span>
+<span id="cb18-121"><a href="#cb18-121" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb18-122"><a href="#cb18-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-123"><a href="#cb18-123" aria-hidden="true" tabindex="-1"></a>where $a_i$ captures the individual fixed effect (or cohort), $a_t$ captures the time fixed effect, and $\delta$ which was meant to capture an average treatment effect for treated units, across all time periods.</span>
+<span id="cb18-124"><a href="#cb18-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-125"><a href="#cb18-125" aria-hidden="true" tabindex="-1"></a>@goodman_bacon_2021 discovered that the parameter of interest $\delta$ is a weighted average of all feasible DiD designs that could be constructed from the data. This is because the Ordinary Least Squares method attempts to leverage all possible variation, without taking into account the nuances of which ones are actually useful for identifying causal effects, and which ones are not adequate to do so.</span>
+<span id="cb18-126"><a href="#cb18-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-127"><a href="#cb18-127" aria-hidden="true" tabindex="-1"></a><span class="fu">### First the Good</span></span>
+<span id="cb18-128"><a href="#cb18-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-129"><a href="#cb18-129" aria-hidden="true" tabindex="-1"></a>Lets say, we are interested in the treatment effect only for the group that was first treated in period 2 (G=2). </span>
+<span id="cb18-130"><a href="#cb18-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-131"><a href="#cb18-131" aria-hidden="true" tabindex="-1"></a>The first thing to consider is which groups could be used as a “control”, to appropriately identify the TE. The first and easy choice is to compare the G=1 units with observations that were never treated (NT), the “perfect” control group. </span>
+<span id="cb18-132"><a href="#cb18-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-133"><a href="#cb18-133" aria-hidden="true" tabindex="-1"></a>Using the NT as control units, we can construct at least 3 2x2 DiD setups to identify the TE, at periods 2, 3 and 4: </span>
+<span id="cb18-134"><a href="#cb18-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-135"><a href="#cb18-135" aria-hidden="true" tabindex="-1"></a><span class="al">![fig3](did_fig5.png)</span></span>
+<span id="cb18-136"><a href="#cb18-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-137"><a href="#cb18-137" aria-hidden="true" tabindex="-1"></a>A very similar exercise could be done if one is interested in analyzing the TE for other groups (say G3 and G4):</span>
+<span id="cb18-138"><a href="#cb18-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-139"><a href="#cb18-139" aria-hidden="true" tabindex="-1"></a>If a Never treated group were not available, it is also possible, and valid given limited information, to use units from other “treated” groups as controls, as long as they have not yet been treated: </span>
+<span id="cb18-140"><a href="#cb18-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-141"><a href="#cb18-141" aria-hidden="true" tabindex="-1"></a><span class="al">![fig4](did_fig6.png)</span></span>
+<span id="cb18-142"><a href="#cb18-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-143"><a href="#cb18-143" aria-hidden="true" tabindex="-1"></a>Average treatment effects could then be derived by "averaging" this individual treatment effects.</span>
+<span id="cb18-144"><a href="#cb18-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-145"><a href="#cb18-145" aria-hidden="true" tabindex="-1"></a><span class="fu">### Second the Bad </span></span>
+<span id="cb18-146"><a href="#cb18-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-147"><a href="#cb18-147" aria-hidden="true" tabindex="-1"></a>Just as there are good, there are also bad designs. As described in @goodman_bacon_2021, one of the pitfalls of the TWFE is that it may also try to identify TE by comparing units that are already treated, but at different times.</span>
+<span id="cb18-148"><a href="#cb18-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-149"><a href="#cb18-149" aria-hidden="true" tabindex="-1"></a><span class="al">![fig5](did_fig4.png)</span></span>
+<span id="cb18-150"><a href="#cb18-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-151"><a href="#cb18-151" aria-hidden="true" tabindex="-1"></a>Consider the first panel. It compares data for G3 to those in G2. At T=2, G3 is untreated, whereas G2 is treated both at T=2 and T=3. If the treatment effect were homogenous (a location shift), this may work. However, if the treatment affected both G2 and G3 differently, it would violate the parallel trend assumption, and this 2x2 design will not identify Treatment effects.</span>
+<span id="cb18-152"><a href="#cb18-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-153"><a href="#cb18-153" aria-hidden="true" tabindex="-1"></a>Now, why are these units used as controls? </span>
+<span id="cb18-154"><a href="#cb18-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-155"><a href="#cb18-155" aria-hidden="true" tabindex="-1"></a>From an OLS viewpoint, the reason is that the treatment status for a given unit remains constant across time, thereby making it appear as though the previously treated unit is a good control. Nonetheless, if the treatment effect varies over time, then the parallel trends assumption may be invalidated, and treatment effects will not be identified.</span>
+<span id="cb18-156"><a href="#cb18-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-157"><a href="#cb18-157" aria-hidden="true" tabindex="-1"></a><span class="fu">### Bad controls and Negative weights: How bad can it be?</span></span>
+<span id="cb18-158"><a href="#cb18-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-159"><a href="#cb18-159" aria-hidden="true" tabindex="-1"></a>The problem describe above can be summarized with a single idea. WHen using OLS, sometimes one uses **bad** controls to estimete Treatment effects, which will affect the identification. </span>
+<span id="cb18-160"><a href="#cb18-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-161"><a href="#cb18-161" aria-hidden="true" tabindex="-1"></a>The other concept that has been used to describe the problem is one about **Negative weights**, which are closely related. </span>
+<span id="cb18-162"><a href="#cb18-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-163"><a href="#cb18-163" aria-hidden="true" tabindex="-1"></a>First the technical part. </span>
+<span id="cb18-164"><a href="#cb18-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-165"><a href="#cb18-165" aria-hidden="true" tabindex="-1"></a>Assume we have balanced panel data, and estimate the following model:</span>
+<span id="cb18-166"><a href="#cb18-166" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb18-167"><a href="#cb18-167" aria-hidden="true" tabindex="-1"></a>y_{it} = a_i + a_t + \delta D_{it}+e_{it}</span>
+<span id="cb18-168"><a href="#cb18-168" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb18-169"><a href="#cb18-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-170"><a href="#cb18-170" aria-hidden="true" tabindex="-1"></a>One way to estimate this effects *easily* is to apply Frisch–Waugh–Lovell theorem, ***demean*** $D_{it}$, and estimate $\delta$ using the new data:</span>
+<span id="cb18-171"><a href="#cb18-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-172"><a href="#cb18-172" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb18-173"><a href="#cb18-173" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb18-174"><a href="#cb18-174" aria-hidden="true" tabindex="-1"></a>    \delta^{twfe} &amp;=\frac{\sum \bar{\bar D}_{it} y_{it}}{\sum \bar{\bar D}_{it}^2} <span class="sc">\\</span></span>
+<span id="cb18-175"><a href="#cb18-175" aria-hidden="true" tabindex="-1"></a>    \bar{\bar D}_{it} &amp;= D_{it}+\bar D-(\bar D_i + \bar D_t)</span>
+<span id="cb18-176"><a href="#cb18-176" aria-hidden="true" tabindex="-1"></a>\end{aligned}    </span>
+<span id="cb18-177"><a href="#cb18-177" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb18-178"><a href="#cb18-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-179"><a href="#cb18-179" aria-hidden="true" tabindex="-1"></a>When estimating treatment effects, treated units are expected to receive a positive weight. However, after applying FWL, there is no assurance that $\bar{\bar D}_{it}$ will be positive for already treated units. This happens because $\bar D_t$ is larger in later periods, and $\bar D_i$ is larger for units that were treated earlier. </span>
+<span id="cb18-180"><a href="#cb18-180" aria-hidden="true" tabindex="-1"></a>In consequence, units that were treated earlier could incorrectly receive a negative weight, when estimating the treatment effect, it could also be that units that were never treated are incorrectedly assigned a possitive weight, when they should receive negative weights.</span>
+<span id="cb18-181"><a href="#cb18-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-182"><a href="#cb18-182" aria-hidden="true" tabindex="-1"></a>How bad could it be? Consider the following excercise/code:</span>
+<span id="cb18-183"><a href="#cb18-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-186"><a href="#cb18-186" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb18-187"><a href="#cb18-187" aria-hidden="true" tabindex="-1"></a><span class="in">*| output: false</span></span>
+<span id="cb18-188"><a href="#cb18-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-189"><a href="#cb18-189" aria-hidden="true" tabindex="-1"></a><span class="in">clear</span></span>
+<span id="cb18-190"><a href="#cb18-190" aria-hidden="true" tabindex="-1"></a><span class="in">set seed 101</span></span>
+<span id="cb18-191"><a href="#cb18-191" aria-hidden="true" tabindex="-1"></a><span class="in">set obs 100</span></span>
+<span id="cb18-192"><a href="#cb18-192" aria-hidden="true" tabindex="-1"></a><span class="in">gen id = _n</span></span>
+<span id="cb18-193"><a href="#cb18-193" aria-hidden="true" tabindex="-1"></a><span class="in">gen gv = runiformint(2,10)</span></span>
+<span id="cb18-194"><a href="#cb18-194" aria-hidden="true" tabindex="-1"></a><span class="in">replace gv = 0 if gv&gt;=8</span></span>
+<span id="cb18-195"><a href="#cb18-195" aria-hidden="true" tabindex="-1"></a><span class="in">expand 10</span></span>
+<span id="cb18-196"><a href="#cb18-196" aria-hidden="true" tabindex="-1"></a><span class="in">bysort id:gen t=_n</span></span>
+<span id="cb18-197"><a href="#cb18-197" aria-hidden="true" tabindex="-1"></a><span class="in">gen trt = gv&lt;=t &amp; gv!=0</span></span>
+<span id="cb18-198"><a href="#cb18-198" aria-hidden="true" tabindex="-1"></a><span class="in">ssc install hdfe</span></span>
+<span id="cb18-199"><a href="#cb18-199" aria-hidden="true" tabindex="-1"></a><span class="in">hdfe trt, abs(t id) gen(trt_d)</span></span>
+<span id="cb18-200"><a href="#cb18-200" aria-hidden="true" tabindex="-1"></a><span class="in">gen y = 0</span></span>
+<span id="cb18-201"><a href="#cb18-201" aria-hidden="true" tabindex="-1"></a><span class="in">replace y = 1 if trt==1 &amp; trt_d &lt;0 </span></span>
+<span id="cb18-202"><a href="#cb18-202" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-203"><a href="#cb18-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-204"><a href="#cb18-204" aria-hidden="true" tabindex="-1"></a>In this case, y is zero for everyone, but for selected treated units at some point in time. You would expect average treatment effects to be possitive. TWFE, would dissagree:</span>
+<span id="cb18-205"><a href="#cb18-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-208"><a href="#cb18-208" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb18-209"><a href="#cb18-209" aria-hidden="true" tabindex="-1"></a><span class="in">qui:ssc install reghdfe</span></span>
+<span id="cb18-210"><a href="#cb18-210" aria-hidden="true" tabindex="-1"></a><span class="in">reghdfe y trt, abs(id t)</span></span>
+<span id="cb18-211"><a href="#cb18-211" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-212"><a href="#cb18-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-213"><a href="#cb18-213" aria-hidden="true" tabindex="-1"></a>But why is that? The way treatment was assigned, only the units that were treated earlier have a positive treatment, but those are the ones used as controls later on, receiving negative weights. Thus, TWFE uses that and estimates negative TE. </span>
+<span id="cb18-214"><a href="#cb18-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-217"><a href="#cb18-217" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb18-218"><a href="#cb18-218" aria-hidden="true" tabindex="-1"></a><span class="in">*| echo: false</span></span>
+<span id="cb18-219"><a href="#cb18-219" aria-hidden="true" tabindex="-1"></a><span class="in">*| fig-cap: "FWL-Weights"</span></span>
+<span id="cb18-220"><a href="#cb18-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-221"><a href="#cb18-221" aria-hidden="true" tabindex="-1"></a><span class="in">two (line trt_dtrt t if trt==1 &amp; gv==2, sort) ///</span></span>
+<span id="cb18-222"><a href="#cb18-222" aria-hidden="true" tabindex="-1"></a><span class="in">    (line trt_dtrt t if trt==1 &amp; gv==3, sort) ///</span></span>
+<span id="cb18-223"><a href="#cb18-223" aria-hidden="true" tabindex="-1"></a><span class="in">    (line trt_dtrt t if trt==1 &amp; gv==4, sort) ///</span></span>
+<span id="cb18-224"><a href="#cb18-224" aria-hidden="true" tabindex="-1"></a><span class="in">    (line trt_dtrt t if trt==1 &amp; gv==5, sort), legend(order(1 "G=2" 2 "G=3" 3 "G=4" 4 "G=5"))</span></span>
+<span id="cb18-225"><a href="#cb18-225" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb18-226"><a href="#cb18-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-227"><a href="#cb18-227" aria-hidden="true" tabindex="-1"></a><span class="fu">## This were the problems, but solutions?</span></span>
+<span id="cb18-228"><a href="#cb18-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-229"><a href="#cb18-229" aria-hidden="true" tabindex="-1"></a>What I provided you here was a brief review of DID, with some of the intution on why TWFE fails. Now, it doesn't mean there is no</span>
+<span id="cb18-230"><a href="#cb18-230" aria-hidden="true" tabindex="-1"></a>solutions moving forward. In fact, by the time you are reading it, you will probaly be aware of many of them.</span>
+<span id="cb18-231"><a href="#cb18-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-232"><a href="#cb18-232" aria-hidden="true" tabindex="-1"></a>Over the last years, there have been many propositions trying provide solutions that would tackle the problems related to TWFE DID. I have been lucky enough to participate in the after programming of couple of them, but also worked closely to understand some of the others: </span>
+<span id="cb18-233"><a href="#cb18-233" aria-hidden="true" tabindex="-1"></a><span class="in">`csdid`</span>/<span class="in">`csdid2`</span>; <span class="in">`jwdid`</span>; <span class="in">`did2s`</span>; <span class="in">`did_imputation`</span>; <span class="in">`did_multiplegt`</span>. </span>
+<span id="cb18-234"><a href="#cb18-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-235"><a href="#cb18-235" aria-hidden="true" tabindex="-1"></a>These new strategies have one thing in commong. They aim to solve the problems of TWFE by either using good 2x2 designs, avoiding wrong 2x2 designs, or adjusting weights to reduce the impact of negative weights. </span>
+<span id="cb18-236"><a href="#cb18-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-237"><a href="#cb18-237" aria-hidden="true" tabindex="-1"></a>I dive a bit into the possible solutions (and may reiterated the problems) in other posts. For now, hope you enjoy this.</span>
+<span id="cb18-238"><a href="#cb18-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-239"><a href="#cb18-239" aria-hidden="true" tabindex="-1"></a>Comments and questions welcome.</span>
+<span id="cb18-240"><a href="#cb18-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-241"><a href="#cb18-241" aria-hidden="true" tabindex="-1"></a><span class="fu">## References</span></span>
+<span id="cb18-242"><a href="#cb18-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-243"><a href="#cb18-243" aria-hidden="true" tabindex="-1"></a>:::{#refs}</span>
+<span id="cb18-244"><a href="#cb18-244" aria-hidden="true" tabindex="-1"></a>::: </span>
+<span id="cb18-245"><a href="#cb18-245" aria-hidden="true" tabindex="-1"></a></span>
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+</body></html>

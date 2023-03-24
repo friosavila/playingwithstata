@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Playing With Stata - Linear Regression via MLE</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../stata_do/stata_do4.html" rel="next">
+<link href="../stata_do/stata_do2.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-LCL2C8L3JH"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-LCL2C8L3JH', { 'anonymize_ip': true});
+</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../WeeMee.jpg" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Playing With Stata</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../stataviz/index.html">
+ <span class="menu-text">Stata Viz</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../stata_do/index.html" aria-current="page">
+ <span class="menu-text">Stata Do’s Ado’s</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../app_metrics/index.html">
+ <span class="menu-text">Applied econometrics</span></a>
+  </li>  
+  <li class="dropdown-header">
+ <span class="menu-text">Odds and Ends</span></li>
+  <li class="nav-item">
+    <a class="nav-link" href="../chatgpt.html">
+ <span class="menu-text">Fun with ChatGPT</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html">
+ <span class="menu-text">about</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../cv.html">
+ <span class="menu-text">cv &amp; Papers</span></a>
+  </li>  
+</ul>
+              <div class="quarto-toggle-container">
+                  <a href="" class="quarto-reader-toggle nav-link" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+              </div>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Linear Regression via MLE</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../stata_do/index.html" class="sidebar-item-text sidebar-link">Stata Programming</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Stata Do</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../stata_do/stata_do2.html" class="sidebar-item-text sidebar-link">How to Bootstrap</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../stata_do/stata_do3.html" class="sidebar-item-text sidebar-link active">Linear Regression via MLE</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../stata_do/stata_do4.html" class="sidebar-item-text sidebar-link">The IV-Probit: <code>margins</code> and <code>ml</code></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../stata_do/stata_do1.html" class="sidebar-item-text sidebar-link">Using Quarto for Stata dynamic documents</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#lr-as-mle" id="toc-lr-as-mle" class="nav-link" data-scroll-target="#lr-as-mle">LR as MLE</a></li>
+  <li><a href="#programming-for-margins" id="toc-programming-for-margins" class="nav-link" data-scroll-target="#programming-for-margins">Programming for Margins</a></li>
+  <li><a href="#the-estimation" id="toc-the-estimation" class="nav-link" data-scroll-target="#the-estimation">The Estimation</a></li>
+  <li><a href="#margins" id="toc-margins" class="nav-link" data-scroll-target="#margins"><code>margins</code></a></li>
+  <li><a href="#conclusions" id="toc-conclusions" class="nav-link" data-scroll-target="#conclusions">Conclusions</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title d-none d-lg-block">Linear Regression via MLE</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+<p class="subtitle lead">Basic MLE-Programming and margins</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p><code>Stata</code> has a very useful command that can be used for the estimation of almost any linear and nonlinear models using maximum likelihood. This command is -ml-.</p>
+<p>Properly speaking, this command can be used to obtain M-type estimators, however, I’ll concentrate on maximum likelihood models.</p>
+<p>In this small tutorial, I’ll provide a small example of how to use -ml- in combination with -margins- to estimate marginal effects for a linear model, as long as one identifies the outcome of interest.</p>
+</section>
+<section id="lr-as-mle" class="level2">
+<h2 class="anchored" data-anchor-id="lr-as-mle">LR as MLE</h2>
+<p>As I mentioned earlier, the <code>ml</code> command in Stata is a powerful tool for obtaining maximum likelihood estimators, although it can be used to find solutions for any m-type estimators. The one limitation I have encountered with this command is that it can be resource-intensive when estimating complex models on large datasets. For instance, If you have a dataset with one million observations but only use 10% of it for modeling, dropping the unused data before estimation can speed up the process. <code>ml</code> will not do that for you.</p>
+<p>There are several ways to program <code>ml</code>, such as using the lf, df0, df1, or df2 options. The main difference among them is that you must define the objective function, its gradient, and its Hessian. However, for most purposes, I find that <code>lf</code> is the only one you will ever need.</p>
+<p>When using <code>ml</code> with the <code>lf</code> option, you only need to declare the loglikelihood function contributed by each observation in the sample. To illustrate this concept, let’s assume that we want to estimate a simple linear regression using MLE. For this, we need to assume that either the error follows a normal distribution or that the outcome follows a conditionally normal distribution.</p>
+<p><span class="math display">\[
+\begin{aligned}
+y_i &amp;= X_i'\beta + e_i \\
+e_i &amp;\sim N(0,\sigma^2) \ or \ y_i \sim N(X_i'\beta,sigma^2)
+\end{aligned}
+\]</span></p>
+<p>This implies that the Likelihood (<span class="math inline">\(L_i\)</span>) and Log-Likelihood (<span class="math inline">\(LL_i\)</span>) of a single observation is given by: <span class="math display">\[
+\begin{aligned}
+L_i &amp;= \frac{1}{\sigma \sqrt{2\pi}} exp\left( -\frac{1}{2} \left(\frac{y_i -X_i'\beta }{\sigma} \right)^2 \right) \\
+LL_i &amp;= -log(\sigma) - \frac{1}{2} log (2\pi) -\frac{1}{2} \left(\frac{y_i -X_i'\beta }{\sigma} \right)^2
+\end{aligned}
+\]</span></p>
+<p>So we just need to create a program that defines this log-likelihood function.</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">program</span> myols_mle</span>
+<span id="cb1-2"><a href="#cb1-2"></a>    <span class="kw">args</span> lnf <span class="kw">xb</span> lnsigma</span>
+<span id="cb1-3"><a href="#cb1-3"></a>    <span class="kw">local</span> sigma <span class="fu">exp</span>(<span class="ot">`lnsigma'</span>)</span>
+<span id="cb1-4"><a href="#cb1-4"></a>    *<span class="kw">qui</span>:<span class="kw">replace</span> <span class="ot">`lnf'</span> = -<span class="ot">`lnsigma'</span> - 1/2 * <span class="fu">log</span>(2*<span class="dt">_pi</span>) - 1/2 *((<span class="ot">$ML_y1</span>-<span class="ot">`xb'</span>)/<span class="ot">`sigma'</span>)^2</span>
+<span id="cb1-5"><a href="#cb1-5"></a>    <span class="kw">qui</span>: <span class="kw">replace</span> <span class="ot">`lnf'</span> = <span class="fu">log</span>(<span class="fu">normalden</span>(<span class="ot">$ML_y1</span>,<span class="ot">`xb'</span>,<span class="ot">`sigma'</span>))</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Notice that this program has 3 arguments (which come after <code>args</code>) (see line 2)</p>
+<ul>
+<li><code>lnf</code>: Will store the log-Likelihood for each observation</li>
+<li><code>xb</code>: Will store the linear combination of variables and their coefficients</li>
+<li><code>lnsigma</code>: Will store the <span class="math inline">\(log(\sigma)\)</span>.</li>
+</ul>
+<p>We do not estimate <span class="math inline">\(\sigma\)</span> directly, because its numerically more stable to estimate the <span class="math inline">\(log(\sigma)\)</span>. Also, we require <span class="math inline">\(\sigma\)</span> to be strictly positive, which can only be done by using the log transformation.</p>
+<p>In line 3, I specifically impose the transformation to obtain <span class="math inline">\(\sigma\)</span>.</p>
+<p>In line 4, I leave the comment of how I would write the full Loglikelihood using the formula I provided before, but for simplicilty I use the built-in <code>normalden</code> (line 5)</p>
+<p>You should also notice that all arguments will be handled internally as <code>locals</code>, which is why they need to be written within single quotes: <code>' . The only exception is</code>$ML_y1`, which represents the dependent variable.</p>
+</section>
+<section id="programming-for-margins" class="level2">
+<h2 class="anchored" data-anchor-id="programming-for-margins">Programming for Margins</h2>
+<p>The second component I’m interested in introducing today is to create a program that will allow you to modify how <code>margins</code>, operate.</p>
+<p>As some may know, <code>margins</code> is a <code>Stata</code> built-in program that estimates marginal effects, or marginal means, for any official and unofficial model in <code>Stata</code>. The way it works is rather simple. Once you estimat you model of interest and call on margins it will:</p>
+<ol type="1">
+<li><p>Estimate the predicted outcome for the model. This varies by model, but the default is to use the linear combination of variables and coefficients.</p></li>
+<li><p>Depending on other modeling factors, estimate derivatives, or means, of the outcome with respect to every variable in the model.</p></li>
+<li><p>Calculate standard errors using Delta method, and summarize results.</p></li>
+</ol>
+<p>Steps 2 and 3 above are common to all models. However, step 1 is the one that needs to be modified everytime one changes from one model to another.</p>
+<p>What I will do next is to write a program where I will define different types of outcomes that I may be interested in when analyzing Linear regressions. I will call this program <code>myols_mle_p</code>, following <code>Stata</code> naming standards:</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">program</span> myols_mle_p</span>
+<span id="cb2-2"><a href="#cb2-2"></a>    <span class="kw">syntax</span> newvarname [<span class="kw">if</span>] [<span class="kw">in</span>] , [ <span class="kw">mean</span> sigma emean *]</span>
+<span id="cb2-3"><a href="#cb2-3"></a>    <span class="kw">if</span> <span class="st">"`mean'`sigma'`emean'"</span> ==<span class="st">""</span> {</span>
+<span id="cb2-4"><a href="#cb2-4"></a>        <span class="kw">ml_p</span> <span class="ot">`0'</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a>    }</span>
+<span id="cb2-6"><a href="#cb2-6"></a>    <span class="kw">marksample</span> touse, novarlist</span>
+<span id="cb2-7"><a href="#cb2-7"></a>    <span class="kw">if</span> <span class="st">"`mean'"</span> !=<span class="st">""</span>  {</span>
+<span id="cb2-8"><a href="#cb2-8"></a>        <span class="kw">tempvar</span> <span class="kw">xb</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a>        _predict <span class="kw">double</span> <span class="ot">`xb'</span> , <span class="kw">eq</span>(#1)</span>
+<span id="cb2-10"><a href="#cb2-10"></a>        <span class="kw">gen</span> <span class="ot">`typlist'</span> <span class="ot">`varlist'</span> = <span class="ot">`xb'</span> <span class="kw">if</span> <span class="ot">`touse'</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a>        <span class="kw">label</span> <span class="kw">var</span> <span class="ot">`varlist'</span> <span class="st">"E(y|X)"</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a>    }</span>
+<span id="cb2-13"><a href="#cb2-13"></a>    <span class="kw">else</span> <span class="kw">if</span> <span class="st">"`sigma'"</span> !=<span class="st">""</span>  {</span>
+<span id="cb2-14"><a href="#cb2-14"></a>        <span class="kw">tempvar</span> <span class="kw">xb</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a>        _predict <span class="kw">double</span> <span class="ot">`xb'</span> , <span class="kw">eq</span>(#2)</span>
+<span id="cb2-16"><a href="#cb2-16"></a>        <span class="kw">gen</span> <span class="ot">`typlist'</span> <span class="ot">`varlist'</span> = <span class="fu">exp</span>(<span class="ot">`xb'</span>) <span class="kw">if</span> <span class="ot">`touse'</span></span>
+<span id="cb2-17"><a href="#cb2-17"></a>        <span class="kw">label</span> <span class="kw">var</span> <span class="ot">`varlist'</span> <span class="st">"E(sigma|X)"</span></span>
+<span id="cb2-18"><a href="#cb2-18"></a>    }</span>
+<span id="cb2-19"><a href="#cb2-19"></a>    <span class="kw">else</span> <span class="kw">if</span> <span class="st">"`emean'"</span>!=<span class="st">""</span> {</span>
+<span id="cb2-20"><a href="#cb2-20"></a>        <span class="kw">tempvar</span> <span class="kw">xb</span> lns</span>
+<span id="cb2-21"><a href="#cb2-21"></a>        _predict <span class="kw">double</span> <span class="ot">`xb'</span> , <span class="kw">eq</span>(#1)</span>
+<span id="cb2-22"><a href="#cb2-22"></a>        _predict <span class="kw">double</span> <span class="ot">`lns'</span> , <span class="kw">eq</span>(#2)</span>
+<span id="cb2-23"><a href="#cb2-23"></a>        <span class="kw">local</span> sigma (<span class="fu">exp</span>(<span class="ot">`lns'</span>))</span>
+<span id="cb2-24"><a href="#cb2-24"></a>        <span class="kw">gen</span> <span class="ot">`typlist'</span> <span class="ot">`varlist'</span> = <span class="fu">exp</span>(<span class="ot">`xb'</span>)*<span class="fu">exp</span>(0.5*<span class="ot">`sigma'</span>^2) <span class="kw">if</span> <span class="ot">`touse'</span></span>
+<span id="cb2-25"><a href="#cb2-25"></a>        <span class="kw">label</span> <span class="kw">var</span> <span class="ot">`varlist'</span> <span class="st">"E(exp(Y)|X)"</span></span>
+<span id="cb2-26"><a href="#cb2-26"></a>    }</span>
+<span id="cb2-27"><a href="#cb2-27"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The way I’m defining this program, one could request 3 types of outcomes:</p>
+<ul>
+<li><code>mean</code>: This is the standard outcome. Just looking into the linear combination of X and betas</li>
+<li><code>sigma</code>: When this option is used, you will obtain the prediction for <span class="math inline">\(\sigma\)</span> instead of <span class="math inline">\(log(\sigma)\)</span>. May be useful to compare and test heteroskedasticity directly</li>
+<li><code>emean</code>: This is something different. This option could be used if your outcome of interest was “wages”, but you were modeling “log(wages)”. This will be estimated under the assumption of log-normality.</li>
+</ul>
+<p>If neither option is used, it will revert to use the default.</p>
+</section>
+<section id="the-estimation" class="level2">
+<h2 class="anchored" data-anchor-id="the-estimation">The Estimation</h2>
+<p>Before we estimate the LR model using MLE, lets start by loading some data:</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>frause oaxaca, <span class="kw">clear</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Excerpt from the Swiss Labor Market Survey 1998)</code></pre>
+</div>
+</div>
+<p>Now, to estimate a model using -ml-, we need to use a somewhat complex syntax, that would be better explained in the following code:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">ml</span> <span class="kw">model</span> lf myols_mle <span class="co">/// </span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>   (<span class="kw">mean</span>:lnwage = educ exper i.female) <span class="co">///</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>   (ln_sigma:  = educ exper i.female) <span class="co">///</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>   , <span class="kw">maximize</span>  <span class="kw">nolog</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">ml</span> <span class="kw">display</span>   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Line 1. Indicates you will try and estimate a model using <code>ml</code>, where the model will use <code>lf</code> option (which only requires the log-likelihood function at individual level to be provided. You also need to provide the name of the program that defines the LL function: <code>myols_mle</code>.</p>
+<p>Line 2 and 3. As described earlier, the program <code>myols_mle</code> requires 3 arguments. The first one is the LL function, so we do not need to be concernd about. The other two arguments refer to <code>xb</code> or conditional mean, and <code>lnsigma</code> or log of the variance, need to be declared here. They are order specific. Line 2 will always refer to <code>xb</code>, independent of the name I provide, and Line 3 will always refer to <code>lnsigma</code>.</p>
+<p>In standard models, we assume homoskedasticity, so we do not need to add covariates to <code>lnsigma</code>, but we can do it and control for heteroskedasticity directly.</p>
+<p>In line 4, I simply request model to be maximized, but could just as well requested clustered standard errors, or use other options allowed in <code>ml</code>.</p>
+<p>Finally line 5 request displaying the results. So lets see what we get:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                                                        Number <span class="kw">of</span> <span class="kw">obs</span> =  1,434</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                                                        Wald <span class="fu">chi2</span>(3)  = 371.53</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>Log likelihood = -871.18998                             Prob &gt; <span class="fu">chi2</span>   = 0.0000</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>------------------------------------------------------------------------------</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      lnwage | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>-------------+----------------------------------------------------------------</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="kw">mean</span>         |</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        educ |   .0736371   .0045872    16.05   0.000     .0646464    .0826278</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>       exper |   .0105825   .0010551    10.03   0.000     .0085147    .0126504</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    1.female |  -.1118167    .024106    -4.64   0.000    -.1590636   -.0645698</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>       <span class="dt">_cons</span> |   2.430164   .0641158    37.90   0.000     2.304499    2.555828</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>-------------+----------------------------------------------------------------</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>ln_sigma     |</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        educ |  -.0356134   .0067794    -5.25   0.000    -.0489008   -.0223259</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>       exper |  -.0165439   .0016363   -10.11   0.000     -.019751   -.0133368</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    1.female |   .2066704   .0382432     5.40   0.000     .1317152    .2816256</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>       <span class="dt">_cons</span> |  -.2813734   .0910696    -3.09   0.002    -.4598665   -.1028802</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>------------------------------------------------------------------------------</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You can compare these results with the standard <code>regress</code> outcome, or <code>hetregress</code> if you want to compare the results allowing for heteroskedastic errors.</p>
+</section>
+<section id="margins" class="level2">
+<h2 class="anchored" data-anchor-id="margins"><code>margins</code></h2>
+<p>Margins can be used here to analyze the effect of covariates on the outcome of interest. The default from -ml- is to use linear combinations of coefficients and covariates. Now, if we want to use our predict command, we need to modify one piece of information in e(). If you type <code>ereturn list</code>, after every <code>Stata</code> command, you will see there is one local named <code>e(predict)</code>. This local has the name of a program that is used to get predictions for a given model. We need to modify it, and change the default name to our program: <code>myols_mle_p</code>.</p>
+<p>We will do this with the following program:</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">program</span> adde, <span class="kw">eclass</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">ereturn</span> <span class="ot">`0'</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>adde <span class="kw">local</span> <span class="kw">predict</span> myols_mle_p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ok with all of this, we are ready to estimate marginal effects. The next two lines should give you the same result, but I present them here as an example:</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>margins, <span class="kw">dydx</span>(*)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>margins, <span class="kw">dydx</span>(*) <span class="kw">predict</span>(<span class="kw">mean</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Average marginal effects                                 Number of obs = 1,434
+Model VCE: OIM
+
+Expression: Linear prediction, predict()
+dy/dx wrt:  educ exper 1.female
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        educ |   .0736371   .0045872    16.05   0.000     .0646464    .0826278
+       exper |   .0105825   .0010551    10.03   0.000     .0085147    .0126504
+    1.female |  -.1118167    .024106    -4.64   0.000    -.1590636   -.0645698
+------------------------------------------------------------------------------
+Note: dy/dx for factor levels is the discrete change from the base level.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Average marginal effects                                 Number of obs = 1,434
+Model VCE: OIM
+
+Expression: E(y|X), predict(mean)
+dy/dx wrt:  educ exper 1.female
+</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        educ |   .0736371   .0045872    16.05   0.000     .0646464    .0826278
+       exper |   .0105825   .0010551    10.03   0.000     .0085147    .0126504
+    1.female |  -.1118167    .024106    -4.64   0.000    -.1590636   -.0645698
+------------------------------------------------------------------------------
+Note: dy/dx for factor levels is the discrete change from the base level.</code></pre>
+</div>
+</div>
+<p>What would be more interesting, however, would be to provide outcomes for the predicted standard deviation, or the exponentiated mean:</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>margins, <span class="kw">dydx</span>(*) <span class="kw">predict</span>(sigma)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Average marginal effects                                 Number of obs = 1,434
+Model VCE: OIM
+
+Expression: E(sigma|X), predict(sigma)
+dy/dx wrt:  educ exper 1.female
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        educ |  -.0161816   .0031133    -5.20   0.000    -.0222836   -.0100796
+       exper |   -.007517    .000774    -9.71   0.000    -.0090341       -.006
+    1.female |   .0938119   .0175522     5.34   0.000     .0594102    .1282136
+------------------------------------------------------------------------------
+Note: dy/dx for factor levels is the discrete change from the base level.</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>margins, <span class="kw">dydx</span>(*) <span class="kw">predict</span>(emean)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Average marginal effects                                 Number of obs = 1,434
+Model VCE: OIM
+
+Expression: E(exp(Y)|X), predict(emean)
+dy/dx wrt:  educ exper 1.female
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |      dy/dx   std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        educ |   2.175891    .169221    12.86   0.000     1.844224    2.507558
+       exper |    .236423   .0394785     5.99   0.000     .1590466    .3137995
+    1.female |   -2.27482   .8226334    -2.77   0.006    -3.887152   -.6624884
+------------------------------------------------------------------------------
+Note: dy/dx for factor levels is the discrete change from the base level.</code></pre>
+</div>
+</div>
+<p>So how do we interpret the results?. Here one possibility:</p>
+<p>Each additional year of education increases wages by 7.4%, however, as education increases the dispersion of wages decreases. In terms of actual dollar change, in average, that additional year of education translates in a 2.17$ per hour increase.</p>
+</section>
+<section id="conclusions" class="level2">
+<h2 class="anchored" data-anchor-id="conclusions">Conclusions</h2>
+<p>The purpose of this small article was to walk you through how to use -ml- for the estimation of a simple linear regression.</p>
+<p>In addition, it also introduces you to creating a program that will allow you to use <code>margins</code>, when you have a specific outcome in mind, that is not currently available in the command you are interested in using.</p>
+<p>Hope you find it useful.</p>
+<p>Comments and question welcome!</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../stata_do/stata_do2.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">How to Bootstrap</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../stata_do/stata_do4.html" class="pagination-link">
+        <span class="nav-page-text">The IV-Probit: <code>margins</code> and <code>ml</code></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb16" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Linear Regression via MLE"</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Basic MLE-Programming and margins"</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> html</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="in">`Stata`</span> has a very useful command that can be used for the estimation of almost any linear and nonlinear models using maximum likelihood. This command is -ml-.</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>Properly speaking, this command can be used to obtain M-type estimators, however, I'll concentrate on maximum likelihood models.</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>In this small tutorial, I'll provide a small example of how to use -ml- in combination with -margins- to estimate marginal effects for a linear model, as long as one identifies the outcome of interest.</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="fu">## LR as MLE</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>As I mentioned earlier, the <span class="in">`ml`</span> command in Stata is a powerful tool for obtaining maximum likelihood estimators, although it can be used to find solutions for any m-type estimators. The one limitation I have encountered with this command is that it can be resource-intensive when estimating complex models on large datasets. For instance, If you have a dataset with one million observations but only use 10% of it for modeling, dropping the unused data before estimation can speed up the process. <span class="in">`ml`</span> will not do that for you.</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>There are several ways to program <span class="in">`ml`</span>, such as using the lf, df0, df1, or df2 options. The main difference among them is that you must define the objective function, its gradient, and its Hessian. However, for most purposes, I find that <span class="in">`lf`</span> is the only one you will ever need.</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>When using <span class="in">`ml`</span> with the <span class="in">`lf`</span> option, you only need to declare the loglikelihood function contributed by each observation in the sample. To illustrate this concept, let's assume that we want to estimate a simple linear regression using MLE. For this, we need to assume that either the error follows a normal distribution or that the outcome follows a conditionally normal distribution.</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>y_i &amp;= X_i'\beta + e_i <span class="sc">\\</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>e_i &amp;\sim N(0,\sigma^2) \ or \ y_i \sim N(X_i'\beta,sigma^2)</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>This implies that the Likelihood ($L_i$)  and Log-Likelihood ($LL_i$) of a single observation is given by:</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>L_i &amp;= \frac{1}{\sigma \sqrt{2\pi}} exp\left( -\frac{1}{2} \left(\frac{y_i -X_i'\beta }{\sigma} \right)^2 \right) <span class="sc">\\</span></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>LL_i &amp;= -log(\sigma) - \frac{1}{2} log (2\pi) -\frac{1}{2} \left(\frac{y_i -X_i'\beta }{\sigma} \right)^2</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>\end{aligned} </span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>So we just need to create a program that defines this log-likelihood function. </span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a><span class="in">*| echo: false</span></span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a><span class="in">clear all</span></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a><span class="in">*| echo: true</span></span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a><span class="in">*| code-fold: false</span></span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a><span class="in">*| code-line-numbers: true</span></span>
+<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a><span class="in">program myols_mle</span></span>
+<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a><span class="in">    args lnf xb lnsigma</span></span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a><span class="in">    local sigma exp(`lnsigma')</span></span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a><span class="in">    *qui:replace `lnf' = -`lnsigma' - 1/2 * log(2*_pi) - 1/2 *(($ML_y1-`xb')/`sigma')^2</span></span>
+<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a><span class="in">    qui: replace `lnf' = log(normalden($ML_y1,`xb',`sigma'))</span></span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a><span class="in">end</span></span>
+<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a>Notice that this program has 3 arguments (which come after <span class="in">`args`</span>) (see line 2)</span>
+<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`lnf`</span>: Will store the log-Likelihood for each observation</span>
+<span id="cb16-64"><a href="#cb16-64" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`xb`</span>: Will store the linear combination of variables and their coefficients</span>
+<span id="cb16-65"><a href="#cb16-65" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`lnsigma`</span>: Will store the $log(\sigma)$. </span>
+<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a>We do not estimate $\sigma$ directly, because its numerically more stable to estimate the $log(\sigma)$. Also, we require $\sigma$</span>
+<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a>to be strictly positive, which can only be done by using the log transformation.</span>
+<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a>In line 3, I specifically impose the transformation to obtain $\sigma$. </span>
+<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a>In line 4, I leave the comment of how I would write the full Loglikelihood using the formula I provided before, but for simplicilty </span>
+<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a>I use the built-in <span class="in">`normalden`</span> (line 5)</span>
+<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a>You should also notice that all arguments will be handled internally as <span class="in">`locals`</span>, which is why they need to be written within single quotes: <span class="in">`' . The only exception is `</span>$ML_y1`, which represents the dependent variable.</span>
+<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a><span class="fu">## Programming for Margins</span></span>
+<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a>The second component I'm interested in introducing today is to create a program that will allow you to modify how <span class="in">`margins`</span>, operate.</span>
+<span id="cb16-80"><a href="#cb16-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-81"><a href="#cb16-81" aria-hidden="true" tabindex="-1"></a>As some may know, <span class="in">`margins`</span> is a <span class="in">`Stata`</span> built-in program that estimates marginal effects, or marginal means, for any official and unofficial model in <span class="in">`Stata`</span>.</span>
+<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a>The way it works is rather simple. Once you estimat you model of interest and call on margins it will:</span>
+<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Estimate the predicted outcome for the model. This varies by model, but the default is to use the linear combination of variables and coefficients.</span>
+<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Depending on other modeling factors, estimate derivatives, or means, of the outcome with respect to every variable in the model.</span>
+<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Calculate standard errors using Delta method, and summarize results.</span>
+<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a>Steps 2 and 3 above are common to all models. However, step 1 is the one that needs to be modified everytime one changes from one model to another.</span>
+<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a>What I will do next is to write a program where I will define different types of outcomes that I may be interested in when analyzing Linear regressions. I will call this program <span class="in">`myols_mle_p`</span>, following <span class="in">`Stata`</span> naming standards:</span>
+<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a><span class="in">*| echo: true</span></span>
+<span id="cb16-98"><a href="#cb16-98" aria-hidden="true" tabindex="-1"></a><span class="in">*| code-fold: false</span></span>
+<span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a><span class="in">*| code-line-numbers: true</span></span>
+<span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a><span class="in">program myols_mle_p</span></span>
+<span id="cb16-101"><a href="#cb16-101" aria-hidden="true" tabindex="-1"></a><span class="in">    syntax newvarname [if] [in] , [ mean sigma emean *]</span></span>
+<span id="cb16-102"><a href="#cb16-102" aria-hidden="true" tabindex="-1"></a><span class="in">    if "`mean'`sigma'`emean'" =="" {</span></span>
+<span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a><span class="in">        ml_p `0'</span></span>
+<span id="cb16-104"><a href="#cb16-104" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb16-105"><a href="#cb16-105" aria-hidden="true" tabindex="-1"></a><span class="in">    marksample touse, novarlist</span></span>
+<span id="cb16-106"><a href="#cb16-106" aria-hidden="true" tabindex="-1"></a><span class="in">    if "`mean'" !=""  {</span></span>
+<span id="cb16-107"><a href="#cb16-107" aria-hidden="true" tabindex="-1"></a><span class="in">        tempvar xb</span></span>
+<span id="cb16-108"><a href="#cb16-108" aria-hidden="true" tabindex="-1"></a><span class="in">        _predict double `xb' , eq(#1)</span></span>
+<span id="cb16-109"><a href="#cb16-109" aria-hidden="true" tabindex="-1"></a><span class="in">        gen `typlist' `varlist' = `xb' if `touse'</span></span>
+<span id="cb16-110"><a href="#cb16-110" aria-hidden="true" tabindex="-1"></a><span class="in">        label var `varlist' "E(y|X)"</span></span>
+<span id="cb16-111"><a href="#cb16-111" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb16-112"><a href="#cb16-112" aria-hidden="true" tabindex="-1"></a><span class="in">    else if "`sigma'" !=""  {</span></span>
+<span id="cb16-113"><a href="#cb16-113" aria-hidden="true" tabindex="-1"></a><span class="in">        tempvar xb</span></span>
+<span id="cb16-114"><a href="#cb16-114" aria-hidden="true" tabindex="-1"></a><span class="in">        _predict double `xb' , eq(#2)</span></span>
+<span id="cb16-115"><a href="#cb16-115" aria-hidden="true" tabindex="-1"></a><span class="in">        gen `typlist' `varlist' = exp(`xb') if `touse'</span></span>
+<span id="cb16-116"><a href="#cb16-116" aria-hidden="true" tabindex="-1"></a><span class="in">        label var `varlist' "E(sigma|X)"</span></span>
+<span id="cb16-117"><a href="#cb16-117" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb16-118"><a href="#cb16-118" aria-hidden="true" tabindex="-1"></a><span class="in">    else if "`emean'"!="" {</span></span>
+<span id="cb16-119"><a href="#cb16-119" aria-hidden="true" tabindex="-1"></a><span class="in">        tempvar xb lns</span></span>
+<span id="cb16-120"><a href="#cb16-120" aria-hidden="true" tabindex="-1"></a><span class="in">        _predict double `xb' , eq(#1)</span></span>
+<span id="cb16-121"><a href="#cb16-121" aria-hidden="true" tabindex="-1"></a><span class="in">        _predict double `lns' , eq(#2)</span></span>
+<span id="cb16-122"><a href="#cb16-122" aria-hidden="true" tabindex="-1"></a><span class="in">        local sigma (exp(`lns'))</span></span>
+<span id="cb16-123"><a href="#cb16-123" aria-hidden="true" tabindex="-1"></a><span class="in">        gen `typlist' `varlist' = exp(`xb')*exp(0.5*`sigma'^2) if `touse'</span></span>
+<span id="cb16-124"><a href="#cb16-124" aria-hidden="true" tabindex="-1"></a><span class="in">        label var `varlist' "E(exp(Y)|X)"</span></span>
+<span id="cb16-125"><a href="#cb16-125" aria-hidden="true" tabindex="-1"></a><span class="in">    }</span></span>
+<span id="cb16-126"><a href="#cb16-126" aria-hidden="true" tabindex="-1"></a><span class="in">end</span></span>
+<span id="cb16-127"><a href="#cb16-127" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-128"><a href="#cb16-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-129"><a href="#cb16-129" aria-hidden="true" tabindex="-1"></a>The way I'm defining this program, one could request 3 types of outcomes:</span>
+<span id="cb16-130"><a href="#cb16-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-131"><a href="#cb16-131" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`mean`</span>: This is the standard outcome. Just looking into the linear combination of X and betas</span>
+<span id="cb16-132"><a href="#cb16-132" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`sigma`</span>: When this option is used, you will obtain the prediction for $\sigma$ instead of $log(\sigma)$. May be useful to compare and test heteroskedasticity directly</span>
+<span id="cb16-133"><a href="#cb16-133" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`emean`</span>: This is something different. This option could be used if your outcome of interest was "wages", but you were modeling "log(wages)". This will be estimated under the assumption of log-normality.</span>
+<span id="cb16-134"><a href="#cb16-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-135"><a href="#cb16-135" aria-hidden="true" tabindex="-1"></a>If neither option is used, it will revert to use the default.</span>
+<span id="cb16-136"><a href="#cb16-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-137"><a href="#cb16-137" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Estimation</span></span>
+<span id="cb16-138"><a href="#cb16-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-139"><a href="#cb16-139" aria-hidden="true" tabindex="-1"></a>Before we estimate the LR model using MLE, lets start by loading some data: </span>
+<span id="cb16-140"><a href="#cb16-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-143"><a href="#cb16-143" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb16-144"><a href="#cb16-144" aria-hidden="true" tabindex="-1"></a><span class="in">*| echo: true</span></span>
+<span id="cb16-145"><a href="#cb16-145" aria-hidden="true" tabindex="-1"></a><span class="in">*| code-fold: false</span></span>
+<span id="cb16-146"><a href="#cb16-146" aria-hidden="true" tabindex="-1"></a><span class="in">frause oaxaca, clear</span></span>
+<span id="cb16-147"><a href="#cb16-147" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-148"><a href="#cb16-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-149"><a href="#cb16-149" aria-hidden="true" tabindex="-1"></a>Now, to estimate a model using -ml-, we need to use a somewhat complex syntax, that would be better explained in the following code:</span>
+<span id="cb16-150"><a href="#cb16-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-151"><a href="#cb16-151" aria-hidden="true" tabindex="-1"></a><span class="in">```stata</span></span>
+<span id="cb16-152"><a href="#cb16-152" aria-hidden="true" tabindex="-1"></a><span class="in">ml model lf myols_mle /// </span></span>
+<span id="cb16-153"><a href="#cb16-153" aria-hidden="true" tabindex="-1"></a><span class="in">   (mean:lnwage = educ exper i.female) ///</span></span>
+<span id="cb16-154"><a href="#cb16-154" aria-hidden="true" tabindex="-1"></a><span class="in">   (ln_sigma:  = educ exper i.female) ///</span></span>
+<span id="cb16-155"><a href="#cb16-155" aria-hidden="true" tabindex="-1"></a><span class="in">   , maximize  nolog</span></span>
+<span id="cb16-156"><a href="#cb16-156" aria-hidden="true" tabindex="-1"></a><span class="in">ml display   </span></span>
+<span id="cb16-157"><a href="#cb16-157" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-158"><a href="#cb16-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-159"><a href="#cb16-159" aria-hidden="true" tabindex="-1"></a>Line 1. Indicates you will try and estimate a model using <span class="in">`ml`</span>, where the model will use <span class="in">`lf`</span> option (which only requires the log-likelihood function at individual level to be provided. You also need to provide the name of the program that defines the LL function: <span class="in">`myols_mle`</span>.</span>
+<span id="cb16-160"><a href="#cb16-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-161"><a href="#cb16-161" aria-hidden="true" tabindex="-1"></a>Line 2 and 3. As described earlier, the program <span class="in">`myols_mle`</span> requires 3 arguments. The first one is the LL function, so we do not need to be concernd about. The other two arguments refer to <span class="in">`xb`</span> or conditional mean, and <span class="in">`lnsigma`</span> or log of the variance, need to be declared here. They are order specific. Line 2 will always refer to <span class="in">`xb`</span>, independent of the name I provide, and Line 3 will always refer to <span class="in">`lnsigma`</span>. </span>
+<span id="cb16-162"><a href="#cb16-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-163"><a href="#cb16-163" aria-hidden="true" tabindex="-1"></a>In standard models, we assume homoskedasticity, so we do not need to add covariates to <span class="in">`lnsigma`</span>, but we can do it and control for heteroskedasticity directly.</span>
+<span id="cb16-164"><a href="#cb16-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-165"><a href="#cb16-165" aria-hidden="true" tabindex="-1"></a>In line 4, I simply request model to be maximized, but could just as well requested clustered standard errors, or use other options allowed in <span class="in">`ml`</span>.</span>
+<span id="cb16-166"><a href="#cb16-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-167"><a href="#cb16-167" aria-hidden="true" tabindex="-1"></a>Finally line 5 request displaying the results. So lets see what we get:</span>
+<span id="cb16-168"><a href="#cb16-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-171"><a href="#cb16-171" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb16-172"><a href="#cb16-172" aria-hidden="true" tabindex="-1"></a><span class="in">*| output: asis</span></span>
+<span id="cb16-173"><a href="#cb16-173" aria-hidden="true" tabindex="-1"></a><span class="in">*| echo: false</span></span>
+<span id="cb16-174"><a href="#cb16-174" aria-hidden="true" tabindex="-1"></a><span class="in">display "```stata"</span></span>
+<span id="cb16-175"><a href="#cb16-175" aria-hidden="true" tabindex="-1"></a><span class="in">qui:ml model lf myols_mle (mean:lnwage = educ exper i.female) ///</span></span>
+<span id="cb16-176"><a href="#cb16-176" aria-hidden="true" tabindex="-1"></a><span class="in">   (ln_sigma:  = educ exper i.female) , maximize  nolog</span></span>
+<span id="cb16-177"><a href="#cb16-177" aria-hidden="true" tabindex="-1"></a><span class="in">ml display   </span></span>
+<span id="cb16-178"><a href="#cb16-178" aria-hidden="true" tabindex="-1"></a><span class="in">display "```"</span></span>
+<span id="cb16-179"><a href="#cb16-179" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-180"><a href="#cb16-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-181"><a href="#cb16-181" aria-hidden="true" tabindex="-1"></a>You can compare these results with the standard <span class="in">`regress`</span> outcome, or <span class="in">`hetregress`</span> if you want to compare the results allowing for heteroskedastic errors.</span>
+<span id="cb16-182"><a href="#cb16-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-183"><a href="#cb16-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-184"><a href="#cb16-184" aria-hidden="true" tabindex="-1"></a><span class="fu">## `margins` </span></span>
+<span id="cb16-185"><a href="#cb16-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-186"><a href="#cb16-186" aria-hidden="true" tabindex="-1"></a>Margins can be used here to analyze the effect of covariates on the outcome of interest. The default from -ml- is to use linear combinations of coefficients and covariates. Now, if we want to use our predict command, we need to modify one piece of information in e(). If you type <span class="in">`ereturn list`</span>, after every <span class="in">`Stata`</span> command, you will see there is one local named <span class="in">`e(predict)`</span>. This local has the name of a program that is used to get predictions for a given model. We need to modify it, and change the default name to our program: <span class="in">`myols_mle_p`</span>. </span>
+<span id="cb16-187"><a href="#cb16-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-188"><a href="#cb16-188" aria-hidden="true" tabindex="-1"></a>We will do this with the following program:</span>
+<span id="cb16-189"><a href="#cb16-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-192"><a href="#cb16-192" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb16-193"><a href="#cb16-193" aria-hidden="true" tabindex="-1"></a><span class="in">*| code-fold: false</span></span>
+<span id="cb16-194"><a href="#cb16-194" aria-hidden="true" tabindex="-1"></a><span class="in">program adde, eclass</span></span>
+<span id="cb16-195"><a href="#cb16-195" aria-hidden="true" tabindex="-1"></a><span class="in">    ereturn `0'</span></span>
+<span id="cb16-196"><a href="#cb16-196" aria-hidden="true" tabindex="-1"></a><span class="in">end</span></span>
+<span id="cb16-197"><a href="#cb16-197" aria-hidden="true" tabindex="-1"></a><span class="in">adde local predict myols_mle_p</span></span>
+<span id="cb16-198"><a href="#cb16-198" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-199"><a href="#cb16-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-200"><a href="#cb16-200" aria-hidden="true" tabindex="-1"></a>Ok with all of this, we are ready to estimate marginal effects. The next two lines should give you the same result, </span>
+<span id="cb16-201"><a href="#cb16-201" aria-hidden="true" tabindex="-1"></a>but I present them here as an example:</span>
+<span id="cb16-202"><a href="#cb16-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-205"><a href="#cb16-205" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb16-206"><a href="#cb16-206" aria-hidden="true" tabindex="-1"></a><span class="in">*| code-fold: false</span></span>
+<span id="cb16-207"><a href="#cb16-207" aria-hidden="true" tabindex="-1"></a><span class="in">margins, dydx(*)</span></span>
+<span id="cb16-208"><a href="#cb16-208" aria-hidden="true" tabindex="-1"></a><span class="in">margins, dydx(*) predict(mean)  </span></span>
+<span id="cb16-209"><a href="#cb16-209" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-210"><a href="#cb16-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-211"><a href="#cb16-211" aria-hidden="true" tabindex="-1"></a>What would be more interesting, however, would be to provide outcomes for the predicted standard deviation, or the exponentiated mean:</span>
+<span id="cb16-212"><a href="#cb16-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-215"><a href="#cb16-215" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb16-216"><a href="#cb16-216" aria-hidden="true" tabindex="-1"></a><span class="in">*| code-fold: false</span></span>
+<span id="cb16-217"><a href="#cb16-217" aria-hidden="true" tabindex="-1"></a><span class="in">margins, dydx(*) predict(sigma)  </span></span>
+<span id="cb16-218"><a href="#cb16-218" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-219"><a href="#cb16-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-222"><a href="#cb16-222" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb16-223"><a href="#cb16-223" aria-hidden="true" tabindex="-1"></a><span class="in">*| code-fold: false</span></span>
+<span id="cb16-224"><a href="#cb16-224" aria-hidden="true" tabindex="-1"></a><span class="in">margins, dydx(*) predict(emean)  </span></span>
+<span id="cb16-225"><a href="#cb16-225" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-226"><a href="#cb16-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-227"><a href="#cb16-227" aria-hidden="true" tabindex="-1"></a>So how do we interpret the results?. Here one possibility:</span>
+<span id="cb16-228"><a href="#cb16-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-229"><a href="#cb16-229" aria-hidden="true" tabindex="-1"></a>Each additional year of education increases wages by 7.4%, however, as education increases the dispersion of wages decreases. In terms of actual dollar change, in average, that additional year of education translates in a 2.17$ per hour increase.</span>
+<span id="cb16-230"><a href="#cb16-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-231"><a href="#cb16-231" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conclusions</span></span>
+<span id="cb16-232"><a href="#cb16-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-233"><a href="#cb16-233" aria-hidden="true" tabindex="-1"></a>The purpose of this small article was to walk you through how to use -ml- for the estimation of a simple linear regression. </span>
+<span id="cb16-234"><a href="#cb16-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-235"><a href="#cb16-235" aria-hidden="true" tabindex="-1"></a>In addition, it also introduces you to creating a program that will allow you to use <span class="in">`margins`</span>, when you have a specific outcome in mind, that is not currently available in the command you are interested in using.</span>
+<span id="cb16-236"><a href="#cb16-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-237"><a href="#cb16-237" aria-hidden="true" tabindex="-1"></a>Hope you find it useful. </span>
+<span id="cb16-238"><a href="#cb16-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-239"><a href="#cb16-239" aria-hidden="true" tabindex="-1"></a>Comments and question welcome!</span>
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+</body></html>

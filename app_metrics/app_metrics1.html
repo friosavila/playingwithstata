@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Playing With Stata - Constructing synthetic Datasets</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../app_metrics/app_metrics3.html" rel="next">
+<link href="../app_metrics/app_metrics5.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-LCL2C8L3JH"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-LCL2C8L3JH', { 'anonymize_ip': true});
+</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../WeeMee.jpg" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Playing With Stata</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../stataviz/index.html">
+ <span class="menu-text">Stata Viz</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../stata_do/index.html">
+ <span class="menu-text">Stata Do’s Ado’s</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../app_metrics/index.html" aria-current="page">
+ <span class="menu-text">Applied econometrics</span></a>
+  </li>  
+  <li class="dropdown-header">
+ <span class="menu-text">Odds and Ends</span></li>
+  <li class="nav-item">
+    <a class="nav-link" href="../chatgpt.html">
+ <span class="menu-text">Fun with ChatGPT</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html">
+ <span class="menu-text">about</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../cv.html">
+ <span class="menu-text">cv &amp; Papers</span></a>
+  </li>  
+</ul>
+              <div class="quarto-toggle-container">
+                  <a href="" class="quarto-reader-toggle nav-link" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+              </div>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Constructing synthetic Datasets</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../app_metrics/index.html" class="sidebar-item-text sidebar-link">Applied Econometrics</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">App Metrics</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../app_metrics/app_metrics5.html" class="sidebar-item-text sidebar-link">2x2 DID: Sant’Anna and Zhao (2020)</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../app_metrics/app_metrics1.html" class="sidebar-item-text sidebar-link active">Constructing synthetic Datasets</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../app_metrics/app_metrics3.html" class="sidebar-item-text sidebar-link">DID: The Fall</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../app_metrics/app_metrics4.html" class="sidebar-item-text sidebar-link">DID: The Revolution</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../app_metrics/app_metrics2.html" class="sidebar-item-text sidebar-link">DRDID/CSDID in Stata</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#the-problem" id="toc-the-problem" class="nav-link" data-scroll-target="#the-problem">The Problem</a></li>
+  <li><a href="#the-solution" id="toc-the-solution" class="nav-link" data-scroll-target="#the-solution">The solution</a></li>
+  <li><a href="#comparing-results" id="toc-comparing-results" class="nav-link" data-scroll-target="#comparing-results">Comparing Results</a></li>
+  <li><a href="#conclusions" id="toc-conclusions" class="nav-link" data-scroll-target="#conclusions">Conclusions</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title d-none d-lg-block">Constructing synthetic Datasets</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<p class="subtitle lead">How to come public, with private data</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>In my current collaboration with Stephen Jenkins, we are grappling with the challenge of providing a self-contained replication package alongside our paper.</p>
+<p>It’s relatively easy to share the code for our model estimations, including code developed by other authors. However, many researchers face the same challenge we do: how to distribute data that we’re not allowed to share due to privacy or proprietary reasons.</p>
+<p>In fact, for this particular project, only Stephen has had access to the data. I’ve mainly worked on the code that estimates new models (for those interested, see references below).</p>
+<p>Now that it’s time to publish our “big” paper, we need a strategy to create a synthetic dataset that satisfies privacy protection constraints while still preserving the moments’ structure we care about, as well as those that others may find interesting.</p>
+<p>To this end, I propose a simple strategy that could work: Multiple Imputation. While it may not be the best method available, I welcome any feedback or suggestions.</p>
+<p>To explain how the method works, I’ll use the Swiss Labor Market Survey 1998 dataset, which is publicly available and used as an example dataset in the command -oaxaca- <span class="citation" data-cites="jann_2008">(<a href="#ref-jann_2008" role="doc-biblioref">Jann 2008</a>)</span>.</p>
+</section>
+<section id="the-problem" class="level2">
+<h2 class="anchored" data-anchor-id="the-problem">The Problem</h2>
+<p>Assume you signed a confidentiality agreement to work with Swiss Survey data and are ready to submit your work. However, you are required to provide a replication package with a code to produce the tables and the dataset itself. Since you cannot share the original data, you suggest generating 5 synthetic datasets instead. By doing so, people can apply your code and reach similar conclusions to your main paper, but with the advantage that the data is simulated, thus fulfilling privacy concerns.</p>
+<p>Here is a piece of code that can be used for that:</p>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>frame <span class="kw">reset</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="dv">linesize</span> 255</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> http:<span class="co">//fmwww.bc.edu/RePEc/bocode/o/oaxaca.dta, clear</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>misstable <span class="kw">summarize</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Excerpt from the Swiss Labor Market Survey 1998)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                                               Obs&lt;.
+                                                +------------------------------
+               |                                | Unique
+      Variable |     Obs=.     Obs&gt;.     Obs&lt;.  | values        Min         Max
+  -------------+--------------------------------+------------------------------
+        lnwage |       213               1,434  |   &gt;500    .507681    5.259097
+         exper |       213               1,434  |   &gt;500          0    49.16667
+        tenure |       213               1,434  |    323          0    44.83333
+          isco |       213               1,434  |      9          1           9
+  -----------------------------------------------------------------------------</code></pre>
+</div>
+</div>
+<p>Four variables (Wages, tenure, experience, and ISCO) have missing data when <code>lfp=0</code> (people are not working).</p>
+</section>
+<section id="the-solution" class="level2">
+<h2 class="anchored" data-anchor-id="the-solution">The solution</h2>
+<p>The first step is to decide on the size of the synthetic dataset. You could create a dataset with the same number of observations or adjust it to your desired sample size. I will expand the dataset to double the size, tag the new observations and make all variables, except for <code>lfp</code>, missing. This is because some data is missing as it’s only available for those in the labor force. Alternatively, you could have created <code>lfp</code> using a random draw from a Bernoulli distribution with the same probability as the original data.</p>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>expand 2, <span class="kw">gen</span>(<span class="fu">tag</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">foreach</span> i <span class="kw">of</span> <span class="kw">varlist</span> lnwage educ exper tenure isco female age single married divorced kids6 kids714 wt {</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">qui</span>:<span class="kw">replace</span> <span class="ot">`i'</span>=. <span class="kw">if</span> <span class="fu">tag</span>==1</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>(1,647 observations created)</code></pre>
+</div>
+</div>
+<p>Next, create multiple imputed datasets using the predictive mean matching strategy. To do this, set the data and register all variables to be imputed. Then, impute all variables using chain <code>pmm</code>. Make sure none of the variables are collinear, and variables with structural missing data are specified separately. The only explanatory variable or exogenous variable here is <code>lfp</code>.</p>
+<div class="cell" data-execution_count="3">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mi</span> <span class="kw">set</span> <span class="kw">wide</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mi</span> register <span class="kw">impute</span> lnwage educ exper tenure isco female age single married kids6 kids714 wt</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">set</span> <span class="dv">seed</span> 101</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">qui</span>:<span class="fu">mi</span> <span class="kw">impute</span> chain (pmm, knn(20))  educ female age single married kids6 kids714 wt (pmm <span class="kw">if</span> lfp==1, knn(20) ) lnwage  exper tenure isco  = lfp, add(5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>You now have 5 sets of variables that can be used to create unique synthetic datasets with a similar structure to the original confidential dataset. Let’s now put the newly created data into frames, so we can estimate few models and compare them with the original data.</p>
+<div class="cell" data-execution_count="4">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode stata code-with-copy"><code class="sourceCode stata"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">forvalues</span> i = 1/5 {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  frame put _<span class="ot">`i'</span>_* lfp <span class="kw">if</span> <span class="fu">tag</span>==1, into(fr<span class="ot">`i'</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  frame fr<span class="ot">`i'</span>:<span class="kw">ren</span> _<span class="ot">`i'</span>_* *</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> http:<span class="co">//fmwww.bc.edu/RePEc/bocode/o/oaxaca.dta, clear</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Excerpt from the Swiss Labor Market Survey 1998)</code></pre>
+</div>
+</div>
+</section>
+<section id="comparing-results" class="level2">
+<h2 class="anchored" data-anchor-id="comparing-results">Comparing Results</h2>
+<p>You can now estimate 4 models using the original data and the synthetic data.</p>
+<p>Now lets compare the models:</p>
+<p><strong>Linear Regression</strong></p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: center;">Original</th>
+<th style="text-align: center;">Fake1</th>
+<th style="text-align: center;">Fake2</th>
+<th style="text-align: center;">Fake3</th>
+<th style="text-align: center;">Fake4</th>
+<th style="text-align: center;">Fake5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>educ</td>
+<td style="text-align: center;">0.085<sup>***</sup></td>
+<td style="text-align: center;">0.076<sup>***</sup></td>
+<td style="text-align: center;">0.059<sup>***</sup></td>
+<td style="text-align: center;">0.077<sup>***</sup></td>
+<td style="text-align: center;">0.069<sup>***</sup></td>
+<td style="text-align: center;">0.063<sup>***</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.005)</td>
+<td style="text-align: center;">(0.005)</td>
+<td style="text-align: center;">(0.006)</td>
+<td style="text-align: center;">(0.005)</td>
+<td style="text-align: center;">(0.005)</td>
+<td style="text-align: center;">(0.005)</td>
+</tr>
+<tr class="odd">
+<td>exper</td>
+<td style="text-align: center;">0.011<sup>***</sup></td>
+<td style="text-align: center;">0.010<sup>***</sup></td>
+<td style="text-align: center;">0.011<sup>***</sup></td>
+<td style="text-align: center;">0.012<sup>***</sup></td>
+<td style="text-align: center;">0.006<sup>***</sup></td>
+<td style="text-align: center;">0.009<sup>***</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.001)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.001)</td>
+<td style="text-align: center;">(0.001)</td>
+</tr>
+<tr class="odd">
+<td>tenure</td>
+<td style="text-align: center;">0.008<sup>***</sup></td>
+<td style="text-align: center;">0.008<sup>***</sup></td>
+<td style="text-align: center;">0.002</td>
+<td style="text-align: center;">0.005<sup>**</sup></td>
+<td style="text-align: center;">0.007<sup>***</sup></td>
+<td style="text-align: center;">0.005<sup>**</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+</tr>
+<tr class="odd">
+<td>female</td>
+<td style="text-align: center;">-0.084<sup>***</sup></td>
+<td style="text-align: center;">-0.027</td>
+<td style="text-align: center;">-0.136<sup>***</sup></td>
+<td style="text-align: center;">-0.063<sup>*</sup></td>
+<td style="text-align: center;">-0.056<sup>*</sup></td>
+<td style="text-align: center;">-0.113<sup>***</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.025)</td>
+<td style="text-align: center;">(0.025)</td>
+<td style="text-align: center;">(0.026)</td>
+<td style="text-align: center;">(0.025)</td>
+<td style="text-align: center;">(0.023)</td>
+<td style="text-align: center;">(0.024)</td>
+</tr>
+<tr class="odd">
+<td>_cons</td>
+<td style="text-align: center;">2.213<sup>***</sup></td>
+<td style="text-align: center;">2.297<sup>***</sup></td>
+<td style="text-align: center;">2.580<sup>***</sup></td>
+<td style="text-align: center;">2.336<sup>***</sup></td>
+<td style="text-align: center;">2.464<sup>***</sup></td>
+<td style="text-align: center;">2.529<sup>***</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.068)</td>
+<td style="text-align: center;">(0.068)</td>
+<td style="text-align: center;">(0.074)</td>
+<td style="text-align: center;">(0.070)</td>
+<td style="text-align: center;">(0.063)</td>
+<td style="text-align: center;">(0.064)</td>
+</tr>
+<tr class="odd">
+<td><em>N</em></td>
+<td style="text-align: center;">1434</td>
+<td style="text-align: center;">1434</td>
+<td style="text-align: center;">1434</td>
+<td style="text-align: center;">1434</td>
+<td style="text-align: center;">1434</td>
+<td style="text-align: center;">1434</td>
+</tr>
+</tbody>
+</table>
+<p>Standard errors in parentheses<br> <sup>*</sup> <em>p</em> &lt; 0.05, <sup>**</sup> <em>p</em> &lt; 0.01, <sup>***</sup> <em>p</em> &lt; 0.001</p>
+<p><strong>Quantile Regression 10</strong></p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: center;">Original</th>
+<th style="text-align: center;">Fake1</th>
+<th style="text-align: center;">Fake2</th>
+<th style="text-align: center;">Fake3</th>
+<th style="text-align: center;">Fake4</th>
+<th style="text-align: center;">Fake5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>educ</td>
+<td style="text-align: center;">0.103<sup>***</sup></td>
+<td style="text-align: center;">0.088<sup>***</sup></td>
+<td style="text-align: center;">0.069<sup>***</sup></td>
+<td style="text-align: center;">0.083<sup>***</sup></td>
+<td style="text-align: center;">0.075<sup>***</sup></td>
+<td style="text-align: center;">0.067<sup>***</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.017)</td>
+<td style="text-align: center;">(0.015)</td>
+<td style="text-align: center;">(0.018)</td>
+<td style="text-align: center;">(0.011)</td>
+<td style="text-align: center;">(0.011)</td>
+<td style="text-align: center;">(0.013)</td>
+</tr>
+<tr class="odd">
+<td>exper</td>
+<td style="text-align: center;">0.020<sup>***</sup></td>
+<td style="text-align: center;">0.012<sup>**</sup></td>
+<td style="text-align: center;">0.014<sup>**</sup></td>
+<td style="text-align: center;">0.012<sup>***</sup></td>
+<td style="text-align: center;">0.008<sup>*</sup></td>
+<td style="text-align: center;">0.009<sup>*</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.005)</td>
+<td style="text-align: center;">(0.004)</td>
+<td style="text-align: center;">(0.005)</td>
+<td style="text-align: center;">(0.003)</td>
+<td style="text-align: center;">(0.003)</td>
+<td style="text-align: center;">(0.004)</td>
+</tr>
+<tr class="odd">
+<td>tenure</td>
+<td style="text-align: center;">0.001</td>
+<td style="text-align: center;">0.006</td>
+<td style="text-align: center;">0.004</td>
+<td style="text-align: center;">0.002</td>
+<td style="text-align: center;">0.006</td>
+<td style="text-align: center;">0.010<sup>*</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.006)</td>
+<td style="text-align: center;">(0.005)</td>
+<td style="text-align: center;">(0.006)</td>
+<td style="text-align: center;">(0.004)</td>
+<td style="text-align: center;">(0.004)</td>
+<td style="text-align: center;">(0.005)</td>
+</tr>
+<tr class="odd">
+<td>female</td>
+<td style="text-align: center;">-0.151</td>
+<td style="text-align: center;">0.022</td>
+<td style="text-align: center;">-0.128</td>
+<td style="text-align: center;">-0.019</td>
+<td style="text-align: center;">-0.161<sup>**</sup></td>
+<td style="text-align: center;">-0.154<sup>*</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.081)</td>
+<td style="text-align: center;">(0.070)</td>
+<td style="text-align: center;">(0.079)</td>
+<td style="text-align: center;">(0.053)</td>
+<td style="text-align: center;">(0.054)</td>
+<td style="text-align: center;">(0.063)</td>
+</tr>
+<tr class="odd">
+<td>_cons</td>
+<td style="text-align: center;">1.462<sup>***</sup></td>
+<td style="text-align: center;">1.681<sup>***</sup></td>
+<td style="text-align: center;">1.939<sup>***</sup></td>
+<td style="text-align: center;">1.835<sup>***</sup></td>
+<td style="text-align: center;">1.971<sup>***</sup></td>
+<td style="text-align: center;">1.994<sup>***</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.219)</td>
+<td style="text-align: center;">(0.193)</td>
+<td style="text-align: center;">(0.228)</td>
+<td style="text-align: center;">(0.149)</td>
+<td style="text-align: center;">(0.146)</td>
+<td style="text-align: center;">(0.171)</td>
+</tr>
+<tr class="odd">
+<td><em>N</em></td>
+<td style="text-align: center;">1434</td>
+<td style="text-align: center;">1434</td>
+<td style="text-align: center;">1434</td>
+<td style="text-align: center;">1434</td>
+<td style="text-align: center;">1434</td>
+<td style="text-align: center;">1434</td>
+</tr>
+</tbody>
+</table>
+<p>Standard errors in parentheses<br> <sup>*</sup> <em>p</em> &lt; 0.05, <sup>**</sup> <em>p</em> &lt; 0.01, <sup>***</sup> <em>p</em> &lt; 0.001</p>
+<p><strong>Quantile Regression 90</strong></p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: center;">Original</th>
+<th style="text-align: center;">Fake1</th>
+<th style="text-align: center;">Fake2</th>
+<th style="text-align: center;">Fake3</th>
+<th style="text-align: center;">Fake4</th>
+<th style="text-align: center;">Fake5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>educ</td>
+<td style="text-align: center;">0.064<sup>***</sup></td>
+<td style="text-align: center;">0.073<sup>***</sup></td>
+<td style="text-align: center;">0.047<sup>***</sup></td>
+<td style="text-align: center;">0.069<sup>***</sup></td>
+<td style="text-align: center;">0.062<sup>***</sup></td>
+<td style="text-align: center;">0.057<sup>***</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.009)</td>
+<td style="text-align: center;">(0.008)</td>
+<td style="text-align: center;">(0.009)</td>
+<td style="text-align: center;">(0.008)</td>
+<td style="text-align: center;">(0.008)</td>
+<td style="text-align: center;">(0.007)</td>
+</tr>
+<tr class="odd">
+<td>exper</td>
+<td style="text-align: center;">0.004</td>
+<td style="text-align: center;">0.009<sup>***</sup></td>
+<td style="text-align: center;">0.009<sup>***</sup></td>
+<td style="text-align: center;">0.011<sup>***</sup></td>
+<td style="text-align: center;">0.003</td>
+<td style="text-align: center;">0.005<sup>**</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.003)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.003)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+</tr>
+<tr class="odd">
+<td>tenure</td>
+<td style="text-align: center;">0.008<sup>*</sup></td>
+<td style="text-align: center;">0.009<sup>***</sup></td>
+<td style="text-align: center;">-0.001</td>
+<td style="text-align: center;">0.008<sup>**</sup></td>
+<td style="text-align: center;">0.012<sup>***</sup></td>
+<td style="text-align: center;">0.005</td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.003)</td>
+<td style="text-align: center;">(0.003)</td>
+<td style="text-align: center;">(0.003)</td>
+<td style="text-align: center;">(0.003)</td>
+<td style="text-align: center;">(0.003)</td>
+<td style="text-align: center;">(0.003)</td>
+</tr>
+<tr class="odd">
+<td>female</td>
+<td style="text-align: center;">-0.054</td>
+<td style="text-align: center;">-0.054</td>
+<td style="text-align: center;">-0.149<sup>***</sup></td>
+<td style="text-align: center;">-0.052</td>
+<td style="text-align: center;">-0.009</td>
+<td style="text-align: center;">-0.106<sup>**</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.044)</td>
+<td style="text-align: center;">(0.035)</td>
+<td style="text-align: center;">(0.041)</td>
+<td style="text-align: center;">(0.039)</td>
+<td style="text-align: center;">(0.039)</td>
+<td style="text-align: center;">(0.033)</td>
+</tr>
+<tr class="odd">
+<td>_cons</td>
+<td style="text-align: center;">2.984<sup>***</sup></td>
+<td style="text-align: center;">2.804<sup>***</sup></td>
+<td style="text-align: center;">3.247<sup>***</sup></td>
+<td style="text-align: center;">2.863<sup>***</sup></td>
+<td style="text-align: center;">2.990<sup>***</sup></td>
+<td style="text-align: center;">3.121<sup>***</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.119)</td>
+<td style="text-align: center;">(0.097)</td>
+<td style="text-align: center;">(0.118)</td>
+<td style="text-align: center;">(0.111)</td>
+<td style="text-align: center;">(0.106)</td>
+<td style="text-align: center;">(0.089)</td>
+</tr>
+<tr class="odd">
+<td><em>N</em></td>
+<td style="text-align: center;">1434</td>
+<td style="text-align: center;">1434</td>
+<td style="text-align: center;">1434</td>
+<td style="text-align: center;">1434</td>
+<td style="text-align: center;">1434</td>
+<td style="text-align: center;">1434</td>
+</tr>
+</tbody>
+</table>
+<p>Standard errors in parentheses<br> <sup>*</sup> <em>p</em> &lt; 0.05, <sup>**</sup> <em>p</em> &lt; 0.01, <sup>***</sup> <em>p</em> &lt; 0.001</p>
+<p><strong>Heckman selection model</strong></p>
+<table class="table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: center;">Original</th>
+<th style="text-align: center;">Fake1</th>
+<th style="text-align: center;">Fake2</th>
+<th style="text-align: center;">Fake3</th>
+<th style="text-align: center;">Fake4</th>
+<th style="text-align: center;">Fake5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lnwage</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td>educ</td>
+<td style="text-align: center;">0.072<sup>***</sup></td>
+<td style="text-align: center;">0.066<sup>***</sup></td>
+<td style="text-align: center;">0.052<sup>***</sup></td>
+<td style="text-align: center;">0.068<sup>***</sup></td>
+<td style="text-align: center;">0.059<sup>***</sup></td>
+<td style="text-align: center;">0.057<sup>***</sup></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td style="text-align: center;">(0.005)</td>
+<td style="text-align: center;">(0.005)</td>
+<td style="text-align: center;">(0.006)</td>
+<td style="text-align: center;">(0.005)</td>
+<td style="text-align: center;">(0.005)</td>
+<td style="text-align: center;">(0.005)</td>
+</tr>
+<tr class="even">
+<td>exper</td>
+<td style="text-align: center;">0.002</td>
+<td style="text-align: center;">0.001</td>
+<td style="text-align: center;">-0.000</td>
+<td style="text-align: center;">0.004<sup>*</sup></td>
+<td style="text-align: center;">-0.002</td>
+<td style="text-align: center;">0.002</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+</tr>
+<tr class="even">
+<td>tenure</td>
+<td style="text-align: center;">0.002</td>
+<td style="text-align: center;">0.003</td>
+<td style="text-align: center;">-0.002</td>
+<td style="text-align: center;">-0.000</td>
+<td style="text-align: center;">0.002</td>
+<td style="text-align: center;">0.001</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+</tr>
+<tr class="even">
+<td>female</td>
+<td style="text-align: center;">-0.105<sup>***</sup></td>
+<td style="text-align: center;">-0.067<sup>**</sup></td>
+<td style="text-align: center;">-0.189<sup>***</sup></td>
+<td style="text-align: center;">-0.105<sup>***</sup></td>
+<td style="text-align: center;">-0.096<sup>***</sup></td>
+<td style="text-align: center;">-0.144<sup>***</sup></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td style="text-align: center;">(0.029)</td>
+<td style="text-align: center;">(0.025)</td>
+<td style="text-align: center;">(0.026)</td>
+<td style="text-align: center;">(0.025)</td>
+<td style="text-align: center;">(0.024)</td>
+<td style="text-align: center;">(0.024)</td>
+</tr>
+<tr class="even">
+<td>age</td>
+<td style="text-align: center;">0.015<sup>***</sup></td>
+<td style="text-align: center;">0.013<sup>***</sup></td>
+<td style="text-align: center;">0.015<sup>***</sup></td>
+<td style="text-align: center;">0.012<sup>***</sup></td>
+<td style="text-align: center;">0.013<sup>***</sup></td>
+<td style="text-align: center;">0.011<sup>***</sup></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+<td style="text-align: center;">(0.002)</td>
+</tr>
+<tr class="even">
+<td>_cons</td>
+<td style="text-align: center;">1.991<sup>***</sup></td>
+<td style="text-align: center;">2.071<sup>***</sup></td>
+<td style="text-align: center;">2.226<sup>***</sup></td>
+<td style="text-align: center;">2.133<sup>***</sup></td>
+<td style="text-align: center;">2.201<sup>***</sup></td>
+<td style="text-align: center;">2.317<sup>***</sup></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td style="text-align: center;">(0.073)</td>
+<td style="text-align: center;">(0.073)</td>
+<td style="text-align: center;">(0.081)</td>
+<td style="text-align: center;">(0.075)</td>
+<td style="text-align: center;">(0.069)</td>
+<td style="text-align: center;">(0.070)</td>
+</tr>
+<tr class="even">
+<td>lfp</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td>educ</td>
+<td style="text-align: center;">0.149<sup>***</sup></td>
+<td style="text-align: center;">0.055<sup>**</sup></td>
+<td style="text-align: center;">0.024</td>
+<td style="text-align: center;">0.018</td>
+<td style="text-align: center;">0.064<sup>***</sup></td>
+<td style="text-align: center;">0.028</td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.028)</td>
+<td style="text-align: center;">(0.020)</td>
+<td style="text-align: center;">(0.020)</td>
+<td style="text-align: center;">(0.019)</td>
+<td style="text-align: center;">(0.019)</td>
+<td style="text-align: center;">(0.018)</td>
+</tr>
+<tr class="odd">
+<td>female</td>
+<td style="text-align: center;">-1.785<sup>***</sup></td>
+<td style="text-align: center;">-0.074</td>
+<td style="text-align: center;">-0.246<sup>**</sup></td>
+<td style="text-align: center;">-0.104</td>
+<td style="text-align: center;">-0.011</td>
+<td style="text-align: center;">-0.177</td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.161)</td>
+<td style="text-align: center;">(0.091)</td>
+<td style="text-align: center;">(0.091)</td>
+<td style="text-align: center;">(0.088)</td>
+<td style="text-align: center;">(0.090)</td>
+<td style="text-align: center;">(0.090)</td>
+</tr>
+<tr class="odd">
+<td>age</td>
+<td style="text-align: center;">-0.039<sup>***</sup></td>
+<td style="text-align: center;">-0.021<sup>***</sup></td>
+<td style="text-align: center;">-0.023<sup>***</sup></td>
+<td style="text-align: center;">-0.018<sup>***</sup></td>
+<td style="text-align: center;">-0.025<sup>***</sup></td>
+<td style="text-align: center;">-0.023<sup>***</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.007)</td>
+<td style="text-align: center;">(0.005)</td>
+<td style="text-align: center;">(0.005)</td>
+<td style="text-align: center;">(0.005)</td>
+<td style="text-align: center;">(0.005)</td>
+<td style="text-align: center;">(0.005)</td>
+</tr>
+<tr class="odd">
+<td>single</td>
+<td style="text-align: center;">-0.100</td>
+<td style="text-align: center;">-0.792<sup>**</sup></td>
+<td style="text-align: center;">-0.586<sup>**</sup></td>
+<td style="text-align: center;">-0.498<sup>**</sup></td>
+<td style="text-align: center;">-0.863<sup>***</sup></td>
+<td style="text-align: center;">-0.780<sup>**</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.231)</td>
+<td style="text-align: center;">(0.241)</td>
+<td style="text-align: center;">(0.201)</td>
+<td style="text-align: center;">(0.186)</td>
+<td style="text-align: center;">(0.229)</td>
+<td style="text-align: center;">(0.238)</td>
+</tr>
+<tr class="odd">
+<td>married</td>
+<td style="text-align: center;">-0.867<sup>***</sup></td>
+<td style="text-align: center;">-0.929<sup>***</sup></td>
+<td style="text-align: center;">-0.765<sup>***</sup></td>
+<td style="text-align: center;">-0.489<sup>**</sup></td>
+<td style="text-align: center;">-0.882<sup>***</sup></td>
+<td style="text-align: center;">-1.017<sup>***</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.158)</td>
+<td style="text-align: center;">(0.219)</td>
+<td style="text-align: center;">(0.169)</td>
+<td style="text-align: center;">(0.160)</td>
+<td style="text-align: center;">(0.198)</td>
+<td style="text-align: center;">(0.213)</td>
+</tr>
+<tr class="odd">
+<td>kids6</td>
+<td style="text-align: center;">-0.716<sup>***</sup></td>
+<td style="text-align: center;">-0.730<sup>***</sup></td>
+<td style="text-align: center;">-0.648<sup>***</sup></td>
+<td style="text-align: center;">-0.699<sup>***</sup></td>
+<td style="text-align: center;">-0.790<sup>***</sup></td>
+<td style="text-align: center;">-0.714<sup>***</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.082)</td>
+<td style="text-align: center;">(0.067)</td>
+<td style="text-align: center;">(0.064)</td>
+<td style="text-align: center;">(0.066)</td>
+<td style="text-align: center;">(0.069)</td>
+<td style="text-align: center;">(0.062)</td>
+</tr>
+<tr class="odd">
+<td>kids714</td>
+<td style="text-align: center;">-0.343<sup>***</sup></td>
+<td style="text-align: center;">-0.378<sup>***</sup></td>
+<td style="text-align: center;">-0.373<sup>***</sup></td>
+<td style="text-align: center;">-0.281<sup>***</sup></td>
+<td style="text-align: center;">-0.402<sup>***</sup></td>
+<td style="text-align: center;">-0.201<sup>***</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.065)</td>
+<td style="text-align: center;">(0.059)</td>
+<td style="text-align: center;">(0.056)</td>
+<td style="text-align: center;">(0.058)</td>
+<td style="text-align: center;">(0.058)</td>
+<td style="text-align: center;">(0.058)</td>
+</tr>
+<tr class="odd">
+<td>_cons</td>
+<td style="text-align: center;">3.543<sup>***</sup></td>
+<td style="text-align: center;">2.720<sup>***</sup></td>
+<td style="text-align: center;">3.006<sup>***</sup></td>
+<td style="text-align: center;">2.560<sup>***</sup></td>
+<td style="text-align: center;">2.729<sup>***</sup></td>
+<td style="text-align: center;">3.135<sup>***</sup></td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">(0.486)</td>
+<td style="text-align: center;">(0.382)</td>
+<td style="text-align: center;">(0.388)</td>
+<td style="text-align: center;">(0.345)</td>
+<td style="text-align: center;">(0.383)</td>
+<td style="text-align: center;">(0.383)</td>
+</tr>
+<tr class="odd">
+<td>/mills</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td>lambda</td>
+<td style="text-align: center;">-0.123</td>
+<td style="text-align: center;">0.128<sup>*</sup></td>
+<td style="text-align: center;">0.251<sup>***</sup></td>
+<td style="text-align: center;">0.062</td>
+<td style="text-align: center;">0.206<sup>***</sup></td>
+<td style="text-align: center;">0.077</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td style="text-align: center;">(0.065)</td>
+<td style="text-align: center;">(0.061)</td>
+<td style="text-align: center;">(0.065)</td>
+<td style="text-align: center;">(0.070)</td>
+<td style="text-align: center;">(0.057)</td>
+<td style="text-align: center;">(0.061)</td>
+</tr>
+<tr class="even">
+<td><em>N</em></td>
+<td style="text-align: center;">1647</td>
+<td style="text-align: center;">1647</td>
+<td style="text-align: center;">1647</td>
+<td style="text-align: center;">1647</td>
+<td style="text-align: center;">1647</td>
+<td style="text-align: center;">1647</td>
+</tr>
+</tbody>
+</table>
+<p>Standard errors in parentheses<br> <sup>*</sup> <em>p</em> &lt; 0.05, <sup>**</sup> <em>p</em> &lt; 0.01, <sup>***</sup> <em>p</em> &lt; 0.001</p>
+<p>I wont spend too much time interpretting the models. However, it is important to notice that they do provide similar outcomes, except for quantile regressions. Still, with this, one could redistribute replication codes that use both the true data and synthetic data, providing transparency to the work.</p>
+</section>
+<section id="conclusions" class="level2">
+<h2 class="anchored" data-anchor-id="conclusions">Conclusions</h2>
+<p>As evident from the analysis, the results of the synthetic dataset are not expected to perfectly replicate the original data due to the introduction of random errors. However, by keeping this in mind, we can create synthetic datasets like this one, along with two sets of results - one based on the actual data, and the other based on the synthetic dataset(s).</p>
+<p>This should help providing replication packages with code and data, improving the transparency of research when using restricted data.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
+<div id="ref-jann_2008" class="csl-entry" role="doc-biblioentry">
+Jann, Ben. 2008. <span>“The <span>Blinder</span>–<span>Oaxaca</span> <span>Decomposition</span> for <span>Linear</span> <span>Regression</span> <span>Models</span>.”</span> <em>The Stata Journal: Promoting Communications on Statistics and Stata</em> 8 (4): 453–79. <a href="https://doi.org/10.1177/1536867X0800800401">https://doi.org/10.1177/1536867X0800800401</a>.
+</div>
+<div id="ref-jenkins_rios_2020" class="csl-entry" role="doc-biblioentry">
+Jenkins, Stephen P., and Fernando Rios-Avila. 2020. <span>“Modelling Errors in Survey and Administrative Data on Employment Earnings: <span>Sensitivity</span> to the Fraction Assumed to Have Error-Free Earnings.”</span> <em>Economics Letters</em> 192 (July): 109253. <a href="https://doi.org/10.1016/j.econlet.2020.109253">https://doi.org/10.1016/j.econlet.2020.109253</a>.
+</div>
+<div id="ref-jenkins_rios_2021" class="csl-entry" role="doc-biblioentry">
+———. 2021. <span>“Measurement Error in Earnings Data: <span>Replication</span> of <span>Meijer</span>, <span>Rohwedder</span>, and <span>Wansbeek</span>’s Mixture Model Approach to Combining Survey and Register Data.”</span> <em>Journal of Applied Econometrics</em> 36 (4): 474–83. <a href="https://doi.org/10.1002/jae.2811">https://doi.org/10.1002/jae.2811</a>.
+</div>
+</div>
+<p>Jenkins, SP, Rios‐Avila, F, 2021. “Measurement error in earnings data: replication of Meijer, Rohwedder, and Wansbeek’s mixture model approach to combining survey and register data.” J Appl Econ. 2021. Accepted Author Manuscript. https://doi.org/10.1002/jae.2811 (with Rep Files here)</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../app_metrics/app_metrics5.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">2x2 DID: Sant’Anna and Zhao (2020)</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../app_metrics/app_metrics3.html" class="pagination-link">
+        <span class="nav-page-text">DID: The Fall</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb9" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Constructing synthetic Datasets"</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "How to come public, with private data"</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> html</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="an">nocite:</span><span class="co"> |</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">  @jenkins_rios_2020, @jenkins_rios_2021</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction </span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>In my current collaboration with Stephen Jenkins, we are grappling with the challenge of providing a self-contained replication package alongside our paper.</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>It's relatively easy to share the code for our model estimations, including code developed by other authors. However, many researchers face the same challenge we do: how to distribute data that we're not allowed to share due to privacy or proprietary reasons.</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>In fact, for this particular project, only Stephen has had access to the data. I've mainly worked on the code that estimates new models (for those interested, see references below).</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>Now that it's time to publish our "big" paper, we need a strategy to create a synthetic dataset that satisfies privacy protection constraints while still preserving the moments' structure we care about, as well as those that others may find interesting.</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>To this end, I propose a simple strategy that could work: Multiple Imputation. While it may not be the best method available, I welcome any feedback or suggestions.</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>To explain how the method works, I'll use the Swiss Labor Market Survey 1998 dataset, which is publicly available and used as an example dataset in the command -oaxaca- <span class="co">[</span><span class="ot">@jann_2008</span><span class="co">]</span>.</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Problem</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>Assume you signed a confidentiality agreement to work with Swiss Survey data and are ready to submit your work. However, you are required to provide a replication package with a code to produce the tables and the dataset itself. Since you cannot share the original data, you suggest generating 5 synthetic datasets instead. By doing so, people can apply your code and reach similar conclusions to your main paper, but with the advantage that the data is simulated, thus fulfilling privacy concerns.</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>Here is a piece of code that can be used for that:</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a><span class="in">frame reset</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a><span class="in">set linesize 255</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a><span class="in">use http://fmwww.bc.edu/RePEc/bocode/o/oaxaca.dta, clear</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a><span class="in">misstable summarize</span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>Four variables (Wages, tenure, experience, and ISCO) have missing data when <span class="in">`lfp=0`</span> (people are not working). </span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## The solution</span></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>The first step is to decide on the size of the synthetic dataset. You could create a dataset with the same number of observations or adjust it to your desired sample size. I will expand the dataset to double the size, tag the new observations and make all variables, except for <span class="in">`lfp`</span>, missing. This is because some data is missing as it's only available for those in the labor force. Alternatively, you could have created <span class="in">`lfp`</span> using a random draw from a Bernoulli distribution with the same probability as the original data.</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a><span class="in">expand 2, gen(tag)</span></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a><span class="in">foreach i of varlist lnwage educ exper tenure isco female age single married divorced kids6 kids714 wt {</span></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a><span class="in">  qui:replace `i'=. if tag==1</span></span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>Next, create multiple imputed datasets using the predictive mean matching strategy. To do this, set the data and register all variables to be imputed. Then, impute all variables using chain <span class="in">`pmm`</span>. Make sure none of the variables are collinear, and variables with structural missing data are specified separately. The only explanatory variable or exogenous variable here is <span class="in">`lfp`</span>.</span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a><span class="in">mi set wide</span></span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a><span class="in">mi register impute lnwage educ exper tenure isco female age single married kids6 kids714 wt</span></span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a><span class="in">set seed 101</span></span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a><span class="in">qui:mi impute chain (pmm, knn(20))  educ female age single married kids6 kids714 wt (pmm if lfp==1, knn(20) ) lnwage  exper tenure isco  = lfp, add(5)</span></span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>You now have 5 sets of variables that can be used to create unique synthetic datasets with a similar structure to the original confidential dataset. Let's now put the newly created data into frames, so we can estimate few models and compare them with the original data.</span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a><span class="in">forvalues i = 1/5 {</span></span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a><span class="in">  frame put _`i'_* lfp if tag==1, into(fr`i')</span></span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a><span class="in">  frame fr`i':ren _`i'_* *</span></span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a><span class="in">use http://fmwww.bc.edu/RePEc/bocode/o/oaxaca.dta, clear</span></span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a><span class="fu">## Comparing Results</span></span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a>You can now estimate 4 models using the original data and the synthetic data. </span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a><span class="in">*|echo: false</span></span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a><span class="in">  qui:reg lnwage educ exper tenure female</span></span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a><span class="in">  est sto m1</span></span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a><span class="in">  qui:qreg lnwage educ exper tenure female, q(10)</span></span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a><span class="in">  est sto m2</span></span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a><span class="in">  qui:qreg lnwage educ exper tenure female, q(90)</span></span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a><span class="in">  est sto m3</span></span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a><span class="in">  qui:heckman lnwage educ exper tenure female age, selec(lfp =educ     female age single married kids6 kids714) two</span></span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a><span class="in">  est sto m4</span></span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a><span class="in">forvalues i = 1/5 { </span></span>
+<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a><span class="in">  frame fr`i' {</span></span>
+<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a><span class="in">    qui:reg lnwage educ exper tenure female</span></span>
+<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a><span class="in">    est sto m1`i'</span></span>
+<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a><span class="in">    qui:qreg lnwage educ exper tenure female, q(10)</span></span>
+<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a><span class="in">    est sto m2`i'    </span></span>
+<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a><span class="in">    qui:qreg lnwage educ exper tenure female, q(90)</span></span>
+<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a><span class="in">    est sto m3`i'</span></span>
+<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a><span class="in">    qui:heckman lnwage educ exper tenure female age, selec(lfp =educ     female age single married kids6 kids714) two</span></span>
+<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a><span class="in">    est sto m4`i'</span></span>
+<span id="cb9-103"><a href="#cb9-103" aria-hidden="true" tabindex="-1"></a><span class="in">  }</span></span>
+<span id="cb9-104"><a href="#cb9-104" aria-hidden="true" tabindex="-1"></a><span class="in">} </span></span>
+<span id="cb9-105"><a href="#cb9-105" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-106"><a href="#cb9-106" aria-hidden="true" tabindex="-1"></a>Now lets compare the models:</span>
+<span id="cb9-107"><a href="#cb9-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-110"><a href="#cb9-110" aria-hidden="true" tabindex="-1"></a><span class="in">```{stata}</span></span>
+<span id="cb9-111"><a href="#cb9-111" aria-hidden="true" tabindex="-1"></a><span class="in">*| echo: false</span></span>
+<span id="cb9-112"><a href="#cb9-112" aria-hidden="true" tabindex="-1"></a><span class="in">*| output: asis</span></span>
+<span id="cb9-113"><a href="#cb9-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-114"><a href="#cb9-114" aria-hidden="true" tabindex="-1"></a><span class="in">display "**Linear Regression**"</span></span>
+<span id="cb9-115"><a href="#cb9-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-116"><a href="#cb9-116" aria-hidden="true" tabindex="-1"></a><span class="in">esttab m1 m1?, mtitle(Original Fake1 Fake2 Fake3 Fake4 Fake5) nonum nogaps md se compress b(3)</span></span>
+<span id="cb9-117"><a href="#cb9-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-118"><a href="#cb9-118" aria-hidden="true" tabindex="-1"></a><span class="in">display "**Quantile Regression 10**"</span></span>
+<span id="cb9-119"><a href="#cb9-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-120"><a href="#cb9-120" aria-hidden="true" tabindex="-1"></a><span class="in">esttab m2 m2? , mtitle(Original Fake1 Fake2 Fake3 Fake4 Fake5) nonum nogaps md se compress b(3)</span></span>
+<span id="cb9-121"><a href="#cb9-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-122"><a href="#cb9-122" aria-hidden="true" tabindex="-1"></a><span class="in">display "**Quantile Regression 90**"</span></span>
+<span id="cb9-123"><a href="#cb9-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-124"><a href="#cb9-124" aria-hidden="true" tabindex="-1"></a><span class="in">esttab m3 m3? , mtitle(Original Fake1 Fake2 Fake3 Fake4 Fake5) nonum nogaps md se compress b(3)</span></span>
+<span id="cb9-125"><a href="#cb9-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-126"><a href="#cb9-126" aria-hidden="true" tabindex="-1"></a><span class="in">display "**Heckman selection model**"</span></span>
+<span id="cb9-127"><a href="#cb9-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-128"><a href="#cb9-128" aria-hidden="true" tabindex="-1"></a><span class="in">esttab m4 m4? , mtitle(Original Fake1 Fake2 Fake3 Fake4 Fake5) nonum nogaps md se compress b(3)</span></span>
+<span id="cb9-129"><a href="#cb9-129" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-130"><a href="#cb9-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-131"><a href="#cb9-131" aria-hidden="true" tabindex="-1"></a>I wont spend too much time interpretting the models. However, it is important to notice that they do provide similar outcomes, except for quantile regressions. Still, with this, one could redistribute replication codes that use both the true data and synthetic data, providing transparency to the work.</span>
+<span id="cb9-132"><a href="#cb9-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-133"><a href="#cb9-133" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conclusions</span></span>
+<span id="cb9-134"><a href="#cb9-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-135"><a href="#cb9-135" aria-hidden="true" tabindex="-1"></a>As evident from the analysis, the results of the synthetic dataset are not expected to perfectly replicate the original data due to the introduction of random errors. However, by keeping this in mind, we can create synthetic datasets like this one, along with two sets of results - one based on the actual data, and the other based on the synthetic dataset(s).</span>
+<span id="cb9-136"><a href="#cb9-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-137"><a href="#cb9-137" aria-hidden="true" tabindex="-1"></a>This should help providing replication packages with code and data, improving the transparency of research when using restricted data.</span>
+<span id="cb9-138"><a href="#cb9-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-139"><a href="#cb9-139" aria-hidden="true" tabindex="-1"></a><span class="fu">## References</span></span>
+<span id="cb9-140"><a href="#cb9-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-141"><a href="#cb9-141" aria-hidden="true" tabindex="-1"></a>::: {#refs}</span>
+<span id="cb9-142"><a href="#cb9-142" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb9-143"><a href="#cb9-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-144"><a href="#cb9-144" aria-hidden="true" tabindex="-1"></a>Jenkins, SP, Rios‐Avila, F, 2021. "Measurement error in earnings data: replication of Meijer, Rohwedder, and Wansbeek's mixture model approach to combining survey and register data." J Appl Econ. 2021. Accepted Author Manuscript. https://doi.org/10.1002/jae.2811 (with Rep Files here)</span>
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+</body></html>
