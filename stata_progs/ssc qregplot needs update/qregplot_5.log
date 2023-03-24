@@ -1,5 +1,0 @@
-<span class="stinp">. qregplot age education married , from(e_qreg) q(5(5)95) label</span>
-(results e_qreg are active now)
-
-<span class="stinp">. graph export qfig2.png, replace</span>
-(file qfig2.png written in PNG format)

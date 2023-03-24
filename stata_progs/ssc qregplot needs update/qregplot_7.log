@@ -1,6 +1,0 @@
-<span class="stinp">. qregplot age education married , from(e_qreg) q(5(5)95) label raopt( color(%30))
-&gt;  grcopt( col(1) ysize(10) xsize(5))</span>
-(results e_qreg are active now)
-
-<span class="stinp">. graph export qfig4.png, replace</span>
-(file qfig4.png written in PNG format)
