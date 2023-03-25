@@ -1,0 +1,6 @@
+<span class="stinp">. qui {</span>
+
+<span class="stinp">.  scatter mean_index mean_index2 if tag==1, mlab(rcode) mlabcolor(black)</span>
+
+<span class="stinp">. graph export jpg8.png   </span>
+(file jpg8.png written in PNG format)

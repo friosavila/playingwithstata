@@ -1,0 +1,19 @@
+<span class="stinp">. label var mean_index "Avg. Index by region"</span>
+
+<span class="stinp">. label var std_index  "Std.Dev. Index by region"</span>
+
+<span class="stinp">. </span>
+<span class="stinp">. graph hbar mean_index std_index , over(rcode) </span>
+
+<span class="stinp">. graph export jpg4.png</span>
+(file jpg4.png written in PNG format)
+
+<span class="stinp">. <span class="stcmt">/***&lt;img src="jpg4.png"&gt;***/</span></span>
+<span class="stinp">. graph hbox sindex1 [aw=withinwt], over(rcode)</span>
+
+<span class="stinp">. graph export jpg5.png</span>
+(file jpg5.png written in PNG format)
+
+<span class="stinp">. <span class="stcmt">/***&lt;img src="jpg5.png"&gt;***/</span></span>
+<span class="stinp">. </span>
+<span class="stinp">. <span class="stcmt">** Simpler models using oprobit </span></span>

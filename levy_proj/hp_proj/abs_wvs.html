@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="format-detection" content="telephone=no">
+<title>Ethiopia WVS ABS</title>
+<style>
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px; line-height: 1.428;
+  margin: 0 auto; padding: 0 15px;
+}
+h1, h2, h3, h4, h5, h6 { margin: 20px 0 10px; }
+h1 { font-size: 28px; } h2 { font-size: 24px; }
+h3 { font-size: 18px; } h4 { font-size: 16px; }
+h5 { font-size: 14px; } h6 { font-size: 12px; }
+a { color: #337AB7; text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; height: auto; }
+ul, ol { padding-left: 30px; }
+pre, code, samp {
+  font-size: 13px;
+  font-family: Courier, monospace;
+}
+code, samp {
+  background-color: #F5F5F5;
+  border-radius: 3px; padding: 3px;
+}
+pre code, pre samp {
+  white-space: pre; background: transparent;
+  border: none; padding: 0;
+}
+pre {
+  line-height: 1.33; background-color: #F5F5F5;
+  border: 1px solid #CCCCCC; border-radius: 3px;
+  padding: 8px; overflow: auto;
+}
+</style>
+<style>
+.stlog { color: #000000; background-color: #F0F3F9; }
+.stres { color: #324F58; }
+.stinp { font-weight: bold; color: #000000; }
+.stcmd .stcmt { font-style: italic; opacity: 0.5; }
+.stoom, .stcnp { font-style: italic; }
+@media screen { .stcnp { display: none; }}
+</style>
+</head>
+<body>
+<pre id="stlog-1" class="stlog"><samp><span class="stinp">. frame create wvs2020</span>
+
+<span class="stinp">. frame create wvs2007</span>
+
+<span class="stinp">. frame create abs2013</span>
+
+<span class="stinp">. </span>
+<span class="stinp">. frame wvs2020:use "G:\Shared drives\levy_distribution\data\Ethiopia\WVS\WVS_Wave_7_Ethiopia_Stata_v1.5.dta", clear</span>
+(WVS_Wave_7_dta_v1_5.dta)
+
+<span class="stinp">. frame wvs2007:use "G:\Shared drives\levy_distribution\data\Ethiopia\WVS\WV5_Data_Ethiopia_Stata_v20201117.dta" , clear</span>
+(WV5_Data_dta_v20201117.dta)
+
+<span class="stinp">. frame abs2013:  use "G:\Shared drives\levy_distribution\data\Ethiopia\Afrobarometer\abs_ethiopia2013_proc.dta", clear</span>
+
+<span class="stinp">. </span>
+<span class="stinp">. frame wvs2007:ren *, low</span>
+
+<span class="stinp">. frame wvs2020:ren *, low</span>
+
+<span class="stinp">. </span>
+<span class="stinp">. frame wvs2007:label define rank 1 "Agree Strongly" 2 "Agree" 3 "Disagree" 4 "Strongly disagree"</span>
+
+<span class="stinp">. frame wvs2007:label values v61 v62 rank</span>
+
+<span class="stinp">. </span>
+<span class="stinp">. frame wvs2007:gen aux=1</span>
+
+<span class="stinp">. frame wvs2020:gen aux=1</span>
+
+<span class="stinp">. frame abs2013:gen aux=1</span>
+
+<span class="stinp">. </span>
+<span class="stinp">. <span class="stcmt">*** Men as Leaders </span></span>
+<span class="stinp">. frame wvs2007:tab v61 aux [iw=v259] if  v61&gt;0, nofreq col</span>
+
+  Men make better |
+political leaders |    aux
+    than women do |         1 |     Total
+------------------+-----------+----------
+   Agree Strongly |<span class="stres">      7.55 </span>|<span class="stres">      7.55 </span>
+            Agree |<span class="stres">     15.16 </span>|<span class="stres">     15.16 </span>
+         Disagree |<span class="stres">     41.26 </span>|<span class="stres">     41.26 </span>
+Strongly disagree |<span class="stres">     36.03 </span>|<span class="stres">     36.03 </span>
+------------------+-----------+----------
+            Total |<span class="stres">    100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame wvs2020:tab q29 aux  [iw=pwght] if  q29&gt;0, nofreq col</span>
+
+      Men make better |
+    political leaders |    aux
+        than women do |         1 |     Total
+----------------------+-----------+----------
+       Agree strongly |<span class="stres">     14.84 </span>|<span class="stres">     14.84 </span>
+                Agree |<span class="stres">     25.87 </span>|<span class="stres">     25.87 </span>
+             Disagree |<span class="stres">     38.31 </span>|<span class="stres">     38.31 </span>
+    Strongly disagree |<span class="stres">     20.98 </span>|<span class="stres">     20.98 </span>
+----------------------+-----------+----------
+                Total |<span class="stres">    100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame abs2013:tab cq22 aux [iw=withinwt], nofreq col</span>
+
+     Q22. Men only as |
+    leaders vs. women |    aux
+           leaders OK |         1 |     Total
+----------------------+-----------+----------
+Agree very strongly w |<span class="stres">     13.23 </span>|<span class="stres">     13.23 </span>
+         Agree with 1 |<span class="stres">     11.66 </span>|<span class="stres">     11.66 </span>
+   Agree with neither |<span class="stres">      0.16 </span>|<span class="stres">      0.16 </span>
+         Agree with 2 |<span class="stres">     34.12 </span>|<span class="stres">     34.12 </span>
+Agree very strongly w |<span class="stres">     40.82 </span>|<span class="stres">     40.82 </span>
+----------------------+-----------+----------
+                Total |<span class="stres">    100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. <span class="stcmt">*** Education for men as priority</span></span>
+<span class="stinp">. frame wvs2007:tab v62 aux [iw=v259] if  v62&gt;0, nofreq col</span>
+
+    University is |
+   more important |
+   for a boy than |    aux
+       for a girl |         1 |     Total
+------------------+-----------+----------
+   Agree Strongly |<span class="stres">      2.77 </span>|<span class="stres">      2.77 </span>
+            Agree |<span class="stres">      5.35 </span>|<span class="stres">      5.35 </span>
+         Disagree |<span class="stres">     50.41 </span>|<span class="stres">     50.41 </span>
+Strongly disagree |<span class="stres">     41.47 </span>|<span class="stres">     41.47 </span>
+------------------+-----------+----------
+            Total |<span class="stres">    100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame wvs2020:tab q30 aux [iw=pwght] if  q30&gt;0, nofreq col</span>
+
+   University is more |
+  important for a boy |    aux
+      than for a girl |         1 |     Total
+----------------------+-----------+----------
+       Agree strongly |<span class="stres">      7.43 </span>|<span class="stres">      7.43 </span>
+                Agree |<span class="stres">      8.66 </span>|<span class="stres">      8.66 </span>
+             Disagree |<span class="stres">     40.69 </span>|<span class="stres">     40.69 </span>
+    Strongly disagree |<span class="stres">     43.22 </span>|<span class="stres">     43.22 </span>
+----------------------+-----------+----------
+                Total |<span class="stres">    100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame abs2013:tab cq24 aux [iw=withinwt], nofreq col</span>
+
+       Q24. Education |
+  recipient priority: |    aux
+       boy vs ability |         1 |     Total
+----------------------+-----------+----------
+Agree very strongly w |<span class="stres">      9.05 </span>|<span class="stres">      9.05 </span>
+         Agree with 1 |<span class="stres">     12.22 </span>|<span class="stres">     12.22 </span>
+   Agree with neither |<span class="stres">     11.75 </span>|<span class="stres">     11.75 </span>
+         Agree with 2 |<span class="stres">     33.78 </span>|<span class="stres">     33.78 </span>
+Agree very strongly w |<span class="stres">     33.20 </span>|<span class="stres">     33.20 </span>
+----------------------+-----------+----------
+                Total |<span class="stres">    100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. </span>
+<span class="stinp">. <span class="stcmt">***</span></span>
+<span class="stinp">. frame wvs2007:clonevar sex = v235</span>
+
+<span class="stinp">. frame wvs2020:clonevar sex = q260</span>
+
+<span class="stinp">. </span>
+<span class="stinp">. frame wvs2007:clonevar rcode = v257</span>
+
+<span class="stinp">. frame wvs2020:clonevar rcode = n_region_iso </span>
+
+<span class="stinp">. </span>
+<span class="stinp">. frame wvs2020: {</span>
+<span class="stinp">.     label define  rcode <span class="stcmt">///</span>
+&gt;       231001 "Addis Ababa" <span class="stcmt">///</span>
+&gt;       231002 "Dire Dawa" <span class="stcmt">///</span>
+&gt;       231003 "Afar" <span class="stcmt">///</span>
+&gt;       231004 "Amara" <span class="stcmt">///</span>
+&gt;       231005 "Benshangul-Gumaz" <span class="stcmt">///</span>
+&gt;       231006 "Gambela Peoples" <span class="stcmt">///</span>
+&gt;       231007 "Harari People" <span class="stcmt">///</span>
+&gt;       231008 "Oromia" <span class="stcmt">///</span>
+&gt;       231009 "Somali" <span class="stcmt">///</span>
+&gt;       231010 "Tigrai" <span class="stcmt">///</span>
+&gt;       231011 "Southern Nations, Nationalities and Peoples", modify</span>
+<span class="stinp">.         label values rcode rcode</span>
+<span class="stinp">. }</span>
+
+<span class="stinp">. </span>
+<span class="stinp">. frame wvs2007: {</span>
+<span class="stinp">.     label define  rcode <span class="stcmt">///</span>
+&gt;       231001 "Addis Ababa" <span class="stcmt">///</span>
+&gt;       231002 "Dire Dawa" <span class="stcmt">///</span>
+&gt;       231003 "Afar" <span class="stcmt">///</span>
+&gt;       231004 "Amara" <span class="stcmt">///</span>
+&gt;       231005 "Benshangul-Gumaz" <span class="stcmt">///</span>
+&gt;       231006 "Gambela Peoples" <span class="stcmt">///</span>
+&gt;       231007 "Harari People" <span class="stcmt">///</span>
+&gt;       231008 "Oromia" <span class="stcmt">///</span>
+&gt;       231009 "Somali" <span class="stcmt">///</span>
+&gt;       231010 "Tigrai" <span class="stcmt">///</span>
+&gt;       231011 "Southern Nations, Nationalities and Peoples", modify</span>
+<span class="stinp">.         label values rcode rcode</span>
+<span class="stinp">. }</span>
+
+<span class="stinp">. </span>
+<span class="stinp">. <span class="stcmt">********************************</span></span>
+<span class="stinp">. <span class="stcmt">*** rcode for abs2013 compatible with WVS</span></span>
+<span class="stinp">. frame abs2013: recode rcode     (1 =10) (2 = 3) (3 =4 ) <span class="stcmt">///</span>
+&gt;                                                     (4 =8 ) (5 =9 ) (6 =5 ) <span class="stcmt">///</span>
+&gt;                                                         (7 =11) (8 =6 ) (9 =7 ) <span class="stcmt">///</span>
+&gt;                                                         (10=1 ) (11=2 ), gen(rcode2)</span>
+(2386 differences between rcode and rcode2)
+
+<span class="stinp">. frame abs2013: label define rcode2 1 "Addis Ababa" <span class="stcmt">///</span>
+&gt;       2 "Dire Dawa" <span class="stcmt">///</span>
+&gt;       3 "Afar" <span class="stcmt">///</span>
+&gt;       4 "Amara" <span class="stcmt">///</span>
+&gt;       5 "Benshangul-Gumaz" <span class="stcmt">///</span>
+&gt;       6 "Gambela Peoples" <span class="stcmt">///</span>
+&gt;       7 "Harari People" <span class="stcmt">///</span>
+&gt;       8 "Oromia" <span class="stcmt">///</span>
+&gt;       9 "Somali" <span class="stcmt">///</span>
+&gt;       10 "Tigrai" <span class="stcmt">///</span>
+&gt;       11 "Southern Nations, Nationalities and Peoples" </span>
+
+<span class="stinp">. frame abs2013: label values rcode2 rcode2</span>
+
+<span class="stinp">. </span>
+<span class="stinp">. </span>
+<span class="stinp">. frame wvs2007:label define sex 1 "Male" 2 "Female"</span>
+
+<span class="stinp">. frame wvs2020:label define sex 1 "Male" 2 "Female"</span>
+
+<span class="stinp">. </span>
+<span class="stinp">. frame wvs2007:label values sex sex </span>
+
+<span class="stinp">. frame wvs2020:label values sex sex</span>
+
+<span class="stinp">. </span>
+<span class="stinp">. <span class="stcmt">** tab sex and region</span></span>
+<span class="stinp">. frame wvs2007:tab rcode sex [iw=v259] , nofreq col</span>
+
+     Region where the |
+        interview was |          Sex
+            conducted |      Male     Female |     Total
+----------------------+----------------------+----------
+          Addis Ababa |<span class="stres">      5.70       4.81 </span>|<span class="stres">      5.27 </span>
+            Dire Dawa |<span class="stres">     37.05      38.19 </span>|<span class="stres">     37.60 </span>
+                 Afar |<span class="stres">      6.61       7.42 </span>|<span class="stres">      7.00 </span>
+                Amara |<span class="stres">     29.66      29.40 </span>|<span class="stres">     29.53 </span>
+     Benshangul-Gumaz |<span class="stres">     20.98      20.19 </span>|<span class="stres">     20.60 </span>
+----------------------+----------------------+----------
+                Total |<span class="stres">    100.00     100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame wvs2020:tab rcode sex [iw=pwght] , nofreq col</span>
+
+                      |          Sex
+    Region ISO 3166-2 |      Male     Female |     Total
+----------------------+----------------------+----------
+          Addis Ababa |<span class="stres">      7.40       7.57 </span>|<span class="stres">      7.48 </span>
+            Dire Dawa |<span class="stres">      2.41       2.47 </span>|<span class="stres">      2.44 </span>
+                 Afar |<span class="stres">      4.98       4.93 </span>|<span class="stres">      4.96 </span>
+                Amara |<span class="stres">     19.61      20.23 </span>|<span class="stres">     19.92 </span>
+     Benshangul-Gumaz |<span class="stres">      4.02       4.11 </span>|<span class="stres">      4.07 </span>
+      Gambela Peoples |<span class="stres">      2.41       2.47 </span>|<span class="stres">      2.44 </span>
+        Harari People |<span class="stres">      1.61       1.64 </span>|<span class="stres">      1.63 </span>
+               Oromia |<span class="stres">     20.90      21.55 </span>|<span class="stres">     21.22 </span>
+               Somali |<span class="stres">     18.17      15.63 </span>|<span class="stres">     16.91 </span>
+               Tigrai |<span class="stres">      8.84       9.54 </span>|<span class="stres">      9.19 </span>
+Southern Nations, Nat |<span class="stres">      9.65       9.87 </span>|<span class="stres">      9.76 </span>
+----------------------+----------------------+----------
+                Total |<span class="stres">    100.00     100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame abs2013:tab rcode2 sex [iw=withinwt], nofreq col</span>
+
+                      |    Q101. Gender of
+      RECODE of rcode |      respondent
+ (Province or region) |      Male     Female |     Total
+----------------------+----------------------+----------
+          Addis Ababa |<span class="stres">      5.03       5.18 </span>|<span class="stres">      5.11 </span>
+            Dire Dawa |<span class="stres">      0.53       0.55 </span>|<span class="stres">      0.54 </span>
+                 Afar |<span class="stres">      1.86       1.94 </span>|<span class="stres">      1.90 </span>
+                Amara |<span class="stres">     23.46      23.17 </span>|<span class="stres">     23.32 </span>
+     Benshangul-Gumaz |<span class="stres">      1.19       1.19 </span>|<span class="stres">      1.19 </span>
+      Gambela Peoples |<span class="stres">      0.50       0.50 </span>|<span class="stres">      0.50 </span>
+        Harari People |<span class="stres">      0.29       0.29 </span>|<span class="stres">      0.29 </span>
+               Oromia |<span class="stres">     35.48      35.36 </span>|<span class="stres">     35.42 </span>
+               Somali |<span class="stres">      6.07       6.07 </span>|<span class="stres">      6.07 </span>
+               Tigrai |<span class="stres">      6.13       6.01 </span>|<span class="stres">      6.07 </span>
+Southern Nations, Nat |<span class="stres">     19.46      19.74 </span>|<span class="stres">     19.60 </span>
+----------------------+----------------------+----------
+                Total |<span class="stres">    100.00     100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. </span>
+<span class="stinp">. <span class="stcmt">*** Men as Leaders </span></span>
+<span class="stinp">. frame wvs2007:tab v61 aux [iw=v259] if  v61&gt;0, nofreq col</span>
+
+  Men make better |
+political leaders |    aux
+    than women do |         1 |     Total
+------------------+-----------+----------
+   Agree Strongly |<span class="stres">      7.55 </span>|<span class="stres">      7.55 </span>
+            Agree |<span class="stres">     15.16 </span>|<span class="stres">     15.16 </span>
+         Disagree |<span class="stres">     41.26 </span>|<span class="stres">     41.26 </span>
+Strongly disagree |<span class="stres">     36.03 </span>|<span class="stres">     36.03 </span>
+------------------+-----------+----------
+            Total |<span class="stres">    100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame wvs2020:tab q29 aux  [iw=pwght] if  q29&gt;0, nofreq col</span>
+
+      Men make better |
+    political leaders |    aux
+        than women do |         1 |     Total
+----------------------+-----------+----------
+       Agree strongly |<span class="stres">     14.84 </span>|<span class="stres">     14.84 </span>
+                Agree |<span class="stres">     25.87 </span>|<span class="stres">     25.87 </span>
+             Disagree |<span class="stres">     38.31 </span>|<span class="stres">     38.31 </span>
+    Strongly disagree |<span class="stres">     20.98 </span>|<span class="stres">     20.98 </span>
+----------------------+-----------+----------
+                Total |<span class="stres">    100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame abs2013:tab cq22 aux [iw=withinwt], nofreq col</span>
+
+     Q22. Men only as |
+    leaders vs. women |    aux
+           leaders OK |         1 |     Total
+----------------------+-----------+----------
+Agree very strongly w |<span class="stres">     13.23 </span>|<span class="stres">     13.23 </span>
+         Agree with 1 |<span class="stres">     11.66 </span>|<span class="stres">     11.66 </span>
+   Agree with neither |<span class="stres">      0.16 </span>|<span class="stres">      0.16 </span>
+         Agree with 2 |<span class="stres">     34.12 </span>|<span class="stres">     34.12 </span>
+Agree very strongly w |<span class="stres">     40.82 </span>|<span class="stres">     40.82 </span>
+----------------------+-----------+----------
+                Total |<span class="stres">    100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. <span class="stcmt">*** Education for men as priority</span></span>
+<span class="stinp">. frame wvs2007:tab v62 aux [iw=v259] if  v62&gt;0, nofreq col</span>
+
+    University is |
+   more important |
+   for a boy than |    aux
+       for a girl |         1 |     Total
+------------------+-----------+----------
+   Agree Strongly |<span class="stres">      2.77 </span>|<span class="stres">      2.77 </span>
+            Agree |<span class="stres">      5.35 </span>|<span class="stres">      5.35 </span>
+         Disagree |<span class="stres">     50.41 </span>|<span class="stres">     50.41 </span>
+Strongly disagree |<span class="stres">     41.47 </span>|<span class="stres">     41.47 </span>
+------------------+-----------+----------
+            Total |<span class="stres">    100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame wvs2020:tab q30 aux [iw=pwght] if  q30&gt;0, nofreq col</span>
+
+   University is more |
+  important for a boy |    aux
+      than for a girl |         1 |     Total
+----------------------+-----------+----------
+       Agree strongly |<span class="stres">      7.43 </span>|<span class="stres">      7.43 </span>
+                Agree |<span class="stres">      8.66 </span>|<span class="stres">      8.66 </span>
+             Disagree |<span class="stres">     40.69 </span>|<span class="stres">     40.69 </span>
+    Strongly disagree |<span class="stres">     43.22 </span>|<span class="stres">     43.22 </span>
+----------------------+-----------+----------
+                Total |<span class="stres">    100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame abs2013:tab cq24 aux [iw=withinwt], nofreq col</span>
+
+       Q24. Education |
+  recipient priority: |    aux
+       boy vs ability |         1 |     Total
+----------------------+-----------+----------
+Agree very strongly w |<span class="stres">      9.05 </span>|<span class="stres">      9.05 </span>
+         Agree with 1 |<span class="stres">     12.22 </span>|<span class="stres">     12.22 </span>
+   Agree with neither |<span class="stres">     11.75 </span>|<span class="stres">     11.75 </span>
+         Agree with 2 |<span class="stres">     33.78 </span>|<span class="stres">     33.78 </span>
+Agree very strongly w |<span class="stres">     33.20 </span>|<span class="stres">     33.20 </span>
+----------------------+-----------+----------
+                Total |<span class="stres">    100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. </span>
+<span class="stinp">. </span>
+<span class="stinp">. <span class="stcmt">********************************</span></span>
+<span class="stinp">. <span class="stcmt">*** By sex</span></span>
+<span class="stinp">. </span>
+<span class="stinp">. <span class="stcmt">*** Men as Leaders </span></span>
+<span class="stinp">. frame wvs2007:tab v61 sex [iw=v259] if  v61&gt;0, nofreq col</span>
+
+  Men make better |
+political leaders |          Sex
+    than women do |      Male     Female |     Total
+------------------+----------------------+----------
+   Agree Strongly |<span class="stres">      8.17       6.88 </span>|<span class="stres">      7.55 </span>
+            Agree |<span class="stres">     21.08       8.85 </span>|<span class="stres">     15.16 </span>
+         Disagree |<span class="stres">     39.66      42.98 </span>|<span class="stres">     41.26 </span>
+Strongly disagree |<span class="stres">     31.09      41.29 </span>|<span class="stres">     36.03 </span>
+------------------+----------------------+----------
+            Total |<span class="stres">    100.00     100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame wvs2020:tab q29 sex  [iw=pwght] if  q29&gt;0, nofreq col</span>
+
+      Men make better |
+    political leaders |          Sex
+        than women do |      Male     Female |     Total
+----------------------+----------------------+----------
+       Agree strongly |<span class="stres">     16.69      12.90 </span>|<span class="stres">     14.84 </span>
+                Agree |<span class="stres">     26.26      25.47 </span>|<span class="stres">     25.87 </span>
+             Disagree |<span class="stres">     36.95      39.73 </span>|<span class="stres">     38.31 </span>
+    Strongly disagree |<span class="stres">     20.10      21.90 </span>|<span class="stres">     20.98 </span>
+----------------------+----------------------+----------
+                Total |<span class="stres">    100.00     100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame abs2013:tab cq22 sex [iw=withinwt], nofreq col</span>
+
+     Q22. Men only as |    Q101. Gender of
+    leaders vs. women |      respondent
+           leaders OK |      Male     Female |     Total
+----------------------+----------------------+----------
+Agree very strongly w |<span class="stres">     13.71      12.74 </span>|<span class="stres">     13.23 </span>
+         Agree with 1 |<span class="stres">     11.04      12.31 </span>|<span class="stres">     11.66 </span>
+   Agree with neither |<span class="stres">      0.11       0.22 </span>|<span class="stres">      0.16 </span>
+         Agree with 2 |<span class="stres">     34.47      33.77 </span>|<span class="stres">     34.12 </span>
+Agree very strongly w |<span class="stres">     40.68      40.96 </span>|<span class="stres">     40.82 </span>
+----------------------+----------------------+----------
+                Total |<span class="stres">    100.00     100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. <span class="stcmt">*** Education for men as priority</span></span>
+<span class="stinp">. frame wvs2007:tab v62 sex [iw=v259] if  v62&gt;0, nofreq col</span>
+
+    University is |
+   more important |
+   for a boy than |          Sex
+       for a girl |      Male     Female |     Total
+------------------+----------------------+----------
+   Agree Strongly |<span class="stres">      2.76       2.79 </span>|<span class="stres">      2.77 </span>
+            Agree |<span class="stres">      7.35       3.21 </span>|<span class="stres">      5.35 </span>
+         Disagree |<span class="stres">     53.94      46.65 </span>|<span class="stres">     50.41 </span>
+Strongly disagree |<span class="stres">     35.96      47.35 </span>|<span class="stres">     41.47 </span>
+------------------+----------------------+----------
+            Total |<span class="stres">    100.00     100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame wvs2020:tab q30 sex [iw=pwght] if  q30&gt;0, nofreq col</span>
+
+   University is more |
+  important for a boy |          Sex
+      than for a girl |      Male     Female |     Total
+----------------------+----------------------+----------
+       Agree strongly |<span class="stres">      7.90       6.95 </span>|<span class="stres">      7.43 </span>
+                Agree |<span class="stres">      9.52       7.78 </span>|<span class="stres">      8.66 </span>
+             Disagree |<span class="stres">     40.32      41.06 </span>|<span class="stres">     40.69 </span>
+    Strongly disagree |<span class="stres">     42.26      44.21 </span>|<span class="stres">     43.22 </span>
+----------------------+----------------------+----------
+                Total |<span class="stres">    100.00     100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame abs2013:tab cq24 sex [iw=withinwt], nofreq col</span>
+
+       Q24. Education |    Q101. Gender of
+  recipient priority: |      respondent
+       boy vs ability |      Male     Female |     Total
+----------------------+----------------------+----------
+Agree very strongly w |<span class="stres">      7.93      10.20 </span>|<span class="stres">      9.05 </span>
+         Agree with 1 |<span class="stres">     11.72      12.72 </span>|<span class="stres">     12.22 </span>
+   Agree with neither |<span class="stres">     10.22      13.31 </span>|<span class="stres">     11.75 </span>
+         Agree with 2 |<span class="stres">     32.96      34.61 </span>|<span class="stres">     33.78 </span>
+Agree very strongly w |<span class="stres">     37.17      29.16 </span>|<span class="stres">     33.20 </span>
+----------------------+----------------------+----------
+                Total |<span class="stres">    100.00     100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. </span>
+<span class="stinp">. </span>
+<span class="stinp">. </span>
+<span class="stinp">. </span>
+<span class="stinp">. <span class="stcmt">*** Men as Leaders </span></span>
+<span class="stinp">. frame wvs2007:tab v61 rcode [iw=v259] if  v61&gt;0, nofreq col</span>
+
+  Men make better |
+political leaders |        Region where the interview was conducted
+    than women do | Addis Aba  Dire Dawa       Afar      Amara  Benshangu |     Total
+------------------+-------------------------------------------------------+----------
+   Agree Strongly |<span class="stres">      8.86       6.09      13.33       7.66       7.72 </span>|<span class="stres">      7.55 </span>
+            Agree |<span class="stres">      7.59      14.34      26.67      12.06      19.13 </span>|<span class="stres">     15.16 </span>
+         Disagree |<span class="stres">     41.77      41.58      35.24      39.91      44.63 </span>|<span class="stres">     41.26 </span>
+Strongly disagree |<span class="stres">     41.77      37.99      24.76      40.37      28.52 </span>|<span class="stres">     36.03 </span>
+------------------+-------------------------------------------------------+----------
+            Total |<span class="stres">    100.00     100.00     100.00     100.00     100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame wvs2020:tab q29 rcode  [iw=pwght] if  q29&gt;0, nofreq col</span>
+
+      Men make better |
+    political leaders |                                                    Region ISO 3166-2
+        than women do | Addis Aba  Dire Dawa       Afar      Amara  Benshangu  Gambela P  Harari Pe     Oromia     Somali     Tigrai  Southern  |     Total
+----------------------+-------------------------------------------------------------------------------------------------------------------------+----------
+       Agree strongly |<span class="stres">      5.43      13.33      12.28      10.34      14.29      23.33      15.00      28.35       8.70      11.01      15.13 </span>|<span class="stres">     14.84 </span>
+                Agree |<span class="stres">     20.65      16.67      54.39      31.03      22.45      23.33      15.00      24.90      15.94      32.11      26.05 </span>|<span class="stres">     25.87 </span>
+             Disagree |<span class="stres">     41.30      50.00      33.33      29.74      16.33      30.00      35.00      19.92      71.01      37.61      47.90 </span>|<span class="stres">     38.31 </span>
+    Strongly disagree |<span class="stres">     32.61      20.00       0.00      28.88      46.94      23.33      35.00      26.82       4.35      19.27      10.92 </span>|<span class="stres">     20.98 </span>
+----------------------+-------------------------------------------------------------------------------------------------------------------------+----------
+                Total |<span class="stres">    100.00     100.00     100.00     100.00     100.00     100.00     100.00     100.00     100.00     100.00     100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame abs2013:tab cq22 rcode2 [iw=withinwt], nofreq col</span>
+
+     Q22. Men only as |
+    leaders vs. women |                                           RECODE of rcode (Province or region)
+           leaders OK | Addis Aba  Dire Dawa       Afar      Amara  Benshangu  Gambela P  Harari Pe     Oromia     Somali     Tigrai  Southern  |     Total
+----------------------+-------------------------------------------------------------------------------------------------------------------------+----------
+Agree very strongly w |<span class="stres">      7.04      11.29       6.96      18.89      15.44      11.89      10.38      13.86       4.01       2.92      13.85 </span>|<span class="stres">     13.23 </span>
+         Agree with 1 |<span class="stres">      2.45       6.23      18.63      13.35      13.81      18.34       5.07      11.85      20.64       9.83       8.96 </span>|<span class="stres">     11.66 </span>
+   Agree with neither |<span class="stres">      0.00       1.17       0.00       0.00       0.00       0.00       0.00       0.28       0.77       0.00       0.05 </span>|<span class="stres">      0.16 </span>
+         Agree with 2 |<span class="stres">     30.46      42.01      46.43      33.12      24.88      34.29      45.50      30.60      32.66      42.39      39.54 </span>|<span class="stres">     34.12 </span>
+Agree very strongly w |<span class="stres">     60.05      39.30      27.97      34.64      45.87      35.47      39.05      43.42      41.92      44.85      37.60 </span>|<span class="stres">     40.82 </span>
+----------------------+-------------------------------------------------------------------------------------------------------------------------+----------
+                Total |<span class="stres">    100.00     100.00     100.00     100.00     100.00     100.00     100.00     100.00     100.00     100.00     100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. <span class="stcmt">*** Education for men as priority</span></span>
+<span class="stinp">. frame wvs2007:tab v62 rcode [iw=v259] if  v62&gt;0, nofreq col</span>
+
+    University is |
+   more important |
+   for a boy than |        Region where the interview was conducted
+       for a girl | Addis Aba  Dire Dawa       Afar      Amara  Benshangu |     Total
+------------------+-------------------------------------------------------+----------
+   Agree Strongly |<span class="stres">      1.27       1.96       9.52       1.85       3.64 </span>|<span class="stres">      2.77 </span>
+            Agree |<span class="stres">      1.27       5.00       4.76       5.09       7.62 </span>|<span class="stres">      5.35 </span>
+         Disagree |<span class="stres">     49.37      50.71      50.48      47.92      53.64 </span>|<span class="stres">     50.41 </span>
+Strongly disagree |<span class="stres">     48.10      42.32      35.24      45.14      35.10 </span>|<span class="stres">     41.47 </span>
+------------------+-------------------------------------------------------+----------
+            Total |<span class="stres">    100.00     100.00     100.00     100.00     100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame wvs2020:tab q30 rcode [iw=pwght] if  q30&gt;0, nofreq col</span>
+
+   University is more |
+  important for a boy |                                                    Region ISO 3166-2
+      than for a girl | Addis Aba  Dire Dawa       Afar      Amara  Benshangu  Gambela P  Harari Pe     Oromia     Somali     Tigrai  Southern  |     Total
+----------------------+-------------------------------------------------------------------------------------------------------------------------+----------
+       Agree strongly |<span class="stres">      0.00       3.33      15.25       1.66       0.00       0.00      10.00      14.56       8.17       5.31      11.67 </span>|<span class="stres">      7.43 </span>
+                Agree |<span class="stres">      2.17       6.67      27.12      11.62       4.00       6.67       5.00       6.51       9.13       5.31       9.17 </span>|<span class="stres">      8.66 </span>
+             Disagree |<span class="stres">     46.74      63.33      35.59      32.37      26.00      46.67      45.00      22.22      67.31      42.48      45.83 </span>|<span class="stres">     40.69 </span>
+    Strongly disagree |<span class="stres">     51.09      26.67      22.03      54.36      70.00      46.67      40.00      56.70      15.38      46.90      33.33 </span>|<span class="stres">     43.22 </span>
+----------------------+-------------------------------------------------------------------------------------------------------------------------+----------
+                Total |<span class="stres">    100.00     100.00     100.00     100.00     100.00     100.00     100.00     100.00     100.00     100.00     100.00 </span>|<span class="stres">    100.00 </span>
+
+<span class="stinp">. frame abs2013:tab cq24 rcode2 [iw=withinwt], nofreq col</span>
+
+       Q24. Education |
+  recipient priority: |                                           RECODE of rcode (Province or region)
+       boy vs ability | Addis Aba  Dire Dawa       Afar      Amara  Benshangu  Gambela P  Harari Pe     Oromia     Somali     Tigrai  Southern  |     Total
+----------------------+-------------------------------------------------------------------------------------------------------------------------+----------
+Agree very strongly w |<span class="stres">      0.99       9.96       4.98       7.53       4.24       9.81      20.56      11.97      12.64       1.81       9.59 </span>|<span class="stres">      9.05 </span>
+         Agree with 1 |<span class="stres">      2.35      12.54      23.71       9.06       6.08      24.12      10.54      16.46      19.34       3.50      10.66 </span>|<span class="stres">     12.22 </span>
+   Agree with neither |<span class="stres">     10.06      11.71       0.00       5.49       7.16       1.87      16.65      14.27      18.69       0.00      18.76 </span>|<span class="stres">     11.75 </span>
+         Agree with 2 |<span class="stres">     40.45      35.69      50.48      36.33      20.11      42.79      28.50      28.75      27.23      67.81      27.67 </span>|<span class="stres">     33.78 </span>
+Agree very strongly w |<span class="stres">     46.15      30.10      20.83      41.59      62.41      21.41      23.74      28.55      22.10      26.88      33.32 </span>|<span class="stres">     33.20 </span>
+----------------------+-------------------------------------------------------------------------------------------------------------------------+----------
+                Total |<span class="stres">    100.00     100.00     100.00     100.00     100.00     100.00     100.00     100.00     100.00     100.00     100.00 </span>|<span class="stres">    100.00 </span>
+</samp></pre>
+</body>
+</html>

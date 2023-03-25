@@ -1,0 +1,274 @@
+---
+title: "How add Colors to your Life: Scheme colors in Stata"
+subtitle: "The `ado` way"
+author: "Fernando Rios-Avila"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      ratio: 13:9
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+![This is the way](https://i.pinimg.com/originals/98/c6/99/98c6997145f363265959daf84b656057.jpg)
+
+<style>
+.center2 {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 60%;
+}
+</style>
+---
+
+# Disclaimer
+
+I should start by saying that what I will be presenting here is ***not*** the only way. There are other ways to create and modify your schemes however you would like to do. Most people provide you with the full set of schemes for that purpose. 
+
+That being said, the command I ll be presenting depends on a few tools built by Ben Jann: `colorpalette` and `colorspace`. As well as `grstyle`.
+
+It also has only 1 purpose. Change the color settings from your current "scheme" to any other palette either available in `colorpalette`, or provided by the program.
+
+So let me start
+ 
+---
+
+## Why do we care about colors?
+
+Why not? 
+
+Even though I suspect you are an economist, who does research, you may also be curious or may have some inclination for data visualization, which means you like to put some colors in your graphs.
+
+**`Stata`**, as many other software, can handle colors pretty well, but its not very natural at it. Why? because it is an statistical/econometric software, and does not specialize much on design and colors. 
+
+In fact, a running comment, or complain, is why is it that they have such an *ugly* choice of colors for the default setting? And why are the graphics capabilities so limited/complex~!
+
+Luckily, many users have created tools to add color to your figures much easier. And that is the purpose of this new command. Add colors to your figures!
+---
+
+## So how does it work?
+
+As I mentioned earlier, there are two very useful programs that mine builds on. These are `colorpalette` and `grstyle`, both by Ben Jann.
+
+`colorpalette` helps create colors, call on palettes, modify properties, and translate them in a way that `Stata` will understand. 
+
+`grstyle` helps modifying the current scheme, so all graphs done afterward will use the modify schemes.
+
+### Where does mine fit? 
+
+My program `color_style` is in fact a wrapper around `colorpalette` and `grstyle`. You can use it to call on a particular color palette, and will automatically apply it into your scheme. 
+
+It also brings some other colorpalettes that can be stored in memory, and applied to your graphs.
+
+---
+
+## Enough talk, lets see how it works!
+
+.panelset[
+  .panel[.panel-name[Code]
+  Lets start using default options for something simple. A pie Graph. 
+  ```stata
+  sysuse auto
+  graph pie mpg, over(rep78)
+  ```
+  This creates a pie graph with average MPG's by number of repairs in 1978
+  ]
+  
+  .panel[.panel-name[plot]
+  
+   ]
+%%% asdasda  
+  .panel[.panel-name[Code]
+  But since you do not like Default Colors, you can request a change
+  ```stata
+  color_style viridis, n(5)
+  graph pie mpg, over(rep78)
+  ```
+  Here, I'll be using Viridis palette, but requesting only 5 colors
+  
+  ]
+  
+  .panel[.panel-name[plot]
+  
+   ]
+  
+
+]
+
+---
+
+## I want more!
+
+  But Every body uses Viridis, what other palette can I use?
+  
+  You can look into the helpfile of `colorpalette` for a large set of colors. But, `color_style` also comes with its own set!.
+  Just type: `color_style, list`, and a list of additional palettes will come up.
+  
+  But you want to see examples!
+  
+---
+```{r xaringan-panelset, echo=FALSE}
+xaringanExtra::use_panelset()
+```
+
+## Simple Joyplot
+
+.panelset[
+  .panel[.panel-name[grph1]
+  
+
+  ]
+  
+  .panel[.panel-name[grph2]
+  
+
+  ]
+  
+  .panel[.panel-name[grph3]
+  
+
+  ]
+  
+  .panel[.panel-name[grph4]
+  
+
+  ]
+   
+  
+]
+
+---
+
+## More Complex JoyPlot
+
+Alright, this first example is just to provide the most basic version of a `joyplot`. 
+
+There are however, many options you can play with to make your plot better looking.
+
+```stata
+joyplot varname [if] [in] [aw/], /// you can select a sample, 
+                                     and use weights
+[byvar(varname) /// Variable over which create the kdensities.
+dadj(real 1)   /// Adjustment to density. (Stacking)
+bwadj(0<#<1)   /// Adj on BW. 0 uses average, 1 uses individual bw's
+bwadj2(#)      /// Adj all BW
+kernel(string)   /// kernel function
+notext textopt(string) /// Notext omits text on y axis.
+                       /// and textopt allows for other options
+colorpalette(string) /// Uses Benjans Colors with all the options. 
+ gap0 /// If you want all densities to be on floor
+lcolor(passthru) lwidth(passthru) ] /// Options for line
+
+```
+
+---
+
+## More Complex JoyPlot 
+
+So we are ready for some Joy!
+
+.panelset[
+   .panel[.panel-name[Code]
+
+Lets start by getting some data
+
+```stata
+webuse nlswork
+```
+
+and create a simple joyplot for wages across race
+
+```stata
+joyplot ln_wage [w=wt], byvar(race) ///
+    title("Log Wages by Race")
+```
+
+   ]
+   
+  .panel[.panel-name[plot]
+  
+  .pull-left[ ![joy_3](./joyplot_files/joyplot_3.png) ]
+  .pull-right[
+  
+ Basic joyplot with caveats
+    
+- There is no overlapping
+- Colors could be better
+- allow for transparency?
+
+  ]
+
+   
+   ]
+]
+
+---
+
+## Beatify
+
+.panelset[
+
+   .panel[.panel-name[Goal]
+
+The next step will be to make the plot better looking.
+- How to change the stacking option (to allow for overlapping)
+- Change bandwidths.
+- change colors
+So lets do All of this ~!
+   ]
+   
+   .panel[ .panel-name[code]
+
+```stata
+joyplot ln_wage , byvar(race) ///
+  bwadj(1) /// <- uses Individually estimated BW
+	dadj(2) /// <- allows to overlap plots
+	colorpalette(viridis, opacity(70)) /// <- Using Collorpalette!
+    title("Log Wages by Race")
+```
+
+   
+   
+   .panel[.panel-name[plot]
+
+  .center2[ ![joy_4](./joyplot_files/joyplot_4.png) ]
+  
+It does look much better! So lets do one even more colorful
+   ]
+   
+   .panel[.panel-name[plot2]
+.pull-right[  ![joy_5](./joyplot_files/joyplot_5.png) ]
+.pull-left[
+Here I use a code that changes colors, using Year of birth for groups
+
+```stata
+joyplot ln_wage if ///
+inrange(birth_yr,42,53) ///
+, byvar(birth_yr) bwadj(1) ///
+dadj(3)  ///
+colorpalette(gold red, opacity(80)) ///
+title("Log Wages by Race") 
+```
+]
+]  
+]
+   
+]
+
+---
+
+## Conclusions
+
+This was fun to code, and flex my programming muscles.
+
+More important, I wanted make an "easy" way to construct this figures.
+
+There is still some details to address. Specifically, allow for histograms, and time lines. I also want to add labels automatically. but everything step by step
+
+Comments? suggestions? Drop me a message!
+
+.center2[![WeeMee](https://friosavila.github.io/playingwithstata/img/WeeMee.jpg)]
+

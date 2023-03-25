@@ -1,0 +1,6 @@
+<span class="stinp">. qregplot age education , from(e_qreg) q(5(5)95) label raopt( color(%30)) grcopt(
+&gt;  col(1) ysize(7) xsize(5) name(qreg1, replace))</span>
+(results e_qreg are active now)
+
+<span class="stinp">. graph export qfig5.png, replace</span>
+(file qfig5.png written in PNG format)

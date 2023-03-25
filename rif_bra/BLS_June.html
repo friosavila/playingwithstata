@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Putting a Price to Household Production</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Fernando Rios-Avila" />
+    <meta name="date" content="2022-06-07" />
+    <script src="libs/header-attrs-2.13/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+    <script src="libs/fabric-4.3.1/fabric.min.js"></script>
+    <link href="libs/xaringanExtra-scribble-0.0.1/scribble.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-scribble-0.0.1/scribble.js"></script>
+    <script>document.addEventListener('DOMContentLoaded', function() { window.xeScribble = new Scribble({"pen_color":["#FF0000"],"pen_size":3,"eraser_size":30,"palette":[]}) })</script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link href="libs/tachyons-4.12.0/tachyons.min.css" rel="stylesheet" />
+    <link href="libs/panelset-0.2.6/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset-0.2.6/panelset.js"></script>
+    <script src="libs/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <link href="libs/shareon-1.4.1/shareon.min.css" rel="stylesheet" />
+    <script src="libs/shareon-1.4.1/shareon.min.js"></script>
+    <link href="libs/xaringanExtra-shareagain-0.2.6/shareagain.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-shareagain-0.2.6/shareagain.js"></script>
+    <link href="libs/xaringanExtra-extra-styles-0.2.6/xaringanExtra-extra-styles.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-webcam-0.0.1/webcam.js"></script>
+    <script id="xaringanExtra-webcam-options" type="application/json">{"width":"200","height":"200","margin":"1em"}</script>
+  </head>
+  <body>
+    <textarea id="source">
+class: left, middle, my-title, black, title-slide
+
+.title[
+# Putting a Price to Household Production
+]
+.subtitle[
+## How much time are we consumming?
+]
+.author[
+### Fernando Rios-Avila
+]
+.institute[
+### Levy Economics Institute
+]
+.date[
+### 2022-06-07
+]
+
+---
+
+
+
+
+class: center, middle, inverse
+
+## Valuation of HP: 
+## the How
+
+---
+
+## Valuation of HP: Summary
+
+During the last meeting we described, in general terms, our procedure for valuing Household production.
+
+.pull-left[
+**Preferred**: Use of Specialized wage, to differentiate across different types of activities ]
+.pull-right[
+
+**Alternative**: Use of generalist wage, assuming an homogeneous "product" ]
+
+--
+
+- In addition, **preferred** and **alternative** methodology construct aggregate household production differently, with the **alternative** method considering only active household production activities provided by household members.
+
+---
+
+## HP types and aggregation
+
+In our efforts to construct an internally consistent measure of consumed household production into the following categories:
+
+.pull-left[
+- Cooking and related activities
+- Other housework (except cooking) and shopping
+- Active Child care
+- Adult Care
+  ]
+.pull-right[
+- "External" Child Care help (potential)
+- "External" Adult Care help (potential)
+- Supervisory Care Overlapping with Other HP
+- Supervisory Care non Overlapping with Other HP
+]
+
+--
+
+- All components are adjusted to obtain weekly hours (x5weekday-x2weekend or x7 days)
+
+- And aggregated at the household level (Scaling down Sup-care)
+
+- All imputation methods (**RP, RP+ and SM**) use similar structure except for Sup-Care overlapping
+
+  - For SM, we use .red[*imputed/transferred*] values from ATUS
+  - For RP and RP+ we use conditional means
+
+---
+
+##	Imputation Method	and Wages
+
+|Time component |	Statistical Matching |	Regression (RP &amp; RP+) |	Comment|	Surveys| Wages |
+|--|--|--|--|--|
+|Cooking|	x|	x	|Double Match|	ATUS| Cooks |
+|Other HPA|	x| 	x| 	Double Match|	ATUS | Generalist|
+|Child Care|	x	|x|	Double Match| ATUS | KE Teachers|
+|Adult Care|	x |	x|	Double Match|	ATUS| Nursing Assistants|
+|External CCare| |  |logit/avg| ATUS-SIPP | KE Teachers|
+|External ACare| | |logit/poisson| ATUS;HRS| Nursing Assistants|
+|Non-over Sup-Care|	x |	x |	Double Match |	ATUS|KE Teachers/2|
+|Over Sup-Care|	x	|	| E(cond  X) |	ATUS|KE Teachers/2|
+
+---
+
+## Final Valuation:
+
+Simple accounting:
+
+`$$HPC_i = \sum  w_j * ht_{ij}$$`
+`\(\forall \ j=\)` Cooking, Other HW, child care, Adult Care, External Child Care, External Adult Care, and Supervisory Child Care.
+
+- For preferred method, `\(w_j\)` is different for each activity.
+
+- For BEA method, `\(w_j=w_{generalist}\)` for all but External Care and Supervisory care. These activities receive a wage of zero `\(w_j=0\)`.
+
+---
+
+class: center, middle, inverse
+
+# Results
+
+---
+
+# Wages by Activity
+
+|Division	|Cooking|	Other HW |	Adult care |	Act Ccare|	Sup. Ccare|
+|--|--|--|--|--|--| 
+|New England 	|15.6|	14.0|	16.3|	19.0|	9.5|
+|Middle Atlantic |	14.4|	13.9|	16.5|	19.1	|9.6|
+|East North Central| 	12.7|	13.4|	14.3|	15.0|	7.5|
+|West North Central |	12.9|	12.9|	14.4|	16.4|	8.2|
+|South Atlantic| 	12.7|	13.4|	13.6|	15.2|	7.6|
+|East South Central |	11.0|	13.4|	12.5|	14.9|	7.4|
+|West South Central |	11.6|	12.3|	12.8	|17.0|	8.5|
+|Mountain |	13.4|	12.8|	15.3|	15.6|	7.8|
+|Pacific |	15.0|	13.5|	17.3|	17.8|	8.9|
+
+&gt; Right now we are using "imputed" Division in the CE. Is there a fully observed division value in the internal data?
+
+&gt; Generalist wages will only be available at Division level.
+---
+
+## Avg. value of Weekly Household Time Consumption
+
+
+|	|Pr-RP |Pr-RP+	|Pr-SM	|BEA-RP	|BEA-RP+		|BEA-SM|
+|-|-|-|-|-|-|
+|CE interview|	722|	723	|709|	577|	577|	551|
+|CE diary	|717|	716|	702|	575|	576|	548|
+
+This represents between 34% to 45% of average household income.
+
+--
+
+Across the distribution (Interview Sample):
+
+|	|Pr-RP |Pr-RP+	|Pr-SM	|BEAa-RP	|BEA-RP+		|BEA-SM|
+|-|-|-|-|-|-|
+| Mean|	722|	723|	709|	577|	577|	551|
+|SD|	494|	565|	601|	305|	395|	417|
+|p10|	213	|132|	118|	213|	127|	110|
+|p50|	588	|583|	539	|554|	510|	466|
+|p90|	1456|	1518	|1542|	982|	1105|	1090|
+|p50/p10|	2.756	|4.399|	4.579|	2.604	|4.018|	4.252|
+|p90/p50|	2.475|	2.605|	2.861|	1.774|	2.165|	2.340|
+|Gini|	0.368	|0.420	|0.444	|0.293|	0.375|	0.400|
+ 	 	 	 	 	 	 
+---
+
+## Distribution of Value HP
+
+![fig](figs/fig.png)
+
+---
+
+## How much time is Imputed?
+
+Hours per week
+
+|	|Preferred	|BEA|	Cooking	|Other HW |	C. Care	| A. Care | 	Ext CCare |  Ext ACare| Sup.Care no-over |	Sup. care over|
+|--|--|--|--|--|--|--|--|--|--|--|
+|RP|	56.4	|43.3|	9.0|	27.0|	6.2|	1.0	|1.2	|0.5	|8.0	|3.4|
+|RP+|	56.4	|43.4|	9.1|	27.0|	6.2|	1.0	|1.2	|0.5	|8.0|	3.4|
+|SM|	56.0	|41.3|	8.5|	25.6|	6.3|	0.9	|1.2	|0.5	|8.9|	4.0|
+	
+Value per week
+
+|	|Preferred	|BEA|	Cooking	|Other HW |	C. Care	| A. Care | 	Ext CCare |  Ext ACare| Sup.Care no-over |	Sup. care over|
+|--|--|--|--|--|--|--|--|--|--|--|
+|RP|	719.5|	576.2	|119.7|	359.7|	102.9	|15.6|	20.0|	7.8|	66.2|	27.7|
+|RP+|	719.6|	576.5	|120.1|	359.6	|103.3	|15.3	|20.0|	7.8|	65.9|	27.7|
+|SM	|705.2|	549.2	|113.2	|340.5	|103.8	|13.3	|20.0|	7.8|	73.5|	33.1|
+
+---
+
+## What explains the inequality?
+
+Gini Decomposition
+
+|	|BEA|	Pref Hrs	|Pref Wages	| Pref| D Hrs| D wages|
+|-|-|-|-|-|-|-|
+|RP|	0.293	|0.383	|0.307	|0.368|0.090|0.014|
+|RP+	|0.375|	0.430	|0.386	|0.420|0.055|0.011|
+|SM	|0.400	|0.457	|0.409	|0.444|0.057|0.010|
+
+---
+
+## What explains the inequality?
+
+.panelset[
+.panel[.panel-name[SM]
+
+| SM                        | Share | Gini  | Contribution |
+|---------------------------|-------|-------|--------------|
+| Cooking                   | 0.160 | 0.480 | 0.114        |
+| Other House work          | 0.480 | 0.426 | 0.334        |
+| Child Care                | 0.149 | 0.828 | 0.246        |
+| Adult Care                | 0.019 | 0.921 | 0.017        |
+| External Child Care       | 0.029 | 0.877 | 0.041        |
+| External Adult Care       | 0.011 | 0.983 | 0.010        |
+| Sup. care not overlapping | 0.104 | 0.796 | 0.158        |
+| Sup. care overlapping     | 0.047 | 0.831 | 0.079        |
+
+]
+
+.panel[.panel-name[RP]
+
+| RP                        | Share | Gini  | Contribution |
+|---------------------------|-------|-------|--------------|
+| Cooking                   | 0.165 | 0.305 | 0.116        |
+| Other House work          | 0.499 | 0.257 | 0.235        |
+| Child Care                | 0.144 | 0.794 | 0.295        |
+| Adult Care                | 0.021 | 0.599 | 0.020        |
+| External Child Care       | 0.028 | 0.877 | 0.058        |
+| External Adult Care       | 0.011 | 0.983 | 0.012        |
+| Sup. care nonoverlapping  | 0.092 | 0.803 | 0.189        |
+| Sup. care overlapping     | 0.039 | 0.770 | 0.075        |
+
+]
+.panel[.panel-name[RP+]
+
+| RP+                        | Share | Gini  | Contribution |
+|---------------------------|-------|-------|--------------|
+| Cooking                   | 0.165 | 0.493 | 0.122        |
+| Other House work          | 0.497 | 0.391 | 0.319        |
+| Child Care                | 0.145 | 0.834 | 0.262        |
+| Adult Care                | 0.021 | 0.910 | 0.023        |
+| External Child Care       | 0.028 | 0.877 | 0.047        |
+| External Adult Care       | 0.011 | 0.983 | 0.010        |
+| Sup. care not overlapping | 0.093 | 0.833 | 0.159        |
+| Sup. care overlapping     | 0.039 | 0.770 | 0.059        |
+
+]
+
+
+]
+
+---
+
+class: middle
+
+## Conclusions
+
+We have now finished with the imputation and valuation of HP. 
+
+Next step is putting it all together with CE expenditure data to analyze if there are any interesting patterns in expenditure 
+
+---
+class: middle, center
+
+# Thank you
+
+
+
+
+
+&lt;style type="text/css"&gt;
+code.stata{
+  font-size: 15px;
+}
+&lt;/style&gt;
+
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
