@@ -6,6 +6,7 @@ format:
   docx: default
   odt: default
   epub: default
+  ipynb: default
 jupyter: nbstata
 ---
 
