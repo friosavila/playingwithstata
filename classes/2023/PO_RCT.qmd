@@ -1,0 +1,126 @@
+---
+title: "RCT Implementation"
+format: 
+    html:
+        code-fold: true
+jupyter: nbstata
+---
+
+## Randomized Control Trial
+
+In this excecise, I'll provide some simple examples of how to implement a basic RCT analysis.
+
+Before we start, however, we need to create some data. 
+
+@. Estimate two wages models. For men and women, using an heteroskedastic regression model.
+
+The goal: estimate two potential outcomes for wages. One following Womens wage structure, and the other using Men wage structure.
+
+```{stata}
+set linesize 255 
+frause oaxaca, clear
+set seed 101
+qui:hetreg lnwage age agesq married divorced kids6 kids714 if female==0, het(age agesq married divorced kids6 kids714)
+est sto m1
+predict xb1, xb
+predict s1, sigma
+qui:hetreg lnwage age agesq married divorced kids6 kids714 if female==1, het(age agesq married divorced kids6 kids714)
+est sto m2
+predict xb0, xb
+predict s0, sigma
+```
+
+
+Here, as I did for UQregression, I obtain the predicted mean and predicted standard errors. and simulate two wages. I will use 
+wage differences between simulated men and women predicted log wages as the treated effect
+
+$$
+\begin{aligned}
+TE= ln\hat w_1 - ln\hat w_0  \\
+ln\hat w_1 \sim N(xb_1,s^2_1) \\
+ln\hat w_0 \sim N(xb_0,s_0^2)
+\end{aligned} 
+$$
+
+
+```{stata}
+gen lnwage1 = rnormal(xb0,s0)
+gen lnwage0 = rnormal(xb1,s1)
+gen teff=lnwage1-lnwage0
+```
+
+I will create a randomzed treatment, and assume those treated get the treatment effect
+
+$$
+Y_i = Y_i(0) + trt_i * \delta_i
+$$
+
+```{stata}
+gen trt = runiform()<.5
+replace lnwage = lnwage0 + trt * teff
+```
+
+## Visual Exploration
+
+Now that we have a randomized treatment, we could start exploring the data:
+
+```{stata}
+*| fig-cap: Log wage distribution between Treated and untreated
+two (kdensity lnwage if trt == 1) (kdensity lnwage if trt == 0) , ///
+    legend(order(1 "Treated" 2 "Untreated"))
+```
+
+In order to estimate the treatment effects, we could simple estimate a regression model 
+of the outcome. Compare it to the treatment effect
+
+## Estimation of ATE Effect
+
+```{stata}
+** True Effect
+sum teff
+** Simple Regression
+set linesize 255
+reg lnwage  trt, robust
+est sto m0
+```
+
+Because treatment is randomized, we could also add other controls to the model, and improve on precision
+
+```{stata}
+*| output: asis
+qui:reg lnwage  trt age agesq , robust
+est sto m1
+qui:reg lnwage  trt age agesq married divorced , robust
+est sto m2
+qui:reg lnwage  trt age agesq married divorced kids6 kids714 , robust
+est sto m3
+
+esttab m0 m1 m2 m3, se nonum mtitle("m0" "m1" "m2" "m3") keep(trt) md
+```
+
+## Falsification 
+
+We could just use other outcomes that shouldnt be affected by the treatment. 
+You expect they have no impact on outcome
+
+```{stata}
+*| output: asis
+
+qui:reg exper  trt age agesq married divorced kids6 kids714 , robust
+est sto m0
+qui:reg tenure trt age agesq married divorced kids6 kids714 , robust
+est sto m1
+esttab m0 m1 , se nonum mtitle("m0" "m1") keep(trt) md
+```
+
+## Balance test
+
+You should also try to create balance tables, where you compare and test if characteristics are similar across 
+treated and control groups:
+
+```{stata}
+tabstat age agesq married divorced kids6 kids714 , by(trt)
+sureg age agesq married divorced kids6 kids714 =trt, 
+```
+Here, the goal is just to see if `trt` is not-significant across groups
+
