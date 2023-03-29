@@ -71,11 +71,11 @@ Given the information above, The data (without treatment) is created as follows:
 	ux2_it ~ runiform(-.5,.5)
 	
 	x3_it = 0.4 * u_i + (1-0.4^2)^.5 * ux3_it
-
+	ux3_it ~ rnormal(0,1)
 	v_it ~ N(0,1)
 	
 	b_c = $xtrend
-	b_i ~ runiform(-$itrend, $trend)
+	b_i ~ runiform(-$itrend, $itrend)
 
 II. Treatment Timing
 ====================
