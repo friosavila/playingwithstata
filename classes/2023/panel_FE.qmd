@@ -1,0 +1,172 @@
+---
+title: "Panel data and Fixed Effects (Many FE)"
+subtitle: "Are we seeing double?"
+author: Fernando Rios-Avila
+format:
+  revealjs: 
+    slide-number: true
+    width: 1400
+    height: 900
+    code-overflow: wrap
+---
+
+## Re-Cap: Potential outcome Model {.smaler}
+
+In the ideal world, where we can see all possible outcomes and scenarios of your potential treatments, it will be very simple to estimate treatment effects:
+
+$$
+\delta_i = Y_i(1)-Y_i(0)
+$$
+
+Why does this work??
+
+One way to understand this it to imagine that potential outcomes are a function of all observed and unobserved individual characteristics, plust the treatment Status. 
+
+$$y_i(D)=y_i(X,u,D) 
+$$
+
+So when comparing a person with himself (clones or parallel worlds), we know (or at least expect) that everything else is the same, except for the Treatment Status. 
+
+Differences between the two states are explained only by the treatment!
+
+## The Problem and first Solution RCT {.smaller} 
+
+We do not observe both States at the same time. People will either be treated or untreated, not both.
+
+So what can we do?
+
+> **We need to find good counterfactuals!**
+
+One way to do so is via RCT, for example using a lottery!
+
+> Why does it work? 
+
+Potential outcomes will be unrelated to treatment, because treatmet is assigned at random.
+
+Here, it also means that $X's$ and $u's$ will be similar across groups (because of random assigment)
+
+But...you cannot estimatate individual effects, but at least estimate aggregate effects (ATE = ATT = ATU)
+
+## Other Solutions? {.smaller}
+
+So RCTs can be very expensive, and difficult to implement after the fact. In those situations, however, you can use observed data to try answering the same questions!.
+
+One option? Something we have done before...Regression Analysis!
+
+$$y_i = a_0 + \delta D_i + X_i\beta + e_i$$
+
+The idea is that you directly control for all confounding factors that could be related to $y_i$ and $d_i$.
+
+In other words, you add controls until $D_i$ is exogenous! $E(e_i|D)=0$
+
+## Implications to the PO model? {.smaller}
+
+This way of dealing with outcomes does have important implications on the PO model.
+
+- It assumes all individuals have the same outcome structure ($\betas$), except for the treatment effect
+
+- The treatment is effect is homogenous (no heterogeneity) 
+
+- and that functional form is correct (for extrapolation)
+
+However, explicitly controlling for covariates, balances characteristics in this model (FWL):
+
+$$ 
+\begin{aligned}
+D_i &= X\gamma + v_i \\
+y_i &= a_0 + \delta v_i + u_i \\
+\delta &=\frac{1}{N} \sum \frac{D_i - X\gamma}{var(v_i)} y_i
+\end{aligned}
+$$
+
+- Treated units will get positive weights, and controls negative weights, with exceptions because of the LPM.
+
+- Higher weights are given to treated units predicted not to be treated, and viceversa. Lower weights are given to units predicted be treated and are indeed treated. 
+
+With this you try to estimate ATE.
+
+## What if you can See X's
+
+Some times, you may have situations where some covariates cannot be observed (Z_i):
+$$
+y_i = \delta D_i +X_i \beta + Z_i \gamma + e_i
+$$
+
+If $Z_i$ is unrelated to $D_i$, you are on the clear. If its unrelated to $Y_i$ you are also ok. But what if that doesn happen? 
+
+> Then you have a problem!
+
+You no longer can use regression, because the potential outcomes will no longer be independent of the treatment.
+
+you are dooomed!
+
+(when would this happen)
+
+## Having access to More Data
+
+When the above happens, there are still some solutions. Say, for example, that you have access to panel data. Same individuals observed across time:
+
+$$
+y_{it} = \delta D_{it} +X_{it} \beta + Z_{it} \gamma + e_{it}
+$$
+
+If we can't measure $Z_{it}$, and you estimate this using Pool OLS (just simple OLS), you still need the assumption that:
+
+$$E(Z_{it}\gamma + e_{it}|D_it)=0
+$$
+
+But that doesnt solve the problem if $Z_{it}$ is related to $D_it$. 
+
+One option, in cases like this, is assuming that this individual level unobservables are **fixed** across time:
+
+$$
+y_{it} = \delta D_{it} +X_{it} \beta + Z_{i} \gamma + e_{it}
+$$
+
+in which case, it may be possible to estimate Treatment effects
+
+## Fixed Effects
+
+If you have panel data (same individual across time), and are willing to assume the unobserved and problematic data is fixed across time, estimating Treatment Effects is "Easy". Just add Dummies for each individual!
+
+$$
+y_{it}= \delta D_{it} +X_{it} \beta + \sum d_i \gamma_i + e_{it}
+$$
+
+To some extent $d_i \gamma_i$ is our proxy for **ALL** unobserved but fixed factors. Which means, we can again use Regression analysis to estimate ATE's.
+
+This happens because now we can estimate potential outcomes:
+
+$$y(D)=X\hat\beta + \hat u +\delta D+e$$
+
+Under the same assumptions as before. 
+
+you could, in fact, consider adding fixed effects for all dimensions you consider important to account for:
+
+> City, school, region, age, industry, etc
+
+The only limitation...how many dummies can your computer handle? What happens internally?
+
+## Fixed Effects: Estimation - The variation within
+
+The obvious approach is using dummies. But that can take you only so far (why?), and may create other problems! (excluded variables)
+
+The alternative is using the within estimator. Say we take the means across individuals, and use that to substract information from the original regression:
+
+$$
+\begin{aligned}
+y_{it} &= \delta D_{it} +X_{it} \beta + Z_{i} \gamma + e_{it} \\
+\bar y_i &= \delta \bar D_i + \hat X_i \beta +  Z_{i} \gamma + \bar e_i \\
+y_{it}-\bar y_i = \tilde y_{it} &=\delta \tilde D_{it} + \tilde X_{it}\beta+\tilde e_{it} 
+\end{aligned}
+$$
+
+This last equation is far easier to estimate (no dummies!) however you need within variation. IF factors are fixed, they will be "absorbed".
+
+Also, the SE will not have to be modified either, except for degrees of freedom.
+
+This is nothing else but the use of FWL and regression on residuals.
+
+## More Fixed effects: TWFE - NWFE?
+
+
