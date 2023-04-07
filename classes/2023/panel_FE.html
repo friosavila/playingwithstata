@@ -29,6 +29,71 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="panel_FE_files/libs/revealjs/dist/theme/quarto.css" id="theme">
   <link href="panel_FE_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -365,7 +430,7 @@ Fernando Rios-Avila
 <p>Here, it also means that <span class="math inline">\(X's\)</span> and <span class="math inline">\(u's\)</span> will be similar across groups (because of random assigment)</p>
 <p>But…you cannot estimatate individual effects, but at least estimate aggregate effects (ATE = ATT = ATU)</p>
 </section>
-<section id="other-solutions" class="slide level2 smaller">
+<section id="other-solutions" class="slide level2">
 <h2>Other Solutions?</h2>
 <p>So RCTs can be very expensive, and difficult to implement after the fact. In those situations, however, you can use observed data to try answering the same questions!.</p>
 <p>One option? Something we have done before…Regression Analysis!</p>
@@ -373,15 +438,14 @@ Fernando Rios-Avila
 <p>The idea is that you directly control for all confounding factors that could be related to <span class="math inline">\(y_i\)</span> and <span class="math inline">\(d_i\)</span>.</p>
 <p>In other words, you add controls until <span class="math inline">\(D_i\)</span> is exogenous! <span class="math inline">\(E(e_i|D)=0\)</span></p>
 </section>
-<section id="implications-to-the-po-model" class="slide level2 smaller">
+<section id="implications-to-the-po-model" class="slide level2">
 <h2>Implications to the PO model?</h2>
-<p>This way of dealing with outcomes does have important implications on the PO model.</p>
 <ul>
-<li><p>It assumes all individuals have the same outcome structure (<span class="math inline">\(\betas\)</span>), except for the treatment effect</p></li>
+<li><p>Assumes all individuals have the same outcome structure (<span class="math inline">\(\beta s\)</span>), except for the TE</p></li>
 <li><p>The treatment is effect is homogenous (no heterogeneity)</p></li>
 <li><p>and that functional form is correct (for extrapolation)</p></li>
 </ul>
-<p>However, explicitly controlling for covariates, balances characteristics in this model (FWL):</p>
+<p>However, explicitly controlling for covariates, balances characteristics (FWL):</p>
 <p><span class="math display">\[
 \begin{aligned}
 D_i &amp;= X\gamma + v_i \\
@@ -391,9 +455,8 @@ y_i &amp;= a_0 + \delta v_i + u_i \\
 \]</span></p>
 <ul>
 <li><p>Treated units will get positive weights, and controls negative weights, with exceptions because of the LPM.</p></li>
-<li><p>Higher weights are given to treated units predicted not to be treated, and viceversa. Lower weights are given to units predicted be treated and are indeed treated.</p></li>
+<li><p>Weights will “balance Samples” to estimate ATE.</p></li>
 </ul>
-<p>With this you try to estimate ATE.</p>
 </section>
 <section id="what-if-you-can-see-xs" class="slide level2">
 <h2>What if you can See X’s</h2>
@@ -410,7 +473,7 @@ y_i = \delta D_i +X_i \beta + Z_i \gamma + e_i
 </section>
 <section id="having-access-to-more-data" class="slide level2">
 <h2>Having access to More Data</h2>
-<p>When the above happens, there are still some solutions. Say, for example, that you have access to panel data. Same individuals observed across time:</p>
+<p>Solution?: Say you have access to panel data: Same individuals across time:</p>
 <p><span class="math display">\[
 y_{it} = \delta D_{it} +X_{it} \beta + Z_{it} \gamma + e_{it}
 \]</span></p>
@@ -418,7 +481,7 @@ y_{it} = \delta D_{it} +X_{it} \beta + Z_{it} \gamma + e_{it}
 <p><span class="math display">\[E(Z_{it}\gamma + e_{it}|D_it)=0
 \]</span></p>
 <p>But that doesnt solve the problem if <span class="math inline">\(Z_{it}\)</span> is related to <span class="math inline">\(D_it\)</span>.</p>
-<p>One option, in cases like this, is assuming that this individual level unobservables are <strong>fixed</strong> across time:</p>
+<p>One option, in cases like this, is assuming that individual unobservables are <strong>fixed</strong> across time:</p>
 <p><span class="math display">\[
 y_{it} = \delta D_{it} +X_{it} \beta + Z_{i} \gamma + e_{it}
 \]</span></p>
@@ -426,14 +489,12 @@ y_{it} = \delta D_{it} +X_{it} \beta + Z_{i} \gamma + e_{it}
 </section>
 <section id="fixed-effects" class="slide level2">
 <h2>Fixed Effects</h2>
-<p>If you have panel data (same individual across time), and are willing to assume the unobserved and problematic data is fixed across time, estimating Treatment Effects is “Easy”. Just add Dummies for each individual!</p>
+<p>With panel data and assuming unobservables are fixed across time, estimating TE is “Easy”. Just add Dummies for each individual!</p>
 <p><span class="math display">\[
 y_{it}= \delta D_{it} +X_{it} \beta + \sum d_i \gamma_i + e_{it}
 \]</span></p>
-<p>To some extent <span class="math inline">\(d_i \gamma_i\)</span> is our proxy for <strong>ALL</strong> unobserved but fixed factors. Which means, we can again use Regression analysis to estimate ATE’s.</p>
-<p>This happens because now we can estimate potential outcomes:</p>
-<p><span class="math display">\[y(D)=X\hat\beta + \hat u +\delta D+e\]</span></p>
-<p>Under the same assumptions as before.</p>
+<p>Here <span class="math inline">\(d_i \gamma_i\)</span> is our proxy for <strong>ALL</strong> unobserved factors. OLS can be used to estimate ATEs</p>
+<p>This happens because we can estimate potential outcome under the same assumptions as before.</p>
 <p>you could, in fact, consider adding fixed effects for all dimensions you consider important to account for:</p>
 <blockquote>
 <p>City, school, region, age, industry, etc</p>
@@ -447,16 +508,272 @@ y_{it}= \delta D_{it} +X_{it} \beta + \sum d_i \gamma_i + e_{it}
 <p><span class="math display">\[
 \begin{aligned}
 y_{it} &amp;= \delta D_{it} +X_{it} \beta + Z_{i} \gamma + e_{it} \\
-\bar y_i &amp;= \delta \bar D_i + \hat X_i \beta +  Z_{i} \gamma + \bar e_i \\
+\bar y_i &amp;= \delta \bar D_i + \bar X_i \beta +  Z_{i} \gamma + \bar e_i \\
 y_{it}-\bar y_i = \tilde y_{it} &amp;=\delta \tilde D_{it} + \tilde X_{it}\beta+\tilde e_{it}
 \end{aligned}
 \]</span></p>
-<p>This last equation is far easier to estimate (no dummies!) however you need within variation. IF factors are fixed, they will be “absorbed”.</p>
-<p>Also, the SE will not have to be modified either, except for degrees of freedom.</p>
+<p>Last equation is easier to estimate (no dummies!) however you need within variation. IF unobserved factors are fixed, they will be “absorbed”.</p>
+<p>Also, the SE will have to be adjusted for degrees of freedom. (but nothing else)</p>
 <p>This is nothing else but the use of FWL and regression on residuals.</p>
+</section>
+<section id="dont-forget-random-effects" class="slide level2">
+<h2>Dont Forget Random Effects</h2>
+<p>This approach is more efficient than Fixed effects because you don’t estimate fixed effects, just the distribution.</p>
+<p>So how does this affect the estimation:</p>
+<ol type="1">
+<li>Errors have two components. One time fixed <span class="math inline">\(e_i\)</span>, and one time variant <span class="math inline">\(u_{it}\)</span>. Then total errors will be correlated with themselves across time <span class="math display">\[corr(v_{it}, v_{is}) =  corr(e_i+u_{it}, e_i+u_{is}) = \sigma^2_e
+\]</span></li>
+<li>Apply FGLS to eliminating this source of auto-correlation! <span class="math display">\[y_{it}-\lambda \bar y_i = (X_{it}-\lambda \bar X_it) + v_{it}\]</span></li>
+</ol>
+<p>But, you need the assumption that unobservables <span class="math inline">\(e_i\)</span> are unrelated to <span class="math inline">\(X's\)</span>. (because we are not directly controlling for them).</p>
+<p>The advantage, however, is that you do no need within variation!</p>
+</section>
+<section id="fe-vs-re" class="slide level2">
+<h2>FE vs RE</h2>
+<p>So there are two ways to Analyze data Panel data.</p>
+<ul>
+<li>FE: Uses only within variation, is more consistent, but less efficient (too many dummies)</li>
+<li>RE: Uses all variation in data, is less consistent (stronger assumptions), but more efficient!</li>
+</ul>
+<p><strong>How to choose?</strong></p>
+<p>The Standard approach is to apply a Hausan Test:</p>
+<blockquote>
+<p>H0:<span class="math inline">\(\beta^{FE} = \beta^{RE}\)</span> using Chi2</p>
+</blockquote>
+<p>If they are not different (H0 cannot be rejected), then choose RE (efficient). If they are different then choose FE (consistent)</p>
 </section>
 <section id="more-fixed-effects-twfe---nwfe" class="slide level2">
 <h2>More Fixed effects: TWFE - NWFE?</h2>
+<p>With multiple sets of fixed effects (individual, time, cohort, region, etc), you can still use dummies to add them to the model.</p>
+<p>But, you can apply something similar to the previous approach:</p>
+<p><span class="math display">\[
+\begin{aligned}
+y_{it} &amp;= \delta D_{it}+x_{it}\beta + \gamma_i + \gamma_t + e_{it} \\
+\bar y_i &amp;= \bar D_i +\bar x_{i}\beta + \gamma_i + E(\gamma_t|i) + \bar e_i \\
+\bar y_t &amp;= \bar D_t +\bar x_{t}\beta + E(\gamma_i|t) + \gamma_t + \bar e_t \\
+\bar y &amp;= \bar D +\bar x\beta + E(\gamma_i) + E(\gamma_t)+ \bar e \\
+\tilde y_{it} &amp;= y_{it}-\bar y_i - \bar y_t + \bar y
+\end{aligned}
+\]</span></p>
+<p>So one can estimate the following:</p>
+<p><span class="math display">\[
+\tilde y_{it} = \delta \tilde D_{it} + \tilde X_{it} \beta + \tilde e_{it}
+\]</span></p>
+<p>This eliminates FE for both time and individual (if panel is balanced)</p>
+</section>
+<section id="second-option" class="slide level2">
+<h2>Second Option:</h2>
+<p>Alternatively, you can just run regressions of residuals:</p>
+<p><span class="math display">\[
+w_{it} = \gamma^w_i+\gamma^w_t+rw_{it}
+\]</span></p>
+<p>and make regressions using the residuals. (Demeaning also works, but its an iterative process)</p>
+</section>
+<section id="stata-example" class="slide level2 scrollable">
+<h2>Stata Example</h2>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1"></a>#delimit;</span>
+<span id="cb1-2"><a href="#cb1-2"></a>frause school93_98, <span class="kw">clear</span>;</span>
+<span id="cb1-3"><a href="#cb1-3"></a>xtset schid <span class="fu">year</span>;</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">qui</span>:<span class="kw">reg</span> math4 lunch lenrol lrexpp                     ; <span class="kw">est</span> sto m1;</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="kw">qui</span>:<span class="kw">xtreg</span> math4 lunch lenrol lrexpp                   ; <span class="kw">est</span> sto m2;</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="kw">qui</span>:<span class="kw">xtreg</span> math4 lunch lenrol lrexpp, <span class="kw">fe</span>               ; <span class="kw">est</span> sto m3;</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="kw">qui</span>:reghdfe math4 lunch lenrol lrexpp, <span class="fu">abs</span>(schid)     ; <span class="kw">est</span> sto m4;</span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="kw">qui</span>:reghdfe math4 lunch lenrol lrexpp, <span class="fu">abs</span>(schid <span class="fu">year</span>); <span class="kw">est</span> sto m5;</span>
+<span id="cb1-9"><a href="#cb1-9"></a>esttab m1 m2 m3 m4 m5, mtitle(ols re <span class="kw">fe</span> refe1 refe2) <span class="kw">compress</span> se b(3);</span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="kw">hausman</span> m3 m2;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Panel variable: schid (strongly balanced)
+ Time variable: year, 1993 to 1998
+         Delta: 1 unit
+
+---------------------------------------------------------------------------
+                 (1)          (2)          (3)          (4)          (5)   
+                 ols           re           fe        refe1        refe2   
+---------------------------------------------------------------------------
+lunch         -0.413***    -0.370***     0.057        0.057       -0.062*  
+             (0.007)      (0.011)      (0.031)      (0.031)      (0.026)   
+
+lenrol        -0.121        0.936        8.766***     8.766***     0.297   
+             (0.425)      (0.616)      (1.704)      (1.704)      (1.468)   
+
+lrexpp        28.887***    39.161***    46.450***    46.450***     2.799*  
+             (0.860)      (0.878)      (1.006)      (1.006)      (1.265)   
+
+_cons       -162.292***  -254.864***  -377.338***  -377.423***    37.398*  
+             (7.960)      (8.681)     (14.913)     (14.918)     (15.847)   
+---------------------------------------------------------------------------
+N               9369         9369         9369         9328         9328   
+---------------------------------------------------------------------------
+Standard errors in parentheses
+* p&lt;0.05, ** p&lt;0.01, *** p&lt;0.001
+
+                 ---- Coefficients ----
+             |      (b)          (B)            (b-B)     sqrt(diag(V_b-V_B))
+             |       m3           m2         Difference       Std. err.
+-------------+----------------------------------------------------------------
+       lunch |     .056932    -.3703211        .4272531        .0287753
+      lenrol |    8.766051     .9357725        7.830279        1.588902
+      lrexpp |    46.44966     39.16107        7.288595        .4915896
+------------------------------------------------------------------------------
+                          b = Consistent under H0 and Ha; obtained from xtreg.
+           B = Inconsistent under Ha, efficient under H0; obtained from xtreg.
+
+Test of H0: Difference in coefficients not systematic
+
+    chi2(3) = (b-B)'[(V_b-V_B)^(-1)](b-B)
+            = 627.26
+Prob &gt; chi2 = 0.0000</code></pre>
+</div>
+</div>
+</section>
+<section id="correlated-random-effects" class="slide level2">
+<h2>Correlated Random Effects</h2>
+<p>Random effects model may produce inconsistent results, because it assumes unobserved factors are uncorrelated to characteristics.</p>
+<p>Fixed effects controls for individual effects explicitly, or via demeaning.</p>
+<p>A 3rd approach is known as CRE model. A more explicit modeling of the unobserved but fixed components.</p>
+<ol type="1">
+<li>Call the unobserved component <span class="math inline">\(a_i\)</span>, and say we suspect it may be related with individual characteristics.</li>
+<li>Because <span class="math inline">\(a_i\)</span> is constant over time, it may be reasonable assuming its correlated with individual average characteristics: <span id="eq-m1"><span class="math display">\[a_i = a + \bar X_i \gamma + r_i
+\qquad(1)\]</span></span></li>
+</ol>
+<p>By construction, <span class="math inline">\(r_i\)</span> and <span class="math inline">\(X_{it} \&amp; \bar X_i\)</span> will be uncorrelated. So lets just add that to the main model</p>
+</section>
+<section id="cre" class="slide level2">
+<h2>CRE</h2>
+<p>Lets add <a href="#/correlated-random-effects">Equation&nbsp;1</a> to our main equation. <span class="math display">\[
+y_i = \beta X_{it} +  \theta Z_{i} + \bar X_i \gamma + r_i + e_{it}
+\]</span></p>
+<p>This equation can now be estimated using RE, because it already allows controls for the correlation of unobserved factors and the individual effects.</p>
+<p>You can also estimate the model using <em>pool</em> OLS, clustering errors at individual level.</p>
+<p><strong>Result</strong>:</p>
+<ul>
+<li>you now have a model that allows for time variant and time fixed components, that is consistent as FE (same coefficients).</li>
+</ul>
+<p><strong>Uses</strong>:</p>
+<ul>
+<li>Simpler way to test for FE vs RE (are the <span class="math inline">\(\gamma 's\)</span> significant?)</li>
+<li>there is no need for within variation for any variable! (just overall variation)</li>
+</ul>
+</section>
+<section id="cre-in-stata" class="slide level2">
+<h2>cre in Stata</h2>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1"></a>#delimit <span class="kw">cr</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>frause school93_98, <span class="kw">clear</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>reghdfe math4 lunch lenrol lrexpp, <span class="fu">abs</span>(schid <span class="fu">year</span>) <span class="kw">cluster</span>(schid)</span>
+<span id="cb3-4"><a href="#cb3-4"></a>** Experimental</span>
+<span id="cb3-5"><a href="#cb3-5"></a>cre, <span class="fu">abs</span>(schid <span class="fu">year</span>): <span class="kw">reg</span> math4 lunch lenrol lrexpp, <span class="kw">cluster</span>(schid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(dropped 41 singleton observations)
+(MWFE estimator converged in 5 iterations)
+
+HDFE Linear regression                            Number of obs   =      9,328
+Absorbing 2 HDFE groups                           F(   3,   1734) =       2.59
+Statistics robust to heteroskedasticity           Prob &gt; F        =     0.0515
+                                                  R-squared       =     0.7548
+                                                  Adj R-squared   =     0.6985
+                                                  Within R-sq.    =     0.0014
+Number of clusters (schid)   =      1,735         Root MSE        =    11.5747
+
+                              (Std. err. adjusted for 1,735 clusters in schid)
+------------------------------------------------------------------------------
+             |               Robust
+       math4 | Coefficient  std. err.      t    P&gt;|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       lunch |  -.0620863   .0324188    -1.92   0.056    -.1256705    .0014978
+      lenrol |   .2966956   1.484868     0.20   0.842    -2.615625    3.209017
+      lrexpp |   2.798777   1.410581     1.98   0.047     .0321579    5.565397
+       _cons |   37.39798    16.8327     2.22   0.026     4.383449     70.4125
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+       schid |      1735        1735           0    *|
+        year |         6           0           6     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+_reghdfe_r~d |      9,328    4.32e-17    .1015168  -1.180599   1.214313
+
+
+Linear regression                               Number of obs     =      9,328
+                                                F(9, 1734)        =     821.90
+                                                Prob &gt; F          =     0.0000
+                                                R-squared         =     0.4595
+                                                Root MSE          =     15.505
+
+                              (Std. err. adjusted for 1,735 clusters in schid)
+------------------------------------------------------------------------------
+             |               Robust
+       math4 | Coefficient  std. err.      t    P&gt;|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       lunch |  -.0620863   .0327488    -1.90   0.058    -.1263177     .002145
+      lenrol |   .2966955   1.509296     0.20   0.844    -2.663537    3.256928
+      lrexpp |   2.798777   1.435068     1.95   0.051    -.0158694    5.613423
+    m1_lunch |  -.3799049   .0343728   -11.05   0.000    -.4473213   -.3124884
+    m2_lunch |  -2.750266   .5058811    -5.44   0.000    -3.742467   -1.758065
+   m1_lenrol |  -2.394416   1.633657    -1.47   0.143    -5.598562    .8097302
+   m2_lenrol |  -273.8924   11.25589   -24.33   0.000    -295.9689   -251.8158
+   m1_lrexpp |   5.667778   2.276245     2.49   0.013     1.203304    10.13225
+   m2_lrexpp |   73.40469   3.276595    22.40   0.000      66.9782    79.83119
+       _cons |   37.39798   17.10933     2.19   0.029     3.840895    70.95507
+------------------------------------------------------------------------------</code></pre>
+</div>
+</div>
+</section>
+<section id="caveats-not-everything-is-solved-using-fe" class="slide level2">
+<h2>Caveats: Not everything is solved using FE</h2>
+<ul>
+<li><p>While FE allows you do control for unobserve but time fixed factors, it will Not help you if those factors are time varying.</p>
+<p>if <span class="math inline">\(e_{it}\)</span> is different across treated and control groups <span class="math inline">\(D_{it}=0,1\)</span> then TE cannot be estimated.</p>
+<p>This could happen if cases of reverse causality or</p></li>
+<li><p>Because it depends strongly on within variation, it will be more sensitive to measurement errors. Specifically:</p></li>
+</ul>
+<p><span class="math display">\[\beta^{fe} = \beta * \left(1-\frac{\sigma_v^2}{(\sigma^2_v+\sigma^2_x)(1-\rho_x)}\right)
+\]</span></p>
+<p>In other words. when <span class="math inline">\(X\)</span> has strong autocorrelation (Stable treatment), the measurement error effect is far larger!</p>
+</section>
+<section id="caveats-fe-makes-things-harder-to-analyze" class="slide level2">
+<h2>Caveats: FE makes things harder to analyze</h2>
+<ul>
+<li><p>When using a single FE, OLS using within variation to identify the slope coefficients. How does a change in X’s (compared to the average) affect changes in the outcomes (respect to averages)</p></li>
+<li><p>When using Two Fixed effects (individuals and time) identification becomes tricky: <span class="math display">\[\tilde y_{it} = y_{it}-\bar y_i - \bar y_t + \bar y  \]</span></p></li>
+</ul>
+<p>We are looking for variation across time but also across individuals.</p>
+<blockquote>
+<p>we are using changes in outcome that are different from the average changes in the sample.</p>
+</blockquote>
+<ul>
+<li>with Multiple FE, same story…we are trying to exploit variation across multiple dimensions! Difficult to understand</li>
+</ul>
+</section>
+<section id="caveats-some-times-the-variation-may-be-wrong" class="slide level2">
+<h2>Caveats: Some times, the variation may be wrong:</h2>
+<p>Consider:</p>
+<p><span class="math display">\[y_{it} = a_i + a_t + \delta D_{it} + e_{it}\]</span></p>
+<p>If <span class="math inline">\(D_it\)</span> changes only for some people at the same time, we are good.</p>
+<ul>
+<li>The variation comes from comparing individuals (before and after) (time variation), who were treated and untreated (individual effects)</li>
+</ul>
+<p>But if <span class="math inline">\(D_{it}\)</span> changes at different times for different people, we have a problem.</p>
+<ul>
+<li>Who is being compared???
+<ul>
+<li>Those before and after (fine) to those with Status change (D=0 -&gt; D=1) to those whos status do not change! (D=0 to D=0) or (D=1 to D=1)</li>
+</ul></li>
+</ul>
+<p>We will discuss this problem again when talking about DID</p>
+</section>
+<section id="example" class="slide level2">
+<h2>Example</h2>
+<p><strong>Income, Schooling, and Ability: Evidence from a New Sample of Identical Twins</strong> by</p>
+<p><em>Orley Ashenfelter</em> and <em>Cecilia Rouse</em></p>
 <div class="footer footer-default">
 
 </div>

@@ -47,7 +47,7 @@ Here, it also means that $X's$ and $u's$ will be similar across groups (because 
 
 But...you cannot estimatate individual effects, but at least estimate aggregate effects (ATE = ATT = ATU)
 
-## Other Solutions? {.smaller}
+## Other Solutions?  
 
 So RCTs can be very expensive, and difficult to implement after the fact. In those situations, however, you can use observed data to try answering the same questions!.
 
@@ -59,17 +59,15 @@ The idea is that you directly control for all confounding factors that could be 
 
 In other words, you add controls until $D_i$ is exogenous! $E(e_i|D)=0$
 
-## Implications to the PO model? {.smaller}
+## Implications to the PO model?  
 
-This way of dealing with outcomes does have important implications on the PO model.
-
-- It assumes all individuals have the same outcome structure ($\betas$), except for the treatment effect
+- Assumes all individuals have the same outcome structure ($\beta s$), except for the TE
 
 - The treatment is effect is homogenous (no heterogeneity) 
 
 - and that functional form is correct (for extrapolation)
 
-However, explicitly controlling for covariates, balances characteristics in this model (FWL):
+However, explicitly controlling for covariates, balances characteristics (FWL):
 
 $$ 
 \begin{aligned}
@@ -81,9 +79,7 @@ $$
 
 - Treated units will get positive weights, and controls negative weights, with exceptions because of the LPM.
 
-- Higher weights are given to treated units predicted not to be treated, and viceversa. Lower weights are given to units predicted be treated and are indeed treated. 
-
-With this you try to estimate ATE.
+- Weights will "balance Samples" to estimate ATE.
 
 ## What if you can See X's
 
@@ -102,9 +98,9 @@ you are dooomed!
 
 (when would this happen)
 
-## Having access to More Data
+## Having access to More Data  
 
-When the above happens, there are still some solutions. Say, for example, that you have access to panel data. Same individuals observed across time:
+Solution?: Say you have access to panel data: Same individuals across time:
 
 $$
 y_{it} = \delta D_{it} +X_{it} \beta + Z_{it} \gamma + e_{it}
@@ -117,7 +113,7 @@ $$
 
 But that doesnt solve the problem if $Z_{it}$ is related to $D_it$. 
 
-One option, in cases like this, is assuming that this individual level unobservables are **fixed** across time:
+One option, in cases like this, is assuming that individual unobservables are **fixed** across time:
 
 $$
 y_{it} = \delta D_{it} +X_{it} \beta + Z_{i} \gamma + e_{it}
@@ -125,21 +121,17 @@ $$
 
 in which case, it may be possible to estimate Treatment effects
 
-## Fixed Effects
+## Fixed Effects 
 
-If you have panel data (same individual across time), and are willing to assume the unobserved and problematic data is fixed across time, estimating Treatment Effects is "Easy". Just add Dummies for each individual!
+With panel data and assuming unobservables are fixed across time, estimating TE is "Easy". Just add Dummies for each individual!
 
 $$
 y_{it}= \delta D_{it} +X_{it} \beta + \sum d_i \gamma_i + e_{it}
 $$
 
-To some extent $d_i \gamma_i$ is our proxy for **ALL** unobserved but fixed factors. Which means, we can again use Regression analysis to estimate ATE's.
+Here $d_i \gamma_i$ is our proxy for **ALL** unobserved factors. OLS can be used to estimate ATEs
 
-This happens because now we can estimate potential outcomes:
-
-$$y(D)=X\hat\beta + \hat u +\delta D+e$$
-
-Under the same assumptions as before. 
+This happens because we can estimate potential outcome under the same assumptions as before. 
 
 you could, in fact, consider adding fixed effects for all dimensions you consider important to account for:
 
@@ -147,8 +139,7 @@ you could, in fact, consider adding fixed effects for all dimensions you conside
 
 The only limitation...how many dummies can your computer handle? What happens internally?
 
-## Fixed Effects: Estimation - The variation within
-
+## Fixed Effects: Estimation - The variation within  
 The obvious approach is using dummies. But that can take you only so far (why?), and may create other problems! (excluded variables)
 
 The alternative is using the within estimator. Say we take the means across individuals, and use that to substract information from the original regression:
@@ -156,17 +147,199 @@ The alternative is using the within estimator. Say we take the means across indi
 $$
 \begin{aligned}
 y_{it} &= \delta D_{it} +X_{it} \beta + Z_{i} \gamma + e_{it} \\
-\bar y_i &= \delta \bar D_i + \hat X_i \beta +  Z_{i} \gamma + \bar e_i \\
+\bar y_i &= \delta \bar D_i + \bar X_i \beta +  Z_{i} \gamma + \bar e_i \\
 y_{it}-\bar y_i = \tilde y_{it} &=\delta \tilde D_{it} + \tilde X_{it}\beta+\tilde e_{it} 
 \end{aligned}
 $$
 
-This last equation is far easier to estimate (no dummies!) however you need within variation. IF factors are fixed, they will be "absorbed".
+Last equation is easier to estimate (no dummies!) however you need within variation. IF unobserved factors are fixed, they will be "absorbed".
 
-Also, the SE will not have to be modified either, except for degrees of freedom.
+Also, the SE will have to be adjusted for degrees of freedom. (but nothing else)
 
 This is nothing else but the use of FWL and regression on residuals.
 
-## More Fixed effects: TWFE - NWFE?
+## Dont Forget Random Effects
 
+This approach is more efficient than Fixed effects because you don't estimate fixed effects, just the distribution.
+
+So how does this affect the estimation:
+
+1. Errors have two components. One time fixed $e_i$, and one time variant $u_{it}$. Then total errors will be correlated with themselves across time
+$$corr(v_{it}, v_{is}) =  corr(e_i+u_{it}, e_i+u_{is}) = \sigma^2_e
+$$
+2. Apply FGLS to eliminating this source of auto-correlation!
+$$y_{it}-\lambda \bar y_i = (X_{it}-\lambda \bar X_it) + v_{it}$$
+
+But, you need the assumption that unobservables $e_i$ are unrelated to $X's$. (because we are not directly controlling for them). 
+
+The advantage, however, is that you do no need within variation!
+
+## FE vs RE
+
+So there are two ways to Analyze data Panel data.
+
+- FE: Uses only within variation, is more consistent, but less efficient (too many dummies)
+- RE: Uses all variation in data, is less consistent (stronger assumptions), but more efficient!
+
+**How to choose?**
+
+The Standard approach is to apply a Hausan Test:
+
+> H0:$\beta^{FE} = \beta^{RE}$ using Chi2
+
+If they are not different (H0 cannot be rejected), then choose RE (efficient). If they are different then choose FE (consistent)
+
+## More Fixed effects: TWFE - NWFE? 
+
+With multiple sets of fixed effects (individual, time, cohort, region, etc), you can still use dummies to add them to the model.
+
+But, you can apply something similar to the previous approach:
+
+$$
+\begin{aligned}
+y_{it} &= \delta D_{it}+x_{it}\beta + \gamma_i + \gamma_t + e_{it} \\
+\bar y_i &= \bar D_i +\bar x_{i}\beta + \gamma_i + E(\gamma_t|i) + \bar e_i \\
+\bar y_t &= \bar D_t +\bar x_{t}\beta + E(\gamma_i|t) + \gamma_t + \bar e_t \\
+\bar y &= \bar D +\bar x\beta + E(\gamma_i) + E(\gamma_t)+ \bar e \\
+\tilde y_{it} &= y_{it}-\bar y_i - \bar y_t + \bar y
+\end{aligned}
+$$
+
+So one can estimate the following:
+
+$$
+\tilde y_{it} = \delta \tilde D_{it} + \tilde X_{it} \beta + \tilde e_{it}
+$$
+
+This eliminates FE for both time and individual (if panel is balanced)
+
+## Second Option:
+
+Alternatively, you can just run regressions of residuals:
+
+$$
+w_{it} = \gamma^w_i+\gamma^w_t+rw_{it}
+$$
+
+and make regressions using the residuals. (Demeaning also works, but its an iterative process)
+
+## Stata Example{.scrollable}
+```{stata}
+#delimit;
+set linesize 150;
+#delimit cr
+```
+
+```{stata}
+*| echo: true
+#delimit;
+frause school93_98, clear;
+xtset schid year;
+qui:reg math4 lunch lenrol lrexpp                     ; est sto m1;
+qui:xtreg math4 lunch lenrol lrexpp                   ; est sto m2;
+qui:xtreg math4 lunch lenrol lrexpp, fe               ; est sto m3;
+qui:reghdfe math4 lunch lenrol lrexpp, abs(schid)     ; est sto m4;
+qui:reghdfe math4 lunch lenrol lrexpp, abs(schid year); est sto m5;
+esttab m1 m2 m3 m4 m5, mtitle(ols re fe refe1 refe2) compress se b(3);
+hausman m3 m2;
+```
+
+## Correlated Random Effects
+
+Random effects model may produce inconsistent results, because it assumes unobserved factors are uncorrelated to characteristics. 
+
+Fixed effects controls for individual effects explicitly, or via demeaning.
+
+A 3rd approach is known as CRE model. A more explicit modeling of the unobserved but fixed components.
+
+1. Call the unobserved component $a_i$, and say we suspect it may be related with individual characteristics. 
+2. Because $a_i$ is constant over time, it may be reasonable assuming its correlated with individual average characteristics:
+   $$a_i = a + \bar X_i \gamma + r_i
+   $${#eq-m1}
+
+By construction, $r_i$ and $X_{it} \&  \bar X_i$ will be uncorrelated. So lets just add that to the main model
+
+## CRE
+
+Lets add @eq-m1 to our main equation.
+$$
+y_i = \beta X_{it} +  \theta Z_{i} + \bar X_i \gamma + r_i + e_{it}
+$$
+
+This equation can now be estimated using RE, because it already allows controls for the correlation of unobserved factors and the individual effects.
+
+You can also estimate the model using *pool* OLS, clustering errors at individual level. 
+
+**Result**: 
+
+- you now have a model that allows for time variant and time fixed components, that is consistent as FE (same coefficients).
+
+**Uses**: 
+
+- Simpler way to test for FE vs RE (are the $\gamma 's$ significant?)
+- there is no need for within variation for any variable! (just overall variation)
+
+## cre in Stata
+
+```{stata}
+*| echo: true
+#delimit cr
+frause school93_98, clear
+reghdfe math4 lunch lenrol lrexpp, abs(schid year) cluster(schid)
+** Experimental
+cre, abs(schid year): reg math4 lunch lenrol lrexpp, cluster(schid)
+```
+
+## Caveats: Not everything is solved using FE
+
+- While FE allows you do control for unobserve but time fixed factors, it will Not help you if those factors are time varying.
+
+  if $e_{it}$ is different across treated and control groups $D_{it}=0,1$ then TE cannot be estimated.
+
+  This could happen if cases of reverse causality or 
+
+- Because it depends strongly on within variation, it will be more sensitive to measurement errors.  Specifically:
+
+$$\beta^{fe} = \beta * \left(1-\frac{\sigma_v^2}{(\sigma^2_v+\sigma^2_x)(1-\rho_x)}\right)
+$$
+
+In other words. when $X$ has strong autocorrelation (Stable treatment), the measurement error effect is far larger!
+
+## Caveats: FE makes things harder to analyze
+
+- When using a single FE, OLS using within variation to identify the slope coefficients.
+    How does a change in X's (compared to the average) affect changes in the outcomes (respect to averages)
+
+- When using Two Fixed effects (individuals and time) identification becomes tricky:
+$$\tilde y_{it} = y_{it}-\bar y_i - \bar y_t + \bar y  $$
+
+We are looking for variation across time but also across individuals.
+
+> we are using changes in outcome that are different from the average changes in the sample.
+
+- with Multiple FE, same story...we are trying to exploit variation across multiple dimensions! Difficult to understand
+
+## Caveats: Some times, the variation may be wrong:
+
+Consider:
+
+$$y_{it} = a_i + a_t + \delta D_{it} + e_{it}$$
+
+If $D_it$ changes only for some people at the same time, we are good.
+
+- The variation comes from comparing individuals (before and after) (time variation), who were treated and untreated (individual effects)
+
+But if $D_{it}$ changes at different times for different people, we have a problem. 
+
+- Who is being compared??? 
+  - Those before and after (fine) to those with Status change (D=0 -> D=1) to those whos status do not change! (D=0 to D=0) or (D=1 to D=1)
+
+We will discuss this problem again when talking about DID
+
+## Example 
+
+**Income, Schooling, and Ability: Evidence from a New Sample of Identical Twins**
+by
+
+*Orley Ashenfelter* and *Cecilia Rouse*
 
