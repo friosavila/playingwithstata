@@ -336,10 +336,10 @@ But if $D_{it}$ changes at different times for different people, we have a probl
 
 We will discuss this problem again when talking about DID
 
-## Example 
+## Income, Schooling, and Ability: 
+### Evidence from a New Sample of Identical Twins
+ by
 
-**Income, Schooling, and Ability: Evidence from a New Sample of Identical Twins**
-by
+**Orley Ashenfelter** and **Cecilia Rouse**
 
-*Orley Ashenfelter* and *Cecilia Rouse*
-
+## 
