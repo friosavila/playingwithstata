@@ -342,4 +342,63 @@ We will discuss this problem again when talking about DID
 
 **Orley Ashenfelter** and **Cecilia Rouse**
 
-## 
+## Motivation: 
+### In search of Returns to Education
+
+This paper aims to identify returns of education abstracting from the impact of innate ability.
+
+In their framework, ability is mostly explained by genetics, thus to control for it, the authors use a sample 
+of identical twins, to "absorb" unobserved genetics using FE.
+
+They address some of the problems inherited to FE estimation
+
+## The model
+
+- The theoretical model described states that all individuals have an optimal level of Schooling, such that maximizes the his/her returns. 
+- However, Total schooling may be affected by measurement or optimization errors. 
+- Schooling will be directly affected by returns to education, but also by the ability of students.
+
+In their framework, for the twins setup, (log)earnings will be determined by:
+
+$$
+\begin{aligned}
+y_{1j}=A_j + b_j S_{1j} + \gamma X_j + e_{1j} \\
+y_{2j}=A_j + b_j S_{2j} + \gamma X_j + e_{2j} 
+\end{aligned}
+$$
+
+## The model
+
+Because ability is related to schooling, they suggest using the following:
+
+$$
+y_{ij}=\lambda(0.5(S_{1j}+S_{2j}) + b_j S_{1j} + \gamma X_j + v_j+ e_{ij} 
+$$
+
+Which is the equivalent to CRE. Or estimate the fixed effects equivalent:
+
+$$y_{1j} - y_{2j} = b(S_{2j}-S_{1j}) + e_{2j} - e_{2j}
+$$
+
+The later is a First difference, rather than FE estimator, but they both identical when T=2.
+
+- An additional model the authors use is one where returns to education could be related to ability. 
+- Or where ability is measured/proxied by parents education. (which is fixed across twins)
+
+## Data
+
+![](pfe1.png)
+
+## OLS
+
+![](pfe2.png)
+
+## FE-RE-CRE?
+
+![](pfe3.png){height=800px width=1300px}
+
+## Heterogeneity
+
+![](pfe4.png)
+
+# Next Class (Friday) Instrumental Variables!

@@ -8,7 +8,7 @@
 <link href="panel_FE_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="panel_FE_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="panel_FE_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.3.306">
+  <meta name="generator" content="quarto-1.3.299">
 
   <meta name="author" content="Fernando Rios-Avila">
   <title>Panel data and Fixed Effects (Many FE)</title>
@@ -697,11 +697,6 @@ Absorbed degrees of freedom:
 -----------------------------------------------------+
 * = FE nested within cluster; treated as redundant for DoF computation
 
-    Variable |        Obs        Mean    Std. dev.       Min        Max
--------------+---------------------------------------------------------
-_reghdfe_r~d |      9,328    4.32e-17    .1015168  -1.180599   1.214313
-
-
 Linear regression                               Number of obs     =      9,328
                                                 F(9, 1734)        =     821.90
                                                 Prob &gt; F          =     0.0000
@@ -776,8 +771,61 @@ Linear regression                               Number of obs     =      9,328
 <p>by</p>
 <p><strong>Orley Ashenfelter</strong> and <strong>Cecilia Rouse</strong></p>
 </section>
-<section id="section" class="slide level2">
-<h2></h2>
+<section id="motivation" class="slide level2">
+<h2>Motivation:</h2>
+<h3 id="in-search-of-returns-to-education">In search of Returns to Education</h3>
+<p>This paper aims to identify returns of education abstracting from the impact of innate ability.</p>
+<p>In their framework, ability is mostly explained by genetics, thus to control for it, the authors use a sample of identical twins, to “absorb” unobserved genetics using FE.</p>
+<p>They address some of the problems inherited to FE estimation</p>
+</section>
+<section id="the-model" class="slide level2">
+<h2>The model</h2>
+<ul>
+<li>The theoretical model described states that all individuals have an optimal level of Schooling, such that maximizes the his/her returns.</li>
+<li>However, Total schooling may be affected by measurement or optimization errors.</li>
+<li>Schooling will be directly affected by returns to education, but also by the ability of students.</li>
+</ul>
+<p>In their framework, for the twins setup, (log)earnings will be determined by:</p>
+<p><span class="math display">\[
+\begin{aligned}
+y_{1j}=A_j + b_j S_{1j} + \gamma X_j + e_{1j} \\
+y_{2j}=A_j + b_j S_{2j} + \gamma X_j + e_{2j}
+\end{aligned}
+\]</span></p>
+</section>
+<section id="the-model-1" class="slide level2">
+<h2>The model</h2>
+<p>Because ability is related to schooling, they suggest using the following:</p>
+<p><span class="math display">\[
+y_{ij}=\lambda(0.5(S_{1j}+S_{2j}) + b_j S_{1j} + \gamma X_j + v_j+ e_{ij}
+\]</span></p>
+<p>Which is the equivalent to CRE. Or estimate the fixed effects equivalent:</p>
+<p><span class="math display">\[y_{1j} - y_{2j} = b(S_{2j}-S_{1j}) + e_{2j} - e_{2j}
+\]</span></p>
+<p>The later is a First difference, rather than FE estimator, but they both identical when T=2.</p>
+<ul>
+<li>An additional model the authors use is one where returns to education could be related to ability.</li>
+<li>Or where ability is measured/proxied by parents education. (which is fixed across twins)</li>
+</ul>
+</section>
+<section id="data" class="slide level2">
+<h2>Data</h2>
+
+<img data-src="pfe1.png" class="r-stretch"></section>
+<section id="ols" class="slide level2">
+<h2>OLS</h2>
+
+<img data-src="pfe2.png" class="r-stretch"></section>
+<section id="fe-re-cre" class="slide level2">
+<h2>FE-RE-CRE?</h2>
+<p><img data-src="pfe3.png" width="1300" height="800"></p>
+</section>
+<section id="heterogeneity" class="slide level2">
+<h2>Heterogeneity</h2>
+
+<img data-src="pfe4.png" class="r-stretch"></section>
+<section id="next-class-friday-instrumental-variables" class="title-slide slide level1 center">
+<h1>Next Class (Friday) Instrumental Variables!</h1>
 <div class="footer footer-default">
 
 </div>
