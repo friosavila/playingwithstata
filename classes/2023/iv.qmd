@@ -1,0 +1,192 @@
+---
+title: "Instrumental Variables"
+subtitle: "Many are called, only few answer"
+author: Fernando Rios-Avila
+format:
+  revealjs: 
+    slide-number: true
+    width: 1400
+    height: 900
+    code-overflow: wrap
+    mermaid:
+      theme: forest
+---
+
+## Recap: PO's and RCT's
+
+- Quick Recap. The goal of the methodologies we are covering is to identify treatment effects.
+
+- In the PO framework, that is done by simply comparing a group with itself, in two different States (treated vs untreated)
+
+- Since this is **impossible**, the next best solution is using RCT. Individuals are randomized, and *assuming* every body follows directions,
+we can identify treatment effects of the experiments. 
+
+- But only if the RCT is well executed! Sometimes even that may fail
+
+## Instrumental Variables
+
+- While here discussed 3rd, the second best approach to identify Treatment effects is by using Instrumental variables.
+
+- In fact with a **Good-Enough** instrument, one should be able to identify **ANY** causal effect. Assuming such IV exists.
+
+but how?
+
+- If the instrument is good, it may create an exogenous variation, which will allow us to identify Treatment effects by looking ONLY at those affected by the treatment!
+
+- Using the external variation, we can Estimate TE comparing two groups who are identical in every aspect, except being treated. The randomization comes Because of the IV!
+
+## Cannonical IV 
+
+As we have mentioned, the estimation of TE require that we identify two groups of individuals with mostly similar (if not identical) characteristics.
+This include unobserved characteristics.
+
+If the latter is not true, we have a problem of confunders or Endogeneity. But why?
+
+Consider the following diagram
+
+:::{layout="[1,1]"}
+
+Here the effect of $D$ on $Y$ is direct, because there is nothing else that would get people confuse why treatment affects outcome 
+```{mermaid }
+%%| fig-width: 8.5
+flowchart LR
+  e(error) --> Y(Outcome)  
+  D(Treatment) --> Y(Outcome)  
+```
+:::
+
+:::{layout="[1,1]"}
+
+Here the effect of $D$ on $Y$ is not as clear, because there is an additional factor $v$ that affects $D$ and $Y$ (is in the way)
+```{mermaid }
+%%| fig-responsive: false
+flowchart LR
+  e( error ) --> Y(Outcome)  
+  D( Treatment ) --> Y(Outcome)
+  v(unobserved) -.-> D(Treatment)  
+  v(unobserved) -.-> Y(Outcome)  
+```
+:::
+
+## Cannonical IV
+
+Here is where a good instrument comes into play. 
+
+- Not everything in $D$ is affected by $v$. Some may, but some may be trully exogenous. What if we have an instrument that helps you ID this:
+
+```{mermaid }
+%%| fig-responsive: false
+flowchart LR
+e( error ) --> Y(Outcome)  
+  subgraph Treatment
+    D1(Exog) 
+    D2(Endog)
+  end
+  
+  D1( Exog ) --> Y(Outcome)
+  D2( Endog ) --> Y(Outcome)
+  Z(Instrument) --> D1  
+  v(unobserved) -.-> D2
+  
+  v(unobserved) -.-> Y(Outcome)  
+```
+
+- By Isolating those affected by the Instrument Alone, we do not need to worry about endogeneity anymore.
+
+## Properties
+
+Instrumental variables should have at the very list 2 Properties
+
+1. The instrumental variable $Z$ should not be correlated with the model error (Validity).
+2. But, it should explain the treatment Itself $D$ (Relevance).
+
+Failure of (1) may reintroduce problems of endogeneity. Faiture of (2) will make the instrument Irrelevant.
+
+## How does it work
+
+Consider the following. 
+
+- People who study more, tend to earn higher wages
+- People with high ability tend to study more.
+- People with high ability, also earn higher wages.
+
+Does Studying more generate higher wages?
+
+**Instrument**. We create a lottery that provides some people resources to pay for their education. This gives them a chance to study more.
+$$Z \rightarrow D$$
+
+## 
+
+So, we know the instrument was **Random**. We can analyze how much outcome increases among those benefited by the Lottery.
+
+$$E(W|Z=1)-E(W|Z=0)$$
+
+This is often called the **reduced form** effect. In principle, $Z$ only affects wages because of education. So looking at this differences should be similar to a treatment effect of Lotteries (or the intention of lotteries). But not everyone will Study more...So we can see if the lotery had that effect.
+
+$$E(S|Z=1)-E(S|Z=0)$$
+
+This is the equivalent to the first stage. Where we measure the impact of the "instrument/lottery" on Education (to see, say, relevance)
+
+Finally, the TE is given by the Ratio of thes two
+
+$$TE=\frac{E(W|Z=1)-E(W|Z=0)}{E(S|Z=1)-E(S|Z=0)}
+$$
+
+This is also known as the Wald Estimator. How much of the changes in wages is due to changes in the "# treated"
+
+## Some commnents
+
+- This was an example of a binary instrument, which was assigned at random. 
+- In fact, this particular scenario is typical byproduct of "failed" RCTs!
+  - Partially failed RCTs: Not every body selected WAS treated
+
+Consider the following: 
+
+- We make the RCT above giving bouchers to People so they Study more.
+- But, not everybody uses the bouchers:
+  - Some use the bouchers 
+  - Some use them and study more.
+
+Comparing Wages among those who receive will only provide you the "intention to treat" effect. (**Reduced form**)
+
+Because of imperfect compliance we need to "readjust/inflate" our TE estimate.
+
+## More Comments
+
+- in this scenario. the Reduced form and second stage can be estimated by just comparing means, because the treatment was randonmized. 
+
+  - In other words, something you really want is an instrument that is as good as random. 
+
+- The effect we capture is a LOCAL treatment effect (LATE). 
+- However, it could be an ATE if:
+  - The effect is homogenous for everyone. 
+  - The people affected by the treatment is a representative of the population
+
+- It all boils down to identifying who is or might be affected by the treatment. 
+
+- For now, lets assume effects are Homogenous (So we get ATEs)
+  
+## Who Are Affected and who are not?
+
+Even if we are able to identify ATEs, its important to understand who can be affected by the instrument, because the population is generally selected in 3 groups
+
+- **never takers** & **always takers**: These are the individuals who would have never done anything different than their normal. 
+- **Compliers**: These are the ones who, given they receive "instrument", they comply and follow up. We use their variation for analysis
+- **defiers**: These are the ones who, given Z, will do the oppsite. We cannot differentiate them from Compliers, so they will affect how treatment is estimated.
+
+We do not want to have defiers!
+
+## Extension 1: Continuous Instrument
+
+The Wald estimator is for the simplest case of binary treatment. However, if the treatment is continuous, one could modify the IV estimator as follows:
+
+$$
+\delta_{IV} = \frac{cov(y,z)}{cov(d,z)}
+$$
+
+The logic remains. We are trying to see how variation in the outcome related to Z reates to changes in treatment because of Z. 
+
+The *treatment* here is very small (Small changes in z). The intuition is that we are averaging the variation in the outcome across all Zs to estimate the effect. 
+
+## Extension 2: Controls 
+
