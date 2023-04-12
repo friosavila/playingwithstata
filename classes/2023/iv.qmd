@@ -190,3 +190,15 @@ The *treatment* here is very small (Small changes in z). The intuition is that w
 
 ## Extension 2: Controls 
 
+Adding controls to the model is also straight forward, and you have quite a few options for it
+
+1. Adding exogenous controls may help improving model precision, even if instrument was randomized. 
+   
+   they must be added for both the treatment and outcome models
+
+$$
+\begin{aligned}
+d = z\gamma_z + x\gamma_x + e_1  \\
+y = z\beta_z + x\delta + e_1
+\end{aligned}
+$$

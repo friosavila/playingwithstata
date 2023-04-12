@@ -29,7 +29,7 @@ So when comparing a person with himself (clones or parallel worlds), we know (or
 
 Differences between the two states are explained only by the treatment!
 
-## The Problem and first Solution RCT {.smaller} 
+## The Problem and first Solution RCT  
 
 We do not observe both States at the same time. People will either be treated or untreated, not both.
 
@@ -80,6 +80,10 @@ $$
 - Treated units will get positive weights, and controls negative weights, with exceptions because of the LPM.
 
 - Weights will "balance Samples" to estimate ATE.
+
+## Controlling for Unobservables
+
+![](panel_FE_files/fefig.jpg)
 
 ## What if you can See X's
 

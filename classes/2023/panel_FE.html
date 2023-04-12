@@ -8,7 +8,7 @@
 <link href="panel_FE_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="panel_FE_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="panel_FE_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.3.299">
+  <meta name="generator" content="quarto-1.3.313">
 
   <meta name="author" content="Fernando Rios-Avila">
   <title>Panel data and Fixed Effects (Many FE)</title>
@@ -384,6 +384,9 @@
       margin-right: 0; 
     }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+  <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -415,7 +418,7 @@ Fernando Rios-Avila
 <p>So when comparing a person with himself (clones or parallel worlds), we know (or at least expect) that everything else is the same, except for the Treatment Status.</p>
 <p>Differences between the two states are explained only by the treatment!</p>
 </section>
-<section id="the-problem-and-first-solution-rct" class="slide level2 smaller">
+<section id="the-problem-and-first-solution-rct" class="slide level2">
 <h2>The Problem and first Solution RCT</h2>
 <p>We do not observe both States at the same time. People will either be treated or untreated, not both.</p>
 <p>So what can we do?</p>
@@ -458,6 +461,10 @@ y_i &amp;= a_0 + \delta v_i + u_i \\
 <li><p>Weights will “balance Samples” to estimate ATE.</p></li>
 </ul>
 </section>
+<section id="controlling-for-unobservables" class="slide level2">
+<h2>Controlling for Unobservables</h2>
+
+<img data-src="panel_FE_files/fefig.jpg" class="r-stretch"></section>
 <section id="what-if-you-can-see-xs" class="slide level2">
 <h2>What if you can See X’s</h2>
 <p>Some times, you may have situations where some covariates cannot be observed (Z_i): <span class="math display">\[
@@ -571,6 +578,11 @@ w_{it} = \gamma^w_i+\gamma^w_t+rw_{it}
 </section>
 <section id="stata-example" class="slide level2 scrollable">
 <h2>Stata Example</h2>
+<div class="cell" data-execution_count="1">
+<div class="cell-output cell-output-display">
+<style>div.jp-Notebook .datagrid-container {min-height: 448px; }</style>
+</div>
+</div>
 <div class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1"></a>#delimit;</span>
 <span id="cb1-2"><a href="#cb1-2"></a>frause school93_98, <span class="kw">clear</span>;</span>
@@ -697,6 +709,11 @@ Absorbed degrees of freedom:
 -----------------------------------------------------+
 * = FE nested within cluster; treated as redundant for DoF computation
 
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+_reghdfe_r~d |      9,328    4.32e-17    .1015168  -1.180599   1.214313
+
+
 Linear regression                               Number of obs     =      9,328
                                                 F(9, 1734)        =     821.90
                                                 Prob &gt; F          =     0.0000
@@ -709,15 +726,15 @@ Linear regression                               Number of obs     =      9,328
        math4 | Coefficient  std. err.      t    P&gt;|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
        lunch |  -.0620863   .0327488    -1.90   0.058    -.1263177     .002145
-      lenrol |   .2966955   1.509296     0.20   0.844    -2.663537    3.256928
-      lrexpp |   2.798777   1.435068     1.95   0.051    -.0158694    5.613423
+      lenrol |   .2966948   1.509296     0.20   0.844    -2.663538    3.256927
+      lrexpp |   2.798777   1.435068     1.95   0.051    -.0158696    5.613423
     m1_lunch |  -.3799049   .0343728   -11.05   0.000    -.4473213   -.3124884
-    m2_lunch |  -2.750266   .5058811    -5.44   0.000    -3.742468   -1.758065
-   m1_lenrol |  -2.394416   1.633657    -1.47   0.143    -5.598562    .8097302
+    m2_lunch |  -2.750266   .5058811    -5.44   0.000    -3.742467   -1.758065
+   m1_lenrol |  -2.394415   1.633657    -1.47   0.143    -5.598561     .809731
    m2_lenrol |  -273.8924   11.25589   -24.33   0.000    -295.9689   -251.8158
-   m1_lrexpp |   5.667778   2.276245     2.49   0.013     1.203304    10.13225
-   m2_lrexpp |   73.40469   3.276595    22.40   0.000      66.9782    79.83119
-       _cons |   37.39798   17.10933     2.19   0.029     3.840895    70.95507
+   m1_lrexpp |   5.667779   2.276245     2.49   0.013     1.203305    10.13225
+   m2_lrexpp |    73.4047   3.276595    22.40   0.000      66.9782    79.83119
+       _cons |   37.39799   17.10933     2.19   0.029     3.840901    70.95507
 ------------------------------------------------------------------------------</code></pre>
 </div>
 </div>
