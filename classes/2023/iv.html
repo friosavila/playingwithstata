@@ -29,6 +29,71 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="iv_files/libs/revealjs/dist/theme/quarto.css" id="theme">
   <link href="iv_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -323,6 +388,9 @@
   <script src="iv_files/libs/quarto-diagram/mermaid.min.js"></script>
   <script src="iv_files/libs/quarto-diagram/mermaid-init.js"></script>
   <link href="iv_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+  <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -531,6 +599,266 @@ e( error ) --&gt; Y(Outcome)
 </section>
 <section id="extension-2-controls" class="slide level2">
 <h2>Extension 2: Controls</h2>
+<p>Adding controls to the model is also straight forward, and you have quite a few options for it</p>
+<ol type="1">
+<li>Adding exogenous controls may help improving model precision, even if instrument was randomized. The easiest way to do this is by applying the 2sls procedure (among others)</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+1st: d = z\gamma_z + x\gamma_x + e_1  \\
+2nd: y = x\beta_x + \delta \hat d+ e_2
+\end{aligned}
+\]</span></p>
+<ul>
+<li><p>The 1st stage “randomizes” instrument to measure the effect on treatment.</p></li>
+<li><p>The 2nd stage uses predicted values of the first to see what the impact on the outcome will be.</p></li>
+<li><p>This works because <span class="math inline">\(\hat d\)</span> is exogenous, “carrying over” exogenous changes in the treatment.</p></li>
+</ul>
+</section>
+<section id="extension-2-controls-1" class="slide level2">
+<h2>Extension 2: Controls</h2>
+<p>One can also think of the approach as a pseudo Wald Estimator, with continuous variables:</p>
+<p><span class="math display">\[
+\begin{aligned}
+1st: d &amp;= \gamma_z * z + x\gamma_x + e_1  \\
+rd:  y &amp;= \beta_z  * z+ x\beta_x + e_2 \\
+ATE &amp;=\frac{\beta_z}{\gamma_z}=\frac{cov(y,\tilde z)}{cov(d,\tilde z)}
+\end{aligned}
+\]</span></p>
+<p>This compare averages changes in the outcome to average changes in the treatment.</p>
+</section>
+<section id="extension-3-multiple-endogenous-variables" class="slide level2">
+<h2>Extension 3: Multiple Endogenous Variables</h2>
+<p>Although less common in Causal Analysis perspective, in other frameworks one may to consider more than 1 instrument or using instrument interactions. In these cases one still has two alternatives</p>
+<ol type="1">
+<li>2SLS: One can model more than one endogenous variable at the same time, simply substituting the predicted values in the main regression. When using interactions, or polynomials, each will need its own first stage regression.</li>
+<li>Control function approach. In contrast with the “prediction subtstitution” approach, this method suggests using a “residual inclusion approach”. This controls for endogeneity directly. If there is only one endogenous variable (with interactions of polynomials) only one model is needed.</li>
+</ol>
+<p>In the first case, you need at least 1 instrument per regression. Even if its just a transformation of the original variable</p>
+<p>In the second case, you need at least 1 instrument per endogenous variable.</p>
+</section>
+<section id="instrument-validity" class="slide level2">
+<h2>Instrument Validity</h2>
+<p>As mentioned earlier, Instruments require at least to fullfill two conditions:</p>
+<ul>
+<li><strong>Relevant</strong>. They need to be Strongly related to the endogenous variable</li>
+<li><strong>Exogenous</strong>. instruments should not and cannot be endogenous. In fact, you want instruments that are as good as random, thus not defined by the “system” in anyway.</li>
+</ul>
+</section>
+<section id="iv-validity-exogeneity" class="slide level2">
+<h2>IV Validity: Exogeneity</h2>
+<p>Unfortunately, for most cases, this assumption is not testable, because we do not observe the model unobservables, thus dont know if <span class="math inline">\(z\)</span> is related to those unobserved components.</p>
+<p>While most efforts for these are done through model design, or argumentation, there are at least 2 options to verify the exogeneity</p>
+<ol type="1">
+<li><p>If truly exogenous, the instrument should be as good as random. Thus controls shouldnt be affected by the instrument. (Balance test)</p></li>
+<li><p>Otherwise, one could test for exogeneity only by comparing Estimates across different IV’s. Different results may suggest instrumments are invalid.</p>
+<ul>
+<li>Run a regression of Residuals from the main model against all exogenous variables plus other instruments.</li>
+</ul></li>
+</ol>
+<p>Note: Unless the instrument was randomized, assumed is going to be slighly endogenous.</p>
+</section>
+<section id="iv-validity-strength" class="slide level2">
+<h2>IV Validity: strength</h2>
+<p>The only thing we could probably do is try to analyze model strength. How much does the instrument affect treatment take up? is the effect marginal? or a large effect?</p>
+<p>Weaker instruments may be create larger problems on the analysis because:</p>
+<ol type="1">
+<li>With weaker instruments, the precision of the estimator drops substantially.</li>
+<li>With weaker instruments, any “endogeneity” problem (even due to randomness) will generate a bias</li>
+</ol>
+<ul>
+<li>Stock and Yogo (2005) suggest and F~13.9 (or higher) for a 5% bias</li>
+<li>Lee, et al (2020) suggest you need even higher F’s if you want to avoid problems with CI</li>
+</ul>
+</section>
+<section id="iv-strength" class="slide level2">
+<h2>IV Strength</h2>
+<p>Notice Bias with Weak Instruments:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1"></a>    Variable |        Obs        Mean    Std. <span class="kw">dev</span>.       Min        Max</span>
+<span id="cb1-2"><a href="#cb1-2"></a>-------------+---------------------------------------------------------</span>
+<span id="cb1-3"><a href="#cb1-3"></a>     b1_b_c1 |        991    139.2814     27.3981   58.59376   257.7574</span>
+<span id="cb1-4"><a href="#cb1-4"></a>     b1_b_c2 |        991    .9874847    .3060169  -.0509955   1.857092</span>
+<span id="cb1-5"><a href="#cb1-5"></a>     b1_b_c3 |        991    .3044599    .0326545   .2220692   .4777986</span>
+<span id="cb1-6"><a href="#cb1-6"></a>     b1_b_c4 |        991     3.33866    1.228425  -.1393513   7.304715</span>
+<span id="cb1-7"><a href="#cb1-7"></a>-------------+---------------------------------------------------------</span>
+<span id="cb1-8"><a href="#cb1-8"></a>     b2_b_c1 |        991     18.5753    8.880913   1.104271   56.66291</span>
+<span id="cb1-9"><a href="#cb1-9"></a>     b2_b_c2 |        991    .9161109    .7788409  -3.749899   2.948366</span>
+<span id="cb1-10"><a href="#cb1-10"></a>     b2_b_c3 |        991    .7901266    .3263594   .3677861   3.856925</span>
+<span id="cb1-11"><a href="#cb1-11"></a>     b2_b_c4 |        991    1.486873    1.238263  -1.242283   5.600827</span>
+<span id="cb1-12"><a href="#cb1-12"></a>-------------+---------------------------------------------------------</span>
+<span id="cb1-13"><a href="#cb1-13"></a>     b3_b_c1 |        991    7.329736    5.352335   .0126054   40.82824</span>
+<span id="cb1-14"><a href="#cb1-14"></a>     b3_b_c2 |        991    .6891979    2.611228  -40.78007   26.50793</span>
+<span id="cb1-15"><a href="#cb1-15"></a>     b3_b_c3 |        991     2.87683     14.8956   .4277885   311.2773</span>
+<span id="cb1-16"><a href="#cb1-16"></a>     b3_b_c4 |        991    .9828429     1.13565  -1.124282   4.969245</span>
+<span id="cb1-17"><a href="#cb1-17"></a>-------------+---------------------------------------------------------</span>
+<span id="cb1-18"><a href="#cb1-18"></a>     b4_b_c1 |        991    4.206627    3.885072   .0000288   27.33819</span>
+<span id="cb1-19"><a href="#cb1-19"></a>     b4_b_c2 |        991    .7767246    4.421099  -41.27678   46.78173</span>
+<span id="cb1-20"><a href="#cb1-20"></a>     b4_b_c3 |        991    15.69515    259.8914   .5105977   8104.976</span>
+<span id="cb1-21"><a href="#cb1-21"></a>     b4_b_c4 |        991    .7798746     1.03038   -1.11632   4.701989</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="iv-strength-solution-weakiv" class="slide level2">
+<h2>IV Strength Solution: weakiv</h2>
+<p>Weak IV’s are a problem in the sense that it may induce bias on the estiamted coefficients, but also that it may affect how Standard Errors are estimated</p>
+<p>One solution, in this case, is at least adjusting SE So they better reflect the problem.</p>
+<p>In Stata, this can be done with <code>weakiv</code> (ssc install weakiv)</p>
+<p>At the end, however, if you weak instruments, you may be able to correct of potential biases, but you may need to get more data, or better instruments</p>
+</section>
+<section id="late-local-average-treatement-effect" class="slide level2">
+<h2>LATE: Local Average Treatement Effect</h2>
+<p>Up to this point, we imposed the assumption that TE were homogenous. Thus, IV could identify Treatment effects for everyone. (Average Treatment effect)</p>
+<p>However, not everyone may be affected by the instrument, only by the compliers.</p>
+<p>Two ways of thinking about it:</p>
+<ol type="1">
+<li>Not everybody is affected by the instrument. (you have the always and never takers)</li>
+<li>the instrument was never suppoused to affect certain groups!</li>
+</ol>
+<p>So, IV will identify TE for the compliers only.</p>
+<p>Because of this, using different instruments may actually identify different effects, based on which population was affected</p>
+</section>
+<section id="simulation-example" class="slide level2">
+<h2>Simulation Example:</h2>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">clear</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">set</span> <span class="kw">obs</span> 10000</span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">gen</span> sex = rnormal()&gt;0</span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="kw">gen</span> z1 = rnormal()&gt;0</span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="kw">gen</span> z2 = rnormal()&gt;0</span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="kw">gen</span> e_1 =rnormal()</span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="kw">gen</span> e_2 =rnormal()</span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="kw">gen</span> e_3 =rnormal()</span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="kw">gen</span> D =(z1*(sex==0) + z2*(sex==1) + (e_1 + e_2)*.5)&gt;0</span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="kw">gen</span> Ds =(  (e_1 + e_2)*.5)&gt;0</span>
+<span id="cb2-11"><a href="#cb2-11"></a><span class="kw">gen</span> <span class="fu">y</span> = 1 + D*(sex==0) +2*D*(sex==1)+e_3+e_2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<style>div.jp-Notebook .datagrid-container {min-height: 448px; }</style>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of observations (_N) was 0, now 10,000.</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="2">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+. ivregress 2sls y (D=z1)
+
+Instrumental variables 2SLS regression            Number of obs   =     10,000
+                                                  Wald chi2(1)    =      68.68
+                                                  Prob &gt; chi2     =     0.0000
+                                                  R-squared       =     0.2703
+                                                  Root MSE        =      1.553
+
+------------------------------------------------------------------------------
+           y | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+           D |   1.168485    .140995     8.29   0.000       .89214     1.44483
+       _cons |   1.234834   .1012064    12.20   0.000     1.036473    1.433194
+------------------------------------------------------------------------------
+Instrumented: D
+ Instruments: z1
+
+. ivregress 2sls y (D=z2)
+
+Instrumental variables 2SLS regression            Number of obs   =     10,000
+                                                  Wald chi2(1)    =     210.31
+                                                  Prob &gt; chi2     =     0.0000
+                                                  R-squared       =     0.3557
+                                                  Root MSE        =     1.4593
+
+------------------------------------------------------------------------------
+           y | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+           D |   1.945131   .1341286    14.50   0.000     1.682244    2.208018
+       _cons |   .6839587   .0962501     7.11   0.000      .495312    .8726055
+------------------------------------------------------------------------------
+Instrumented: D
+ Instruments: z2
+
+. ivregress 2sls y (D=z1 z2)
+
+Instrumental variables 2SLS regression            Number of obs   =     10,000
+                                                  Wald chi2(1)    =     256.88
+                                                  Prob &gt; chi2     =     0.0000
+                                                  R-squared       =     0.3219
+                                                  Root MSE        =     1.4971
+
+------------------------------------------------------------------------------
+           y | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+           D |    1.55201   .0968339    16.03   0.000     1.362219    1.741801
+       _cons |   .9627992    .070297    13.70   0.000     .8250197    1.100579
+------------------------------------------------------------------------------
+Instrumented: D
+ Instruments: z1 z2
+
+. </code></pre>
+</div>
+</div>
+</section>
+<section>
+<section id="popular-iv-designs" class="title-slide slide level1 center">
+<h1>Popular IV Designs</h1>
+
+</section>
+<section id="canonical-designs" class="slide level2">
+<h2>Canonical Designs</h2>
+<ul>
+<li><p>The general message about using IV’s is, and has always been, that they are hard to come by.</p></li>
+<li><p>Applied research spends a quite good amount of time explaining why a particular instrument <strong>IS</strong> valid. (exogenous and relevant)</p></li>
+<li><p>Relevance is generally easy to test, but exogeneity is difficult. Little can be done other than relying in other papers, and circumstances.</p></li>
+<li><p>There are also those “clever” IVs, that tend to be case specific</p>
+<ul>
+<li>Scott Cunningham talks about Instruments being “weird”, because you wouldnt expect them to be in the context of the research</li>
+</ul></li>
+<li><p>There are, however, some designs that are used quite often, because they apply to different circumstances.</p></li>
+</ul>
+</section>
+<section id="cd-lotteries" class="slide level2">
+<h2>CD: Lotteries</h2>
+<ul>
+<li><p>In RCT, Lotteries are commonly used to decide who gets or doesnt get treatment among participants. Once treatment is assigned, however, not everyone will effectively taking up the treatment.</p>
+<ul>
+<li>Furthermore, some people may still end up being effectively treated because of other factors.</li>
+</ul></li>
+<li><p>This is a case of imperfect compliance.</p></li>
+<li><p>In cases like this, the lottery itself (which is randomized) can be used as instrument to identify the effect of being effectively treated.</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li>Vietnam Draft Lottery</li>
+<li>Oregon Medicaid Expansion Lottery</li>
+</ul>
+</section>
+<section id="cd-judge-fixed-effects" class="slide level2">
+<h2>CD: Judge Fixed Effects</h2>
+<p>This design is also partially based on a kind of randomized assigment.</p>
+<ol type="1">
+<li>Individuals are “allocated” to work, or be judge, under different officers “judges”, at random.</li>
+<li>Judges are consistent among each other, with only difference being the severity of the judgment.</li>
+<li>Then Judge fixed effect can be used as an instrument on the judgment (treatment), and the final impact on the outcome of interest.</li>
+</ol>
+<p>The idea here is that “judgment-severity” varies by judge. This difference in taste creates exogenous variation on some treatment, which is analyzed on some treatment.</p>
+<p>Example:</p>
+<ul>
+<li>Teachers Grading?</li>
+<li>Driving test officers?</li>
+<li>Performance tests?</li>
+</ul>
+</section>
+<section id="cd-shift-share-bartik-instrument" class="slide level2">
+<h2>CD: Shift-Share Bartik Instrument</h2>
+<p>Originally used in a study of regional labor market effects, this kind of instruments have also been used widely in other areas, such as imigration and trade.</p>
+<p>The instrument was developed to createa an instrument to see how changes in economic growth would affect market outcomes. (reverse Causality)</p>
+<p>To do this, Bartik (1991) suggests, that it could be possible to create an instrument, making use of only exogenous variations, to first predict Potential local growth.</p>
+<ol type="1">
+<li>Estimate <strong>industry</strong> shares by local region, based on some Ex ante information.</li>
+<li>Estimate national growth (which should be exogenous to local growth)</li>
+<li>Estimate Potential Local growth using Shares x growth</li>
+</ol>
+<p>This last one should represent the instrument to be used on actual local growth</p>
+<p>This instrument depends strongly on the assumption that <strong>Shares</strong> are exogenous/</p>
+</section></section>
+<section id="til-next-time-matching" class="title-slide slide level1 center">
+<h1>Til Next time: Matching</h1>
 <div class="footer footer-default">
 
 </div>

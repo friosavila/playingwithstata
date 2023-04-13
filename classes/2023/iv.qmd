@@ -192,13 +192,224 @@ The *treatment* here is very small (Small changes in z). The intuition is that w
 
 Adding controls to the model is also straight forward, and you have quite a few options for it
 
-1. Adding exogenous controls may help improving model precision, even if instrument was randomized. 
-   
-   they must be added for both the treatment and outcome models
+1. Adding exogenous controls may help improving model precision, even if instrument was randomized. The easiest way to do this is by applying the 2sls procedure (among others)
 
 $$
 \begin{aligned}
-d = z\gamma_z + x\gamma_x + e_1  \\
-y = z\beta_z + x\delta + e_1
+1st: d = z\gamma_z + x\gamma_x + e_1  \\
+2nd: y = x\beta_x + \delta \hat d+ e_2
 \end{aligned}
 $$
+
+- The 1st stage "randomizes" instrument to measure the effect on treatment. 
+
+- The 2nd stage uses predicted values of the first to see what the impact on the outcome will be.
+
+- This works because $\hat d$ is exogenous, "carrying over" exogenous changes in the treatment. 
+
+## Extension 2: Controls 
+
+One can also think of the approach as a pseudo Wald Estimator, with continuous variables:
+
+$$
+\begin{aligned}
+1st: d &= \gamma_z * z + x\gamma_x + e_1  \\
+rd:  y &= \beta_z  * z+ x\beta_x + e_2 \\
+ATE &=\frac{\beta_z}{\gamma_z}=\frac{cov(y,\tilde z)}{cov(d,\tilde z)}
+\end{aligned}
+$$
+
+This compare averages changes in the outcome to average changes in the treatment.
+
+## Extension 3: Multiple Endogenous Variables
+
+Although less common in Causal Analysis perspective, in other frameworks one may to consider more than 1 instrument or using instrument interactions. In these cases one still has two alternatives
+
+1. 2SLS: One can model more than one endogenous variable at the same time, simply substituting the predicted values in the main regression. When using interactions, or polynomials, each will need its own first stage regression.
+2. Control function approach. In contrast with the "prediction subtstitution" approach, this method suggests using a "residual inclusion approach". This controls for endogeneity directly. If there is only one endogenous variable (with interactions of polynomials) only one model is needed.
+
+In the first case, you need at least 1 instrument per regression. Even if its just a transformation of the original variable
+
+In the second case, you need at least 1 instrument per endogenous variable. 
+
+## Instrument Validity
+
+As mentioned earlier, Instruments require at least to fullfill two conditions:
+
+- **Relevant**. They need to be Strongly related to the endogenous variable
+- **Exogenous**. instruments should not and cannot be endogenous. In fact, you want instruments that are as good as random, thus not defined by the "system" in anyway.
+
+## IV Validity: Exogeneity
+
+Unfortunately, for most cases, this assumption is not testable, because we do not observe the model unobservables, thus dont know if $z$ is related to those unobserved components.
+
+While most efforts for these are done through model design, or argumentation, there are at least 2 options to verify the exogeneity
+
+1. If truly exogenous, the instrument should be as good as random. Thus controls shouldnt be affected by the instrument. (Balance test)
+   
+2. Otherwise, one could test for exogeneity only by comparing Estimates across different IV's. Different results may suggest instrumments are invalid.
+   
+   - Run a regression of Residuals from the main model against all exogenous variables plus other instruments.
+
+Note: Unless the instrument was randomized, assumed is going to be slighly endogenous.
+
+## IV Validity: strength
+
+The only thing we could probably do is try to analyze model strength. How much does the instrument affect treatment take up? is the effect marginal? or a large effect?
+
+Weaker instruments may be create larger problems on the analysis because:
+
+1. With weaker instruments, the precision of the estimator drops substantially.
+2. With weaker instruments, any "endogeneity" problem (even due to randomness) will generate a bias
+
+- Stock and Yogo (2005) suggest and F~13.9 (or higher) for a 5% bias
+- Lee, et al (2020) suggest you need even higher F's if you want to avoid problems with CI
+
+## IV Strength
+
+Notice Bias with Weak Instruments:
+
+```stata
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+     b1_b_c1 |        991    139.2814     27.3981   58.59376   257.7574
+     b1_b_c2 |        991    .9874847    .3060169  -.0509955   1.857092
+     b1_b_c3 |        991    .3044599    .0326545   .2220692   .4777986
+     b1_b_c4 |        991     3.33866    1.228425  -.1393513   7.304715
+-------------+---------------------------------------------------------
+     b2_b_c1 |        991     18.5753    8.880913   1.104271   56.66291
+     b2_b_c2 |        991    .9161109    .7788409  -3.749899   2.948366
+     b2_b_c3 |        991    .7901266    .3263594   .3677861   3.856925
+     b2_b_c4 |        991    1.486873    1.238263  -1.242283   5.600827
+-------------+---------------------------------------------------------
+     b3_b_c1 |        991    7.329736    5.352335   .0126054   40.82824
+     b3_b_c2 |        991    .6891979    2.611228  -40.78007   26.50793
+     b3_b_c3 |        991     2.87683     14.8956   .4277885   311.2773
+     b3_b_c4 |        991    .9828429     1.13565  -1.124282   4.969245
+-------------+---------------------------------------------------------
+     b4_b_c1 |        991    4.206627    3.885072   .0000288   27.33819
+     b4_b_c2 |        991    .7767246    4.421099  -41.27678   46.78173
+     b4_b_c3 |        991    15.69515    259.8914   .5105977   8104.976
+     b4_b_c4 |        991    .7798746     1.03038   -1.11632   4.701989
+```
+
+## IV Strength Solution: weakiv
+
+Weak IV's are a problem in the sense that it may induce bias on the estiamted coefficients, but also that it may affect how Standard Errors are estimated
+
+One solution, in this case, is at least adjusting SE So they better reflect the problem.
+
+In Stata, this can be done with `weakiv` (ssc install weakiv)
+
+At the end, however, if you weak instruments, you may be able to correct of potential biases, but you may need to get 
+more data, or better instruments
+
+## LATE: Local Average Treatement Effect
+
+Up to this point, we imposed the assumption that TE were homogenous. Thus, IV could identify Treatment effects for everyone. (Average Treatment effect)
+
+However, not everyone may be affected by the instrument, only by the compliers.
+
+Two ways of thinking about it:
+
+1. Not everybody is affected by the instrument. (you have the always and never takers) 
+2. the instrument was never suppoused to affect certain groups!
+
+So, IV will identify TE for the compliers only.
+
+Because of this, using different instruments may actually identify different effects, based on which population was affected
+
+## Simulation Example:
+
+```{stata}
+*| echo: true
+clear
+set obs 10000
+gen sex = rnormal()>0
+gen z1 = rnormal()>0
+gen z2 = rnormal()>0
+gen e_1 =rnormal()
+gen e_2 =rnormal()
+gen e_3 =rnormal()
+gen D =(z1*(sex==0) + z2*(sex==1) + (e_1 + e_2)*.5)>0
+gen Ds =(  (e_1 + e_2)*.5)>0
+gen y = 1 + D*(sex==0) +2*D*(sex==1)+e_3+e_2
+```
+
+```{stata}
+%%echo
+ivregress 2sls y (D=z1)
+ivregress 2sls y (D=z2)
+ivregress 2sls y (D=z1 z2)
+```
+
+# Popular IV Designs
+
+## Canonical Designs
+
+- The general message about using IV's is, and has always been, that they are hard to come by.
+
+- Applied research spends a quite good amount of time explaining why a particular instrument **IS** valid. (exogenous and relevant)
+
+- Relevance is generally easy to test, but exogeneity is difficult. Little can be done other than relying in other papers, and circumstances.
+
+- There are also those "clever" IVs, that tend to be case specific 
+  - Scott Cunningham talks about Instruments being "weird", because you wouldnt expect them to be in the context of the research
+
+- There are, however, some designs that are used quite often, because they apply to different circumstances.
+
+## CD: Lotteries
+
+- In RCT, Lotteries are commonly used to decide who gets or doesnt get treatment among participants. Once treatment is assigned, however, not everyone will effectively taking up the treatment. 
+  - Furthermore, some people may still end up being effectively treated because of other factors. 
+- This is a case of imperfect compliance. 
+
+- In cases like this, the lottery itself (which is randomized) can be used as instrument to identify the effect of being effectively treated. 
+
+Examples:
+
+- Vietnam Draft Lottery
+- Oregon Medicaid Expansion Lottery
+
+## CD: Judge Fixed Effects
+
+This design is also partially based on a kind of randomized assigment.
+
+1. Individuals are "allocated" to work, or be judge, under different officers "judges", at random.
+2. Judges are consistent among each other, with only difference being the severity of the judgment.
+3. Then Judge fixed effect can be used as an instrument on the judgment (treatment), and the final impact on the outcome of interest.
+
+The idea here is that "judgment-severity" varies by judge. This difference in taste creates exogenous variation on some treatment, which is analyzed on some treatment.
+
+Example:
+
+- Teachers Grading?
+- Driving test officers?
+- Performance tests?
+
+## CD: Shift-Share Bartik Instrument
+
+Originally used in a study of regional labor market effects, this kind of instruments have also been used widely in other areas, such as imigration and trade.
+
+The instrument was developed to createa an instrument to see how changes in economic growth would affect market outcomes. (reverse Causality)
+
+To do this, Bartik (1991) suggests, that it could be possible to create an instrument, making use of only exogenous variations, to first predict Potential local growth.
+
+1. Estimate **industry** shares by local region, based on some Ex ante information.
+2. Estimate national growth (which should be exogenous to local growth)
+3. Estimate Potential Local growth using Shares x growth
+
+This last one should represent the instrument to be used on actual local growth
+
+This instrument depends strongly on the assumption that **Shares** are exogenous/
+
+# Til Next time: Matching
+
+
+
+
+
+
+
+
+
