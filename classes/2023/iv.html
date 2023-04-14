@@ -388,6 +388,9 @@
   <script src="iv_files/libs/quarto-diagram/mermaid.min.js"></script>
   <script src="iv_files/libs/quarto-diagram/mermaid-init.js"></script>
   <link href="iv_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+  <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -738,16 +741,21 @@ ATE &amp;=\frac{\beta_z}{\gamma_z}=\frac{cov(y,\tilde z)}{cov(d,\tilde z)}
 <span id="cb2-21"><a href="#cb2-21"></a>  md5_b_beta |        494    .7696057    1.443986  -6.293723   8.951643</span>
 <span id="cb2-22"><a href="#cb2-22"></a>md5_b_beta~<span class="fu">e</span> |        494     1.69479    1.866909    .530196    18.3837</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="iv-strength-1" class="slide level2">
-<h2>IV Strength</h2>
+<section id="iv-strength-bias-distribution" class="slide level2">
+<h2>IV Strength: Bias distribution</h2>
 
 <img data-src="iv_files/cmb.png" class="r-stretch"></section>
 <section id="iv-strength-solution-weakiv" class="slide level2">
-<h2>IV Strength Solution: weakiv</h2>
-<p>Weak IV’s are a problem in the sense that it may induce bias on the estiamted coefficients, but also that it may affect how Standard Errors are estimated</p>
-<p>One solution, in this case, is at least adjusting SE So they better reflect the problem.</p>
-<p>In Stata, this can be done with <code>weakiv</code> (ssc install weakiv)</p>
-<p>At the end, however, if you weak instruments, you may be able to correct of potential biases, but you may need to get more data, or better instruments</p>
+<h2>IV Strength Solution: <code>weakiv</code></h2>
+<ul>
+<li><p>Weak IV’s are a problem in the sense that it may induce bias on the estimated coefficients, but also that it may affect how Standard Errors are estimated.</p>
+<ul>
+<li>The distribution of the Statistic is no longer normal</li>
+</ul></li>
+<li><p>One solution, in this case, is at least adjusting SE and CI So they better reflect the problem.</p></li>
+<li><p>In Stata, this can be done with <code>weakiv</code> (ssc install weakiv)</p></li>
+<li><p>At the end, however, if you weak instruments, you may be able to correct of potential biases, but you may need to get more data, or better instruments</p></li>
+</ul>
 </section>
 <section id="late-local-average-treatement-effect" class="slide level2">
 <h2>LATE: Local Average Treatement Effect</h2>
@@ -759,7 +767,8 @@ ATE &amp;=\frac{\beta_z}{\gamma_z}=\frac{cov(y,\tilde z)}{cov(d,\tilde z)}
 <li>the instrument was never suppoused to affect certain groups!</li>
 </ol>
 <p>So, IV will identify TE for the compliers only.</p>
-<p>Because of this, using different instruments may actually identify different effects, based on which population was affected</p>
+<p>Because of this, using different instruments may actually identify different effects, based on which population was affected.</p>
+<p>Overid tests may fail in this case.</p>
 </section>
 <section id="simulation-example" class="slide level2">
 <h2>Simulation Example:</h2>
@@ -785,16 +794,16 @@ ATE &amp;=\frac{\beta_z}{\gamma_z}=\frac{cov(y,\tilde z)}{cov(d,\tilde z)}
 . ivregress 2sls y (D=z1)
 
 Instrumental variables 2SLS regression            Number of obs   =     10,000
-                                                  Wald chi2(1)    =      31.40
+                                                  Wald chi2(1)    =      68.61
                                                   Prob &gt; chi2     =     0.0000
-                                                  R-squared       =     0.2144
-                                                  Root MSE        =      1.577
+                                                  R-squared       =     0.2706
+                                                  Root MSE        =     1.5526
 
 ------------------------------------------------------------------------------
            y | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-           D |   .8139011   .1452389     5.60   0.000     .5292382    1.098564
-       _cons |   1.485753   .1038877    14.30   0.000     1.282137    1.689369
+           D |   1.170842   .1413543     8.28   0.000     .8937923    1.447891
+       _cons |   1.233464   .1015275    12.15   0.000     1.034474    1.432455
 ------------------------------------------------------------------------------
 Instrumented: D
  Instruments: z1
@@ -802,16 +811,16 @@ Instrumented: D
 . ivregress 2sls y (D=z2)
 
 Instrumental variables 2SLS regression            Number of obs   =     10,000
-                                                  Wald chi2(1)    =     247.48
+                                                  Wald chi2(1)    =     211.38
                                                   Prob &gt; chi2     =     0.0000
-                                                  R-squared       =     0.3798
-                                                  Root MSE        =     1.4011
+                                                  R-squared       =     0.3558
+                                                  Root MSE        =     1.4591
 
 ------------------------------------------------------------------------------
            y | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-           D |    2.19527   .1395448    15.73   0.000     1.921768    2.468773
-       _cons |   .5091245   .0996481     5.11   0.000     .3138178    .7044312
+           D |   1.948051   .1339876    14.54   0.000      1.68544    2.210662
+       _cons |   .6818014   .0962172     7.09   0.000     .4932192    .8703836
 ------------------------------------------------------------------------------
 Instrumented: D
  Instruments: z2
@@ -819,16 +828,16 @@ Instrumented: D
 . ivregress 2sls y (D=z1 z2)
 
 Instrumental variables 2SLS regression            Number of obs   =     10,000
-                                                  Wald chi2(1)    =     213.92
+                                                  Wald chi2(1)    =     257.90
                                                   Prob &gt; chi2     =     0.0000
-                                                  R-squared       =     0.3217
-                                                  Root MSE        =     1.4653
+                                                  R-squared       =     0.3223
+                                                  Root MSE        =     1.4966
 
 ------------------------------------------------------------------------------
            y | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-           D |   1.450562   .0991776    14.63   0.000     1.256177    1.644947
-       _cons |   1.035633   .0716334    14.46   0.000     .8952346    1.176032
+           D |   1.556085   .0968958    16.06   0.000     1.366172    1.745997
+       _cons |   .9600188   .0703862    13.64   0.000     .8220643    1.097973
 ------------------------------------------------------------------------------
 Instrumented: D
  Instruments: z1 z2
@@ -882,26 +891,25 @@ Instrumented: D
 <p>The idea here is that “judgment-severity” varies by judge. This difference in taste creates exogenous variation on some treatment, which is analyzed on some treatment.</p>
 <p>Example:</p>
 <ul>
-<li>Teachers Grading?</li>
-<li>Driving test officers?</li>
-<li>Performance tests?</li>
+<li>Teachers Grading? Driving test officers? Performance tests?</li>
 </ul>
 </section>
 <section id="cd-shift-share-bartik-instrument" class="slide level2">
 <h2>CD: Shift-Share Bartik Instrument</h2>
 <p>Originally used in a study of regional labor market effects, this kind of instruments have also been used widely in other areas, such as imigration and trade.</p>
-<p>The instrument was developed to createa an instrument to see how changes in economic growth would affect market outcomes. (reverse Causality)</p>
+<p>The instrument was developed to analyze how changes in economic growth would affect market outcomes. (reverse Causality)</p>
 <p>To do this, Bartik (1991) suggests, that it could be possible to create an instrument, making use of only exogenous variations, to first predict Potential local growth.</p>
 <ol type="1">
 <li>Estimate <strong>industry</strong> shares by local region, based on some Ex ante information.</li>
-<li>Estimate national growth (which should be exogenous to local growth)</li>
+<li>Estimate national growth by industry (which should be exogenous to local growth)</li>
 <li>Estimate Potential Local growth using Shares x growth</li>
 </ol>
 <p>This last one should represent the instrument to be used on actual local growth</p>
-<p>This instrument depends strongly on the assumption that <strong>Shares</strong> are exogenous/</p>
+<p>This instrument depends strongly on the assumption that <strong>Shares</strong> are exogenous, and states are small compare to the national experience.</p>
 </section></section>
-<section id="til-next-time-matching" class="title-slide slide level1 center">
-<h1>Til Next time: Matching</h1>
+<section id="til-next-time-matching-and-reweithing" class="title-slide slide level1 center">
+<h1>Til Next time: Matching and Reweithing</h1>
+<p>Also Dan: Instrumental Variables Presentation Also Nitin: Matching</p>
 <div class="footer footer-default">
 
 </div>
