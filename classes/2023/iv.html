@@ -8,7 +8,7 @@
 <link href="iv_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="iv_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="iv_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.3.313">
+  <meta name="generator" content="quarto-1.3.299">
 
   <meta name="author" content="Fernando Rios-Avila">
   <title>Instrumental Variables</title>
@@ -388,9 +388,6 @@
   <script src="iv_files/libs/quarto-diagram/mermaid.min.js"></script>
   <script src="iv_files/libs/quarto-diagram/mermaid-init.js"></script>
   <link href="iv_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
-  <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -427,7 +424,7 @@ Fernando Rios-Avila
 <p>but how?</p>
 <ul>
 <li><p>If the instrument is good, it may create an exogenous variation, which will allow us to identify Treatment effects by looking ONLY at those affected by the treatment!</p></li>
-<li><p>Using the external variation, we can Estimate TE comparing two groups who are identical in every aspect, except being treated. The randomization comes Because of the IV!</p></li>
+<li><p>Using the external variation, we can Estimate TE comparing two groups who are identical in every aspect, except being expose to the Instrument, because they were exposed to the instrument. The randomization comes Because of the IV!</p></li>
 </ul>
 </section>
 <section id="cannonical-iv" class="slide level2">
@@ -526,13 +523,21 @@ e( error ) --&gt; Y(Outcome)
 <li>People with high ability, also earn higher wages.</li>
 </ul>
 <p>Does Studying more generate higher wages?</p>
-<p><strong>Instrument</strong>. We create a lottery that provides some people resources to pay for their education. This gives them a chance to study more. <span class="math display">\[Z \rightarrow D\]</span></p>
+<p><strong>Instrument</strong>. We create a lottery that provides some people resources to pay for their education. This gives them a chance to study more (regardless of ability). <span class="math display">\[Z \rightarrow D\]</span></p>
 </section>
 <section id="section" class="slide level2">
 <h2></h2>
 <p>So, we know the instrument was <strong>Random</strong>. We can analyze how much outcome increases among those benefited by the Lottery.</p>
 <p><span class="math display">\[E(W|Z=1)-E(W|Z=0)\]</span></p>
-<p>This is often called the <strong>reduced form</strong> effect. In principle, <span class="math inline">\(Z\)</span> only affects wages because of education. So looking at this differences should be similar to a treatment effect of Lotteries (or the intention of lotteries). But not everyone will Study more…So we can see if the lotery had that effect.</p>
+<ul>
+<li><p>This is often called the <strong>reduced form</strong> effect.</p></li>
+<li><p>In principle, <span class="math inline">\(Z\)</span> only affects wages because of education. So looking at this differences should be similar to a treatment effect of Lotteries.</p></li>
+<li><p>These are also known as Intention to treatment effect. Which will bias towards zero, because not everyone will effectively make use of the opporunities</p></li>
+</ul>
+</section>
+<section id="section-1" class="slide level2">
+<h2></h2>
+<p>In othe words, not everyone will Study more…So we can see if the lotery had that effect.</p>
 <p><span class="math display">\[E(S|Z=1)-E(S|Z=0)\]</span></p>
 <p>This is the equivalent to the first stage. Where we measure the impact of the “instrument/lottery” on Education (to see, say, relevance)</p>
 <p>Finally, the TE is given by the Ratio of thes two</p>
@@ -554,8 +559,8 @@ e( error ) --&gt; Y(Outcome)
 <li>We make the RCT above giving bouchers to People so they Study more.</li>
 <li>But, not everybody uses the bouchers:
 <ul>
-<li>Some use the bouchers</li>
 <li>Some use them and study more.</li>
+<li>Some decide to not use them.</li>
 </ul></li>
 </ul>
 <p>Comparing Wages among those who receive will only provide you the “intention to treat” effect. (<strong>Reduced form</strong>)</p>
@@ -564,11 +569,12 @@ e( error ) --&gt; Y(Outcome)
 <section id="more-comments" class="slide level2">
 <h2>More Comments</h2>
 <ul>
-<li><p>in this scenario. the Reduced form and second stage can be estimated by just comparing means, because the treatment was randonmized.</p>
+<li><p>In this scenario the Reduced form and second stage can be estimated by just comparing means, because the treatment was randonmized.</p>
 <ul>
 <li>In other words, something you really want is an instrument that is as good as random.</li>
 </ul></li>
 <li><p>The effect we capture is a LOCAL treatment effect (LATE).</p></li>
+<li></li>
 <li><p>However, it could be an ATE if:</p>
 <ul>
 <li>The effect is homogenous for everyone.</li>
@@ -582,9 +588,12 @@ e( error ) --&gt; Y(Outcome)
 <h2>Who Are Affected and who are not?</h2>
 <p>Even if we are able to identify ATEs, its important to understand who can be affected by the instrument, because the population is generally selected in 3 groups</p>
 <ul>
-<li><strong>never takers</strong> &amp; <strong>always takers</strong>: These are the individuals who would have never done anything different than their normal.</li>
-<li><strong>Compliers</strong>: These are the ones who, given they receive “instrument”, they comply and follow up. We use their variation for analysis</li>
-<li><strong>defiers</strong>: These are the ones who, given Z, will do the oppsite. We cannot differentiate them from Compliers, so they will affect how treatment is estimated.</li>
+<li><strong>never takers</strong> &amp; <strong>always takers</strong>: These are the individuals who would have never done anything different than their normal.
+<ul>
+<li>Perhaps their likelihood was already too low (or high) to be affected.</li>
+</ul></li>
+<li><strong>Compliers</strong>: These are the ones who, given they receive “instrument”, they comply and follow up. We use their variation for analysis.</li>
+<li><strong>Defiers</strong>: These are the ones who, given Z, will do the oposite. We cannot differentiate them from Compliers, so they will affect how treatment is estimated.</li>
 </ul>
 <p>We do not want to have defiers!</p>
 </section>
@@ -595,7 +604,7 @@ e( error ) --&gt; Y(Outcome)
 \delta_{IV} = \frac{cov(y,z)}{cov(d,z)}
 \]</span></p>
 <p>The logic remains. We are trying to see how variation in the outcome related to Z reates to changes in treatment because of Z.</p>
-<p>The <em>treatment</em> here is very small (Small changes in z). The intuition is that we are averaging the variation in the outcome across all Zs to estimate the effect.</p>
+<p>The <em>treatment</em> here is very small (Small changes in d). The intuition is that we are averaging the variation in the outcome across all Zs to estimate the effect.</p>
 </section>
 <section id="extension-2-controls" class="slide level2">
 <h2>Extension 2: Controls</h2>
@@ -625,21 +634,21 @@ rd:  y &amp;= \beta_z  * z+ x\beta_x + e_2 \\
 ATE &amp;=\frac{\beta_z}{\gamma_z}=\frac{cov(y,\tilde z)}{cov(d,\tilde z)}
 \end{aligned}
 \]</span></p>
-<p>This compare averages changes in the outcome to average changes in the treatment.</p>
+<p>This compares average changes in the outcome to average changes in the treatment.</p>
 </section>
 <section id="extension-3-multiple-endogenous-variables" class="slide level2">
 <h2>Extension 3: Multiple Endogenous Variables</h2>
 <p>Although less common in Causal Analysis perspective, in other frameworks one may to consider more than 1 instrument or using instrument interactions. In these cases one still has two alternatives</p>
 <ol type="1">
-<li>2SLS: One can model more than one endogenous variable at the same time, simply substituting the predicted values in the main regression. When using interactions, or polynomials, each will need its own first stage regression.</li>
-<li>Control function approach. In contrast with the “prediction subtstitution” approach, this method suggests using a “residual inclusion approach”. This controls for endogeneity directly. If there is only one endogenous variable (with interactions of polynomials) only one model is needed.</li>
+<li><strong>2SLS</strong>: One can model more than one endogenous variable at the same time, simply substituting the predicted values in the main regression. When using interactions, or polynomials, each will need its own first stage regression.</li>
+<li><strong>Control function approach</strong>. In contrast with the “prediction subtstitution” approach, this method suggests using a “residual inclusion approach”. This controls for endogeneity directly. If there is only one endogenous variable (with interactions of polynomials) only one model is needed.</li>
 </ol>
 <p>In the first case, you need at least 1 instrument per regression. Even if its just a transformation of the original variable</p>
 <p>In the second case, you need at least 1 instrument per endogenous variable.</p>
 </section>
 <section id="instrument-validity" class="slide level2">
 <h2>Instrument Validity</h2>
-<p>As mentioned earlier, Instruments require at least to fullfill two conditions:</p>
+<p>As mentioned earlier, Instruments require to fullfill two conditions:</p>
 <ul>
 <li><strong>Relevant</strong>. They need to be Strongly related to the endogenous variable</li>
 <li><strong>Exogenous</strong>. instruments should not and cannot be endogenous. In fact, you want instruments that are as good as random, thus not defined by the “system” in anyway.</li>
@@ -651,7 +660,7 @@ ATE &amp;=\frac{\beta_z}{\gamma_z}=\frac{cov(y,\tilde z)}{cov(d,\tilde z)}
 <p>While most efforts for these are done through model design, or argumentation, there are at least 2 options to verify the exogeneity</p>
 <ol type="1">
 <li><p>If truly exogenous, the instrument should be as good as random. Thus controls shouldnt be affected by the instrument. (Balance test)</p></li>
-<li><p>Otherwise, one could test for exogeneity only by comparing Estimates across different IV’s. Different results may suggest instrumments are invalid.</p>
+<li><p>Otherwise, one could test for exogeneity only by comparing Estimates across different IV’s. Different results may suggest instruments are invalid.</p>
 <ul>
 <li>Run a regression of Residuals from the main model against all exogenous variables plus other instruments.</li>
 </ul></li>
@@ -659,9 +668,9 @@ ATE &amp;=\frac{\beta_z}{\gamma_z}=\frac{cov(y,\tilde z)}{cov(d,\tilde z)}
 <p>Note: Unless the instrument was randomized, assumed is going to be slighly endogenous.</p>
 </section>
 <section id="iv-validity-strength" class="slide level2">
-<h2>IV Validity: strength</h2>
+<h2>IV Validity: Strength</h2>
 <p>The only thing we could probably do is try to analyze model strength. How much does the instrument affect treatment take up? is the effect marginal? or a large effect?</p>
-<p>Weaker instruments may be create larger problems on the analysis because:</p>
+<p>Weaker instruments may create larger problems on the analysis because:</p>
 <ol type="1">
 <li>With weaker instruments, the precision of the estimator drops substantially.</li>
 <li>With weaker instruments, any “endogeneity” problem (even due to randomness) will generate a bias</li>
@@ -670,32 +679,69 @@ ATE &amp;=\frac{\beta_z}{\gamma_z}=\frac{cov(y,\tilde z)}{cov(d,\tilde z)}
 <li>Stock and Yogo (2005) suggest and F~13.9 (or higher) for a 5% bias</li>
 <li>Lee, et al (2020) suggest you need even higher F’s if you want to avoid problems with CI</li>
 </ul>
+<ol start="3" type="1">
+<li>With weak instruments, distribution of beta coefficients will no longer be normal!</li>
+</ol>
 </section>
-<section id="iv-strength" class="slide level2">
+<section id="iv-strength" class="slide level2 scrollable">
 <h2>IV Strength</h2>
-<p>Notice Bias with Weak Instruments:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1"></a>    Variable |        Obs        Mean    Std. <span class="kw">dev</span>.       Min        Max</span>
-<span id="cb1-2"><a href="#cb1-2"></a>-------------+---------------------------------------------------------</span>
-<span id="cb1-3"><a href="#cb1-3"></a>     b1_b_c1 |        991    139.2814     27.3981   58.59376   257.7574</span>
-<span id="cb1-4"><a href="#cb1-4"></a>     b1_b_c2 |        991    .9874847    .3060169  -.0509955   1.857092</span>
-<span id="cb1-5"><a href="#cb1-5"></a>     b1_b_c3 |        991    .3044599    .0326545   .2220692   .4777986</span>
-<span id="cb1-6"><a href="#cb1-6"></a>     b1_b_c4 |        991     3.33866    1.228425  -.1393513   7.304715</span>
-<span id="cb1-7"><a href="#cb1-7"></a>-------------+---------------------------------------------------------</span>
-<span id="cb1-8"><a href="#cb1-8"></a>     b2_b_c1 |        991     18.5753    8.880913   1.104271   56.66291</span>
-<span id="cb1-9"><a href="#cb1-9"></a>     b2_b_c2 |        991    .9161109    .7788409  -3.749899   2.948366</span>
-<span id="cb1-10"><a href="#cb1-10"></a>     b2_b_c3 |        991    .7901266    .3263594   .3677861   3.856925</span>
-<span id="cb1-11"><a href="#cb1-11"></a>     b2_b_c4 |        991    1.486873    1.238263  -1.242283   5.600827</span>
-<span id="cb1-12"><a href="#cb1-12"></a>-------------+---------------------------------------------------------</span>
-<span id="cb1-13"><a href="#cb1-13"></a>     b3_b_c1 |        991    7.329736    5.352335   .0126054   40.82824</span>
-<span id="cb1-14"><a href="#cb1-14"></a>     b3_b_c2 |        991    .6891979    2.611228  -40.78007   26.50793</span>
-<span id="cb1-15"><a href="#cb1-15"></a>     b3_b_c3 |        991     2.87683     14.8956   .4277885   311.2773</span>
-<span id="cb1-16"><a href="#cb1-16"></a>     b3_b_c4 |        991    .9828429     1.13565  -1.124282   4.969245</span>
-<span id="cb1-17"><a href="#cb1-17"></a>-------------+---------------------------------------------------------</span>
-<span id="cb1-18"><a href="#cb1-18"></a>     b4_b_c1 |        991    4.206627    3.885072   .0000288   27.33819</span>
-<span id="cb1-19"><a href="#cb1-19"></a>     b4_b_c2 |        991    .7767246    4.421099  -41.27678   46.78173</span>
-<span id="cb1-20"><a href="#cb1-20"></a>     b4_b_c3 |        991    15.69515    259.8914   .5105977   8104.976</span>
-<span id="cb1-21"><a href="#cb1-21"></a>     b4_b_c4 |        991    .7798746     1.03038   -1.11632   4.701989</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">program</span> simx, <span class="kw">eclass</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a>  <span class="kw">clear</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a>  <span class="kw">set</span> <span class="kw">obs</span> 500</span>
+<span id="cb1-4"><a href="#cb1-4"></a>  <span class="kw">gen</span> z=rnormal()&gt;0</span>
+<span id="cb1-5"><a href="#cb1-5"></a>  <span class="kw">gen</span> u1=rnormal()</span>
+<span id="cb1-6"><a href="#cb1-6"></a>  <span class="kw">gen</span> u2=rnormal()</span>
+<span id="cb1-7"><a href="#cb1-7"></a>  <span class="kw">gen</span> u3=rnormal()</span>
+<span id="cb1-8"><a href="#cb1-8"></a>  <span class="kw">forvalues</span> i = 1/5 {</span>
+<span id="cb1-9"><a href="#cb1-9"></a>    <span class="kw">gen</span> d<span class="ot">`i'</span> = ((-0.5+z)*(3-0.5*<span class="ot">`i'</span>) + (u1 + u2))&gt;0</span>
+<span id="cb1-10"><a href="#cb1-10"></a>    <span class="kw">gen</span> y<span class="ot">`i'</span> = 1 + d<span class="ot">`i'</span>+u3+u2</span>
+<span id="cb1-11"><a href="#cb1-11"></a>  }</span>
+<span id="cb1-12"><a href="#cb1-12"></a>  <span class="kw">forvalues</span> i = 1/5 {</span>
+<span id="cb1-13"><a href="#cb1-13"></a>    <span class="kw">reg</span> d<span class="ot">`i'</span> z</span>
+<span id="cb1-14"><a href="#cb1-14"></a>    <span class="fu">matrix</span> b<span class="ot">`i'</span> =_b[z]/_se[z]</span>
+<span id="cb1-15"><a href="#cb1-15"></a>    ivregress  2sls y<span class="ot">`i'</span> (d<span class="ot">`i'</span>=z)</span>
+<span id="cb1-16"><a href="#cb1-16"></a>    <span class="fu">matrix</span> b<span class="ot">`i'</span> = b<span class="ot">`i'</span>,_b[d<span class="ot">`i'</span>],_se[d<span class="ot">`i'</span>],_b[d<span class="ot">`i'</span>]/_se[d<span class="ot">`i'</span>]</span>
+<span id="cb1-17"><a href="#cb1-17"></a>    <span class="fu">matrix</span> colname b<span class="ot">`i'</span>=f_stat beta beta_se beta_t</span>
+<span id="cb1-18"><a href="#cb1-18"></a>    <span class="fu">matrix</span> <span class="ot">coleq</span> b<span class="ot">`i'</span>=md<span class="ot">`i'</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a>  }</span>
+<span id="cb1-20"><a href="#cb1-20"></a>  <span class="fu">matrix</span> b=b1</span>
+<span id="cb1-21"><a href="#cb1-21"></a>  <span class="kw">forvalues</span> i = 2/5 {</span>
+<span id="cb1-22"><a href="#cb1-22"></a>    <span class="fu">matrix</span> b=b,b<span class="ot">`i'</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a>  }</span>
+<span id="cb1-24"><a href="#cb1-24"></a>  <span class="kw">ereturn</span> <span class="kw">post</span> b</span>
+<span id="cb1-25"><a href="#cb1-25"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb2-1"><a href="#cb2-1"></a></span>
+<span id="cb2-2"><a href="#cb2-2"></a>    Variable |        Obs        Mean    Std. <span class="kw">dev</span>.       Min        Max</span>
+<span id="cb2-3"><a href="#cb2-3"></a>-------------+---------------------------------------------------------</span>
+<span id="cb2-4"><a href="#cb2-4"></a>md1_b_f_stat |        494    189.9262    38.63693   101.8865   337.4117</span>
+<span id="cb2-5"><a href="#cb2-5"></a>  md1_b_beta |        494    .9912474    .2289997   .1758122    1.64053</span>
+<span id="cb2-6"><a href="#cb2-6"></a>md1_b_beta~<span class="fu">e</span> |        494    .2440663    .0235266   .1867024   .3293121</span>
+<span id="cb2-7"><a href="#cb2-7"></a>-------------+---------------------------------------------------------</span>
+<span id="cb2-8"><a href="#cb2-8"></a>md2_b_f_stat |        494    43.33591    13.76347   12.07967   101.6624</span>
+<span id="cb2-9"><a href="#cb2-9"></a>  md2_b_beta |        494    .9717824    .4421832  -.8390987   2.327243</span>
+<span id="cb2-10"><a href="#cb2-10"></a>md2_b_beta~<span class="fu">e</span> |        494    .4711093    .0945389   .3032212   .9873207</span>
+<span id="cb2-11"><a href="#cb2-11"></a>-------------+---------------------------------------------------------</span>
+<span id="cb2-12"><a href="#cb2-12"></a>md3_b_f_stat |        494    19.25043     8.81203   2.051613   61.55846</span>
+<span id="cb2-13"><a href="#cb2-13"></a>  md3_b_beta |        494    .9354647    .6820819  -1.964163   2.996998</span>
+<span id="cb2-14"><a href="#cb2-14"></a>md3_b_beta~<span class="fu">e</span> |        494    .7430147    .2493365    .383426    2.16554</span>
+<span id="cb2-15"><a href="#cb2-15"></a>-------------+---------------------------------------------------------</span>
+<span id="cb2-16"><a href="#cb2-16"></a>md4_b_f_stat |        494    11.19082    6.428525   .0483399   38.44057</span>
+<span id="cb2-17"><a href="#cb2-17"></a>  md4_b_beta |        494    .8711808    .9987467  -4.383311   5.634943</span>
+<span id="cb2-18"><a href="#cb2-18"></a>md4_b_beta~<span class="fu">e</span> |        494    1.135114    1.244907   .4609722   25.16503</span>
+<span id="cb2-19"><a href="#cb2-19"></a>-------------+---------------------------------------------------------</span>
+<span id="cb2-20"><a href="#cb2-20"></a>md5_b_f_stat |        494    7.522731    5.144063   .0544148   28.23535</span>
+<span id="cb2-21"><a href="#cb2-21"></a>  md5_b_beta |        494    .7696057    1.443986  -6.293723   8.951643</span>
+<span id="cb2-22"><a href="#cb2-22"></a>md5_b_beta~<span class="fu">e</span> |        494     1.69479    1.866909    .530196    18.3837</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
+<section id="iv-strength-1" class="slide level2">
+<h2>IV Strength</h2>
+
+<img data-src="iv_files/cmb.png" class="r-stretch"></section>
 <section id="iv-strength-solution-weakiv" class="slide level2">
 <h2>IV Strength Solution: weakiv</h2>
 <p>Weak IV’s are a problem in the sense that it may induce bias on the estiamted coefficients, but also that it may affect how Standard Errors are estimated</p>
@@ -717,41 +763,38 @@ ATE &amp;=\frac{\beta_z}{\gamma_z}=\frac{cov(y,\tilde z)}{cov(d,\tilde z)}
 </section>
 <section id="simulation-example" class="slide level2">
 <h2>Simulation Example:</h2>
-<div class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">clear</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">set</span> <span class="kw">obs</span> 10000</span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">gen</span> sex = rnormal()&gt;0</span>
-<span id="cb2-4"><a href="#cb2-4"></a><span class="kw">gen</span> z1 = rnormal()&gt;0</span>
-<span id="cb2-5"><a href="#cb2-5"></a><span class="kw">gen</span> z2 = rnormal()&gt;0</span>
-<span id="cb2-6"><a href="#cb2-6"></a><span class="kw">gen</span> e_1 =rnormal()</span>
-<span id="cb2-7"><a href="#cb2-7"></a><span class="kw">gen</span> e_2 =rnormal()</span>
-<span id="cb2-8"><a href="#cb2-8"></a><span class="kw">gen</span> e_3 =rnormal()</span>
-<span id="cb2-9"><a href="#cb2-9"></a><span class="kw">gen</span> D =(z1*(sex==0) + z2*(sex==1) + (e_1 + e_2)*.5)&gt;0</span>
-<span id="cb2-10"><a href="#cb2-10"></a><span class="kw">gen</span> Ds =(  (e_1 + e_2)*.5)&gt;0</span>
-<span id="cb2-11"><a href="#cb2-11"></a><span class="kw">gen</span> <span class="fu">y</span> = 1 + D*(sex==0) +2*D*(sex==1)+e_3+e_2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<style>div.jp-Notebook .datagrid-container {min-height: 448px; }</style>
-</div>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">clear</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">set</span> <span class="kw">obs</span> 10000</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="kw">gen</span> sex = rnormal()&gt;0</span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="kw">gen</span> z1 = rnormal()&gt;0</span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="kw">gen</span> z2 = rnormal()&gt;0</span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="kw">gen</span> e_1 =rnormal()</span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="kw">gen</span> e_2 =rnormal()</span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="kw">gen</span> e_3 =rnormal()</span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="kw">gen</span> D =(z1*(sex==0) + z2*(sex==1) + (e_1 + e_2)*.5)&gt;0</span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="kw">gen</span> Ds =(  (e_1 + e_2)*.5)&gt;0</span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="kw">gen</span> <span class="fu">y</span> = 1 + D*(sex==0) +2*D*(sex==1)+e_3+e_2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Number of observations (_N) was 0, now 10,000.</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="2">
+<div class="cell" data-execution_count="4">
 <div class="cell-output cell-output-stdout">
 <pre><code>
 . ivregress 2sls y (D=z1)
 
 Instrumental variables 2SLS regression            Number of obs   =     10,000
-                                                  Wald chi2(1)    =      68.68
+                                                  Wald chi2(1)    =      31.40
                                                   Prob &gt; chi2     =     0.0000
-                                                  R-squared       =     0.2703
-                                                  Root MSE        =      1.553
+                                                  R-squared       =     0.2144
+                                                  Root MSE        =      1.577
 
 ------------------------------------------------------------------------------
            y | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-           D |   1.168485    .140995     8.29   0.000       .89214     1.44483
-       _cons |   1.234834   .1012064    12.20   0.000     1.036473    1.433194
+           D |   .8139011   .1452389     5.60   0.000     .5292382    1.098564
+       _cons |   1.485753   .1038877    14.30   0.000     1.282137    1.689369
 ------------------------------------------------------------------------------
 Instrumented: D
  Instruments: z1
@@ -759,16 +802,16 @@ Instrumented: D
 . ivregress 2sls y (D=z2)
 
 Instrumental variables 2SLS regression            Number of obs   =     10,000
-                                                  Wald chi2(1)    =     210.31
+                                                  Wald chi2(1)    =     247.48
                                                   Prob &gt; chi2     =     0.0000
-                                                  R-squared       =     0.3557
-                                                  Root MSE        =     1.4593
+                                                  R-squared       =     0.3798
+                                                  Root MSE        =     1.4011
 
 ------------------------------------------------------------------------------
            y | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-           D |   1.945131   .1341286    14.50   0.000     1.682244    2.208018
-       _cons |   .6839587   .0962501     7.11   0.000      .495312    .8726055
+           D |    2.19527   .1395448    15.73   0.000     1.921768    2.468773
+       _cons |   .5091245   .0996481     5.11   0.000     .3138178    .7044312
 ------------------------------------------------------------------------------
 Instrumented: D
  Instruments: z2
@@ -776,16 +819,16 @@ Instrumented: D
 . ivregress 2sls y (D=z1 z2)
 
 Instrumental variables 2SLS regression            Number of obs   =     10,000
-                                                  Wald chi2(1)    =     256.88
+                                                  Wald chi2(1)    =     213.92
                                                   Prob &gt; chi2     =     0.0000
-                                                  R-squared       =     0.3219
-                                                  Root MSE        =     1.4971
+                                                  R-squared       =     0.3217
+                                                  Root MSE        =     1.4653
 
 ------------------------------------------------------------------------------
            y | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-           D |    1.55201   .0968339    16.03   0.000     1.362219    1.741801
-       _cons |   .9627992    .070297    13.70   0.000     .8250197    1.100579
+           D |   1.450562   .0991776    14.63   0.000     1.256177    1.644947
+       _cons |   1.035633   .0716334    14.46   0.000     .8952346    1.176032
 ------------------------------------------------------------------------------
 Instrumented: D
  Instruments: z1 z2

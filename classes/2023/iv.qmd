@@ -33,7 +33,7 @@ but how?
 
 - If the instrument is good, it may create an exogenous variation, which will allow us to identify Treatment effects by looking ONLY at those affected by the treatment!
 
-- Using the external variation, we can Estimate TE comparing two groups who are identical in every aspect, except being treated. The randomization comes Because of the IV!
+- Using the external variation, we can Estimate TE comparing two groups who are identical in every aspect, except being expose to the Instrument, because they were exposed to the instrument. The randomization comes Because of the IV!
 
 ## Cannonical IV 
 
@@ -112,7 +112,7 @@ Consider the following.
 
 Does Studying more generate higher wages?
 
-**Instrument**. We create a lottery that provides some people resources to pay for their education. This gives them a chance to study more.
+**Instrument**. We create a lottery that provides some people resources to pay for their education. This gives them a chance to study more (regardless of ability).
 $$Z \rightarrow D$$
 
 ## 
@@ -121,7 +121,15 @@ So, we know the instrument was **Random**. We can analyze how much outcome incre
 
 $$E(W|Z=1)-E(W|Z=0)$$
 
-This is often called the **reduced form** effect. In principle, $Z$ only affects wages because of education. So looking at this differences should be similar to a treatment effect of Lotteries (or the intention of lotteries). But not everyone will Study more...So we can see if the lotery had that effect.
+- This is often called the **reduced form** effect. 
+
+- In principle, $Z$ only affects wages because of education. So looking at this differences should be similar to a treatment effect of Lotteries.
+
+- These are also known as Intention to treatment effect. Which will bias towards zero, because not everyone will effectively make use of the opporunities
+
+##
+
+In othe words, not everyone will Study more...So we can see if the lotery had that effect.
 
 $$E(S|Z=1)-E(S|Z=0)$$
 
@@ -144,8 +152,8 @@ Consider the following:
 
 - We make the RCT above giving bouchers to People so they Study more.
 - But, not everybody uses the bouchers:
-  - Some use the bouchers 
   - Some use them and study more.
+  - Some decide to not use them.
 
 Comparing Wages among those who receive will only provide you the "intention to treat" effect. (**Reduced form**)
 
@@ -153,11 +161,12 @@ Because of imperfect compliance we need to "readjust/inflate" our TE estimate.
 
 ## More Comments
 
-- in this scenario. the Reduced form and second stage can be estimated by just comparing means, because the treatment was randonmized. 
+- In this scenario the Reduced form and second stage can be estimated by just comparing means, because the treatment was randonmized. 
 
   - In other words, something you really want is an instrument that is as good as random. 
 
 - The effect we capture is a LOCAL treatment effect (LATE). 
+- 
 - However, it could be an ATE if:
   - The effect is homogenous for everyone. 
   - The people affected by the treatment is a representative of the population
@@ -171,8 +180,9 @@ Because of imperfect compliance we need to "readjust/inflate" our TE estimate.
 Even if we are able to identify ATEs, its important to understand who can be affected by the instrument, because the population is generally selected in 3 groups
 
 - **never takers** & **always takers**: These are the individuals who would have never done anything different than their normal. 
-- **Compliers**: These are the ones who, given they receive "instrument", they comply and follow up. We use their variation for analysis
-- **defiers**: These are the ones who, given Z, will do the oppsite. We cannot differentiate them from Compliers, so they will affect how treatment is estimated.
+  - Perhaps their likelihood was already too low (or high) to be affected.
+- **Compliers**: These are the ones who, given they receive "instrument", they comply and follow up. We use their variation for analysis.
+- **Defiers**: These are the ones who, given Z, will do the oposite. We cannot differentiate them from Compliers, so they will affect how treatment is estimated.
 
 We do not want to have defiers!
 
@@ -186,7 +196,7 @@ $$
 
 The logic remains. We are trying to see how variation in the outcome related to Z reates to changes in treatment because of Z. 
 
-The *treatment* here is very small (Small changes in z). The intuition is that we are averaging the variation in the outcome across all Zs to estimate the effect. 
+The *treatment* here is very small (Small changes in d). The intuition is that we are averaging the variation in the outcome across all Zs to estimate the effect. 
 
 ## Extension 2: Controls 
 
@@ -219,14 +229,14 @@ ATE &=\frac{\beta_z}{\gamma_z}=\frac{cov(y,\tilde z)}{cov(d,\tilde z)}
 \end{aligned}
 $$
 
-This compare averages changes in the outcome to average changes in the treatment.
+This compares average changes in the outcome to average changes in the treatment.
 
 ## Extension 3: Multiple Endogenous Variables
 
 Although less common in Causal Analysis perspective, in other frameworks one may to consider more than 1 instrument or using instrument interactions. In these cases one still has two alternatives
 
-1. 2SLS: One can model more than one endogenous variable at the same time, simply substituting the predicted values in the main regression. When using interactions, or polynomials, each will need its own first stage regression.
-2. Control function approach. In contrast with the "prediction subtstitution" approach, this method suggests using a "residual inclusion approach". This controls for endogeneity directly. If there is only one endogenous variable (with interactions of polynomials) only one model is needed.
+1. **2SLS**: One can model more than one endogenous variable at the same time, simply substituting the predicted values in the main regression. When using interactions, or polynomials, each will need its own first stage regression.
+2. **Control function approach**. In contrast with the "prediction subtstitution" approach, this method suggests using a "residual inclusion approach". This controls for endogeneity directly. If there is only one endogenous variable (with interactions of polynomials) only one model is needed.
 
 In the first case, you need at least 1 instrument per regression. Even if its just a transformation of the original variable
 
@@ -234,7 +244,7 @@ In the second case, you need at least 1 instrument per endogenous variable.
 
 ## Instrument Validity
 
-As mentioned earlier, Instruments require at least to fullfill two conditions:
+As mentioned earlier, Instruments require to fullfill two conditions:
 
 - **Relevant**. They need to be Strongly related to the endogenous variable
 - **Exogenous**. instruments should not and cannot be endogenous. In fact, you want instruments that are as good as random, thus not defined by the "system" in anyway.
@@ -247,17 +257,17 @@ While most efforts for these are done through model design, or argumentation, th
 
 1. If truly exogenous, the instrument should be as good as random. Thus controls shouldnt be affected by the instrument. (Balance test)
    
-2. Otherwise, one could test for exogeneity only by comparing Estimates across different IV's. Different results may suggest instrumments are invalid.
+2. Otherwise, one could test for exogeneity only by comparing Estimates across different IV's. Different results may suggest instruments are invalid.
    
    - Run a regression of Residuals from the main model against all exogenous variables plus other instruments.
 
 Note: Unless the instrument was randomized, assumed is going to be slighly endogenous.
 
-## IV Validity: strength
+## IV Validity: Strength
 
 The only thing we could probably do is try to analyze model strength. How much does the instrument affect treatment take up? is the effect marginal? or a large effect?
 
-Weaker instruments may be create larger problems on the analysis because:
+Weaker instruments may create larger problems on the analysis because:
 
 1. With weaker instruments, the precision of the estimator drops substantially.
 2. With weaker instruments, any "endogeneity" problem (even due to randomness) will generate a bias
@@ -265,43 +275,97 @@ Weaker instruments may be create larger problems on the analysis because:
 - Stock and Yogo (2005) suggest and F~13.9 (or higher) for a 5% bias
 - Lee, et al (2020) suggest you need even higher F's if you want to avoid problems with CI
 
-## IV Strength
+3. With weak instruments, distribution of beta coefficients will no longer be normal!
+  
+## IV Strength {.scrollable}
 
-Notice Bias with Weak Instruments:
-
-```stata
-    Variable |        Obs        Mean    Std. dev.       Min        Max
--------------+---------------------------------------------------------
-     b1_b_c1 |        991    139.2814     27.3981   58.59376   257.7574
-     b1_b_c2 |        991    .9874847    .3060169  -.0509955   1.857092
-     b1_b_c3 |        991    .3044599    .0326545   .2220692   .4777986
-     b1_b_c4 |        991     3.33866    1.228425  -.1393513   7.304715
--------------+---------------------------------------------------------
-     b2_b_c1 |        991     18.5753    8.880913   1.104271   56.66291
-     b2_b_c2 |        991    .9161109    .7788409  -3.749899   2.948366
-     b2_b_c3 |        991    .7901266    .3263594   .3677861   3.856925
-     b2_b_c4 |        991    1.486873    1.238263  -1.242283   5.600827
--------------+---------------------------------------------------------
-     b3_b_c1 |        991    7.329736    5.352335   .0126054   40.82824
-     b3_b_c2 |        991    .6891979    2.611228  -40.78007   26.50793
-     b3_b_c3 |        991     2.87683     14.8956   .4277885   311.2773
-     b3_b_c4 |        991    .9828429     1.13565  -1.124282   4.969245
--------------+---------------------------------------------------------
-     b4_b_c1 |        991    4.206627    3.885072   .0000288   27.33819
-     b4_b_c2 |        991    .7767246    4.421099  -41.27678   46.78173
-     b4_b_c3 |        991    15.69515    259.8914   .5105977   8104.976
-     b4_b_c4 |        991    .7798746     1.03038   -1.11632   4.701989
+```{stata}
+*| echo: true
+*| code-fold: true
+*| eval: false
+program simx, eclass
+  clear
+  set obs 500
+  gen z=rnormal()>0
+  gen u1=rnormal()
+  gen u2=rnormal()
+  gen u3=rnormal()
+  forvalues i = 1/5 {
+    gen d`i' = ((-0.5+z)*(3-0.5*`i') + (u1 + u2))>0
+    gen y`i' = 1 + d`i'+u3+u2
+  }
+  forvalues i = 1/5 {
+    reg d`i' z
+    matrix b`i' =_b[z]/_se[z]
+    ivregress  2sls y`i' (d`i'=z)
+    matrix b`i' = b`i',_b[d`i'],_se[d`i'],_b[d`i']/_se[d`i']
+    matrix colname b`i'=f_stat beta beta_se beta_t
+    matrix coleq b`i'=md`i'
+  }
+  matrix b=b1
+  forvalues i = 2/5 {
+    matrix b=b,b`i'
+  }
+  ereturn post b
+end
 ```
 
-## IV Strength Solution: weakiv
+```stata
 
-Weak IV's are a problem in the sense that it may induce bias on the estiamted coefficients, but also that it may affect how Standard Errors are estimated
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+md1_b_f_stat |        494    189.9262    38.63693   101.8865   337.4117
+  md1_b_beta |        494    .9912474    .2289997   .1758122    1.64053
+md1_b_beta~e |        494    .2440663    .0235266   .1867024   .3293121
+-------------+---------------------------------------------------------
+md2_b_f_stat |        494    43.33591    13.76347   12.07967   101.6624
+  md2_b_beta |        494    .9717824    .4421832  -.8390987   2.327243
+md2_b_beta~e |        494    .4711093    .0945389   .3032212   .9873207
+-------------+---------------------------------------------------------
+md3_b_f_stat |        494    19.25043     8.81203   2.051613   61.55846
+  md3_b_beta |        494    .9354647    .6820819  -1.964163   2.996998
+md3_b_beta~e |        494    .7430147    .2493365    .383426    2.16554
+-------------+---------------------------------------------------------
+md4_b_f_stat |        494    11.19082    6.428525   .0483399   38.44057
+  md4_b_beta |        494    .8711808    .9987467  -4.383311   5.634943
+md4_b_beta~e |        494    1.135114    1.244907   .4609722   25.16503
+-------------+---------------------------------------------------------
+md5_b_f_stat |        494    7.522731    5.144063   .0544148   28.23535
+  md5_b_beta |        494    .7696057    1.443986  -6.293723   8.951643
+md5_b_beta~e |        494     1.69479    1.866909    .530196    18.3837
+```
+## IV Strength: Bias distribution 
 
-One solution, in this case, is at least adjusting SE So they better reflect the problem.
+```{stata}
+*| output: false
+use iv_files/simiv.dta, clear
+forvalues i = 1/5 {
+  qui:sum md`i'_b_beta
+  gen new`i'=(md`i'_b_beta-1)/r(sd)
+}
+set scheme white2
+color_style tableau
+two function y=normalden(x), range(-5 5) lwidth(1) pstyle(p2) || histogram new1, name(m1, replace) , legend(off)
+two function y=normalden(x), range(-5 5) lwidth(1) pstyle(p2) || histogram new2, name(m2, replace) , legend(off)
+two function y=normalden(x), range(-5 5) lwidth(1) pstyle(p2) || histogram new3, name(m3, replace) , legend(off)
+two function y=normalden(x), range(-5 5) lwidth(1) pstyle(p2) || histogram new4, name(m4, replace) , legend(off)
+two function y=normalden(x), range(-5 5) lwidth(1) pstyle(p2) || histogram new5, name(m5, replace) , legend(off)
+graph combine m1 m2 m3 m4 m5, col(3) xcommon ycommon
+graph export iv_files/cmb.png, width(1500)  replace
+```
+![](iv_files/cmb.png)
 
-In Stata, this can be done with `weakiv` (ssc install weakiv)
+## IV Strength Solution: `weakiv`
 
-At the end, however, if you weak instruments, you may be able to correct of potential biases, but you may need to get 
+- Weak IV's are a problem in the sense that it may induce bias on the estimated coefficients, but also that it may affect how Standard Errors are estimated.
+
+  - The distribution of the Statistic is no longer normal
+  
+- One solution, in this case, is at least adjusting SE and CI So they better reflect the problem.
+
+- In Stata, this can be done with `weakiv` (ssc install weakiv)
+
+- At the end, however, if you weak instruments, you may be able to correct of potential biases, but you may need to get 
 more data, or better instruments
 
 ## LATE: Local Average Treatement Effect
@@ -317,7 +381,9 @@ Two ways of thinking about it:
 
 So, IV will identify TE for the compliers only.
 
-Because of this, using different instruments may actually identify different effects, based on which population was affected
+Because of this, using different instruments may actually identify different effects, based on which population was affected. 
+
+Overid tests may fail in this case.
 
 ## Simulation Example:
 
@@ -383,27 +449,27 @@ The idea here is that "judgment-severity" varies by judge. This difference in ta
 
 Example:
 
-- Teachers Grading?
-- Driving test officers?
-- Performance tests?
+- Teachers Grading? Driving test officers?  Performance tests?
 
 ## CD: Shift-Share Bartik Instrument
 
 Originally used in a study of regional labor market effects, this kind of instruments have also been used widely in other areas, such as imigration and trade.
 
-The instrument was developed to createa an instrument to see how changes in economic growth would affect market outcomes. (reverse Causality)
+The instrument was developed to analyze how changes in economic growth would affect market outcomes. (reverse Causality)
 
 To do this, Bartik (1991) suggests, that it could be possible to create an instrument, making use of only exogenous variations, to first predict Potential local growth.
 
 1. Estimate **industry** shares by local region, based on some Ex ante information.
-2. Estimate national growth (which should be exogenous to local growth)
+2. Estimate national growth by industry (which should be exogenous to local growth)
 3. Estimate Potential Local growth using Shares x growth
 
 This last one should represent the instrument to be used on actual local growth
 
-This instrument depends strongly on the assumption that **Shares** are exogenous/
+This instrument depends strongly on the assumption that **Shares** are exogenous, and states are small compare to the national experience.
 
-# Til Next time: Matching
+# Til Next time: Matching and Reweithing
+Also Dan: Instrumental Variables Presentation
+Also Nitin: Matching
 
 
 
