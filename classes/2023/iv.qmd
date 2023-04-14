@@ -283,30 +283,31 @@ Weaker instruments may create larger problems on the analysis because:
 *| echo: true
 *| code-fold: true
 *| eval: false
+capture program drop simx
 program simx, eclass
-  clear
-  set obs 500
-  gen z=rnormal()>0
-  gen u1=rnormal()
-  gen u2=rnormal()
-  gen u3=rnormal()
-  forvalues i = 1/5 {
-    gen d`i' = ((-0.5+z)*(3-0.5*`i') + (u1 + u2))>0
-    gen y`i' = 1 + d`i'+u3+u2
-  }
-  forvalues i = 1/5 {
-    reg d`i' z
-    matrix b`i' =_b[z]/_se[z]
-    ivregress  2sls y`i' (d`i'=z)
-    matrix b`i' = b`i',_b[d`i'],_se[d`i'],_b[d`i']/_se[d`i']
-    matrix colname b`i'=f_stat beta beta_se beta_t
-    matrix coleq b`i'=md`i'
-  }
-  matrix b=b1
-  forvalues i = 2/5 {
-    matrix b=b,b`i'
-  }
-  ereturn post b
+	clear
+	set obs 500
+	gen z=rnormal()>0
+	gen u1=rnormal()
+	gen u2=rnormal()
+	gen u3=rnormal()
+	forvalues i = 1/5 {
+		gen d`i' = ((-0.5+z) + (u1 + u2)*0.5*`i')>0
+		gen y`i' = 1 + d`i'+u3+u2
+	}
+	forvalues i = 1/5 {
+		reg d`i' z
+		matrix b`i' =(_b[z]/_se[z])^2
+		ivregress  2sls y`i' (d`i'=z)
+		matrix b`i' = b`i',_b[d`i'],_se[d`i'],_b[d`i']/_se[d`i']
+		matrix colname b`i'=f_stat beta beta_se beta_t
+		matrix coleq b`i'=md`i'
+	}
+	matrix b=b1
+	forvalues i = 2/5 {
+		matrix b=b,b`i'
+	}
+	ereturn post b
 end
 ```
 
