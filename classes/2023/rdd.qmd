@@ -1,0 +1,88 @@
+---
+title: "Regression Discontinuity Design"
+subtitle: "Up close, we are all the same"
+author: Fernando Rios-Avila
+format:
+  revealjs: 
+    slide-number: true
+    reveal-js-url: ppt_files
+    width: 1400
+    height: 900
+    code-overflow: wrap
+---
+
+## Re-Cap: Potential outcome Model {.smaler}
+
+In the ideal world, where we can see all possible outcomes and scenarios of your potential treatments, it will be very simple to estimate treatment effects:
+
+$$
+\delta_i = Y_i(1)-Y_i(0)
+$$
+
+This works because all observed and unobserved individual characteristics are kept fixed, except for the treatment Status. 
+
+$$y_i(D)=y_i(X,u,D)$$
+
+So when comparing a person with himself (clones or parallel worlds), we know (or at least expect) that everything else is the same, and that differences between the two states are explained only by the treatment.
+
+## The Problem 
+
+We do not observe both **ALL** States at the same time. People will either be treated or untreated, not both.
+
+So what can we do?
+
+> **We need to find good counterfactuals!**
+
+This means finding people are very similar to the ones treated, so they can be used as the examples of the "what if" question.
+
+But there is a problem. Even in the best scenarios, we can never be asure about how to control for unobservables...or can we?
+
+## 
+
+- **You can always RCT** But it can be expensive
+
+- **You can IV the problem** but its hard to justify
+
+- **You can add FE**, but you have time varying errors
+
+Then what?
+
+- You could RDD the problem (if you have the right data!)
+
+## What is RDD?
+
+**RDD** or Regression Discontinuity design is methodology that is known for its clean identification and with a relatively easy visualization tool to understand the identification, and solve the problem of unobserved distributions. (see [here](https://academic.oup.com/qje/advance-article/doi/10.1093/qje/qjad011/7068116?login=true) for a recent paper on how to make graphs on this).
+
+Consider the following problem: 
+
+1. You want to study the role of college on earnings.
+2. You have data on people who are applying to go to school. They all take some standardized tests. Their grade will determine if they get into College or not.
+3. People with high skills will get a higher grades in the GRE, go to college, and probably get higher salaries. 
+4. But, there is a problem. How can you figure out if wages are due to College or skill?
+
+## Possible Solution
+
+Say that we actually have access to the grades, which range from 100 to 200. And assume that you say, every one with grades higher than 170 will go to college. 
+
+Can you estimate the effect now?
+
+- You still cannot compare people with more than 170 to those with less than 170. Because skill or ability will be different across groups.
+- However, what if you compare individuals with 170-172 vs 167-169? 
+  - These individuals are so close togeter they problably have very similar characteristics as well! 
+  - you have a Localized randomization.
+
+In this case, your analysis is those individuals just above the thresholds to those just below (counterfactual)
+
+Unless you think grades near the threshold are as good as random, then you have a design to identify treatment effects!
+
+## RDD: How it works.
+
+**Selection and Index**:
+  - The first thing you need to see if you can use and RDD is to see if you have access to a variable that "ranks" units.
+  - This variable should be smooth and preferibly continuous.
+    - age, distance from boarder, test score, poverty index
+  - There is a clearly defined threshold for the index to have an impact the treatment.
+
+
+
+

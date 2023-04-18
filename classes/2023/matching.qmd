@@ -1,0 +1,453 @@
+---
+title: "Matching and Re-weighting"
+subtitle: "When X differ..."
+author: Fernando Rios-Avila
+format:
+  revealjs: 
+    slide-number: true
+    width: 1500
+    height: 900
+    code-overflow: scroll
+    theme: simple
+    echo: true
+  pdf: default  
+jupyter: nbstata
+---
+
+## Recap: Potential outcomes and Identification
+
+To identify treatment effects one could **just** compare potential outcomes in two states:
+
+-   with treatment
+-   without treatment
+
+Mathematically, average treatment effects would be: 
+$$
+ATE = E(Y_i(1)-Y_i(0))
+$$
+
+the problem: with real data, we are only able to see one outcome. The counter factual is not observed:
+
+$$
+Y_i = Y_i(1)*D + Y_i(0)*(1-D)
+$$
+
+and simple differences may not capture ATE, because of selection bias and heterogeneity in effects.
+
+## Recap: Gold Standard - RCT
+
+The easiest, but most expensive, way to deal with the problem is using **Randomized Control Trials**.
+
+Effectively, you randomize Treatment, so that potential outcomes are independent of treatment:
+
+$$
+Y(1),Y(0) \perp D
+$$
+
+In other words, the distribution of potential outcomes is the same for those treated or untreated units.
+
+$$
+\begin{aligned}
+E(Y,D=1)&=E(Y(1),D=1)=E(Y(1),D=0) \\
+E(Y,D=0)&=E(Y(0),D=1)=E(Y(0),D=0) \\
+ATT&=E(Y,D=1) - E(Y,D=0)
+\end{aligned}
+$$
+
+# But what if you can't Randomize {background-color="#447099"}
+
+## When unconditional fails
+
+More often than not, specially if we didn't construct the data, it would be impossible to find that unconditional independence assumption holds.
+
+For example, treatment (say having health insurance) may vary by age, gender, race, location, etc.
+
+This is similar to the selection bias: Outcomes across treated and untreated groups will be different because:
+
+-   Composition: Characteristics of people among the treated could be different than those among the untreated For example, they could be older, more educated, mostly men, etc.
+
+-   Other factors: There could be factors we cannot control for, that also affect outcomes.
+
+## There is conditional
+
+When unconditional independence assumption fails, we can call on Conditional independence assumption:
+
+$$
+Y(1),Y(0) \perp D | X
+$$
+
+In other words, If we can look into specific groups (given $X$), it may be possible to impose the Independence assumption.
+
+This relaxes the independence condition, but assumes selection is due to observable characteristics only. (it still needs to be as good as randomized given $X$)
+
+Implications:
+
+$$
+\begin{aligned}
+E(Y|D=1,X) =E(Y(1)|D=1,X)=E(Y(1)|D=0,X)  \\
+E(Y|D=0,X) =E(Y(0)|D=1,X)=E(Y(0)|D=0,X)  
+\end{aligned}
+$$
+
+## Intuition
+
+Matching is a methodology that falls within quasi-experimental designs. You cannot or could not decide the assignment rules, so now are using data as given.
+
+The idea is to construct an artificial control and use it as a counter-factual, so that both treated and control groups "look similar" in terms of observables.
+
+Once a group of synthetic controls has been constructed, treatment effects can be calculated for the whole population:
+
+$$
+\begin{aligned}
+ATE(X) &= E(Y|D=1,X) -E(Y|D=0,X) \\
+ATE &= \int ATE(X) dFx 
+\end{aligned}
+$$
+
+How can we do this?
+
+we just need to find observational twins!
+
+## Matching Twins
+
+![Matching on Observables](matching_files/charles_ozzy.jpg)
+
+## Subclassification or stratification {.scrollable}
+
+Consider the following dataset:
+
+```{stata}
+frause titanic, clear
+expand freq
+drop if freq==0
+gen class1=class==1
+tab survived class1 , nofreq col
+```
+
+If we assume full Independence assumption we would believe that being in first class increased chance of survival in 35.4%. but is that the case?
+
+What if the composition of individuals differs across classes (women and children)
+
+```{stata}
+tab age class1, nofreq col
+tab sex class1, nofreq col
+```
+
+There were fewer children, but more women in first class. Perhaps that explains the difference in survival rates
+
+##  {.scrollable}
+
+A better approach would be to look into the survival probabilities stratifying the data:
+
+```{stata}
+gen surv=survived==2
+bysort age sex class1:egen sr_mean=mean(survived==2)
+table (age sex) (class1), stat(mean surv) nototal
+```
+
+So even within each group, the survival probability is larger in first class. What about Average?
+
+```{stata}
+bysort age sex:egen sr_mean_class1=max(sr_mean*(class1==1))
+bysort age sex:egen sr_mean_class0=max(sr_mean*(class1==0))
+gen teff = sr_mean_class1-sr_mean_class0
+sum teff if class1==1 // ATT
+sum teff if class1==0 // ATU
+sum teff  // ATE
+```
+
+## What did we do?
+
+The procedure above is a simple stratification approach, aka matching, to analyze the true impact of the treatment (being a 1st class passenger).
+
+1.  Stratified the sample in groups by age and gender.
+    -   Identify the shares of each group by class1
+2.  Predict probability of survival per strata and class1
+3.  Obtain the Strata level Effects
+4.  Aggregate as needed.
+    -   Here, we could estimate ATE, ATT or ATU!
+
+Where could things go wrong?
+
+## Overlapping {.scrollable}
+
+The procedure describe above works well whenever there is data overlapping.
+
+-   For every combination of X, you see data on the control and treated group $0<P(D|X)<1$
+
+When this fails, you wont be able to estimate ATE's, although ATT's or ATU's might still be possible:
+
+-   for ATT: $P(D|X)<1$
+-   for ATU: $0<P(D|X)$
+
+For example:
+
+```{stata}
+frause hhprice, clear
+keep price rooms type_h
+tab rooms type_h
+```
+
+Would not be able to estimate ATE nor ATU. Only ATT for townhouses.
+
+## Curse of dimensionality
+
+There is a second problem in terms of stratification. How would we deal with Multiple dimensions? Would it be possible to find "twins" for every observation?
+
+The answer is, probably no. Too many groups to track, to many micro cells to make use of:
+
+```{stata}
+frause oaxaca, clear
+drop if lnwage==.
+egen strata=group(educ isco)
+bysort strata:egen flag=mean(female)
+list educ isco female if (flag==0 | flag==1) & educ == 10, sep(0)
+```
+
+## Alternative: Matching as a weighted
+
+The problem of curse of dimensional states that as the number of desired characteristics to match increase, fewer "twins" will be available in the data. At the end...no one will be like you!
+
+The alternative, is to look into People that are sufficiently close so they can be used for matching.
+
+$$
+\begin{aligned}
+ATT_i &= Y_i -  \sum_{j \in C} w(x_j,x_i) Y_j \\
+ATT   &= \frac{1}{N_T}\sum(ATT_i)  \\
+ATT   &=E(Y|D=1) - E_i\left( \sum_{j \in C} w(x_j,x_i) Y_j  \Big| D=0 \right)
+\end{aligned}
+$$
+
+Depending how $w(.)$ is defined, we would be facing different kinds of matching estimators.
+
+# Types of Matching
+
+## Matching on covariates
+
+The first decision to take is whether one should find matches based on covariates, or based on scores (propensity scores).
+
+Using covariates implies that will aim to find the closest "twin" possible, based on multiple dimensions: $$
+\begin{aligned}
+Eclidean=d(x_i,x_j) &=\sqrt{ (x_i-x_j)'(x_i-x_j)} \\
+WEclidean=d(x_i,x_j) &=\sqrt{ (x_i-x_j)'W (x_i-x_j)} \\
+Maha =d(x_i,x_j) &=\sqrt{(x_i-x_j)'S^{-1}(x_i-x_j)} 
+\end{aligned}
+$$ Distance measures are used to identify the closest matches to a given observation, and thus the weight assigned to that observation.
+
+Has the advantage of looking at individuals who are indeed close to each other, but becomes more difficult as the dimensionality of X's increase. (you will not find close matches)
+
+## Matching on Scores
+
+A second approach is to match individuals based on some summary index that condenses the information in $X$ into a single scalar $h(x)$, reducing the dimensionality problem fron K to 1.
+
+Few candidates:
+
+-   Propensity Score: $P(D|X)$ based on a logit/probit/binomial model. Most common approach!
+
+-   Predicted Mean: $X\beta$ if there is information on outcome to be predicted
+
+-   PCA: Using Principal components to reduce dimensionality before Matching
+
+Since there is only 1 dimension to consider, multiple distance measures are possible:
+
+-   nearest neighbors, kernel weight matching, radious matching.
+
+But one has to be careful with the approach. King and Nielsen (2019) Argue about the risks of PSM
+
+## 1 vs K matching; With and without replacement
+
+Two additional questions remain regarding matching. How many "twins" to use, and if twins will be obtained with/without replacement.
+
+-   Fewer matches reduce bias (choosing only the closest observation), but increase variance.
+
+-   More matches increase bias, but reduce variance. (because of less optimal matches)
+
+-   with replacement: control units may be used more than once. This will improve matching quality reducing bias. But by using the same units multiple times, it will increase variance.
+
+-   without replacement: Control units are used once, potentially reducing matching quality, but reducing variance. It will be order dependent.
+
+see Caliendo and Kopeing (2008)
+
+## What about SE? and Statistical inference?
+
+Well....this is one of the few cases where Bootstrapping WON'T work!
+
+Standard errors are more cumbersome. So we will just rely on software results
+
+## Other considerations
+
+Once you have chosen your matching method, find your "statistical twins", and estimate your differences you are done! (or are you)
+
+Not yet...common practice: Evaluate the balance of your data
+
+> Matching aims to reduce or eliminate differences in characteristics between treatment and control units. Thus, one should evaluate the differences (before and after match) of your characteristis
+
+1.  Check for overlapping condition.
+
+  - either variable by variable or with pscore
+
+2.  Assess Matching Quality: Have differences across groups vanished?
+
+  - Check Standardized differences $\frac{\mu_1 - \mu_2}{\sqrt{0.5*(V_1 + V_2)}}$
+  - t-tests 
+  - PR2 of regression with matched data
+
+
+## Implementation
+
+In `Stata`, there are at least two approaches that can be used for matching:
+
+-   `psmatch2` (from ssc)
+
+-   `teffects` (Official `Stata` command)
+
+We will use this to answer a simple question:
+
+> What is the impact of Traing Jobs on Earnings?
+
+## Example {.scrollable}
+
+This file contains information on experimental and observed data for the analysis of 
+training on earnings program:
+
+```{stata}
+use https://friosavila.github.io/playingwithstata/drdid/lalonde.dta, clear
+keep if year==1978 
+drop if dwincl==0
+label define sample 1 "exper"  2 "CPS" 3 "PSID"
+label values sample sample
+tab sample treated,m
+```
+
+First Experimental design - RCT
+```{stata}
+reg re treated
+tabstat age educ black married nodegree , by(treated)
+logit treated age educ black hisp married nodegree 
+```
+Then using PScore Matching CPS
+
+```{stata}
+keep if treated == 1 | sample ==2
+replace treated=0 if treated==.
+
+reg re treated
+tabstat age educ black hisp married nodegree , by(treated)
+```
+
+We need to do trimming
+
+```{stata}
+bysort educ black hisp married:egen n11=sum(treated==1)
+bysort age  black hisp married:egen n22=sum(treated==1)
+drop if n11==0 | n22 ==0
+tabstat age educ black hisp married nodegree , by(treated)
+reg re treated
+```
+
+
+Lets do some matching
+```{stata}
+teffects nnmatch (re age educ black   married nodegree  ) (treated)
+tebalance summarize
+teffects nnmatch (re age educ black   married nodegree  ) (treated), nn(2)
+tebalance summarize
+teffects psmatch (re) (treated age educ black   married nodegree  )
+tebalance summarize
+teffects psmatch (re) (treated age educ black   married nodegree  ) ,  nn(2)
+tebalance summarize
+```
+
+A missing variable? Earnings in previous year.
+May capture information of Need to do treatment (selection)
+```{stata}
+tabstat age educ black hisp married nodegree re74, by(treated)
+gen dre = re-re74
+teffects nnmatch (dre age educ black   married nodegree  ) (treated)
+
+teffects nnmatch (dre age educ black   married nodegree  ) (treated), nn(2)
+
+teffects psmatch (dre) (treated age educ black   married nodegree  )
+
+teffects psmatch (dre) (treated age educ black   married nodegree  ) ,  nn(2)
+```
+
+In this case, Matching alone could not get the right answer.
+Who were the most likely to "go to the training?"
+
+So instead we change the question: How much the change in earnings compare across groups.
+
+## Wait: What about Reweighting?
+
+An alternative method to Matching is to do Re-weighting.
+
+We have seen this! 
+
+Your control group has a distribution $g(x)$ and your treatment $f(x)$. We can use some weighting factors $h(x)$ that reshapes $g(x)\rightarrow \hat f(x)$.
+
+How? Using Propensity scores
+
+Why does it work? Just as matching, your goal is to compare distributions of outcomes, forcing differences in observed characteristics to be the same.
+
+IPW, does this by reweighting the distribution! (rather than matching)
+
+## Inverse Probability Weighting:IPW
+
+s1: Estimate Pscore
+
+$$
+p(D=1|X)=F(X\beta)
+$$
+S2: Estimate IPW
+
+For ATT: $W(D=1,x)=1 \ \&  \ W(D=0,X)=\frac{\hat p(x)}{1-\hat p(x)}$
+
+For ATU: $W(D=0,x)=1 \ \&  \ W(D=1,X)=\frac{1-\hat p(x)}{\hat p(x)}$
+
+For ATE: $W(D=0,x)=\frac{1}{1-\hat p(x)} \ \&  \ W(D=1,X)=\frac{1}{\hat p(x)}$
+
+s3: Estimate Treatment effect:
+
+$$
+TE = \sum_{i \in D=1} w_i^s(1) Y_i - \sum_{i \in D=0} w_i^s(0) Y_i
+$$
+
+## Even Better: Go DR!
+
+An interesting advantage of IPW approach is that you can gain efficiency using Doubly Robust Methods. Namely, instead of comparing outcomes directly, you could compare predicted outcomes!
+
+$$
+\begin{aligned}
+ATT &= \frac{1}{N_t}\sum(Y_1-X'\hat\beta_w^0) \\
+ATU &= \frac{1}{N_c}\sum(X'\hat\beta_w^1-Y_0) \\
+ATE &= \frac{1}{N}\sum(X'\hat\beta_w^1-X'\hat\beta_w^0) 
+\end{aligned}
+$$
+where $\hat \beta^k_w$ can be modeled using weighted least squares
+
+
+## Comparing to Matching {.scrollable}
+
+```stata
+teffects ipw (re) (treated age educ black   married nodegree) , iter(3) nolog
+teffects ipwra (re age educ black   married nodegree) (treated age educ black married nodegree), iter(3) nolog
+teffects ipw (dre) (treated age educ black   married nodegree), iter(3) nolog
+teffects ipwra (dre age educ black   married nodegree) (treated age educ black   married nodegree), iter(3) nolog
+```
+
+```{stata}
+*| output: asis
+*| echo: false
+display "```stata"
+teffects ipw (re) (treated age educ black   married nodegree) , iter(3) nolog
+teffects ipwra (re age educ black   married nodegree) (treated age educ black married nodegree), iter(3) nolog
+teffects ipw (dre) (treated age educ black   married nodegree), iter(3) nolog
+teffects ipwra (dre age educ black   married nodegree) (treated age educ black married nodegree), iter(3) nolog
+display "```"
+```
+
+# Next: Regression Discontinuity
+
+
+
+

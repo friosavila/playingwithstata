@@ -1,0 +1,11 @@
+title: "Differences in Differences"
+subtitle: "1 is good, 2 is twice as good"
+author: Fernando Rios-Avila
+format:
+  revealjs: 
+    slide-number: true
+    reveal-js-url: ppt_files
+    width: 1400
+    height: 900
+    code-overflow: wrap
+---
