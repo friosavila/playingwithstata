@@ -53,6 +53,8 @@ Then what?
 
 **RDD** or Regression Discontinuity design is methodology that is known for its clean identification and with a relatively easy visualization tool to understand the identification, and solve the problem of unobserved distributions. (see [here](https://academic.oup.com/qje/advance-article/doi/10.1093/qje/qjad011/7068116?login=true) for a recent paper on how to make graphs on this).
 
+In fact, the treatment Status has a very clear Rule!
+
 Consider the following problem: 
 
 1. You want to study the role of college on earnings.
@@ -66,7 +68,7 @@ Say that we actually have access to the grades, which range from 100 to 200. And
 
 Can you estimate the effect now?
 
-- You still cannot compare people with more than 170 to those with less than 170. Because skill or ability will be different across groups.
+- You can't compare people with more than 170 to those with less than 170. Because skill or ability will be different across groups.
 - However, what if you compare individuals with 170-172 vs 167-169? 
   - These individuals are so close togeter they problably have very similar characteristics as well! 
   - you have a Localized randomization.
@@ -78,11 +80,152 @@ Unless you think grades near the threshold are as good as random, then you have 
 ## RDD: How it works.
 
 **Selection and Index**:
-  - The first thing you need to see if you can use and RDD is to see if you have access to a variable that "ranks" units.
+
+1. The first thing you need to see if you can use and RDD is to see if you have access to a variable that "ranks" units.
+   
   - This variable should be smooth and preferibly continuous.
     - age, distance from boarder, test score, poverty index
-  - There is a clearly defined threshold for the index to have an impact the treatment.
+  
+2. Assignment into treatment is a function of this index only, with a clear threshold for the index to have an impact the treatment.
+  
+  - Those under the Threshold are not treated. Those above are.
+  - This is called a **Sharp RDD** design.
+
+## 
+
+3. The threshold should be unique to the Treatment of interest (nothing else happens around that point) 
+  
+  - In the College Case, we assume 170 triggers acceptance to School. But if it also triggers Scholarships??
+  
+4. Perhaps the Most important: The score cannot be manipulated
+   
+   - Only then we have true local randomization. 
+
+5. You want the potential outcomes to be smooth functions of Z. (so we do not mix treatment effects with Nonsmooth changes in outcomes)
+
+## Sharp RDD    
 
 
+```{stata}
+*| output: false
+clear
+set scheme white2
+color_style bay
+set seed 1
+qui:set obs 100
+gen e=rnormal()
+gen z=runiform()+e
+gen t = z>0
+gen y = 1 + z + e + rnormal() + (z>0)
+two line t z, sort title("Treatment") ylabel(0 "Not Treated" 1 "Treated") name(m1, replace) ytitle("")
+graph export rdd1.png,  width(1000) height(1000) replace
+two scatter y z, sort title("Outcome") pstyle(p1) || lfit y z, lw(1) pstyle(p2) ///
+	|| lfit y z if z<0, lw(0.5) || lfit y z if z>0, lw(0.5) , legend(off) name(m2, replace)
+graph export rdd2.png,  width(1000) height(1000)  replace
+``` 
 
+::: { layout-ncol=2}
 
+![ ](rdd1.png)
+
+![ ](rdd2.png)
+
+:::
+
+## How it works : p2
+
+Recall that in an RCT (or under randomization) treatment effects are estimated by comparing those treated and those not treated.
+
+$$E(y|D=1)-E(y|D=0)$$
+
+Under SRDD, you can also think about the same experiment, except that we would need to compare individuals AT the theshold.
+
+$$\begin{aligned}
+\lim_{z\downarrow c} E(y|Z=z) &- \lim_{z\uparrow c} E(y|Z=z) \\
+E(y(1)|Z=c) &-E(y(0)|Z=c)
+\end{aligned}
+$$
+
+- In this case, the overlapping assumption is violated. So we need to attemp obtaining effects for groups AT the limit when $Z=c$.
+
+## Estimation
+
+The most simple way to proceed is to estimate the model using a parametric approach (OLS)
+
+$$y = a_0 + \delta D_{z>c} + f(z-c) + e$$
+
+The idea here is to identify a "jump" in the outcome (treatment effect) at the point where $z$ crosses the threshold. 
+
+But to identify the jump only, we also need to model the trend observe before and after that threshold ($f(z-c)$), which can be modelled as flexible as possible.
+(this include interactions with the jump)
+
+Alternatively, we could use smaller bandwidths (nonparametric)
+
+## Example
+
+```{stata}
+ qui: {
+clear
+set seed 1
+set obs 200
+gen e=rnormal()
+gen z=runiform()+e
+sum z
+replace z=(z-r(mean))/r(sd)
+gen t = z>0
+gen y = 1 + 0.5*z + e + rnormal() + (z>0)
+
+qui:reg y t z 
+predict yh1
+local b1:display %3.2f _b[t]
+qui:reg y t c.z##c.z  
+predict yh2
+local b2:display %3.2f _b[t]
+qui:reg y t c.z##c.z##c.z
+predict yh3
+local b3:display %3.2f _b[t]
+sort z
+}
+two (scatter y z, sort title("Sharp RDD") pstyle(p1) color(%20)) ///
+	(line yh1 z if z<0, pstyle(p2)) (line yh1 z if z>0, pstyle(p2)) ///
+	(line yh2 z if z<0, pstyle(p3)) (line yh2 z if z>0, pstyle(p3)) ///
+	(line yh3 z if z<0, pstyle(p4)) (line yh3 z if z>0, pstyle(p4)) , ///
+	legend(order(1 "Linear ATT: `b1'" 2 "Quadratic ATT: `b2'" 3 "Cubic ATT: `b3'")) name(m1, replace)
+
+```
+
+## Example
+
+```{stata}
+qui: {
+qui:reg y t c.z#t 
+predict yh11
+local b1:display %3.2f _b[t]
+qui:reg y t (c.z##c.z)#t  
+predict yh21
+local b2:display %3.2f _b[t]
+qui:reg y t (c.z##c.z##c.z)#t
+predict yh31
+local b3:display %3.2f _b[t]
+}
+two (scatter y z, sort title("Sharp RDD") pstyle(p1) color(%20)) ///
+	(line yh11 z if z<0, pstyle(p2)) (line yh11 z if z>0, pstyle(p2)) ///
+	(line yh21 z if z<0, pstyle(p3)) (line yh21 z if z>0, pstyle(p3)) ///
+	(line yh31 z if z<0, pstyle(p4)) (line yh31 z if z>0, pstyle(p4)) , ///
+	legend(order(2 "Linear ATT: `b1'" 3 "Quadratic ATT: `b2'" 4 "Cubic ATT: `b3'"))	name(m2, replace) 
+```
+
+## Fuzzy RD: Imperfect compliance
+
+While the Idea Scenario happens when there is perfect compliance (above the threshold you are treated), this doesnt happen all the time.
+
+In the education example: 
+
+- Some people with low grades may be "legacy" or have "contacts" (or took a second exam later) and manage to go to college
+- Some decided not to go, even after entering to college
+
+Sounds Familiar? (Never takers vs always takers)
+
+When this happens, you can still do RDD, but you need steps
+
+## Example 

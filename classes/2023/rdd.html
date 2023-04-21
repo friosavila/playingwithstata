@@ -372,6 +372,7 @@ Fernando Rios-Avila
 <section id="what-is-rdd" class="slide level2">
 <h2>What is RDD?</h2>
 <p><strong>RDD</strong> or Regression Discontinuity design is methodology that is known for its clean identification and with a relatively easy visualization tool to understand the identification, and solve the problem of unobserved distributions. (see <a href="https://academic.oup.com/qje/advance-article/doi/10.1093/qje/qjad011/7068116?login=true">here</a> for a recent paper on how to make graphs on this).</p>
+<p>In fact, the treatment Status has a very clear Rule!</p>
 <p>Consider the following problem:</p>
 <ol type="1">
 <li>You want to study the role of college on earnings.</li>
@@ -385,7 +386,7 @@ Fernando Rios-Avila
 <p>Say that we actually have access to the grades, which range from 100 to 200. And assume that you say, every one with grades higher than 170 will go to college.</p>
 <p>Can you estimate the effect now?</p>
 <ul>
-<li>You still cannot compare people with more than 170 to those with less than 170. Because skill or ability will be different across groups.</li>
+<li>You can’t compare people with more than 170 to those with less than 170. Because skill or ability will be different across groups.</li>
 <li>However, what if you compare individuals with 170-172 vs 167-169?
 <ul>
 <li>These individuals are so close togeter they problably have very similar characteristics as well!</li>
@@ -397,8 +398,83 @@ Fernando Rios-Avila
 </section>
 <section id="rdd-how-it-works." class="slide level2">
 <h2>RDD: How it works.</h2>
-<p><strong>Selection and Index</strong>: - The first thing you need to see if you can use and RDD is to see if you have access to a variable that “ranks” units. - This variable should be smooth and preferibly continuous. - age, distance from boarder, test score, poverty index - There is a clearly defined threshold for the index to have an impact the treatment.</p>
-<div class="footer footer-default">
+<p><strong>Selection and Index</strong>:</p>
+<ol type="1">
+<li>The first thing you need to see if you can use and RDD is to see if you have access to a variable that “ranks” units.</li>
+</ol>
+<ul>
+<li>This variable should be smooth and preferibly continuous.
+<ul>
+<li>age, distance from boarder, test score, poverty index</li>
+</ul></li>
+</ul>
+<ol start="2" type="1">
+<li>Assignment into treatment is a function of this index only, with a clear threshold for the index to have an impact the treatment.</li>
+</ol>
+<ul>
+<li>Those under the Threshold are not treated. Those above are.</li>
+<li>This is called a <strong>Sharp RDD</strong> design.</li>
+</ul>
+</section>
+<section id="section-1" class="slide level2">
+<h2></h2>
+<ol start="3" type="1">
+<li>The threshold should be unique to the Treatment of interest (nothing else happens around that point)</li>
+</ol>
+<ul>
+<li>In the College Case, we assume 170 triggers acceptance to School. But if it also triggers Scholarships??</li>
+</ul>
+<ol start="4" type="1">
+<li><p>Perhaps the Most important: The score cannot be manipulated</p>
+<ul>
+<li>Only then we have true local randomization.</li>
+</ul></li>
+<li><p>You want the potential outcomes to be smooth functions of Z. (so we do not mix treatment effects with Nonsmooth changes in outcomes)</p></li>
+</ol>
+</section>
+<section id="sharp-rdd" class="slide level2">
+<h2>Sharp RDD</h2>
+<div class="quarto-layout-panel">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img data-src="rdd1.png"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img data-src="rdd2.png"></p>
+</div>
+</div>
+</div>
+</section>
+<section id="how-it-works-p2" class="slide level2">
+<h2>How it works : p2</h2>
+<p>Recall that in an RCT (or under randomization) treatment effects are estimated by comparing those treated and those not treated.</p>
+<p><span class="math display">\[E(y|D=1)-E(y|D=0)\]</span></p>
+<p>Under SRDD, you can also think about the same experiment, except that we would need to compare individuals AT the theshold.</p>
+<p><span class="math display">\[\begin{aligned}
+\lim_{z\downarrow c} E(y|Z=z) &amp;- \lim_{z\uparrow c} E(y|Z=z) \\
+E(y(1)|Z=c) &amp;-E(y(0)|Z=c)
+\end{aligned}
+\]</span></p>
+<ul>
+<li>In this case, the overlapping assumption is violated. So we need to attemp obtaining effects for groups AT the limit when <span class="math inline">\(Z=c\)</span>.</li>
+</ul>
+</section>
+<section id="estimation" class="slide level2">
+<h2>Estimation</h2>
+<p>The most simple way to proceed is to estimate the model using a parametric approach (OLS)</p>
+<p><span class="math display">\[y = a_0 + \delta D_{z&gt;c} + f(z-c) + e\]</span></p>
+<p>The idea here is to identify a “jump” in the outcome (treatment effect) at the point where <span class="math inline">\(z\)</span> crosses the threshold.</p>
+<p>But to identify the jump only, we also need to model the trend observe before and after that threshold (<span class="math inline">\(f(z-c)\)</span>), which can be modelled as flexible as possible. (this include interactions with the jump)</p>
+<p>Alternatively, we could use smaller bandwidths (nonparametric)</p>
+</section>
+<section id="example" class="slide level2">
+<h2>Example</h2>
+
+<img data-src="rdd_files/figure-revealjs/cell-3-output-1.png" class="r-stretch"></section>
+<section id="example-1" class="slide level2">
+<h2>example</h2>
+
+<img data-src="rdd_files/figure-revealjs/cell-4-output-1.png" class="r-stretch"><div class="footer footer-default">
 
 </div>
 </section>
