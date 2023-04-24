@@ -452,4 +452,4 @@ est sto m4
 esttab m1 m2 m3 m4, keep(d)
 ```
 
-## Next Differences in Differences
+# Next Differences in Differences
