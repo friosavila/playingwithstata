@@ -226,6 +226,230 @@ In the education example:
 
 Sounds Familiar? (Never takers vs always takers)
 
-When this happens, you can still do RDD, but you need steps
+When this happens, you can still do RDD, but you need more steps
+
+## Fuzzy RD
+
+1. Estimate the impact of Discontinuity on Treatment
+2. Estimate the impact of Discontinuity on Outcome
+3. Estimate the ratio between (1) and (2)
+
+Sounds Familiar?
+
+- Its a kind of wald/IV estimator. 
+  - The instrument is the discontinuity
+  - The the endogenous variable is the treament
+  
+You still need to estimate the effect as close to the Discontinuity as possible
+
+`ivregress` may still do most of this for you
 
 ## Example 
+
+```{stata}
+*| echo: false
+*| output: false
+qui {
+clear
+set seed 131
+set obs 300
+color_style bay
+gen e=rnormal()
+gen z=runiform()+e
+sum z
+replace z=(z-r(mean))/r(sd)
+
+gen t = (rnormal(-1)*0.5 + 0.5*(z>0) +e ) >0
+
+gen y = 1 + e + rnormal() + (t>0)	
+sort z
+
+gen q20=0
+forvalues i = -3(.25)3 {
+	local j = `j'+1
+	replace q20 = q20+1 if z>`i'
+}
+
+bysort q20 :egen mt = mean(t)
+bysort q20 :egen mz = mean(z)
+bysort q20 :egen my = mean(y)
+bysort mt mz:gen ww=_N
+}
+qui:two scatter mt mz [w=ww] || ///
+	qfit t z if z<0, lw(1) || ///
+	qfit t z if z>0 , lw(1) legend(off) ///
+	ytitle("Share treated") 
+graph export frdd1.png, width(1000) replace
+qui:two scatter my mz [w=ww] || ///
+	qfit y z if z<0, lw(1) || ///
+	qfit y z if z>0 , lw(1) legend(off) ///
+	ytitle("Share treated")
+graph export frdd2.png, width(1000) replace
+```
+
+::: {layout-ncol=2 }
+
+![Treatment](frdd1.png)
+
+![Outcome](frdd2.png)
+
+:::
+
+Effect: 
+
+```{stata}
+*| output: asis
+qui: gen dz = z>0
+qui: reg y dz c.z##c.z#i.dz
+local b1 = _b[dz]
+qui: reg t dz c.z##c.z#i.dz
+local b2 = _b[dz]
+
+display "There is a " %3.2f `b1' " effect on the outcome"
+display "and a " %3.2f `b2' " effect on the treatment"
+display "which imply a LATE of " %3.2f `=`b1'/`b2''
+```
+
+## Things to consider
+
+**Theoretical**:
+
+1. You need to identify "jumps" caused by a running variable. (depends on knowing how things works)
+2. The potential outcomes have to be smooth functions of the running variable
+   
+**Empirical**:
+
+3. The running variable shouldnt be manipulated. (random)
+   - Implies Assignment rules are not known, are exogenous, and there is no random heaping
+4. Controls should be balanced around the threshold
+
+## Testing Empirical Assumptions {.scrollable}
+
+Manipulation of running variable may cause a non-smooth density in the running variable:
+
+- If there is no manipulation, you may expect density round threshold to be smooth.
+  - In Stata: ssc install `rddensity`. In r install.packages(c('rdd','rddensity'))
+
+```{stata}
+*| echo: true
+*| code-fold: true
+*| output: false
+set linesize 100
+qui:ssc install  lpdensity, replace
+qui:ssc install  rddensity, replace
+rddensity z, c(0) plot
+graph export frdd3.png, width(1000) replace
+```
+![](frdd3.png)
+
+## 
+
+- In cases of nonrandom heaping, it may be possible to avoid the problem by restricting the data.
+
+- This is an example of measurement error, when individuals may "round-up/down" answers. And may occure near threshold.
+
+- This does not necessarily mean there is manipulation. 
+
+- Possible Solution? Estimate RDD excluding observations around (excluding) threshold.
+
+## Covariate balance and Placebo tests
+
+- If treatment is **locally** randomized, then covariates should not be affected by discontinuity. 
+
+- Alternatively, one could estimate effects on variables you know CANNOT be affected by the treatment
+
+- One could also implement a placebo test, checking the impact on a different threholds.  
+  - No effect should be observed on the outcome, (but some on the treatment)
+
+## Example 
+
+Impact of Scores on Scholarship recipiency
+
+```{stata}
+use rdd_files\fuzzy, clear
+color_style bay
+qui:rdplot d x1, graph_options(legend( pos(6)))
+```
+
+## Manipulation test
+
+```{stata}
+qui:rddensity x1, plot
+```
+
+## Intention to treat
+
+Impact on Enrollment 
+```{stata}
+qui:rdplot y x1, graph_options(legend( pos(6)))
+```
+
+## Estimation of the effect:
+
+```{stata}
+*| echo: true
+gen dx1 = x1>0
+ivregress 2sls y (d = dx1) c.x1##c.x1#dx1 
+```
+
+## Some Sensitivity
+
+```{stata}
+qui:{
+  
+ 
+matrix b1 = 0,0
+forvalues i = 1/15 {
+	ivregress 2sls y (d = dx1) c.x1#dx1  if abs(x1)<`i'
+	matrix b1=b1\[_b[d],_se[d]]
+}
+
+matrix b2 = 0,0
+forvalues i = 1/15 {
+	ivregress 2sls y (d = dx1) c.x1##c.x1#dx1  if abs(x1)<`i'
+	matrix b2=b2\[_b[d],_se[d]]
+}
+
+matrix b3 = 0,0
+forvalues i = 1/15 {
+	ivregress 2sls y (d = dx1) c.x1##c.x1##c.x1#dx1  if abs(x1)<`i'
+	matrix b3=b3\[_b[d],_se[d]]
+}
+
+lbsvmat b1
+lbsvmat b2
+lbsvmat b3
+forvalues i = 1/3 {
+  gen ll`i'=b`i'1-b`i'2*1.96
+  gen ul`i'=b`i'1+b`i'2*1.96
+}
+gen z = _n-1 if b11!=.
+replace z=. in 1
+
+}
+gen z1 = z + 0.25
+gen z2 = z + 0.5
+two (rspike ll1 ul1 z, lw(1) pstyle(p1) color(%50) ) (scatter b11 z, pstyle(p1) ) ///
+	(rspike ll2 ul2 z1, lw(1) pstyle(p2) color(%50) ) (scatter b21 z1, pstyle(p2) ) ///
+	(rspike ll3 ul3 z2, lw(1) pstyle(p3) color(%50) ) (scatter b31 z2, pstyle(p3) ), ///
+	legend(order(1 "Linear" 3 "Quadratic" 5 "Cubic")) xtitle("Bandwidth")
+
+```
+
+## Flasification test
+
+```{stata}
+qui {
+ivregress 2sls icfes_female (d = dx1) c.x1#dx1    if abs(x1)<20
+est sto m1
+ivregress 2sls icfes_age (d = dx1) c.x1#dx1       if abs(x1)<20
+est sto m2
+ivregress 2sls icfes_urm (d = dx1) c.x1#dx1       if abs(x1)<20
+est sto m3
+ivregress 2sls icfes_famsize (d = dx1) c.x1#dx1       if abs(x1)<20
+est sto m4
+}
+esttab m1 m2 m3 m4, keep(d)
+```
+
+## Next Differences in Differences

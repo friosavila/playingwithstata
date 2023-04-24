@@ -29,6 +29,71 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="rdd_files/libs/revealjs/dist/theme/quarto.css" id="theme">
   <link href="rdd_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -319,6 +384,9 @@
       margin-right: 0; 
     }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+  <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -472,9 +540,199 @@ E(y(1)|Z=c) &amp;-E(y(0)|Z=c)
 
 <img data-src="rdd_files/figure-revealjs/cell-3-output-1.png" class="r-stretch"></section>
 <section id="example-1" class="slide level2">
-<h2>example</h2>
+<h2>Example</h2>
 
-<img data-src="rdd_files/figure-revealjs/cell-4-output-1.png" class="r-stretch"><div class="footer footer-default">
+<img data-src="rdd_files/figure-revealjs/cell-4-output-1.png" class="r-stretch"></section>
+<section id="fuzzy-rd-imperfect-compliance" class="slide level2">
+<h2>Fuzzy RD: Imperfect compliance</h2>
+<p>While the Idea Scenario happens when there is perfect compliance (above the threshold you are treated), this doesnt happen all the time.</p>
+<p>In the education example:</p>
+<ul>
+<li>Some people with low grades may be “legacy” or have “contacts” (or took a second exam later) and manage to go to college</li>
+<li>Some decided not to go, even after entering to college</li>
+</ul>
+<p>Sounds Familiar? (Never takers vs always takers)</p>
+<p>When this happens, you can still do RDD, but you need more steps</p>
+</section>
+<section id="fuzzy-rd" class="slide level2">
+<h2>Fuzzy RD</h2>
+<ol type="1">
+<li>Estimate the impact of Discontinuity on Treatment</li>
+<li>Estimate the impact of Discontinuity on Outcome</li>
+<li>Estimate the ratio between (1) and (2)</li>
+</ol>
+<p>Sounds Familiar?</p>
+<ul>
+<li>Its a kind of wald/IV estimator.
+<ul>
+<li>The instrument is the discontinuity</li>
+<li>The the endogenous variable is the treament</li>
+</ul></li>
+</ul>
+<p>You still need to estimate the effect as close to the Discontinuity as possible</p>
+<p><code>ivregress</code> may still do most of this for you</p>
+</section>
+<section id="example-2" class="slide level2">
+<h2>Example</h2>
+<div class="quarto-layout-panel">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="frdd1.png"></p>
+<p></p><figcaption>Treatment</figcaption><p></p>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="frdd2.png"></p>
+<p></p><figcaption>Outcome</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>Effect:</p>
+<p>There is a 0.45 effect on the outcome and a 0.44 effect on the treatment which imply a LATE of 1.03</p>
+</section>
+<section id="things-to-consider" class="slide level2">
+<h2>Things to consider</h2>
+<p><strong>Theoretical</strong>:</p>
+<ol type="1">
+<li>You need to identify “jumps” caused by a running variable. (depends on knowing how things works)</li>
+<li>The potential outcomes have to be smooth functions of the running variable</li>
+</ol>
+<p><strong>Empirical</strong>:</p>
+<ol start="3" type="1">
+<li>The running variable shouldnt be manipulated. (random)
+<ul>
+<li>Implies Assignment rules are not known, are exogenous, and there is no random heaping</li>
+</ul></li>
+<li>Controls should be balanced around the threshold</li>
+</ol>
+</section>
+<section id="testing-empirical-assumptions" class="slide level2 scrollable">
+<h2>Testing Empirical Assumptions</h2>
+<p>Manipulation of running variable may cause a non-smooth density in the running variable:</p>
+<ul>
+<li>If there is no manipulation, you may expect density round threshold to be smooth.
+<ul>
+<li>In Stata: ssc install <code>rddensity</code>. In r install.packages(c(‘rdd’,‘rddensity’))</li>
+</ul></li>
+</ul>
+<div class="cell" data-execution_count="6">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">set</span> <span class="dv">linesize</span> 100</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">qui</span>:<span class="kw">ssc</span> install  lpdensity, <span class="kw">replace</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">qui</span>:<span class="kw">ssc</span> install  rddensity, <span class="kw">replace</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>rddensity z, c(0) plot</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="kw">graph</span> <span class="kw">export</span> frdd3.png, <span class="kw">width</span>(1000) <span class="kw">replace</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+
+<img data-src="frdd3.png" class="r-stretch"></section>
+<section id="section-2" class="slide level2">
+<h2></h2>
+<ul>
+<li><p>In cases of nonrandom heaping, it may be possible to avoid the problem by restricting the data.</p></li>
+<li><p>This is an example of measurement error, when individuals may “round-up/down” answers. And may occure near threshold.</p></li>
+<li><p>This does not necessarily mean there is manipulation.</p></li>
+<li><p>Possible Solution? Estimate RDD excluding observations around (excluding) threshold.</p></li>
+</ul>
+</section>
+<section id="covariate-balance-and-placebo-tests" class="slide level2">
+<h2>Covariate balance and Placebo tests</h2>
+<ul>
+<li><p>If treatment is <strong>locally</strong> randomized, then covariates should not be affected by discontinuity.</p></li>
+<li><p>Alternatively, one could estimate effects on variables you know CANNOT be affected by the treatment</p></li>
+<li><p>One could also implement a placebo test, checking the impact on a different threholds.</p>
+<ul>
+<li>No effect should be observed on the outcome, (but some on the treatment)</li>
+</ul></li>
+</ul>
+</section>
+<section id="example-3" class="slide level2">
+<h2>Example</h2>
+<p>Impact of Scores on Scholarship recipiency</p>
+
+<img data-src="rdd_files/figure-revealjs/cell-8-output-1.png" class="r-stretch"></section>
+<section id="manipulation-test" class="slide level2">
+<h2>Manipulation test</h2>
+
+<img data-src="rdd_files/figure-revealjs/cell-9-output-1.png" class="r-stretch"></section>
+<section id="intention-to-treat" class="slide level2">
+<h2>Intention to treat</h2>
+<p>Impact on Enrollment</p>
+
+<img data-src="rdd_files/figure-revealjs/cell-10-output-1.png" class="r-stretch"></section>
+<section id="estimation-of-the-effect" class="slide level2">
+<h2>Estimation of the effect:</h2>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">gen</span> dx1 = x1&gt;0</span>
+<span id="cb2-2"><a href="#cb2-2"></a>ivregress 2sls <span class="fu">y</span> (<span class="kw">d</span> = dx1) c.x1##c.x1#dx1 </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Instrumental variables 2SLS regression            Number of obs   =     23,132
+                                                  Wald chi2(5)    =    1645.56
+                                                  Prob &gt; chi2     =     0.0000
+                                                  R-squared       =     0.2845
+                                                  Root MSE        =     .39876
+
+-------------------------------------------------------------------------------
+            y | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
+--------------+----------------------------------------------------------------
+            d |   .4432824   .0215111    20.61   0.000     .4011214    .4854434
+              |
+     dx1#c.x1 |
+           0  |   .0002949   .0019179     0.15   0.878    -.0034642    .0040539
+           1  |  -.0034238    .000779    -4.39   0.000    -.0049507   -.0018969
+              |
+dx1#c.x1#c.x1 |
+           0  |   .0000741   .0000703     1.05   0.292    -.0000637    .0002119
+           1  |   .0000616   .0000164     3.76   0.000     .0000295    .0000936
+              |
+        _cons |   .5103635    .010876    46.93   0.000     .4890469    .5316801
+-------------------------------------------------------------------------------
+Instrumented: d
+ Instruments: 0b.dx1#c.x1 1.dx1#c.x1 0b.dx1#c.x1#c.x1 1.dx1#c.x1#c.x1 dx1</code></pre>
+</div>
+</div>
+</section>
+<section id="some-sensitivity" class="slide level2">
+<h2>Some Sensitivity</h2>
+<div class="cell" data-execution_count="11">
+<div class="cell-output cell-output-stdout">
+<pre><code>(23,117 missing values generated)
+(23,117 missing values generated)</code></pre>
+</div>
+
+</div>
+<img data-src="rdd_files/figure-revealjs/cell-12-output-2.png" class="r-stretch"></section>
+<section id="flasification-test" class="slide level2">
+<h2>Flasification test</h2>
+<div class="cell" data-execution_count="12">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+----------------------------------------------------------------------------
+                      (1)             (2)             (3)             (4)   
+             icfes_female       icfes_age       icfes_urm    icfes_fams~e   
+----------------------------------------------------------------------------
+d                  0.0199           0.128         0.00791          0.0439   
+                   (0.80)          (1.05)          (0.65)          (0.63)   
+----------------------------------------------------------------------------
+N                   14841           14799           14841           14801   
+----------------------------------------------------------------------------
+t statistics in parentheses
+* p&lt;0.05, ** p&lt;0.01, *** p&lt;0.001</code></pre>
+</div>
+</div>
+</section>
+<section id="next-differences-in-differences" class="slide level2">
+<h2>Next Differences in Differences</h2>
+<div class="footer footer-default">
 
 </div>
 </section>
