@@ -53,12 +53,13 @@ two (scatter y z, sort title("Sharp RDD") pstyle(p1) color(%20)) ///
 clear
 set seed 11
 set obs 200
+color_style bay
 gen e=rnormal()
 gen z=runiform()+e
 sum z
 replace z=(z-r(mean))/r(sd)
 
-gen t = (rnormal(-1)*0.5 + (z>0) +e ) >0
+gen t = (rnormal(-1)*0.5 + 0.5*(z>0) +e ) >0
 
 gen y = 1 + e + rnormal() + (t>0)	
 sort z
@@ -73,7 +74,7 @@ bysort q20 :egen mt = mean(t)
 bysort q20 :egen mz = mean(z)
 bysort mt mz:gen ww=_N
 two scatter mt mz [w=ww] || ///
-	lfit t z if z<0, lw(1) || ///
-	lfit t z if z>0 , lw(1) legend(off) ///
+	qfit t z if z<0, lw(1) || ///
+	qfit t z if z>0 , lw(1) legend(off) ///
 	ytitle("Share treated")
 	
