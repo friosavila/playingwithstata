@@ -1,0 +1,27 @@
+title: "Synthetic Control"
+subtitle: "Frankensteining a Clone"
+author: Fernando Rios-Avila
+format:
+  revealjs: 
+    slide-number: true
+    reveal-js-url: ppt_files
+    width: 1400
+    height: 900
+    code-overflow: wrap
+---
+
+## Introduction
+
+## Synthetic Control: Special case
+
+Put togerher 
+
+## How does it work:
+
+## Manual Example:
+
+## How is it done in `Stata`
+
+## What else?
+
+## Conclusions
