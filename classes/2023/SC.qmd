@@ -1,3 +1,4 @@
+---
 title: "Synthetic Control"
 subtitle: "Frankensteining a Clone"
 author: Fernando Rios-Avila
@@ -12,13 +13,270 @@ format:
 
 ## Introduction
 
+- One more last time. What is the Goal of Causal Analysis?
+
+:::{.callout-important}
+**The goal of Causal Analysis is to identify how a treatment affects the outcome by itself, once all other factors are kept constant or controlled for.**
+:::
+
+From a theoretical point of view, that is very easy. You simply compare two Potential outcomes:
+
+$$
+TE_i = y_i(1)- y_i(0)
+$$
+
+and aggregate those outcomes as needed:
+
+$$
+ATT=E(TE_i|D=1);ATU=E(TE_i|D=0);ATE=E(TE_i);ATX=E(TE_i|X)
+$$
+
+##
+
+Unfortunately, we only observe one outcome. You are either treated or untreated...So how do we fix this?
+
+You need to find counterfactuals so both observed ($X$) and unobserved ($e$) are the same (or close) between treated and contro group.
+
+1. **RCT**: Gold Standard, You randomize treatment and compare means. If correctly done, $X's$ and $e's$ will be comparable across groups, and ATE's can be identified.
+  
+2. **Reg + FE**: For other cases, we just work with observational data. First method, Regression (OLS?). Adding covariates controls for their presence, working as a pseudo balancing approach.
+   
+   You could also add *fixed effects*, to control for factors that are fixed (across time), but you do not observe. (requires Panel data).
+
+   It works if Treatment occurs at the same time for everyone treated. and if Unobserved are "fixed"
+
+##
+
+3. **Instrumental variables**: 2nd Best to RCT. It uses IV to generate a small randomization process that can be used for estimating ATT. Technically it compares the effect among those potentially affected by the random instrument.
+   Requires Randome instrument, and no-defiers. Its a Local ATE
+
+4. **Matching and Reweigthing**. Similar to Regression, but better to balance characteristics. The goal is to find units with similar characteristics for all treated units. You can estimate ATE, ATT or ATU. Depends on how well Matching is done
+
+5. **RDD**. If you have data where treatment depends on a single variable and a threshold, you can use this to identify TE for those "Near" the threshold. They Key assumption, treatment assigment is as good at random at the threshold.
+
+##
+
+6. **DD**. Differences in differences uses variation across time and across individual to identify treatment effects. Under PTA, and SUTVA
+   
+   Dif. within individuals eliminates common time trends, Dif across time, eliminates individual fixed effects. DD provide you with ATT's for the treated, after treatment. 
+
+   $$ATT=(Y_{g=1,t=1}-Y_{g=1,t=0}) - [(Y_{g=0,t=1}-Y_{g=0,t=0})]$$
+
+   Can be generalized to Many periods and many groups, but requires stronger assumptions (no anticipation and no change in treatment status), and further aggregation.
+
+   Or combined with Matching for even better results.
+
 ## Synthetic Control: Special case
 
-Put togerher 
+As previous Cases, Synthetic control aims to identify treatment constructing appropriate "counterfactuals".
 
-## How does it work:
+It is said that Synthethic controls may be even MORE credible methodology, because the treated group is by construction Exogenous...but how?
 
-## Manual Example:
+> The treated group is a Case Study. 
+> 
+> An isolated event or unit that is affected by a treatment, and should not affect other units ! 
+
+In this sense, the treatment is exogenous, because it affected a single unit. 
+
+But what about the counterfactual?
+
+## 
+
+- In other methods (in particular Matching), our "conterfactual" mean to look for observations that had the same characteristics as the treated observation. 
+
+- Some times, we needed to settle to use a single "bad" control, because we couldnt find one better. (people are very different).
+  - Using Stricter criteria would make it unfeasible.
+  - More relax and we have lots of biases.
+
+- SC is different. You have **MANY** controls, so why settle with only one? 
+  
+- SC is like Dr Frankenstein, where you "build" a single comparison group by averaging information of all controls.
+
+- You build the synthetic control getting "weighted averages".
+
+- But...we assume you can see all units across time (panel data)
+
+## This is a very popular method
+
+Where has this method been used: 
+
+- effects of right-to-carry laws (Donohue et al., 2019), 
+- legalized prostitution (Cunningham and Shah, 2018), 
+- immigration policy (Bohn et al., 2014), 
+- corporate political connections (Acemoglu et al., 2016), 
+- taxation (Kleven et al., 2013), 
+- organized crime (Pinotti, 2015) 
+
+Just to name a few. 
+
+## Assumptions:
+
+1. The Donor Pool should be a good match for the treated unit. Thus, the synthethic control should be Zero before treatment.
+   
+   - This is similar to PTA, but stronger. Before treatment, there should be no difference between Treated and synthetic control
+
+2. SUTVA. Only the treated group is affected by treatment. The control group should be unaffected (no spill over effects).
+
+3. There should be NO other "event" in the period of analysis. (Thus we only capture treatment impact)
+
+## How does it work.
+
+Recall, we want to estimate TE for the single untreated unit:
+
+$$ATT_{1t} = Y_{1t}- Y(0)_{1t}
+$$
+
+but we do not observe $Y(0)_{1t}$. We only know that before treatment 
+
+$$ATT_{1t} = Y_{1t}- Y(0)_{1t}=0$$
+
+We could construct a synthetic control:
+
+$$\hat Y_{1t}(0) = \sum_{i = 2}^N w_i Y_{it} 
+$$
+
+At the very least, the weights $w$ should be such that before treatment ($G$):
+
+$$Y_{1t} = \sum_{i \neq 1} w_i Y_{it} \ \forall \ t<G $$
+
+## 
+
+At the very least, the weights $w$ should be such that before treatment ($G$):
+
+$$Y_{1t} = \sum_{i \neq 1} w_i Y_{it} \ \forall \ t<G $$
+
+Havent we seen seen something like this Before? OLS:
+
+$$y = x\beta + e$$
+$$y^t_{1} = \color{red}{a_0} +  y_i^t w + e$$
+
+$$
+\begin{bmatrix}
+y^1_1 \\ y^1_2 \\ ... \\ y^1_{G-1} \\ 
+\end{bmatrix} = \color{red}{a_0} +
+\begin{bmatrix}
+y^2_1 & y^3_1 & ... & y^k_1  \\ 
+y^2_2 & y^3_2 & ... & y^k_2 \\
+ ...  & ... & ... & ...\\
+y^2_{G-1} & y^3_{G-1} & ... & y^k_{G-1}\\ 
+\end{bmatrix} 
+\begin{bmatrix}
+w_2 \\ w_3 \\ ... \\ w_k
+\end{bmatrix} 
+ + e
+$$
+
+##
+
+$$y^t_{1} = \color{red}{a_0} +  y_i^t w + e$$
+
+- In this Specification, each row (observation) is a "pre-treatment" period of observed data. 
+- and each control unit (from the many controls) will be a variable.
+
+OLS can help you find the weights, which can then be used for obtaining the "Synthetic" control
+
+## Small Example 
+
+```{stata}
+*| code-fold: true
+*| echo: true
+qui:frause smoking, clear
+color_style tableau
+bysort year:egen mean_cig=mean(cigsale) if state!=3
+two (line cigsale year if state ==3) (line mean_cig year if state==1), ///
+    legend(order(1 "California" 2 "Avg Other States") pos(6) col(2)) xline(1988)
+```
+
+## 
+
+```{stata}
+drop mean_cig
+qui:reshape wide cigsale lnincome beer age15to24 retprice , i(year) j(state)
+ren cigsale1 mcigsale
+```
+- Now we have...38 variables, (other States but California)
+- And 31 periods (only 19 Before treatment)
+- Can we estimate the weights using OLS?
+ 
+...
+
+- Nop. N<K !
+
+## 
+
+```{stata}
+*| code-fold: true
+*| echo: true
+qui:reg mcigsale cigsale* if year<=1988, nocons
+predict mcigh1
+qui: lasso linear  mcigsale cig* if year<=1988, nocons
+predict mcigh2
+ two (line mcigsale year, lw(0.5)  ) ///
+  (line mcigh1 mcigh2   year, lw(0.5)  ) , ///
+  legend(order(1 "California" 2 "OLS Synthetic" 3 "LASSO Synthetic")) xline(1988)
+```
+- OLS Not appropriate (specially if N<K)
+- Lasso Better, because of regularization, but not great.
+- We are not controlling for other factors either (controls)
+- Other Details we cover next
+  
+## Allowing for Covariates:
+
+- As with other methodologies, one should also considered controlling for covariates.
+- Specifically, more covariates can be allowed by Stacking them:
+
+$$\begin{bmatrix} y^t_{1} \\ x^t_{1} \\ z^t_{1} \end{bmatrix}
+= \color{red}{(a_0=0)} + 
+\begin{bmatrix} y^t_{2} & y^t_{3} ... & y^t_{k} \\ 
+                x^t_{2} & x^t_{3} ... & x^t_{k} \\ 
+                z^t_{2} & z^t_{3} ... & z^t_{k} \end{bmatrix}
+\begin{bmatrix} w_2 \\ w_3 \\ ... \\ w_k \end{bmatrix}
++ e
+$$
+
+##
+
+```{stata}
+*| code-fold: true
+*| echo: true
+qui:frause smoking, clear
+ren (cigsale lnincome beer age15to24 retprice) ///
+	  (var1    var2     var3 var4      var5)
+qui: reshape long var, i(state year)	j(new)
+qui: reshape wide var, i(year new)	j(state)
+label define new 1 "cigsale" ///
+				 2 "lnincome" ///
+				 3 "beer" ///
+				 4 "age15to24" /// 
+				 5 "retprice", modify
+label values new new	
+ren var3 cal_out
+qui:reg cal_out var* if year<=1988, nocons
+predict mcigh1
+qui: lasso linear   cal_out var* if year<=1988, nocons
+predict mcigh2
+ two (line cal_out year if new==1, lw(0.5)  ) ///
+  (line mcigh1 mcigh2   year if new==1, lw(0.5)  ) , ///
+  legend(order(1 "California" 2 "OLS Synthetic" 3 "LASSO Synthetic")) xline(1988)
+```
+
+## What else to keep in mind
+
+- With More Variables, the goal is still to be able to choose $w's$ that best explain the observed outcomes (and characteristics) of the "treated unit".
+
+$$w = \min_w \sum_{m=1}^K \left[ v_m \left( X_{1t}-\sum_{j=2}^J w_j X_{jt}  \right)^2 \right] 
+$$
+
+However, we also need to impose restrictions on Weights:
+
+1. $w_j \geq 0$ Weights cannot be negative.
+2. $\sum w_j =1$ They should sum up to 1. 
+3. $v_m$ can be used to increase, or reduce the relative importance of factors in the model. 
+The constant is zero.
+
+This is a maximization problem with constrains. Not so easy to deal with, but there is `synth`.
+
+## 
 
 ## How is it done in `Stata`
 
