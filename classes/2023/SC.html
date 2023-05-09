@@ -478,8 +478,8 @@ ATT=E(TE_i|D=1);ATU=E(TE_i|D=0);ATE=E(TE_i);ATX=E(TE_i|X)
 <li>Using Stricter criteria would make it unfeasible.</li>
 <li>More relax and we have lots of biases.</li>
 </ul></li>
-<li><p>SC is different. You have <strong>MANY</strong> controls, so why settle with only one?</p></li>
-<li><p>SC is like Dr Frankenstein, where you “build” a single comparison group by averaging information of all controls.</p></li>
+<li><p><strong>SC</strong> is different. You have <strong>MANY</strong> controls, so why settle with only one?</p></li>
+<li><p><strong>SC</strong> is like Dr Frankenstein, where you “build” a single comparison group by averaging information of all controls.</p></li>
 <li><p>You build the synthetic control getting “weighted averages”.</p></li>
 <li><p>But…we assume you can see all units across time (panel data)</p></li>
 </ul>
@@ -666,21 +666,158 @@ w_2 \\ w_3 \\ ... \\ w_k
 <ol type="1">
 <li><span class="math inline">\(w_j \geq 0\)</span> Weights cannot be negative.</li>
 <li><span class="math inline">\(\sum w_j =1\)</span> They should sum up to 1.</li>
-<li><span class="math inline">\(v_m\)</span> can be used to increase, or reduce the relative importance of factors in the model. The constant is zero.</li>
+<li><span class="math inline">\(v_m\)</span> can be used to increase, or reduce the relative importance of factors in the model. (lower bound at 0) The constant is zero.</li>
 </ol>
-<p>This is a maximization problem with constrains. Not so easy to deal with, but there is <code>synth</code>.</p>
+<p>This is a maximization problem with constrains. Restrictions ensure the prediction is based on a “convex” set, avoiding extrapolation.</p>
+</section>
+<section id="is-it-noise-or-causal" class="slide level2">
+<h2>Is it noise? or Causal?</h2>
+<ul>
+<li><p>When using <strong>SC</strong>, you essentially have a sample <span class="math inline">\(n=1\)</span> to estimate an effect. How do you know that effect is significant? and not just noise?</p>
+<ul>
+<li>You can do a randomization experiment! and answer:</li>
+</ul></li>
+</ul>
+<blockquote>
+<p>“how unusual is this estimate under the null hypothesis of no policy effect?”.</p>
+</blockquote>
+<ul>
+<li>How does this work?</li>
+</ul>
+</section>
+<section id="randomization" class="slide level2">
+<h2>Randomization</h2>
+<ol type="1">
+<li><p>Excluding the treated unit, estimate the pseudo effect of every other unit in the dataset. These are placebos, and you should expect the effect to be zero for them…but you may see some positive and negative effects.</p>
+<ul>
+<li>This may be consider the sampling distribution of the estimated effect.</li>
+</ul></li>
+<li><p>Calculate the pre- and post- treament <em>Root mean squared prediction error</em> for all units (treated and placebos).</p>
+<ul>
+<li>Pre-RMSPE provides a statistic of how well the model fits before treatment.</li>
+<li>Post-RMSPE provides a statistic of how unusual is the outcome after the “treatment date”. The largest it is, the more unpredictable (or stronger treatment effect) it would be.</li>
+</ul></li>
+</ol>
 </section>
 <section id="section-9" class="slide level2">
 <h2></h2>
+<p><span class="math display">\[
+  \begin{aligned}
+  RMSPE_i^{pre} &amp;= \sqrt{ \frac{1}{g-1}\sum_{t=1}^{g-1}(y_{i,t}-\sum_{j\neq i}w_j^i y_{j,t})^2 } \\
+  RMSPE_i^{post} &amp;= \sqrt{ \frac{1}{T-g+1}\sum_{t=g}^{T}(y_{i,t}-\sum_{j\neq i}w_j^i y_{j,t})^2 }
+  \end{aligned}
+  \]</span></p>
+<ol start="3" type="1">
+<li><p>Estimate the ratio between Pre and Post RMSPE, and rank them. <span class="math display">\[Ratio_i = \frac{RMSPE_i^{post}}{RMSPE_i^{pre}}
+\]</span></p></li>
+<li><p>The p-value for the treatment is proportional to the Rank:</p>
+<p><span class="math display">\[pvalue_i = \frac{rank(i)}{Tot}\]</span></p></li>
+</ol>
 </section>
-<section id="how-is-it-done-in-stata" class="slide level2">
-<h2>How is it done in <code>Stata</code></h2>
-</section>
-<section id="what-else" class="slide level2">
-<h2>What else?</h2>
+<section id="lets-continue-the-example" class="slide level2">
+<h2>Lets continue the example:</h2>
+<div class="cell" data-execution_count="5">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">qui</span>:frause smoking, <span class="kw">clear</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>xtset state <span class="fu">year</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="kw">tempfile</span> sc3</span>
+<span id="cb7-4"><a href="#cb7-4"></a>** For California</span>
+<span id="cb7-5"><a href="#cb7-5"></a>synth cigsale cigsale(1970) cigsale(1975) cigsale(1980) cigsale(1985) cigsale(1988), trunit(3) trperiod(1989) <span class="kw">keep</span>(<span class="ot">`sc3'</span>) <span class="kw">replace</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a>** Same Specification <span class="kw">for</span> All other States excluding California</span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="kw">forvalues</span> i =1/39{</span>
+<span id="cb7-8"><a href="#cb7-8"></a>    <span class="kw">if</span> <span class="ot">`i'</span>!=3 {</span>
+<span id="cb7-9"><a href="#cb7-9"></a>        <span class="kw">local</span> pool</span>
+<span id="cb7-10"><a href="#cb7-10"></a>        <span class="kw">foreach</span> j <span class="kw">of</span> <span class="kw">local</span> stl {</span>
+<span id="cb7-11"><a href="#cb7-11"></a>            <span class="kw">if</span> <span class="ot">`j'</span>!=3 &amp; <span class="ot">`j'</span>!=<span class="ot">`i'</span> <span class="kw">local</span> pool <span class="ot">`pool'</span> <span class="ot">`j'</span></span>
+<span id="cb7-12"><a href="#cb7-12"></a>        }</span>
+<span id="cb7-13"><a href="#cb7-13"></a>        <span class="kw">tempfile</span> sc<span class="ot">`i'</span></span>
+<span id="cb7-14"><a href="#cb7-14"></a>        synth cigsale cigsale(1970) cigsale(1975) cigsale(1980) cigsale(1985) cigsale(1988), <span class="co">///</span></span>
+<span id="cb7-15"><a href="#cb7-15"></a>        trunit(<span class="ot">`i'</span>) trperiod(1989) <span class="kw">keep</span>(<span class="ot">`sc`i'</span>') <span class="kw">replace</span> counit(<span class="ot">`pool'</span>)</span>
+<span id="cb7-16"><a href="#cb7-16"></a>    }</span>
+<span id="cb7-17"><a href="#cb7-17"></a>}</span>
+<span id="cb7-18"><a href="#cb7-18"></a>** Some <span class="kw">data</span> cleaning and prepration</span>
+<span id="cb7-19"><a href="#cb7-19"></a><span class="kw">forvalues</span> i =1/39{</span>
+<span id="cb7-20"><a href="#cb7-20"></a>    <span class="kw">use</span> <span class="ot">`sc`i'</span>' , <span class="kw">clear</span></span>
+<span id="cb7-21"><a href="#cb7-21"></a>    <span class="kw">gen</span> tef<span class="ot">`i'</span> = _Y_treated - _Y_synthetic</span>
+<span id="cb7-22"><a href="#cb7-22"></a>    <span class="kw">egen</span> sef<span class="ot">`i'</span>a =<span class="kw">mean</span>( (_Y_treated - _Y_synthetic)^2) <span class="kw">if</span> _time&lt;=1988</span>
+<span id="cb7-23"><a href="#cb7-23"></a>    <span class="kw">egen</span> sef<span class="ot">`i'</span>b =<span class="kw">mean</span>( (_Y_treated - _Y_synthetic)^2) <span class="kw">if</span> _time&gt;1988</span>
+<span id="cb7-24"><a href="#cb7-24"></a>  <span class="kw">replace</span> sef<span class="ot">`i'</span>a=<span class="fu">sqrt</span>(sef<span class="ot">`i'</span>a[1])</span>
+<span id="cb7-25"><a href="#cb7-25"></a>    <span class="kw">replace</span> sef<span class="ot">`i'</span>b=<span class="fu">sqrt</span>(sef<span class="ot">`i'</span>b[_N])</span>
+<span id="cb7-26"><a href="#cb7-26"></a>    <span class="kw">drop</span> <span class="kw">if</span> _time==.</span>
+<span id="cb7-27"><a href="#cb7-27"></a>    <span class="kw">keep</span> tef<span class="ot">`i'</span> sef<span class="ot">`i'</span>* _time</span>
+<span id="cb7-28"><a href="#cb7-28"></a>    <span class="kw">save</span> <span class="ot">`sc`i'</span>', <span class="kw">replace</span></span>
+<span id="cb7-29"><a href="#cb7-29"></a>}</span>
+<span id="cb7-30"><a href="#cb7-30"></a>**</span>
+<span id="cb7-31"><a href="#cb7-31"></a>** Merging <span class="ot">all</span> together, and getting ready to plot</span>
+<span id="cb7-32"><a href="#cb7-32"></a>** </span>
+<span id="cb7-33"><a href="#cb7-33"></a></span>
+<span id="cb7-34"><a href="#cb7-34"></a><span class="kw">use</span> <span class="ot">`sc1'</span>, <span class="kw">clear</span></span>
+<span id="cb7-35"><a href="#cb7-35"></a><span class="kw">forvalues</span> i = 2/39 {</span>
+<span id="cb7-36"><a href="#cb7-36"></a>    <span class="kw">merge</span> 1:1 _time <span class="kw">using</span> <span class="ot">`sc`i'</span>', nogen</span>
+<span id="cb7-37"><a href="#cb7-37"></a>}</span>
+<span id="cb7-38"><a href="#cb7-38"></a><span class="kw">global</span> toplot</span>
+<span id="cb7-39"><a href="#cb7-39"></a><span class="kw">global</span> toplot2</span>
+<span id="cb7-40"><a href="#cb7-40"></a></span>
+<span id="cb7-41"><a href="#cb7-41"></a><span class="kw">forvalues</span> i = 1/39 {</span>
+<span id="cb7-42"><a href="#cb7-42"></a>    <span class="kw">global</span> toplot <span class="ot">$toplot</span> (<span class="kw">line</span> tef<span class="ot">`i'</span> _time, <span class="kw">color</span>(gs11) )</span>
+<span id="cb7-43"><a href="#cb7-43"></a>  <span class="kw">if</span> (sef<span class="ot">`i'</span>a[1])&lt;(2*sef3a[1]) {</span>
+<span id="cb7-44"><a href="#cb7-44"></a>        <span class="kw">global</span> toplot2 <span class="ot">$toplot2</span> (<span class="kw">line</span> tef<span class="ot">`i'</span> _time, <span class="kw">color</span>(gs11) )</span>
+<span id="cb7-45"><a href="#cb7-45"></a>    }</span>
+<span id="cb7-46"><a href="#cb7-46"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><strong>All Cases</strong></p>
+
+<img data-src="SC_files/figure-revealjs/cell-7-output-1.png" class="r-stretch"></section>
+<section id="section-10" class="slide level2">
+<h2></h2>
+<p><strong>Good Cases</strong> Restricts to States with Good RMSEP (less than 2 California)</p>
+
+<img data-src="SC_files/figure-revealjs/cell-8-output-1.png" class="r-stretch"></section>
+<section id="rmse-ratio" class="slide level2">
+<h2>RMSE Ratio</h2>
+
+<img data-src="SC_files/figure-revealjs/cell-10-output-1.png" class="r-stretch"></section>
+<section id="p-values" class="slide level2">
+<h2>p-values</h2>
+
+<img data-src="SC_files/figure-revealjs/cell-12-output-1.png" class="r-stretch"></section>
+<section id="other-falsification-tests" class="slide level2">
+<h2>Other Falsification Tests</h2>
+<ul>
+<li>Change of treatment Year.
+<ul>
+<li>In the manual implementation you may want to change the treatment year (to an earler point). One should see no effect between <em>false</em> treatment date and the true to be zero.</li>
+<li>Using <code>synth</code> (Stata) you may want to drop some of the controls, so only “pre-false” treatment data is used.
+<ul>
+<li>Look also into <code>synth_runner</code></li>
+</ul></li>
+</ul></li>
+<li>Change of Outcome.
+<ul>
+<li>One can estimate the effect on alternative outcomes. No effect should be estimated.</li>
+</ul></li>
+</ul>
 </section>
 <section id="conclusions" class="slide level2">
 <h2>Conclusions</h2>
+<ul>
+<li><p>The basic methodology presented here differs from other strategies because one uses a single treated unit, with pletora of treated groups.</p></li>
+<li><p>Instead of comparing single units with the treated group, it aims to compare a weighted average “synthetic control” to do so.</p></li>
+<li><p>It will work better than matching because you are focusing on getting the best “weighted” group for a single unit.</p></li>
+<li><p>But this methodology is still under development, with extensions toward using dissagregated data, or a combination with DD approaches.</p></li>
+<li><p>This may change how much more one can do with the method</p></li>
+</ul>
+</section>
+<section id="section-11" class="title-slide slide level1 center">
+<h1></h1>
+
+<img data-src="https://wallpapercave.com/dwp1x/wp8641362.jpg" class="r-stretch"></section>
+
+<section id="next-week" class="title-slide slide level1 center">
+<h1>Next week:</h1>
+<p>Your papers! And Goodluck Friday</p>
 <div class="footer footer-default">
 
 </div>

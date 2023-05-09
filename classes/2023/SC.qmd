@@ -88,9 +88,9 @@ But what about the counterfactual?
   - Using Stricter criteria would make it unfeasible.
   - More relax and we have lots of biases.
 
-- SC is different. You have **MANY** controls, so why settle with only one? 
+- **SC** is different. You have **MANY** controls, so why settle with only one? 
   
-- SC is like Dr Frankenstein, where you "build" a single comparison group by averaging information of all controls.
+- **SC** is like Dr Frankenstein, where you "build" a single comparison group by averaging information of all controls.
 
 - You build the synthetic control getting "weighted averages".
 
@@ -271,15 +271,177 @@ However, we also need to impose restrictions on Weights:
 
 1. $w_j \geq 0$ Weights cannot be negative.
 2. $\sum w_j =1$ They should sum up to 1. 
-3. $v_m$ can be used to increase, or reduce the relative importance of factors in the model. 
+3. $v_m$ can be used to increase, or reduce the relative importance of factors in the model. (lower bound at 0)
 The constant is zero.
 
-This is a maximization problem with constrains. Not so easy to deal with, but there is `synth`.
+This is a maximization problem with constrains. Restrictions ensure the prediction is based on a "convex" set, avoiding extrapolation. 
+
+## Is it noise? or Causal?
+
+- When using **SC**, you essentially have a sample $n=1$ to estimate an effect. How do you know that effect is significant? and not just noise?
+
+  - You can do a randomization experiment! and answer:
+
+> “how unusual is this estimate under the null hypothesis of no policy effect?”.
+
+- How does this work? 
+
+## Randomization
+
+1. Excluding the treated unit, estimate the pseudo effect of every other unit in the dataset. These are placebos, and you should expect the effect to be zero for them...but you may see some positive and negative effects. 
+   
+   - This may be consider the sampling distribution of the estimated effect.
+
+2. Calculate the pre- and post- treament *Root mean squared prediction error* for all units (treated and placebos). 
+   
+   - Pre-RMSPE provides a statistic of how well the model fits before treatment. 
+   - Post-RMSPE provides a statistic of how unusual is the outcome after the "treatment date". The largest it is, the more unpredictable (or stronger treatment effect) it would be.
 
 ## 
+ 
+  $$
+  \begin{aligned}
+  RMSPE_i^{pre} &= \sqrt{ \frac{1}{g-1}\sum_{t=1}^{g-1}(y_{i,t}-\sum_{j\neq i}w_j^i y_{j,t})^2 } \\
+  RMSPE_i^{post} &= \sqrt{ \frac{1}{T-g+1}\sum_{t=g}^{T}(y_{i,t}-\sum_{j\neq i}w_j^i y_{j,t})^2 } 
+  \end{aligned}
+  $$
 
-## How is it done in `Stata`
+3. Estimate the ratio between Pre and Post RMSPE, and rank them.
+$$Ratio_i = \frac{RMSPE_i^{post}}{RMSPE_i^{pre}}
+$$
 
-## What else?
+4. The p-value for the treatment is proportional to the Rank:
+   
+   $$pvalue_i = \frac{rank(i)}{Tot}$$
+  
+## Lets continue the example:
+
+```{stata}
+*| code-fold: true
+*| echo: true
+*| output: false
+qui:frause smoking, clear
+xtset state year
+tempfile sc3
+** For California
+synth cigsale cigsale(1970) cigsale(1975) cigsale(1980) cigsale(1985) cigsale(1988), trunit(3) trperiod(1989) keep(`sc3') replace
+** Same Specification for All other States excluding California
+forvalues i =1/39{
+	if `i'!=3 {
+		local pool
+		foreach j of local stl {
+			if `j'!=3 & `j'!=`i' local pool `pool' `j'
+		}
+		tempfile sc`i'
+		synth cigsale cigsale(1970) cigsale(1975) cigsale(1980) cigsale(1985) cigsale(1988), ///
+		trunit(`i') trperiod(1989) keep(`sc`i'') replace counit(`pool')
+	}
+}
+** Some data cleaning and prepration
+forvalues i =1/39{
+	use `sc`i'' , clear
+	gen tef`i' = _Y_treated - _Y_synthetic
+	egen sef`i'a =mean( (_Y_treated - _Y_synthetic)^2) if _time<=1988
+	egen sef`i'b =mean( (_Y_treated - _Y_synthetic)^2) if _time>1988
+  replace sef`i'a=sqrt(sef`i'a[1])
+	replace sef`i'b=sqrt(sef`i'b[_N])
+	drop if _time==.
+	keep tef`i' sef`i'* _time
+	save `sc`i'', replace
+}
+**
+** Merging all together, and getting ready to plot
+** 
+
+use `sc1', clear
+forvalues i = 2/39 {
+	merge 1:1 _time using `sc`i'', nogen
+}
+global toplot
+global toplot2
+
+forvalues i = 1/39 {
+	global toplot $toplot (line tef`i' _time, color(gs11) )
+  if (sef`i'a[1])<(2*sef3a[1]) {
+		global toplot2 $toplot2 (line tef`i' _time, color(gs11) )
+ 	}
+}
+```
+**All Cases**
+```{stata}
+two $toplot (line tef3 _time, lw(1) color(navy*.8)), xline(1989) legend(off)
+```
+
+##
+
+**Good Cases**
+Restricts to States with Good RMSEP (less than 2 California)
+```{stata}
+two $toplot2 (line tef3 _time, lw(1) color(navy*.8)), xline(1989) legend(off)
+```
+
+
+## RMSE Ratio
+
+```{stata}
+*| output: false
+forvalues i = 1/39 {
+  if (sef`i'a[1])<(2*sef3a[1]) {
+		matrix rt=nullmat(rt)\[`i',sef`i'b[1]/sef`i'a[1]]
+ 	}
+}
+svmat rt
+egen rnk=rank(rt2)
+```
+```{stata}
+two bar rt2 rnk || bar rt2 rnk if rt1==3 , ///
+ legend(order( 2 "California")) ///
+  ytitle(RMSE ratio)  xtitle(RMSE rank)
+```
+
+## p-values
+
+```{stata}
+*| output: false
+gen rnk2=0
+forvalues i = 1/39 {
+	if   (sef`i'a[1])<(2*sef3a[1]) {
+		local t = `t'+1
+		replace rnk2=rnk2+(tef`i'<=tef3)	
+	}
+} 
+gen pv=rnk2*100/`t'
+```
+```{stata}
+two bar pv _time if _time>1988 & rnk2<32, ylabel(0(2)15) xlabel(1989/2000)
+```
+
+## Other Falsification Tests
+
+- Change of treatment Year. 
+  - In the manual implementation you may want to change the treatment year (to an earler point). 
+  One should see no effect between *false* treatment date and the true to be zero.
+  - Using `synth` (Stata) you may want to drop some of the controls, so only "pre-false" treatment data is used.
+    - Look also into `synth_runner`
+- Change of Outcome.
+  - One can estimate the effect on alternative outcomes. No effect should be estimated.
+
 
 ## Conclusions
+
+- The basic methodology presented here differs from other strategies because one uses a single treated unit, with pletora of treated groups. 
+
+- Instead of comparing single units with the treated group, it aims to compare a weighted average "synthetic control" to do so.
+- It will work better than matching because you are focusing on getting the best "weighted" group for a single unit. 
+
+- But this methodology is still under development, with extensions toward using dissagregated data, or a combination with DD approaches. 
+
+- This may change how much more one can do with the method
+
+#
+
+![](https://wallpapercave.com/dwp1x/wp8641362.jpg)
+
+# Next week:
+Your papers! 
+And Goodluck Friday
