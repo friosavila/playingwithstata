@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/tabby.min.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.3.313">
+
+  <meta name="author" content="Fernando Rios-Avila">
+  <title>Econometrics MSC Levy - Panel data and Fixed Effects (Many FE)</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto.css" id="theme">
+  <link rel="stylesheet" href="styles.css">
+  <link href="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+
+  .callout {
+    margin-top: 1em;
+    margin-bottom: 1em;  
+    border-radius: .25rem;
+  }
+
+  .callout.callout-style-simple { 
+    padding: 0em 0.5em;
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+    display: flex;
+  }
+
+  .callout.callout-style-default {
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+  }
+
+  .callout .callout-body-container {
+    flex-grow: 1;
+  }
+
+  .callout.callout-style-simple .callout-body {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-style-default .callout-body {
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-titled.callout-style-simple .callout-body {
+    margin-top: 0.2em;
+  }
+
+  .callout:not(.callout-titled) .callout-body {
+      display: flex;
+  }
+
+  .callout:not(.no-icon).callout-titled.callout-style-simple .callout-content {
+    padding-left: 1.6em;
+  }
+
+  .callout.callout-titled .callout-header {
+    padding-top: 0.2em;
+    margin-bottom: -0.2em;
+  }
+
+  .callout.callout-titled .callout-title  p {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+    
+  .callout.callout-titled.callout-style-simple .callout-content  p {
+    margin-top: 0;
+  }
+
+  .callout.callout-titled.callout-style-default .callout-content  p {
+    margin-top: 0.7em;
+  }
+
+  .callout.callout-style-simple div.callout-title {
+    border-bottom: none;
+    font-size: .9rem;
+    font-weight: 600;
+    opacity: 75%;
+  }
+
+  .callout.callout-style-default  div.callout-title {
+    border-bottom: none;
+    font-weight: 600;
+    opacity: 85%;
+    font-size: 0.9rem;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-default div.callout-content {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-simple .callout-icon::before {
+    height: 1rem;
+    width: 1rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 1rem 1rem;
+  }
+
+  .callout.callout-style-default .callout-icon::before {
+    height: 0.9rem;
+    width: 0.9rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 0.9rem 0.9rem;
+  }
+
+  .callout-title {
+    display: flex
+  }
+    
+  .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  .callout.no-icon::before {
+    display: none !important;
+  }
+
+  .callout.callout-titled .callout-body > .callout-content > :last-child {
+    margin-bottom: 0.5rem;
+  }
+
+  .callout.callout-titled .callout-icon::before {
+    margin-top: .5rem;
+    padding-right: .5rem;
+  }
+
+  .callout:not(.callout-titled) .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  /* Callout Types */
+
+  div.callout-note {
+    border-left-color: #4582ec !important;
+  }
+
+  div.callout-note .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEU0lEQVRYCcVXTWhcVRQ+586kSUMMxkyaElstCto2SIhitS5Ek8xUKV2poatCcVHtUlFQk8mbaaziwpWgglJwVaquitBOfhQXFlqlzSJpFSpIYyXNjBNiTCck7x2/8/LeNDOZxDuEkgOXe++553zfefee+/OYLOXFk3+1LLrRdiO81yNqZ6K9cG0P3MeFaMIQjXssE8Z1JzLO9ls20MBZX7oG8w9GxB0goaPrW5aNMp1yOZIa7Wv6o2ykpLtmAPs/vrG14Z+6d4jpbSKuhdcSyq9wGMPXjonwmESXrriLzFGOdDBLB8Y6MNYBu0dRokSygMA/mrun8MGFN3behm6VVAwg4WR3i6FvYK1T7MHo9BK7ydH+1uurECoouk5MPRyVSBrBHMYwVobG2aOXM07sWrn5qgB60rc6mcwIDJtQrnrEr44kmy+UO9r0u9O5/YbkS9juQckLed3DyW2XV/qWBBB3ptvI8EUY3I9p/67OW+g967TNr3Sotn3IuVlfMLVnsBwH4fsnebJvyGm5GeIUA3jljERmrv49SizPYuq+z7c2H/jlGC+Ghhupn/hcapqmcudB9jwJ/3jvnvu6vu5lVzF1fXyZuZZ7U8nRmVzytvT+H3kilYvH09mLWrQdwFSsFEsxFVs5fK7A0g8gMZjbif4ACpKbjv7gNGaD8bUrlk8x+KRflttr22JEMRUbTUwwDQScyzPgedQHZT0xnx7ujw2jfVfExwYHwOsDTjLdJ2ebmeQIlJ7neo41s/DrsL3kl+W2lWvAga0tR3zueGr6GL78M3ifH0rGXrBC2aAR8uYcIA5gwV8zIE8onoh8u0Fca/ciF7j1uOzEnqcIm59sEXoGc0+z6+H45V1CvAvHcD7THztu669cnp+L0okAeIc6zjbM/24LgGM1gZk7jnRu1aQWoU9sfUOuhrmtaPIO3YY1KLLWZaEO5TKUbMY5zx8W9UJ6elpLwKXbsaZ4EFl7B4bMtDv0iRipKoDQT2sNQI9b1utXFdYisi+wzZ/ri/1m7QfDgEuvgUUEIJPq3DhX/5DWNqIXDOweC2wvIR90Oq3lDpdMIgD2r0dXvGdsEW5H6x6HLRJYU7C69VefO1x8Gde1ZFSJLfWS1jbCnhtOPxmpfv2LXOA2Xk2tvnwKKPFuZ/oRmwBwqRQDcKNeVQkYcOjtWVBuM/JuYw5b6isojIkYxyYAFn5K7ZBF10fea52y8QltAg6jnMqNHFBmGkQ1j+U43HMi2xMar1Nv0zGsf1s8nUsmUtPOOrbFIR8bHFDMB5zL13Gmr/kGlCkUzedTzzmzsaJXhYawnA3UmARpiYj5ooJZiUoxFRtK3X6pgNPv+IZVPcnwbOl6f+aBaO1CNvPW9n9LmCp01nuSaTRF2YxHqZ8DYQT6WsXT+RD6eUztwYLZ8rM+rcPxamv1VQzFUkzFXvkiVrySGQgJNvXHJAxiU3/NwiC03rSf05VBaPtu/Z7/B8Yn/w7eguloAAAAAElFTkSuQmCC');
+  }
+
+  div.callout-note.callout-style-default .callout-title {
+    background-color: #dae6fb
+  }
+
+  div.callout-important {
+    border-left-color: #d9534f !important;
+  }
+
+  div.callout-important .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEKklEQVRYCcVXTWhcVRS+575MJym48A+hSRFr00ySRQhURRfd2HYjk2SSTokuBCkU2o0LoSKKraKIBTcuFCoidGFD08nkBzdREbpQ1EDNIv8qSGMFUboImMSZd4/f9zJv8ibJMC8xJQfO3HPPPef7zrvvvnvviIkpC9nsw0UttFunbUhpFzFtarSd6WJkStVMw5xyVqYTvkwfzuf/5FgtkVoB0729j1rjXwThS7Vio+Mo6DNnvLfahoZ+i/o32lULuJ3NNiz7q6+pyAUkJaFF6JwaM2lUJlV0MlnQn5aTRbEu0SEqHUa0A4AdiGuB1kFXRfVyg5d87+Dg4DL6m2TLAub60ilj7A1Ec4odSAc8X95sHh7+ZRPCFo6Fnp7HfU/fBng/hi10CjCnWnJjsxvDNxWw0NfV6Rv5GgP3I3jGWXumdTD/3cbEOP2ZbOZp69yniG3FQ9z1jD7bnBu9Fc2tKGC2q+uAJOQHBDRiZX1x36o7fWBs7J9ownbtO+n0/qWkvW7UPIfc37WgT6ZGR++EOJyeQDSb9UB+DZ1G6DdLDzyS+b/kBCYGsYgJbSQHuThGKRcw5xdeQf8YdNHsc6ePXrlSYMBuSIAFTGAtQo+VuALo4BX83N190NWZWbynBjhOHsmNfFWLeL6v+ynsA58zDvvAC8j5PkbOcXCMg2PZFk3q8MjI7WAG/Dp9AwP7jdGBOOQkAvlFUB+irtm16I1Zw9YBcpGTGXYmk3kQIC/Cds55l+iMI3jqhjAuaoe+am2Jw5GT3Nbz3CkE12NavmzN5+erJW7046n/CH1RO/RVa8lBLozXk9uqykkGAyRXLWlLv5jyp4RFsG5vGVzpDLnIjTWgnRy2Rr+tDKvRc7Y8AyZq10jj8DqXdnIRNtFZb+t/ZRtXcDiVnzpqx8mPcDWxgARUqx0W1QB9MeUZiNrV4qP+Ehc+BpNgATsTX8ozYKL2NtFYAHc84fG7ndxUPr+AR/iQSns7uSUufAymwDOb2+NjK27lEFocm/EE2WpyIy/Hi66MWuMKJn8RvxIcj87IM5Vh9663ziW36kR0HNenXuxmfaD8JC7tfKbrhFr7LiZCrMjrzTeGx+PmkosrkNzW94ObzwocJ7A1HokLolY+AvkTiD/q1H0cN48c5EL8Crkttsa/AXQVDmutfyku0E7jShx49XqV3MFK8IryDhYVbj7Sj2P2eBxwcXoe8T8idsKKPRcnZw1b+slFTubwUwhktrfnAt7J++jwQtLZcm3sr9LQrjRzz6cfMv9aLvgmnAGvpoaGLxM4mAEaLV7iAzQ3oU0IvD5x9ix3yF2RAAuYAOO2f7PEFWCXZ4C9Pb2UsgDeVnFSpbFK7/IWu7TPTvBqzbGdCHOJQSxiEjt6IyZmxQyEJHv6xyQsYk//moVFsN2zP6fRImjfq7/n/wFDguUQFNEwugAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-important.callout-style-default .callout-title {
+    background-color: #f7dddc
+  }
+
+  div.callout-warning {
+    border-left-color: #f0ad4e !important;
+  }
+
+  div.callout-warning .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAETklEQVRYCeVWW2gcVRg+58yaTUnizqbipZeX4uWhBEniBaoUX1Ioze52t7sRq6APio9V9MEaoWlVsFasRq0gltaAPuxms8lu0gcviE/FFOstVbSIxgcv6SU7EZqmdc7v9+9mJtNks51NTUH84ed889/PP+cmxP+d5FIbMJmNbpREu4WUkiTtCicKny0l1pIKmBzovF2S+hIJHX8iEu3hZJ5lNZGqyRrGSIQpq15AzF28jgpeY6yk6GVdrfFqdrD6Iw+QlB8g0YS2g7dyQmXM/IDhBhT0UCiRf59lfqmmDvzRt6kByV/m4JjtzuaujMUM2c5Z2d6JdKrRb3K2q6mA+oYVz8JnDdKPmmNthzkAk/lN63sYPgevrguc72aZX/L9C6x09GYyxBgCX4NlvyGUHOKELlm5rXeR1kchuChJt4SSwyddZRXgvwMGvYo4QSlk3/zkHD8UHxwVJA6zjZZqP8v8kK8OWLnIZtLyCAJagYC4rTGW/9Pqj92N/c+LUaAj27movwbi19tk/whRCIE7Q9vyI6yvRpftAKVTdUjOW40X3h5OXsKCdmFcx0xlLJoSuQngnrJe7Kcjm4OMq9FlC7CMmScQANuNvjfP3PjGXDBaUQmbp296S5L4DrpbrHN1T87ZVEZVCzg1FF0Ft+dKrlLukI+/c9ENo+TvlTDbYFvuKPtQ9+l052rXrgKoWkDAFnvh0wTOmYn8R5f4k/jN/fZiCM1tQx9jQQ4ANhqG4hiL0qIFTGViG9DKB7GYzgubnpofgYRwO+DFjh0Zin2m4b/97EDkXkc+f6xYAPX0KK2I/7fUQuwzuwo/L3AkcjugPNixC8cHf0FyPjWlItmLxWw4Ou9YsQCr5fijMGoD/zpdRy95HRysyXA74MWOnscpO4j2y3HAVisw85hX5+AFBRSHt4ShfLFkIMXTqyKFc46xdzQM6XbAi702a7sy04J0+feReMFKp5q9esYLCqAZYw/k14E/xcLLsFElaornTuJB0svMuJINy8xkIYuL+xPAlWRceH6+HX7THJ0djLUom46zREu7tTkxwmf/FdOZ/sh6Q8qvEAiHpm4PJ4a/doJe0gH1t+aHRgCzOvBvJedEK5OFE5jpm4AGP2a8Dxe3gGJ/pAutug9Gp6he92CsSsWBaEcxGx0FHytmIpuqGkOpldqNYQK8cSoXvd+xLxXADw0kf6UkJNFtdo5MOgaLjiQOQHcn+A6h5NuL2s0qsC2LOM75PcF3yr5STuBSAcGG+meA14K/CI21HcS4LBT6tv0QAh8Dr5l93AhZzG5ZJ4VxAqdZUEl9z7WJ4aN+svMvwHHL21UKTd1mqvChH7/Za5xzXBBKrUcB0TQ+Ulgkfbi/H/YT5EptrGzsEK7tR1B7ln9BBwckYfMiuSqklSznIuoIIOM42MQO+QnduCoFCI0bpkzjCjddHPN/F+2Yu+sd9bKNpVwHhbS3LluK/0zgfwD0xYI5dXuzlQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-warning.callout-style-default .callout-title {
+    background-color: #fcefdc
+  }
+
+  div.callout-tip {
+    border-left-color: #02b875 !important;
+  }
+
+  div.callout-tip .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAADr0lEQVRYCe1XTWgTQRj9ZjZV8a9SPIkKgj8I1bMHsUWrqYLVg4Ue6v9BwZOxSYsIerFao7UiUryIqJcqgtpimhbBXoSCVxUFe9CTiogUrUp2Pt+3aUI2u5vdNh4dmMzOzHvvezuz8xNFM0mjnbXaNu1MvFWRXkXEyE6aYOYJpdW4IXuA4r0fo8qqSMDBU0v1HJUgVieAXxzCsdE/YJTdFcVIZQNMyhruOMJKXYFoLfIfIvVIMWdsrd+Rpd86ZmyzzjJmLStqRn0v8lzkb4rVIXvnpScOJuAn2ACC65FkPzEdEy4TPWRLJ2h7z4cArXzzaOdKlbOvKKX25Wl00jSnrwVxAg3o4dRxhO13RBSdNvH0xSARv3adTXbBdTf64IWO2vH0LT+cv4GR1DJt+DUItaQogeBX/chhbTBxEiZ6gftlDNXTrvT7co4ub5A6gp9HIcHvzTa46OS5fBeP87Qm0fQkr4FsYgVQ7Qg+ZayaDg9jhg1GkWj8RG6lkeSacrrHgDaxdoBiZPg+NXV/KifMuB6//JmYH4CntVEHy/keA6x4h4CU5oFy8GzrBS18cLJMXcljAKB6INjWsRcuZBWVaS3GDrqB7rdapVIeA+isQ57Eev9eCqzqOa81CY05VLd6SamW2wA2H3SiTbnbSxmzfp7WtKZkqy4mdyAlGx7ennghYf8voqp9cLSgKdqNfa6RdRsAAkPwRuJZNbpByn+RrJi1RXTwdi8RQF6ymDwGMAtZ6TVE+4uoKh+MYkcLsT0Hk8eAienbiGdjJHZTpmNjlbFJNKDVAp2fJlYju6IreQxQ08UJDNYdoLSl6AadO+fFuCQqVMB1NJwPm69T04Wv5WhfcWyfXQB+wXRs1pt+nCknRa0LVzSA/2B+a9+zQJadb7IyyV24YAxKp2Jqs3emZTuNnKxsah+uabKbMk7CbTgJx/zIgQYErIeTKRQ9yD9wxVof5YolPHqaWo7TD6tJlh7jQnK5z2n3+fGdggIOx2kaa2YI9QWarc5Ce1ipNWMKeSG4DysFF52KBmTNMmn5HqCFkwy34rDg05gDwgH3bBi+sgFhN/e8QvRn8kbamCOhgrZ9GJhFDgfcMHzFb6BAtjKpFhzTjwv1KCVuxHvCbsSiEz4CANnj84cwHdFXAbAOJ4LTSAawGWFn5tDhLMYz6nWeU2wJfIhmIJBefcd/A5FWQWGgrWzyORZ3Q6HuV+Jf0Bj+BTX69fm1zWgK7By1YTXchFDORywnfQ7GpzOo6S+qECrsx2ifVQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-tip.callout-style-default .callout-title {
+    background-color: #ccf1e3
+  }
+
+  div.callout-caution {
+    border-left-color: #fd7e14 !important;
+  }
+
+  div.callout-caution .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAACV0lEQVRYCdVWzWoUQRCuqp2ICBLJXgITZL1EfQDBW/bkzUMUD7klD+ATSHBEfAIfQO+iXsWDxJsHL96EHAwhgzlkg8nBg25XWb0zIb0zs9muYYWkoKeru+vn664fBqElyZNuyh167NXJ8Ut8McjbmEraKHkd7uAnAFku+VWdb3reSmRV8PKSLfZ0Gjn3a6Xlcq9YGb6tADjn+lUfTXtVmaZ1KwBIvFI11rRXlWlatwIAAv2asaa9mlB9wwygiDX26qaw1yYPzFXg2N1GgG0FMF8Oj+VIx7E/03lHx8UhvYyNZLN7BwSPgekXXLribw7w5/c8EF+DBK5idvDVYtEEwMeYefjjLAdEyQ3M9nfOkgnPTEkYU+sxMq0BxNR6jExrAI31H1rzvLEfRIdgcv1XEdj6QTQAS2wtstEALLG1yEZ3QhH6oDX7ExBSFEkFINXH98NTrme5IOaaA7kIfiu2L8A3qhH9zRbukdCqdsA98TdElyeMe5BI8Rs2xHRIsoTSSVFfCFCWGPn9XHb4cdobRIWABNf0add9jakDjQJpJ1bTXOJXnnRXHRf+dNL1ZV1MBRCXhMbaHqGI1JkKIL7+i8uffuP6wVQAzO7+qVEbF6NbS0LJureYcWXUUhH66nLR5rYmva+2tjRFtojkM2aD76HEGAD3tPtKM309FJg5j/K682ywcWJ3PASCcycH/22u+Bh7Aa0ehM2Fu4z0SAE81HF9RkB21c5bEn4Dzw+/qNOyXr3DCTQDMBOdhi4nAgiFDGCinIa2owCEChUwD8qzd03PG+qdW/4fDzjUMcE1ZpIAAAAASUVORK5CYII=');
+  }
+
+  div.callout-caution.callout-style-default .callout-title {
+    background-color: #ffe5d0
+  }
+
+  </style>
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Panel data and Fixed Effects (Many FE)</h1>
+  <p class="subtitle">Are we seeing double?</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Fernando Rios-Avila 
+</div>
+</div>
+</div>
+
+</section>
+<section id="re-cap-potential-outcome-model" class="slide level2 scrollable">
+<h2>Re-Cap: Potential outcome Model</h2>
+<p>In the ideal world, where we can see all possible outcomes and scenarios of your potential treatments, it will be very simple to estimate treatment effects:</p>
+<p><span class="math display">\[
+\delta_i = Y_i(1)-Y_i(0)
+\]</span></p>
+<p>Why does this work??</p>
+<p>One way to understand this it to imagine that potential outcomes are a function of all observed and unobserved individual characteristics, plust the treatment Status.</p>
+<p><span class="math display">\[y_i(D)=y_i(X,u,D)
+\]</span></p>
+<p>So when comparing a person with himself (clones or parallel worlds), we know (or at least expect) that everything else is the same, except for the Treatment Status.</p>
+<p>Differences between the two states are explained only by the treatment!</p>
+</section>
+<section id="the-problem-and-first-solution-rct" class="slide level2">
+<h2>The Problem and first Solution RCT</h2>
+<p>We do not observe both States at the same time. People will either be treated or untreated, not both.</p>
+<p>So what can we do?</p>
+<blockquote>
+<p><strong>We need to find good counterfactuals!</strong></p>
+</blockquote>
+<p>One way to do so is via RCT, for example using a lottery!</p>
+<blockquote>
+<p>Why does it work?</p>
+</blockquote>
+<p>Potential outcomes will be unrelated to treatment, because treatmet is assigned at random.</p>
+<p>Here, it also means that <span class="math inline">\(X's\)</span> and <span class="math inline">\(u's\)</span> will be similar across groups (because of random assigment)</p>
+<p>But…you cannot estimatate individual effects, but at least estimate aggregate effects (ATE = ATT = ATU)</p>
+</section>
+<section id="other-solutions" class="slide level2">
+<h2>Other Solutions?</h2>
+<p>So RCTs can be very expensive, and difficult to implement after the fact. In those situations, however, you can use observed data to try answering the same questions!.</p>
+<p>One option? Something we have done before…Regression Analysis!</p>
+<p><span class="math display">\[y_i = a_0 + \delta D_i + X_i\beta + e_i\]</span></p>
+<p>The idea is that you directly control for all confounding factors that could be related to <span class="math inline">\(y_i\)</span> and <span class="math inline">\(d_i\)</span>.</p>
+<p>In other words, you add controls until <span class="math inline">\(D_i\)</span> is exogenous! <span class="math inline">\(E(e_i|D)=0\)</span></p>
+</section>
+<section id="implications-to-the-po-model" class="slide level2">
+<h2>Implications to the PO model?</h2>
+<ul>
+<li><p>Assumes all individuals have the same outcome structure (<span class="math inline">\(\beta s\)</span>), except for the TE</p></li>
+<li><p>The treatment is effect is homogenous (no heterogeneity)</p></li>
+<li><p>and that functional form is correct (for extrapolation)</p></li>
+</ul>
+<p>However, explicitly controlling for covariates, balances characteristics (FWL):</p>
+<p><span class="math display">\[
+\begin{aligned}
+D_i &amp;= X\gamma + v_i \\
+y_i &amp;= a_0 + \delta v_i + u_i \\
+\delta &amp;=\frac{1}{N} \sum \frac{D_i - X\gamma}{var(v_i)} y_i
+\end{aligned}
+\]</span></p>
+<ul>
+<li><p>Treated units will get positive weights, and controls negative weights, with exceptions because of the LPM.</p></li>
+<li><p>Weights will “balance Samples” to estimate ATE.</p></li>
+</ul>
+</section>
+<section id="controlling-for-unobservables" class="slide level2">
+<h2>Controlling for Unobservables</h2>
+
+<img data-src="resources/fefig.jpg" class="r-stretch"></section>
+<section id="what-if-you-can-see-xs" class="slide level2">
+<h2>What if you can See X’s</h2>
+<p>Some times, you may have situations where some covariates cannot be observed (Z_i): <span class="math display">\[
+y_i = \delta D_i +X_i \beta + Z_i \gamma + e_i
+\]</span></p>
+<p>If <span class="math inline">\(Z_i\)</span> is unrelated to <span class="math inline">\(D_i\)</span>, you are on the clear. If its unrelated to <span class="math inline">\(Y_i\)</span> you are also ok. But what if that doesn happen?</p>
+<blockquote>
+<p>Then you have a problem!</p>
+</blockquote>
+<p>You no longer can use regression, because the potential outcomes will no longer be independent of the treatment.</p>
+<p>you are dooomed!</p>
+<p>(when would this happen)</p>
+</section>
+<section id="having-access-to-more-data" class="slide level2">
+<h2>Having access to More Data</h2>
+<p>Solution?: Say you have access to panel data: Same individuals across time:</p>
+<p><span class="math display">\[
+y_{it} = \delta D_{it} +X_{it} \beta + Z_{it} \gamma + e_{it}
+\]</span></p>
+<p>If we can’t measure <span class="math inline">\(Z_{it}\)</span>, and you estimate this using Pool OLS (just simple OLS), you still need the assumption that:</p>
+<p><span class="math display">\[E(Z_{it}\gamma + e_{it}|D_it)=0
+\]</span></p>
+<p>But that doesnt solve the problem if <span class="math inline">\(Z_{it}\)</span> is related to <span class="math inline">\(D_it\)</span>.</p>
+<p>One option, in cases like this, is assuming that individual unobservables are <strong>fixed</strong> across time:</p>
+<p><span class="math display">\[
+y_{it} = \delta D_{it} +X_{it} \beta + Z_{i} \gamma + e_{it}
+\]</span></p>
+<p>in which case, it may be possible to estimate Treatment effects</p>
+</section>
+<section id="fixed-effects" class="slide level2">
+<h2>Fixed Effects</h2>
+<p>With panel data and assuming unobservables are fixed across time, estimating TE is “Easy”. Just add Dummies for each individual!</p>
+<p><span class="math display">\[
+y_{it}= \delta D_{it} +X_{it} \beta + \sum d_i \gamma_i + e_{it}
+\]</span></p>
+<p>Here <span class="math inline">\(d_i \gamma_i\)</span> is our proxy for <strong>ALL</strong> unobserved factors. OLS can be used to estimate ATEs</p>
+<p>This happens because we can estimate potential outcome under the same assumptions as before.</p>
+<p>you could, in fact, consider adding fixed effects for all dimensions you consider important to account for:</p>
+<blockquote>
+<p>City, school, region, age, industry, etc</p>
+</blockquote>
+<p>The only limitation…how many dummies can your computer handle? What happens internally?</p>
+</section>
+<section id="fixed-effects-estimation---the-variation-within" class="slide level2">
+<h2>Fixed Effects: Estimation - The variation within</h2>
+<p>The obvious approach is using dummies. But that can take you only so far (why?), and may create other problems! (excluded variables)</p>
+<p>The alternative is using the within estimator. Say we take the means across individuals, and use that to substract information from the original regression:</p>
+<p><span class="math display">\[
+\begin{aligned}
+y_{it} &amp;= \delta D_{it} +X_{it} \beta + Z_{i} \gamma + e_{it} \\
+\bar y_i &amp;= \delta \bar D_i + \bar X_i \beta +  Z_{i} \gamma + \bar e_i \\
+y_{it}-\bar y_i = \tilde y_{it} &amp;=\delta \tilde D_{it} + \tilde X_{it}\beta+\tilde e_{it}
+\end{aligned}
+\]</span></p>
+<p>Last equation is easier to estimate (no dummies!) however you need within variation. IF unobserved factors are fixed, they will be “absorbed”.</p>
+<p>Also, the SE will have to be adjusted for degrees of freedom. (but nothing else)</p>
+<p>This is nothing else but the use of FWL and regression on residuals.</p>
+</section>
+<section id="dont-forget-random-effects" class="slide level2">
+<h2>Dont Forget Random Effects</h2>
+<p>This approach is more efficient than Fixed effects because you don’t estimate fixed effects, just the distribution.</p>
+<p>So how does this affect the estimation:</p>
+<ol type="1">
+<li>Errors have two components. One time fixed <span class="math inline">\(e_i\)</span>, and one time variant <span class="math inline">\(u_{it}\)</span>. Then total errors will be correlated with themselves across time <span class="math display">\[corr(v_{it}, v_{is}) =  corr(e_i+u_{it}, e_i+u_{is}) = \sigma^2_e
+\]</span></li>
+<li>Apply FGLS to eliminating this source of auto-correlation! <span class="math display">\[y_{it}-\lambda \bar y_i = (X_{it}-\lambda \bar X_it) + v_{it}\]</span></li>
+</ol>
+<p>But, you need the assumption that unobservables <span class="math inline">\(e_i\)</span> are unrelated to <span class="math inline">\(X's\)</span>. (because we are not directly controlling for them).</p>
+<p>The advantage, however, is that you do no need within variation!</p>
+</section>
+<section id="fe-vs-re" class="slide level2">
+<h2>FE vs RE</h2>
+<p>So there are two ways to Analyze data Panel data.</p>
+<ul>
+<li>FE: Uses only within variation, is more consistent, but less efficient (too many dummies)</li>
+<li>RE: Uses all variation in data, is less consistent (stronger assumptions), but more efficient!</li>
+</ul>
+<p><strong>How to choose?</strong></p>
+<p>The Standard approach is to apply a Hausan Test:</p>
+<blockquote>
+<p>H0:<span class="math inline">\(\beta^{FE} = \beta^{RE}\)</span> using Chi2</p>
+</blockquote>
+<p>If they are not different (H0 cannot be rejected), then choose RE (efficient). If they are different then choose FE (consistent)</p>
+</section>
+<section id="more-fixed-effects-twfe---nwfe" class="slide level2">
+<h2>More Fixed effects: TWFE - NWFE?</h2>
+<p>With multiple sets of fixed effects (individual, time, cohort, region, etc), you can still use dummies to add them to the model.</p>
+<p>But, you can apply something similar to the previous approach:</p>
+<p><span class="math display">\[
+\begin{aligned}
+y_{it} &amp;= \delta D_{it}+x_{it}\beta + \gamma_i + \gamma_t + e_{it} \\
+\bar y_i &amp;= \bar D_i +\bar x_{i}\beta + \gamma_i + E(\gamma_t|i) + \bar e_i \\
+\bar y_t &amp;= \bar D_t +\bar x_{t}\beta + E(\gamma_i|t) + \gamma_t + \bar e_t \\
+\bar y &amp;= \bar D +\bar x\beta + E(\gamma_i) + E(\gamma_t)+ \bar e \\
+\tilde y_{it} &amp;= y_{it}-\bar y_i - \bar y_t + \bar y
+\end{aligned}
+\]</span></p>
+<p>So one can estimate the following:</p>
+<p><span class="math display">\[
+\tilde y_{it} = \delta \tilde D_{it} + \tilde X_{it} \beta + \tilde e_{it}
+\]</span></p>
+<p>This eliminates FE for both time and individual (if panel is balanced)</p>
+</section>
+<section id="second-option" class="slide level2">
+<h2>Second Option:</h2>
+<p>Alternatively, you can just run regressions of residuals:</p>
+<p><span class="math display">\[
+w_{it} = \gamma^w_i+\gamma^w_t+rw_{it}
+\]</span></p>
+<p>and make regressions using the residuals. (Demeaning also works, but its an iterative process)</p>
+</section>
+<section id="stata-example" class="slide level2 scrollable">
+<h2>Stata Example</h2>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1"></a>#delimit;</span>
+<span id="cb1-2"><a href="#cb1-2"></a>frause school93_98, <span class="kw">clear</span>;</span>
+<span id="cb1-3"><a href="#cb1-3"></a>xtset schid <span class="fu">year</span>;</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">qui</span>:<span class="kw">reg</span> math4 lunch lenrol lrexpp                     ; <span class="kw">est</span> sto m1;</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="kw">qui</span>:<span class="kw">xtreg</span> math4 lunch lenrol lrexpp                   ; <span class="kw">est</span> sto m2;</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="kw">qui</span>:<span class="kw">xtreg</span> math4 lunch lenrol lrexpp, <span class="kw">fe</span>               ; <span class="kw">est</span> sto m3;</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="kw">qui</span>:reghdfe math4 lunch lenrol lrexpp, <span class="fu">abs</span>(schid)     ; <span class="kw">est</span> sto m4;</span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="kw">qui</span>:reghdfe math4 lunch lenrol lrexpp, <span class="fu">abs</span>(schid <span class="fu">year</span>); <span class="kw">est</span> sto m5;</span>
+<span id="cb1-9"><a href="#cb1-9"></a>esttab m1 m2 m3 m4 m5, mtitle(ols re <span class="kw">fe</span> refe1 refe2) <span class="kw">compress</span> se b(3);</span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="kw">hausman</span> m3 m2;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Panel variable: schid (strongly balanced)
+ Time variable: year, 1993 to 1998
+         Delta: 1 unit
+
+---------------------------------------------------------------------------
+                 (1)          (2)          (3)          (4)          (5)   
+                 ols           re           fe        refe1        refe2   
+---------------------------------------------------------------------------
+lunch         -0.413***    -0.370***     0.057        0.057       -0.062*  
+             (0.007)      (0.011)      (0.031)      (0.031)      (0.026)   
+
+lenrol        -0.121        0.936        8.766***     8.766***     0.297   
+             (0.425)      (0.616)      (1.704)      (1.704)      (1.468)   
+
+lrexpp        28.887***    39.161***    46.450***    46.450***     2.799*  
+             (0.860)      (0.878)      (1.006)      (1.006)      (1.265)   
+
+_cons       -162.292***  -254.864***  -377.338***  -377.423***    37.398*  
+             (7.960)      (8.681)     (14.913)     (14.918)     (15.847)   
+---------------------------------------------------------------------------
+N               9369         9369         9369         9328         9328   
+---------------------------------------------------------------------------
+Standard errors in parentheses
+* p&lt;0.05, ** p&lt;0.01, *** p&lt;0.001
+
+                 ---- Coefficients ----
+             |      (b)          (B)            (b-B)     sqrt(diag(V_b-V_B))
+             |       m3           m2         Difference       Std. err.
+-------------+----------------------------------------------------------------
+       lunch |     .056932    -.3703211        .4272531        .0287753
+      lenrol |    8.766051     .9357725        7.830279        1.588902
+      lrexpp |    46.44966     39.16107        7.288595        .4915896
+------------------------------------------------------------------------------
+                          b = Consistent under H0 and Ha; obtained from xtreg.
+           B = Inconsistent under Ha, efficient under H0; obtained from xtreg.
+
+Test of H0: Difference in coefficients not systematic
+
+    chi2(3) = (b-B)'[(V_b-V_B)^(-1)](b-B)
+            = 627.26
+Prob &gt; chi2 = 0.0000</code></pre>
+</div>
+</div>
+</section>
+<section id="correlated-random-effects" class="slide level2">
+<h2>Correlated Random Effects</h2>
+<p>Random effects model may produce inconsistent results, because it assumes unobserved factors are uncorrelated to characteristics.</p>
+<p>Fixed effects controls for individual effects explicitly, or via demeaning.</p>
+<p>A 3rd approach is known as CRE model. A more explicit modeling of the unobserved but fixed components.</p>
+<ol type="1">
+<li>Call the unobserved component <span class="math inline">\(a_i\)</span>, and say we suspect it may be related with individual characteristics.</li>
+<li>Because <span class="math inline">\(a_i\)</span> is constant over time, it may be reasonable assuming its correlated with individual average characteristics: <span id="eq-m1"><span class="math display">\[a_i = a + \bar X_i \gamma + r_i
+\qquad(1)\]</span></span></li>
+</ol>
+<p>By construction, <span class="math inline">\(r_i\)</span> and <span class="math inline">\(X_{it} \&amp; \bar X_i\)</span> will be uncorrelated. So lets just add that to the main model</p>
+</section>
+<section id="cre" class="slide level2">
+<h2>CRE</h2>
+<p>Lets add <a href="#/correlated-random-effects">Equation&nbsp;1</a> to our main equation. <span class="math display">\[
+y_i = \beta X_{it} +  \theta Z_{i} + \bar X_i \gamma + r_i + e_{it}
+\]</span></p>
+<p>This equation can now be estimated using RE, because it already allows controls for the correlation of unobserved factors and the individual effects.</p>
+<p>You can also estimate the model using <em>pool</em> OLS, clustering errors at individual level.</p>
+<p><strong>Result</strong>:</p>
+<ul>
+<li>you now have a model that allows for time variant and time fixed components, that is consistent as FE (same coefficients).</li>
+</ul>
+<p><strong>Uses</strong>:</p>
+<ul>
+<li>Simpler way to test for FE vs RE (are the <span class="math inline">\(\gamma 's\)</span> significant?)</li>
+<li>there is no need for within variation for any variable! (just overall variation)</li>
+</ul>
+</section>
+<section id="cre-in-stata" class="slide level2 scrollable">
+<h2>cre in Stata</h2>
+<div class="cell" data-execution_count="3">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1"></a>#delimit <span class="kw">cr</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>frause school93_98, <span class="kw">clear</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>reghdfe math4 lunch lenrol lrexpp, <span class="fu">abs</span>(schid <span class="fu">year</span>) <span class="kw">cluster</span>(schid)</span>
+<span id="cb3-4"><a href="#cb3-4"></a>** Experimental</span>
+<span id="cb3-5"><a href="#cb3-5"></a>cre, <span class="fu">abs</span>(schid <span class="fu">year</span>): <span class="kw">reg</span> math4 lunch lenrol lrexpp, <span class="kw">cluster</span>(schid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>(dropped 41 singleton observations)
+(MWFE estimator converged in 5 iterations)
+
+HDFE Linear regression                            Number of obs   =      9,328
+Absorbing 2 HDFE groups                           F(   3,   1734) =       2.59
+Statistics robust to heteroskedasticity           Prob &gt; F        =     0.0515
+                                                  R-squared       =     0.7548
+                                                  Adj R-squared   =     0.6985
+                                                  Within R-sq.    =     0.0014
+Number of clusters (schid)   =      1,735         Root MSE        =    11.5747
+
+                              (Std. err. adjusted for 1,735 clusters in schid)
+------------------------------------------------------------------------------
+             |               Robust
+       math4 | Coefficient  std. err.      t    P&gt;|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       lunch |  -.0620863   .0324188    -1.92   0.056    -.1256705    .0014978
+      lenrol |   .2966956   1.484868     0.20   0.842    -2.615625    3.209017
+      lrexpp |   2.798777   1.410581     1.98   0.047     .0321579    5.565397
+       _cons |   37.39798    16.8327     2.22   0.026     4.383449     70.4125
+------------------------------------------------------------------------------
+
+Absorbed degrees of freedom:
+-----------------------------------------------------+
+ Absorbed FE | Categories  - Redundant  = Num. Coefs |
+-------------+---------------------------------------|
+       schid |      1735        1735           0    *|
+        year |         6           0           6     |
+-----------------------------------------------------+
+* = FE nested within cluster; treated as redundant for DoF computation
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+_reghdfe_r~d |      9,328    3.88e-17    .1015168  -1.180599   1.214313
+
+
+Linear regression                               Number of obs     =      9,328
+                                                F(9, 1734)        =     821.90
+                                                Prob &gt; F          =     0.0000
+                                                R-squared         =     0.4595
+                                                Root MSE          =     15.505
+
+                              (Std. err. adjusted for 1,735 clusters in schid)
+------------------------------------------------------------------------------
+             |               Robust
+       math4 | Coefficient  std. err.      t    P&gt;|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       lunch |  -.0620863   .0327488    -1.90   0.058    -.1263177     .002145
+      lenrol |   .2966948   1.509296     0.20   0.844    -2.663538    3.256927
+      lrexpp |   2.798777   1.435068     1.95   0.051    -.0158696    5.613423
+    m1_lunch |  -.3799049   .0343728   -11.05   0.000    -.4473213   -.3124884
+    m2_lunch |  -2.750266   .5058811    -5.44   0.000    -3.742467   -1.758065
+   m1_lenrol |  -2.394415   1.633657    -1.47   0.143    -5.598561     .809731
+   m2_lenrol |  -273.8924   11.25589   -24.33   0.000    -295.9689   -251.8158
+   m1_lrexpp |   5.667779   2.276245     2.49   0.013     1.203305    10.13225
+   m2_lrexpp |   73.40469   3.276595    22.40   0.000      66.9782    79.83119
+       _cons |   37.39799   17.10933     2.19   0.029     3.840901    70.95507
+------------------------------------------------------------------------------</code></pre>
+</div>
+</div>
+</section>
+<section id="caveats-not-everything-is-solved-using-fe" class="slide level2">
+<h2>Caveats: Not everything is solved using FE</h2>
+<ul>
+<li><p>While FE allows you do control for unobserve but time fixed factors, it will Not help you if those factors are time varying.</p>
+<p>if <span class="math inline">\(e_{it}\)</span> is different across treated and control groups <span class="math inline">\(D_{it}=0,1\)</span> then TE cannot be estimated.</p>
+<p>This could happen if cases of reverse causality or</p></li>
+<li><p>Because it depends strongly on within variation, it will be more sensitive to measurement errors. Specifically:</p></li>
+</ul>
+<p><span class="math display">\[\beta^{fe} = \beta * \left(1-\frac{\sigma_v^2}{(\sigma^2_v+\sigma^2_x)(1-\rho_x)}\right)
+\]</span></p>
+<p>In other words. when <span class="math inline">\(X\)</span> has strong autocorrelation (Stable treatment), the measurement error effect is far larger!</p>
+</section>
+<section id="caveats-fe-makes-things-harder-to-analyze" class="slide level2">
+<h2>Caveats: FE makes things harder to analyze</h2>
+<ul>
+<li><p>When using a single FE, OLS using within variation to identify the slope coefficients. How does a change in X’s (compared to the average) affect changes in the outcomes (respect to averages)</p></li>
+<li><p>When using Two Fixed effects (individuals and time) identification becomes tricky: <span class="math display">\[\tilde y_{it} = y_{it}-\bar y_i - \bar y_t + \bar y  \]</span></p></li>
+</ul>
+<p>We are looking for variation across time but also across individuals.</p>
+<blockquote>
+<p>we are using changes in outcome that are different from the average changes in the sample.</p>
+</blockquote>
+<ul>
+<li>with Multiple FE, same story…we are trying to exploit variation across multiple dimensions! Difficult to understand</li>
+</ul>
+</section>
+<section id="caveats-some-times-the-variation-may-be-wrong" class="slide level2">
+<h2>Caveats: Some times, the variation may be wrong:</h2>
+<p>Consider:</p>
+<p><span class="math display">\[y_{it} = a_i + a_t + \delta D_{it} + e_{it}\]</span></p>
+<p>If <span class="math inline">\(D_it\)</span> changes only for some people at the same time, we are good.</p>
+<ul>
+<li>The variation comes from comparing individuals (before and after) (time variation), who were treated and untreated (individual effects)</li>
+</ul>
+<p>But if <span class="math inline">\(D_{it}\)</span> changes at different times for different people, we have a problem.</p>
+<ul>
+<li>Who is being compared???
+<ul>
+<li>Those before and after (fine) to those with Status change (D=0 -&gt; D=1) to those whos status do not change! (D=0 to D=0) or (D=1 to D=1)</li>
+</ul></li>
+</ul>
+<p>We will discuss this problem again when talking about DID</p>
+</section>
+<section id="income-schooling-and-ability" class="slide level2">
+<h2>Income, Schooling, and Ability:</h2>
+<h3 id="evidence-from-a-new-sample-of-identical-twins">Evidence from a New Sample of Identical Twins</h3>
+<p>by</p>
+<p><strong>Orley Ashenfelter</strong> and <strong>Cecilia Rouse</strong></p>
+</section>
+<section id="motivation" class="slide level2">
+<h2>Motivation:</h2>
+<h3 id="in-search-of-returns-to-education">In search of Returns to Education</h3>
+<p>This paper aims to identify returns of education abstracting from the impact of innate ability.</p>
+<p>In their framework, ability is mostly explained by genetics, thus to control for it, the authors use a sample of identical twins, to “absorb” unobserved genetics using FE.</p>
+<p>They address some of the problems inherited to FE estimation</p>
+</section>
+<section id="the-model" class="slide level2">
+<h2>The model</h2>
+<ul>
+<li>The theoretical model described states that all individuals have an optimal level of Schooling, such that maximizes the his/her returns.</li>
+<li>However, Total schooling may be affected by measurement or optimization errors.</li>
+<li>Schooling will be directly affected by returns to education, but also by the ability of students.</li>
+</ul>
+<p>In their framework, for the twins setup, (log)earnings will be determined by:</p>
+<p><span class="math display">\[
+\begin{aligned}
+y_{1j}=A_j + b_j S_{1j} + \gamma X_j + e_{1j} \\
+y_{2j}=A_j + b_j S_{2j} + \gamma X_j + e_{2j}
+\end{aligned}
+\]</span></p>
+</section>
+<section id="the-model-1" class="slide level2">
+<h2>The model</h2>
+<p>Because ability is related to schooling, they suggest using the following:</p>
+<p><span class="math display">\[
+y_{ij}=\lambda(0.5(S_{1j}+S_{2j}) + b_j S_{1j} + \gamma X_j + v_j+ e_{ij}
+\]</span></p>
+<p>Which is the equivalent to CRE. Or estimate the fixed effects equivalent:</p>
+<p><span class="math display">\[y_{1j} - y_{2j} = b(S_{2j}-S_{1j}) + e_{2j} - e_{2j}
+\]</span></p>
+<p>The later is a First difference, rather than FE estimator, but they both identical when T=2.</p>
+<ul>
+<li>An additional model the authors use is one where returns to education could be related to ability.</li>
+<li>Or where ability is measured/proxied by parents education. (which is fixed across twins)</li>
+</ul>
+</section>
+<section id="data" class="slide level2">
+<h2>Data</h2>
+
+<img data-src="resources\pfe1.png" class="r-stretch"></section>
+<section id="ols" class="slide level2">
+<h2>OLS</h2>
+
+<img data-src="resources\pfe2.png" class="r-stretch"></section>
+<section id="fe-re-cre" class="slide level2">
+<h2>FE-RE-CRE?</h2>
+<p><img data-src="resources\pfe3.png" width="1300" height="800"></p>
+</section>
+<section id="heterogeneity" class="slide level2">
+<h2>Heterogeneity</h2>
+
+<img data-src="resources\pfe4.png" class="r-stretch"></section>
+<section id="next-class-friday-instrumental-variables" class="title-slide slide level1 center">
+<h1>Next Class (Friday) Instrumental Variables!</h1>
+
+<div class="footer footer-default">
+
+</div>
+</section>
+    </div>
+  </div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'smaller': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1500,
+
+        height: 900,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+      const toggleBodyColorMode = (bsSheetEl) => {
+        const mode = bsSheetEl.getAttribute("data-mode");
+        const bodyEl = window.document.querySelector("body");
+        if (mode === "dark") {
+          bodyEl.classList.add("quarto-dark");
+          bodyEl.classList.remove("quarto-light");
+        } else {
+          bodyEl.classList.add("quarto-light");
+          bodyEl.classList.remove("quarto-dark");
+        }
+      }
+      const toggleBodyColorPrimary = () => {
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
+      }
+      toggleBodyColorPrimary();  
+      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+      tabsets.forEach(function(tabset) {
+        const tabby = new Tabby('#' + tabset.id);
+      });
+      const isCodeAnnotation = (el) => {
+        for (const clz of el.classList) {
+          if (clz.startsWith('code-annotation-')) {                     
+            return true;
+          }
+        }
+        return false;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button', {
+        text: function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+      });
+      clipboard.on('success', function(e) {
+        // button target
+        const button = e.trigger;
+        // don't keep focus
+        button.blur();
+        // flash "checked"
+        button.classList.add('code-copy-button-checked');
+        var currentTitle = button.getAttribute("title");
+        button.setAttribute("title", "Copied!");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copied!");
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();    
+        }
+        setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
+          button.setAttribute("title", currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        // clear code selection
+        e.clearSelection();
+      });
+      function tippyHover(el, contentFn) {
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          maxWidth: 500,
+          delay: 100,
+          arrow: false,
+          appendTo: function(el) {
+              return el.closest('section.slide') || el.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'light-border',
+          placement: 'bottom-start'
+        };
+          config['offset'] = [0,0];
+          config['maxWidth'] = 700;
+        window.tippy(el, config); 
+      }
+      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+      for (var i=0; i<noterefs.length; i++) {
+        const ref = noterefs[i];
+        tippyHover(ref, function() {
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+          try { href = new URL(href).hash; } catch {}
+          const id = href.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          return note.innerHTML;
+        });
+      }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
+      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+      for (var i=0; i<bibliorefs.length; i++) {
+        const ref = bibliorefs[i];
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
+          });
+        }
+      }
+    });
+    </script>
+    
+
+</body></html>

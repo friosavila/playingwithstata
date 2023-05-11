@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/tabby.min.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.3.313">
+
+  <meta name="author" content="Fernando Rios-Avila">
+  <title>Econometrics MSC Levy - Matching and Re-weighting</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto.css" id="theme">
+  <link rel="stylesheet" href="styles.css">
+  <link href="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+
+  .callout {
+    margin-top: 1em;
+    margin-bottom: 1em;  
+    border-radius: .25rem;
+  }
+
+  .callout.callout-style-simple { 
+    padding: 0em 0.5em;
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+    display: flex;
+  }
+
+  .callout.callout-style-default {
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+  }
+
+  .callout .callout-body-container {
+    flex-grow: 1;
+  }
+
+  .callout.callout-style-simple .callout-body {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-style-default .callout-body {
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-titled.callout-style-simple .callout-body {
+    margin-top: 0.2em;
+  }
+
+  .callout:not(.callout-titled) .callout-body {
+      display: flex;
+  }
+
+  .callout:not(.no-icon).callout-titled.callout-style-simple .callout-content {
+    padding-left: 1.6em;
+  }
+
+  .callout.callout-titled .callout-header {
+    padding-top: 0.2em;
+    margin-bottom: -0.2em;
+  }
+
+  .callout.callout-titled .callout-title  p {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+    
+  .callout.callout-titled.callout-style-simple .callout-content  p {
+    margin-top: 0;
+  }
+
+  .callout.callout-titled.callout-style-default .callout-content  p {
+    margin-top: 0.7em;
+  }
+
+  .callout.callout-style-simple div.callout-title {
+    border-bottom: none;
+    font-size: .9rem;
+    font-weight: 600;
+    opacity: 75%;
+  }
+
+  .callout.callout-style-default  div.callout-title {
+    border-bottom: none;
+    font-weight: 600;
+    opacity: 85%;
+    font-size: 0.9rem;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-default div.callout-content {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-simple .callout-icon::before {
+    height: 1rem;
+    width: 1rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 1rem 1rem;
+  }
+
+  .callout.callout-style-default .callout-icon::before {
+    height: 0.9rem;
+    width: 0.9rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 0.9rem 0.9rem;
+  }
+
+  .callout-title {
+    display: flex
+  }
+    
+  .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  .callout.no-icon::before {
+    display: none !important;
+  }
+
+  .callout.callout-titled .callout-body > .callout-content > :last-child {
+    margin-bottom: 0.5rem;
+  }
+
+  .callout.callout-titled .callout-icon::before {
+    margin-top: .5rem;
+    padding-right: .5rem;
+  }
+
+  .callout:not(.callout-titled) .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  /* Callout Types */
+
+  div.callout-note {
+    border-left-color: #4582ec !important;
+  }
+
+  div.callout-note .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEU0lEQVRYCcVXTWhcVRQ+586kSUMMxkyaElstCto2SIhitS5Ek8xUKV2poatCcVHtUlFQk8mbaaziwpWgglJwVaquitBOfhQXFlqlzSJpFSpIYyXNjBNiTCck7x2/8/LeNDOZxDuEkgOXe++553zfefee+/OYLOXFk3+1LLrRdiO81yNqZ6K9cG0P3MeFaMIQjXssE8Z1JzLO9ls20MBZX7oG8w9GxB0goaPrW5aNMp1yOZIa7Wv6o2ykpLtmAPs/vrG14Z+6d4jpbSKuhdcSyq9wGMPXjonwmESXrriLzFGOdDBLB8Y6MNYBu0dRokSygMA/mrun8MGFN3behm6VVAwg4WR3i6FvYK1T7MHo9BK7ydH+1uurECoouk5MPRyVSBrBHMYwVobG2aOXM07sWrn5qgB60rc6mcwIDJtQrnrEr44kmy+UO9r0u9O5/YbkS9juQckLed3DyW2XV/qWBBB3ptvI8EUY3I9p/67OW+g967TNr3Sotn3IuVlfMLVnsBwH4fsnebJvyGm5GeIUA3jljERmrv49SizPYuq+z7c2H/jlGC+Ghhupn/hcapqmcudB9jwJ/3jvnvu6vu5lVzF1fXyZuZZ7U8nRmVzytvT+H3kilYvH09mLWrQdwFSsFEsxFVs5fK7A0g8gMZjbif4ACpKbjv7gNGaD8bUrlk8x+KRflttr22JEMRUbTUwwDQScyzPgedQHZT0xnx7ujw2jfVfExwYHwOsDTjLdJ2ebmeQIlJ7neo41s/DrsL3kl+W2lWvAga0tR3zueGr6GL78M3ifH0rGXrBC2aAR8uYcIA5gwV8zIE8onoh8u0Fca/ciF7j1uOzEnqcIm59sEXoGc0+z6+H45V1CvAvHcD7THztu669cnp+L0okAeIc6zjbM/24LgGM1gZk7jnRu1aQWoU9sfUOuhrmtaPIO3YY1KLLWZaEO5TKUbMY5zx8W9UJ6elpLwKXbsaZ4EFl7B4bMtDv0iRipKoDQT2sNQI9b1utXFdYisi+wzZ/ri/1m7QfDgEuvgUUEIJPq3DhX/5DWNqIXDOweC2wvIR90Oq3lDpdMIgD2r0dXvGdsEW5H6x6HLRJYU7C69VefO1x8Gde1ZFSJLfWS1jbCnhtOPxmpfv2LXOA2Xk2tvnwKKPFuZ/oRmwBwqRQDcKNeVQkYcOjtWVBuM/JuYw5b6isojIkYxyYAFn5K7ZBF10fea52y8QltAg6jnMqNHFBmGkQ1j+U43HMi2xMar1Nv0zGsf1s8nUsmUtPOOrbFIR8bHFDMB5zL13Gmr/kGlCkUzedTzzmzsaJXhYawnA3UmARpiYj5ooJZiUoxFRtK3X6pgNPv+IZVPcnwbOl6f+aBaO1CNvPW9n9LmCp01nuSaTRF2YxHqZ8DYQT6WsXT+RD6eUztwYLZ8rM+rcPxamv1VQzFUkzFXvkiVrySGQgJNvXHJAxiU3/NwiC03rSf05VBaPtu/Z7/B8Yn/w7eguloAAAAAElFTkSuQmCC');
+  }
+
+  div.callout-note.callout-style-default .callout-title {
+    background-color: #dae6fb
+  }
+
+  div.callout-important {
+    border-left-color: #d9534f !important;
+  }
+
+  div.callout-important .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEKklEQVRYCcVXTWhcVRS+575MJym48A+hSRFr00ySRQhURRfd2HYjk2SSTokuBCkU2o0LoSKKraKIBTcuFCoidGFD08nkBzdREbpQ1EDNIv8qSGMFUboImMSZd4/f9zJv8ibJMC8xJQfO3HPPPef7zrvvvnvviIkpC9nsw0UttFunbUhpFzFtarSd6WJkStVMw5xyVqYTvkwfzuf/5FgtkVoB0729j1rjXwThS7Vio+Mo6DNnvLfahoZ+i/o32lULuJ3NNiz7q6+pyAUkJaFF6JwaM2lUJlV0MlnQn5aTRbEu0SEqHUa0A4AdiGuB1kFXRfVyg5d87+Dg4DL6m2TLAub60ilj7A1Ec4odSAc8X95sHh7+ZRPCFo6Fnp7HfU/fBng/hi10CjCnWnJjsxvDNxWw0NfV6Rv5GgP3I3jGWXumdTD/3cbEOP2ZbOZp69yniG3FQ9z1jD7bnBu9Fc2tKGC2q+uAJOQHBDRiZX1x36o7fWBs7J9ownbtO+n0/qWkvW7UPIfc37WgT6ZGR++EOJyeQDSb9UB+DZ1G6DdLDzyS+b/kBCYGsYgJbSQHuThGKRcw5xdeQf8YdNHsc6ePXrlSYMBuSIAFTGAtQo+VuALo4BX83N190NWZWbynBjhOHsmNfFWLeL6v+ynsA58zDvvAC8j5PkbOcXCMg2PZFk3q8MjI7WAG/Dp9AwP7jdGBOOQkAvlFUB+irtm16I1Zw9YBcpGTGXYmk3kQIC/Cds55l+iMI3jqhjAuaoe+am2Jw5GT3Nbz3CkE12NavmzN5+erJW7046n/CH1RO/RVa8lBLozXk9uqykkGAyRXLWlLv5jyp4RFsG5vGVzpDLnIjTWgnRy2Rr+tDKvRc7Y8AyZq10jj8DqXdnIRNtFZb+t/ZRtXcDiVnzpqx8mPcDWxgARUqx0W1QB9MeUZiNrV4qP+Ehc+BpNgATsTX8ozYKL2NtFYAHc84fG7ndxUPr+AR/iQSns7uSUufAymwDOb2+NjK27lEFocm/EE2WpyIy/Hi66MWuMKJn8RvxIcj87IM5Vh9663ziW36kR0HNenXuxmfaD8JC7tfKbrhFr7LiZCrMjrzTeGx+PmkosrkNzW94ObzwocJ7A1HokLolY+AvkTiD/q1H0cN48c5EL8Crkttsa/AXQVDmutfyku0E7jShx49XqV3MFK8IryDhYVbj7Sj2P2eBxwcXoe8T8idsKKPRcnZw1b+slFTubwUwhktrfnAt7J++jwQtLZcm3sr9LQrjRzz6cfMv9aLvgmnAGvpoaGLxM4mAEaLV7iAzQ3oU0IvD5x9ix3yF2RAAuYAOO2f7PEFWCXZ4C9Pb2UsgDeVnFSpbFK7/IWu7TPTvBqzbGdCHOJQSxiEjt6IyZmxQyEJHv6xyQsYk//moVFsN2zP6fRImjfq7/n/wFDguUQFNEwugAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-important.callout-style-default .callout-title {
+    background-color: #f7dddc
+  }
+
+  div.callout-warning {
+    border-left-color: #f0ad4e !important;
+  }
+
+  div.callout-warning .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAETklEQVRYCeVWW2gcVRg+58yaTUnizqbipZeX4uWhBEniBaoUX1Ioze52t7sRq6APio9V9MEaoWlVsFasRq0gltaAPuxms8lu0gcviE/FFOstVbSIxgcv6SU7EZqmdc7v9+9mJtNks51NTUH84ed889/PP+cmxP+d5FIbMJmNbpREu4WUkiTtCicKny0l1pIKmBzovF2S+hIJHX8iEu3hZJ5lNZGqyRrGSIQpq15AzF28jgpeY6yk6GVdrfFqdrD6Iw+QlB8g0YS2g7dyQmXM/IDhBhT0UCiRf59lfqmmDvzRt6kByV/m4JjtzuaujMUM2c5Z2d6JdKrRb3K2q6mA+oYVz8JnDdKPmmNthzkAk/lN63sYPgevrguc72aZX/L9C6x09GYyxBgCX4NlvyGUHOKELlm5rXeR1kchuChJt4SSwyddZRXgvwMGvYo4QSlk3/zkHD8UHxwVJA6zjZZqP8v8kK8OWLnIZtLyCAJagYC4rTGW/9Pqj92N/c+LUaAj27movwbi19tk/whRCIE7Q9vyI6yvRpftAKVTdUjOW40X3h5OXsKCdmFcx0xlLJoSuQngnrJe7Kcjm4OMq9FlC7CMmScQANuNvjfP3PjGXDBaUQmbp296S5L4DrpbrHN1T87ZVEZVCzg1FF0Ft+dKrlLukI+/c9ENo+TvlTDbYFvuKPtQ9+l052rXrgKoWkDAFnvh0wTOmYn8R5f4k/jN/fZiCM1tQx9jQQ4ANhqG4hiL0qIFTGViG9DKB7GYzgubnpofgYRwO+DFjh0Zin2m4b/97EDkXkc+f6xYAPX0KK2I/7fUQuwzuwo/L3AkcjugPNixC8cHf0FyPjWlItmLxWw4Ou9YsQCr5fijMGoD/zpdRy95HRysyXA74MWOnscpO4j2y3HAVisw85hX5+AFBRSHt4ShfLFkIMXTqyKFc46xdzQM6XbAi702a7sy04J0+feReMFKp5q9esYLCqAZYw/k14E/xcLLsFElaornTuJB0svMuJINy8xkIYuL+xPAlWRceH6+HX7THJ0djLUom46zREu7tTkxwmf/FdOZ/sh6Q8qvEAiHpm4PJ4a/doJe0gH1t+aHRgCzOvBvJedEK5OFE5jpm4AGP2a8Dxe3gGJ/pAutug9Gp6he92CsSsWBaEcxGx0FHytmIpuqGkOpldqNYQK8cSoXvd+xLxXADw0kf6UkJNFtdo5MOgaLjiQOQHcn+A6h5NuL2s0qsC2LOM75PcF3yr5STuBSAcGG+meA14K/CI21HcS4LBT6tv0QAh8Dr5l93AhZzG5ZJ4VxAqdZUEl9z7WJ4aN+svMvwHHL21UKTd1mqvChH7/Za5xzXBBKrUcB0TQ+Ulgkfbi/H/YT5EptrGzsEK7tR1B7ln9BBwckYfMiuSqklSznIuoIIOM42MQO+QnduCoFCI0bpkzjCjddHPN/F+2Yu+sd9bKNpVwHhbS3LluK/0zgfwD0xYI5dXuzlQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-warning.callout-style-default .callout-title {
+    background-color: #fcefdc
+  }
+
+  div.callout-tip {
+    border-left-color: #02b875 !important;
+  }
+
+  div.callout-tip .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAADr0lEQVRYCe1XTWgTQRj9ZjZV8a9SPIkKgj8I1bMHsUWrqYLVg4Ue6v9BwZOxSYsIerFao7UiUryIqJcqgtpimhbBXoSCVxUFe9CTiogUrUp2Pt+3aUI2u5vdNh4dmMzOzHvvezuz8xNFM0mjnbXaNu1MvFWRXkXEyE6aYOYJpdW4IXuA4r0fo8qqSMDBU0v1HJUgVieAXxzCsdE/YJTdFcVIZQNMyhruOMJKXYFoLfIfIvVIMWdsrd+Rpd86ZmyzzjJmLStqRn0v8lzkb4rVIXvnpScOJuAn2ACC65FkPzEdEy4TPWRLJ2h7z4cArXzzaOdKlbOvKKX25Wl00jSnrwVxAg3o4dRxhO13RBSdNvH0xSARv3adTXbBdTf64IWO2vH0LT+cv4GR1DJt+DUItaQogeBX/chhbTBxEiZ6gftlDNXTrvT7co4ub5A6gp9HIcHvzTa46OS5fBeP87Qm0fQkr4FsYgVQ7Qg+ZayaDg9jhg1GkWj8RG6lkeSacrrHgDaxdoBiZPg+NXV/KifMuB6//JmYH4CntVEHy/keA6x4h4CU5oFy8GzrBS18cLJMXcljAKB6INjWsRcuZBWVaS3GDrqB7rdapVIeA+isQ57Eev9eCqzqOa81CY05VLd6SamW2wA2H3SiTbnbSxmzfp7WtKZkqy4mdyAlGx7ennghYf8voqp9cLSgKdqNfa6RdRsAAkPwRuJZNbpByn+RrJi1RXTwdi8RQF6ymDwGMAtZ6TVE+4uoKh+MYkcLsT0Hk8eAienbiGdjJHZTpmNjlbFJNKDVAp2fJlYju6IreQxQ08UJDNYdoLSl6AadO+fFuCQqVMB1NJwPm69T04Wv5WhfcWyfXQB+wXRs1pt+nCknRa0LVzSA/2B+a9+zQJadb7IyyV24YAxKp2Jqs3emZTuNnKxsah+uabKbMk7CbTgJx/zIgQYErIeTKRQ9yD9wxVof5YolPHqaWo7TD6tJlh7jQnK5z2n3+fGdggIOx2kaa2YI9QWarc5Ce1ipNWMKeSG4DysFF52KBmTNMmn5HqCFkwy34rDg05gDwgH3bBi+sgFhN/e8QvRn8kbamCOhgrZ9GJhFDgfcMHzFb6BAtjKpFhzTjwv1KCVuxHvCbsSiEz4CANnj84cwHdFXAbAOJ4LTSAawGWFn5tDhLMYz6nWeU2wJfIhmIJBefcd/A5FWQWGgrWzyORZ3Q6HuV+Jf0Bj+BTX69fm1zWgK7By1YTXchFDORywnfQ7GpzOo6S+qECrsx2ifVQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-tip.callout-style-default .callout-title {
+    background-color: #ccf1e3
+  }
+
+  div.callout-caution {
+    border-left-color: #fd7e14 !important;
+  }
+
+  div.callout-caution .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAACV0lEQVRYCdVWzWoUQRCuqp2ICBLJXgITZL1EfQDBW/bkzUMUD7klD+ATSHBEfAIfQO+iXsWDxJsHL96EHAwhgzlkg8nBg25XWb0zIb0zs9muYYWkoKeru+vn664fBqElyZNuyh167NXJ8Ut8McjbmEraKHkd7uAnAFku+VWdb3reSmRV8PKSLfZ0Gjn3a6Xlcq9YGb6tADjn+lUfTXtVmaZ1KwBIvFI11rRXlWlatwIAAv2asaa9mlB9wwygiDX26qaw1yYPzFXg2N1GgG0FMF8Oj+VIx7E/03lHx8UhvYyNZLN7BwSPgekXXLribw7w5/c8EF+DBK5idvDVYtEEwMeYefjjLAdEyQ3M9nfOkgnPTEkYU+sxMq0BxNR6jExrAI31H1rzvLEfRIdgcv1XEdj6QTQAS2wtstEALLG1yEZ3QhH6oDX7ExBSFEkFINXH98NTrme5IOaaA7kIfiu2L8A3qhH9zRbukdCqdsA98TdElyeMe5BI8Rs2xHRIsoTSSVFfCFCWGPn9XHb4cdobRIWABNf0add9jakDjQJpJ1bTXOJXnnRXHRf+dNL1ZV1MBRCXhMbaHqGI1JkKIL7+i8uffuP6wVQAzO7+qVEbF6NbS0LJureYcWXUUhH66nLR5rYmva+2tjRFtojkM2aD76HEGAD3tPtKM309FJg5j/K682ywcWJ3PASCcycH/22u+Bh7Aa0ehM2Fu4z0SAE81HF9RkB21c5bEn4Dzw+/qNOyXr3DCTQDMBOdhi4nAgiFDGCinIa2owCEChUwD8qzd03PG+qdW/4fDzjUMcE1ZpIAAAAASUVORK5CYII=');
+  }
+
+  div.callout-caution.callout-style-default .callout-title {
+    background-color: #ffe5d0
+  }
+
+  </style>
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Matching and Re-weighting</h1>
+  <p class="subtitle">When X differ…</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Fernando Rios-Avila 
+</div>
+</div>
+</div>
+
+</section>
+<section id="recap-potential-outcomes-and-identification" class="slide level2">
+<h2>Recap: Potential outcomes and Identification</h2>
+<p>To identify treatment effects one could <strong>just</strong> compare potential outcomes in two states:</p>
+<ul>
+<li>with treatment</li>
+<li>without treatment</li>
+</ul>
+<p>Mathematically, average treatment effects would be: <span class="math display">\[
+ATE = E(Y_i(1)-Y_i(0))
+\]</span></p>
+<p>the problem: with real data, we are only able to see one outcome. The counter factual is not observed:</p>
+<p><span class="math display">\[
+Y_i = Y_i(1)*D + Y_i(0)*(1-D)
+\]</span></p>
+<p>and simple differences may not capture ATE, because of selection bias and heterogeneity in effects.</p>
+</section>
+<section id="recap-gold-standard---rct" class="slide level2">
+<h2>Recap: Gold Standard - RCT</h2>
+<p>The easiest, but most expensive, way to deal with the problem is using <strong>Randomized Control Trials</strong>.</p>
+<p>Effectively, you randomize Treatment, so that potential outcomes are independent of treatment:</p>
+<p><span class="math display">\[
+Y(1),Y(0) \perp D
+\]</span></p>
+<p>In other words, the distribution of potential outcomes is the same for those treated or untreated units.</p>
+<p><span class="math display">\[
+\begin{aligned}
+E(Y,D=1)&amp;=E(Y(1),D=1)=E(Y(1),D=0) \\
+E(Y,D=0)&amp;=E(Y(0),D=1)=E(Y(0),D=0) \\
+ATT&amp;=E(Y,D=1) - E(Y,D=0)
+\end{aligned}
+\]</span></p>
+</section>
+<section>
+<section id="but-what-if-you-cant-randomize" class="title-slide slide level1 center" data-background-color="#447099">
+<h1>But what if you can’t Randomize</h1>
+
+</section>
+<section id="when-unconditional-fails" class="slide level2">
+<h2>When unconditional fails</h2>
+<p>More often than not, specially if we didn’t construct the data, it would be impossible to find that unconditional independence assumption holds.</p>
+<p>For example, treatment (say having health insurance) may vary by age, gender, race, location, etc.</p>
+<p>This is similar to the selection bias: Outcomes across treated and untreated groups will be different because:</p>
+<ul>
+<li><p>Composition: Characteristics of people among the treated could be different than those among the untreated For example, they could be older, more educated, mostly men, etc.</p></li>
+<li><p>Other factors: There could be factors we cannot control for, that also affect outcomes.</p></li>
+</ul>
+</section>
+<section id="there-is-conditional" class="slide level2">
+<h2>There is conditional</h2>
+<p>When unconditional independence assumption fails, we can call on Conditional independence assumption:</p>
+<p><span class="math display">\[
+Y(1),Y(0) \perp D | X
+\]</span></p>
+<p>In other words, If we can look into specific groups (given <span class="math inline">\(X\)</span>), it may be possible to impose the Independence assumption.</p>
+<p>This relaxes the independence condition, but assumes selection is due to observable characteristics only. (it still needs to be as good as randomized given <span class="math inline">\(X\)</span>)</p>
+<p>Implications:</p>
+<p><span class="math display">\[
+\begin{aligned}
+E(Y|D=1,X) =E(Y(1)|D=1,X)=E(Y(1)|D=0,X)  \\
+E(Y|D=0,X) =E(Y(0)|D=1,X)=E(Y(0)|D=0,X)  
+\end{aligned}
+\]</span></p>
+</section>
+<section id="intuition" class="slide level2">
+<h2>Intuition</h2>
+<p>Matching is a methodology that falls within quasi-experimental designs. You cannot or could not decide the assignment rules, so now are using data as given.</p>
+<p>The idea is to construct an artificial control and use it as a counter-factual, so that both treated and control groups “look similar” in terms of observables.</p>
+<p>Once a group of synthetic controls has been constructed, treatment effects can be calculated for the whole population:</p>
+<p><span class="math display">\[
+\begin{aligned}
+ATE(X) &amp;= E(Y|D=1,X) -E(Y|D=0,X) \\
+ATE &amp;= \int ATE(X) dFx
+\end{aligned}
+\]</span></p>
+<p>How can we do this?</p>
+<p>we just need to find observational twins!</p>
+</section>
+<section id="matching-twins" class="slide level2">
+<h2>Matching Twins</h2>
+
+<img data-src="resources/charles_ozzy.jpg" class="r-stretch quarto-figure-center"><p class="caption">Matching on Observables</p></section>
+<section id="subclassification-or-stratification" class="slide level2 scrollable">
+<h2>Subclassification or stratification</h2>
+<p>Consider the following dataset:</p>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1"></a>frause titanic, <span class="kw">clear</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a>expand freq</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">drop</span> <span class="kw">if</span> freq==0</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">gen</span> class1=<span class="kw">class</span>==1</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="kw">tab</span> survived class1 , nofreq col</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Data downloaded from R base)
+(8 zero counts ignored; observations not deleted)
+(2,177 observations created)
+(8 observations deleted)
+
+           |        class1
+  Survived |         0          1 |     Total
+-----------+----------------------+----------
+        No |     72.92      37.54 |     67.70 
+       Yes |     27.08      62.46 |     32.30 
+-----------+----------------------+----------
+     Total |    100.00     100.00 |    100.00 </code></pre>
+</div>
+</div>
+<p>If we assume full Independence assumption we would believe that being in first class increased chance of survival in 35.4%. but is that the case?</p>
+<p>What if the composition of individuals differs across classes (women and children)</p>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">tab</span> age class1, nofreq col</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">tab</span> sex class1, nofreq col</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+           |        class1
+       Age |         0          1 |     Total
+-----------+----------------------+----------
+     Child |      5.49       1.85 |      4.95 
+     Adult |     94.51      98.15 |     95.05 
+-----------+----------------------+----------
+     Total |    100.00     100.00 |    100.00 
+
+           |        class1
+       Sex |         0          1 |     Total
+-----------+----------------------+----------
+      Male |     82.68      55.38 |     78.65 
+    Female |     17.32      44.62 |     21.35 
+-----------+----------------------+----------
+     Total |    100.00     100.00 |    100.00 </code></pre>
+</div>
+</div>
+<p>There were fewer children, but more women in first class. Perhaps that explains the difference in survival rates</p>
+</section>
+<section id="section" class="slide level2 scrollable">
+<h2></h2>
+<p>A better approach would be to look into the survival probabilities stratifying the data:</p>
+<div class="cell" data-execution_count="3">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">gen</span> surv=survived==2</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="kw">bysort</span> age sex class1:<span class="kw">egen</span> sr_mean=<span class="kw">mean</span>(survived==2)</span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="kw">table</span> (age sex) (class1), stat(<span class="kw">mean</span> surv) <span class="kw">nototal</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+-----------------------------------
+             |         class1      
+             |         0          1
+-------------+---------------------
+Age          |                     
+  Child      |                     
+    Sex      |                     
+      Male   |  .4067797          1
+      Female |  .6136364          1
+  Adult      |                     
+    Sex      |                     
+      Male   |  .1883378   .3257143
+      Female |  .6263345   .9722222
+-----------------------------------</code></pre>
+</div>
+</div>
+<p>So even within each group, the survival probability is larger in first class. What about Average?</p>
+<div class="cell" data-execution_count="4">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">bysort</span> age sex:<span class="kw">egen</span> sr_mean_class1=<span class="fu">max</span>(sr_mean*(class1==1))</span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="kw">bysort</span> age sex:<span class="kw">egen</span> sr_mean_class0=<span class="fu">max</span>(sr_mean*(class1==0))</span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="kw">gen</span> teff = sr_mean_class1-sr_mean_class0</span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="kw">sum</span> teff <span class="kw">if</span> class1==1 <span class="co">// ATT</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="kw">sum</span> teff <span class="kw">if</span> class1==0 <span class="co">// ATU</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="kw">sum</span> teff  <span class="co">// ATE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+        teff |        325    .2375421    .1125033   .1373765   .5932204
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+        teff |      1,876    .1887847    .1089261   .1373765   .5932204
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+        teff |      2,201    .1959842    .1107948   .1373765   .5932204</code></pre>
+</div>
+</div>
+</section>
+<section id="what-did-we-do" class="slide level2">
+<h2>What did we do?</h2>
+<p>The procedure above is a simple stratification approach, aka matching, to analyze the true impact of the treatment (being a 1st class passenger).</p>
+<ol type="1">
+<li>Stratified the sample in groups by age and gender.
+<ul>
+<li>Identify the shares of each group by class1</li>
+</ul></li>
+<li>Predict probability of survival per strata and class1</li>
+<li>Obtain the Strata level Effects</li>
+<li>Aggregate as needed.
+<ul>
+<li>Here, we could estimate ATE, ATT or ATU!</li>
+</ul></li>
+</ol>
+<p>Where could things go wrong?</p>
+</section>
+<section id="overlapping" class="slide level2 scrollable">
+<h2>Overlapping</h2>
+<p>The procedure describe above works well whenever there is data overlapping.</p>
+<ul>
+<li>For every combination of X, you see data on the control and treated group <span class="math inline">\(0&lt;P(D|X)&lt;1\)</span></li>
+</ul>
+<p>When this fails, you wont be able to estimate ATE’s, although ATT’s or ATU’s might still be possible:</p>
+<ul>
+<li>for ATT: <span class="math inline">\(P(D|X)&lt;1\)</span></li>
+<li>for ATU: <span class="math inline">\(0&lt;P(D|X)\)</span></li>
+</ul>
+<p>For example:</p>
+<div class="cell" data-execution_count="5">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb9-1"><a href="#cb9-1"></a>frause hhprice, <span class="kw">clear</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="kw">keep</span> price rooms type_h</span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="kw">tab</span> rooms type_h</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+           |    =0 if house, =1
+ Number of |       TownHouse
+     rooms |         0          1 |     Total
+-----------+----------------------+----------
+         1 |        37         72 |       109 
+         2 |     1,134        751 |     1,885 
+         3 |     4,634        648 |     5,282 
+         4 |     2,465        115 |     2,580 
+         5 |       465          2 |       467 
+         6 |        46          0 |        46 
+         7 |         7          0 |         7 
+-----------+----------------------+----------
+     Total |     8,788      1,588 |    10,376 </code></pre>
+</div>
+</div>
+<p>Would not be able to estimate ATE nor ATU. Only ATT for townhouses.</p>
+</section>
+<section id="curse-of-dimensionality" class="slide level2">
+<h2>Curse of dimensionality</h2>
+<p>There is a second problem in terms of stratification. How would we deal with Multiple dimensions? Would it be possible to find “twins” for every observation?</p>
+<p>The answer is, probably no. Too many groups to track, to many micro cells to make use of:</p>
+<div class="cell" data-execution_count="6">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb11-1"><a href="#cb11-1"></a>frause oaxaca, <span class="kw">clear</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="kw">drop</span> <span class="kw">if</span> lnwage==.</span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="kw">egen</span> <span class="kw">strata</span>=<span class="fu">group</span>(educ isco)</span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="kw">bysort</span> <span class="kw">strata</span>:<span class="kw">egen</span> flag=<span class="kw">mean</span>(female)</span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="ot">list</span> educ isco female <span class="kw">if</span> (flag==0 | flag==1) &amp; educ == 10, sep(0)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Excerpt from the Swiss Labor Market Survey 1998)
+(213 observations deleted)
+
+      +----------------------+
+      | educ   isco   female |
+      |----------------------|
+ 158. |   10      1        0 |
+ 159. |   10      1        0 |
+ 197. |   10      7        0 |
+ 198. |   10      7        0 |
+ 199. |   10      9        1 |
+ 200. |   10      9        1 |
+      +----------------------+</code></pre>
+</div>
+</div>
+</section>
+<section id="alternative-matching-as-a-weighted" class="slide level2">
+<h2>Alternative: Matching as a weighted</h2>
+<p>The problem of curse of dimensional states that as the number of desired characteristics to match increase, fewer “twins” will be available in the data. At the end…no one will be like you!</p>
+<p>The alternative, is to look into People that are sufficiently close so they can be used for matching.</p>
+<p><span class="math display">\[
+\begin{aligned}
+ATT_i &amp;= Y_i -  \sum_{j \in C} w(x_j,x_i) Y_j \\
+ATT   &amp;= \frac{1}{N_T}\sum(ATT_i)  \\
+ATT   &amp;=E(Y|D=1) - E_i\left( \sum_{j \in C} w(x_j,x_i) Y_j  \Big| D=0 \right)
+\end{aligned}
+\]</span></p>
+<p>Depending how <span class="math inline">\(w(.)\)</span> is defined, we would be facing different kinds of matching estimators.</p>
+</section></section>
+<section>
+<section id="types-of-matching" class="title-slide slide level1 center">
+<h1>Types of Matching</h1>
+
+</section>
+<section id="matching-on-covariates" class="slide level2">
+<h2>Matching on covariates</h2>
+<p>The first decision to take is whether one should find matches based on covariates, or based on scores (propensity scores).</p>
+<p>Using covariates implies that will aim to find the closest “twin” possible, based on multiple dimensions: <span class="math display">\[
+\begin{aligned}
+Eclidean=d(x_i,x_j) &amp;=\sqrt{ (x_i-x_j)'(x_i-x_j)} \\
+WEclidean=d(x_i,x_j) &amp;=\sqrt{ (x_i-x_j)'W (x_i-x_j)} \\
+Maha =d(x_i,x_j) &amp;=\sqrt{(x_i-x_j)'S^{-1}(x_i-x_j)}
+\end{aligned}
+\]</span></p>
+<p>Distance measures are used to identify the closest matches to a given observation, and thus the weight assigned to that observation.</p>
+<p>Has the advantage of looking at individuals who are indeed close to each other, but becomes more difficult as the dimensionality of X’s increase. (you will not find close matches)</p>
+</section>
+<section id="matching-on-scores" class="slide level2">
+<h2>Matching on Scores</h2>
+<p>A second approach is to match individuals based on some summary index that condenses the information in <span class="math inline">\(X\)</span> into a single scalar <span class="math inline">\(h(x)\)</span>, reducing the dimensionality problem fron K to 1.</p>
+<p>Few candidates:</p>
+<ul>
+<li><p>Propensity Score: <span class="math inline">\(P(D|X)\)</span> based on a logit/probit/binomial model. Most common approach!</p></li>
+<li><p>Predicted Mean: <span class="math inline">\(X\beta\)</span> if there is information on outcome to be predicted</p></li>
+<li><p>PCA: Using Principal components to reduce dimensionality before Matching</p></li>
+</ul>
+<p>Since there is only 1 dimension to consider, multiple distance measures are possible:</p>
+<ul>
+<li>nearest neighbors, kernel weight matching, radious matching.</li>
+</ul>
+<p>But one has to be careful with the approach. King and Nielsen (2019) Argue about the risks of PSM</p>
+</section>
+<section id="vs-k-matching-with-and-without-replacement" class="slide level2">
+<h2>1 vs K matching; With and without replacement</h2>
+<p>Two additional questions remain regarding matching. How many “twins” to use, and if twins will be obtained with/without replacement.</p>
+<ul>
+<li><p>Fewer matches reduce bias (choosing only the closest observation), but increase variance.</p></li>
+<li><p>More matches increase bias, but reduce variance. (because of less optimal matches)</p></li>
+<li><p>with replacement: control units may be used more than once. This will improve matching quality reducing bias. But by using the same units multiple times, it will increase variance.</p></li>
+<li><p>without replacement: Control units are used once, potentially reducing matching quality, but reducing variance. It will be order dependent.</p></li>
+</ul>
+<p>see Caliendo and Kopeing (2008)</p>
+</section>
+<section id="what-about-se-and-statistical-inference" class="slide level2">
+<h2>What about SE? and Statistical inference?</h2>
+<p>Well….this is one of the few cases where Bootstrapping WON’T work!</p>
+<p>Standard errors are more cumbersome. So we will just rely on software results</p>
+</section>
+<section id="other-considerations" class="slide level2">
+<h2>Other considerations</h2>
+<p>Once you have chosen your matching method, find your “statistical twins”, and estimate your differences you are done! (or are you)</p>
+<p>Not yet…common practice: Evaluate the balance of your data</p>
+<blockquote>
+<p>Matching aims to reduce or eliminate differences in characteristics between treatment and control units. Thus, one should evaluate the differences (before and after match) of your characteristis</p>
+</blockquote>
+<ol type="1">
+<li>Check for overlapping condition.</li>
+</ol>
+<ul>
+<li>either variable by variable or with pscore</li>
+</ul>
+<ol start="2" type="1">
+<li>Assess Matching Quality: Have differences across groups vanished?</li>
+</ol>
+<ul>
+<li>Check Standardized differences <span class="math inline">\(\frac{\mu_1 - \mu_2}{\sqrt{0.5*(V_1 + V_2)}}\)</span></li>
+<li>t-tests</li>
+<li>PR2 of regression with matched data</li>
+</ul>
+</section>
+<section id="implementation" class="slide level2">
+<h2>Implementation</h2>
+<p>In <code>Stata</code>, there are at least two approaches that can be used for matching:</p>
+<ul>
+<li><p><code>psmatch2</code> (from ssc)</p></li>
+<li><p><code>teffects</code> (Official <code>Stata</code> command)</p></li>
+</ul>
+<p>We will use this to answer a simple question:</p>
+<blockquote>
+<p>What is the impact of Traing Jobs on Earnings?</p>
+</blockquote>
+</section>
+<section id="example" class="slide level2 scrollable">
+<h2>Example</h2>
+<p>This file contains information on experimental and observed data for the analysis of training on earnings program:</p>
+<div class="cell" data-execution_count="7">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">use</span> https:<span class="co">//friosavila.github.io/playingwithstata/drdid/lalonde.dta, clear</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="kw">keep</span> <span class="kw">if</span> <span class="fu">year</span>==1978 </span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="kw">drop</span> <span class="kw">if</span> dwincl==0</span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="kw">label</span> <span class="kw">define</span> <span class="kw">sample</span> 1 <span class="st">"exper"</span>  2 <span class="st">"CPS"</span> 3 <span class="st">"PSID"</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="kw">label</span> <span class="kw">values</span> <span class="kw">sample</span> <span class="kw">sample</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a><span class="kw">tab</span> <span class="kw">sample</span> treated,<span class="fu">m</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>(19,204 observations deleted)
+(277 observations deleted)
+
+           |             treated
+    sample |         0          1          . |     Total
+-----------+---------------------------------+----------
+     exper |       260        185          0 |       445 
+       CPS |         0          0     15,992 |    15,992 
+      PSID |         0          0      2,490 |     2,490 
+-----------+---------------------------------+----------
+     Total |       260        185     18,482 |    18,927 </code></pre>
+</div>
+</div>
+<p>First Experimental design - RCT</p>
+<div class="cell" data-execution_count="8">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb15-1"><a href="#cb15-1"></a><span class="kw">reg</span> re treated</span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="kw">tabstat</span> age educ <span class="bn">black</span> married nodegree , <span class="kw">by</span>(treated)</span>
+<span id="cb15-3"><a href="#cb15-3"></a><span class="kw">logit</span> treated age educ <span class="bn">black</span> hisp married nodegree </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+      Source |       SS           df       MS      Number of obs   =       445
+-------------+----------------------------------   F(1, 443)       =      8.04
+       Model |   348013183         1   348013183   Prob &gt; F        =    0.0048
+    Residual |  1.9178e+10       443  43290369.3   R-squared       =    0.0178
+-------------+----------------------------------   Adj R-squared   =    0.0156
+       Total |  1.9526e+10       444  43976681.9   Root MSE        =    6579.5
+
+------------------------------------------------------------------------------
+          re | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     treated |   1794.342   632.8534     2.84   0.005     550.5745     3038.11
+       _cons |   4554.801   408.0459    11.16   0.000     3752.855    5356.747
+------------------------------------------------------------------------------
+
+Summary statistics: Mean
+Group variable: treated 
+
+ treated |       age      educ     black   married  nodegree
+---------+--------------------------------------------------
+       0 |  25.05385  10.08846  .8269231  .1538462  .8346154
+       1 |  25.81622  10.34595  .8432432  .1891892  .7081081
+---------+--------------------------------------------------
+   Total |  25.37079  10.19551  .8337079  .1685393  .7820225
+------------------------------------------------------------
+
+Iteration 0:  Log likelihood =     -302.1  
+Iteration 1:  Log likelihood = -294.72908  
+Iteration 2:  Log likelihood = -294.71464  
+Iteration 3:  Log likelihood = -294.71464  
+
+Logistic regression                                     Number of obs =    445
+                                                        LR chi2(6)    =  14.77
+                                                        Prob &gt; chi2   = 0.0221
+Log likelihood = -294.71464                             Pseudo R2     = 0.0244
+
+------------------------------------------------------------------------------
+     treated | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         age |   .0059171   .0142668     0.41   0.678    -.0220452    .0338794
+        educ |  -.0639597    .071354    -0.90   0.370     -.203811    .0758916
+       black |  -.2543689   .3639735    -0.70   0.485    -.9677438    .4590061
+        hisp |  -.8291587   .5042305    -1.64   0.100    -1.817432     .159115
+     married |   .2342415   .2661824     0.88   0.379    -.2874665    .7559495
+    nodegree |  -.8385524   .3093833    -2.71   0.007    -1.444933   -.2321722
+       _cons |   1.053028   1.047384     1.01   0.315    -.9998064    3.105862
+------------------------------------------------------------------------------</code></pre>
+</div>
+</div>
+</section>
+<section id="section-1" class="slide level2 scrollable">
+<h2></h2>
+<p>Then using PScore Matching CPS</p>
+<div class="cell" data-execution_count="9">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb17-1"><a href="#cb17-1"></a><span class="kw">keep</span> <span class="kw">if</span> treated == 1 | <span class="kw">sample</span> ==2</span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="kw">replace</span> treated=0 <span class="kw">if</span> treated==.</span>
+<span id="cb17-3"><a href="#cb17-3"></a><span class="kw">reg</span> re treated</span>
+<span id="cb17-4"><a href="#cb17-4"></a><span class="kw">tabstat</span> age educ <span class="bn">black</span> hisp married nodegree , <span class="kw">by</span>(treated)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>(2,750 observations deleted)
+(15,992 real changes made)
+
+      Source |       SS           df       MS      Number of obs   =    16,177
+-------------+----------------------------------   F(1, 16175)     =    142.43
+       Model |  1.3206e+10         1  1.3206e+10   Prob &gt; F        =    0.0000
+    Residual |  1.4997e+12    16,175  92717515.8   R-squared       =    0.0087
+-------------+----------------------------------   Adj R-squared   =    0.0087
+       Total |  1.5129e+12    16,176  93528158.4   Root MSE        =      9629
+
+------------------------------------------------------------------------------
+          re | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     treated |  -8497.516   712.0207   -11.93   0.000    -9893.156   -7101.877
+       _cons |   14846.66   76.14292   194.98   0.000     14697.41    14995.91
+------------------------------------------------------------------------------
+
+Summary statistics: Mean
+Group variable: treated 
+
+ treated |       age      educ     black      hisp   married  nodegree
+---------+------------------------------------------------------------
+       0 |  33.22524  12.02751  .0735368   .072036  .7117309  .2958354
+       1 |  25.81622  10.34595  .8432432  .0594595  .1891892  .7081081
+---------+------------------------------------------------------------
+   Total |  33.14051  12.00828  .0823391  .0718922  .7057551  .3005502
+----------------------------------------------------------------------</code></pre>
+</div>
+</div>
+</section>
+<section id="section-2" class="slide level2 scrollable">
+<h2></h2>
+<p>We need to do trimming</p>
+<div class="cell" data-execution_count="10">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb19-1"><a href="#cb19-1"></a><span class="kw">bysort</span> educ <span class="bn">black</span> hisp married:<span class="kw">egen</span> n11=<span class="kw">sum</span>(treated==1)</span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="kw">bysort</span> age  <span class="bn">black</span> hisp married:<span class="kw">egen</span> n22=<span class="kw">sum</span>(treated==1)</span>
+<span id="cb19-3"><a href="#cb19-3"></a><span class="kw">drop</span> <span class="kw">if</span> n11==0 | n22 ==0</span>
+<span id="cb19-4"><a href="#cb19-4"></a><span class="kw">tabstat</span> age educ <span class="bn">black</span> hisp married nodegree , <span class="kw">by</span>(treated)</span>
+<span id="cb19-5"><a href="#cb19-5"></a><span class="kw">reg</span> re treated</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>(13,536 observations deleted)
+
+Summary statistics: Mean
+Group variable: treated 
+
+ treated |       age      educ     black      hisp   married  nodegree
+---------+------------------------------------------------------------
+       0 |  24.24145  11.69788   .252443  .0260586  .3346906  .2569218
+       1 |  25.81622  10.34595  .8432432  .0594595  .1891892  .7081081
+---------+------------------------------------------------------------
+   Total |  24.35176  11.60318  .2938281  .0283983  .3244983  .2885271
+----------------------------------------------------------------------
+
+      Source |       SS           df       MS      Number of obs   =     2,641
+-------------+----------------------------------   F(1, 2639)      =     73.89
+       Model |  5.7607e+09         1  5.7607e+09   Prob &gt; F        =    0.0000
+    Residual |  2.0575e+11     2,639  77964783.1   R-squared       =    0.0272
+-------------+----------------------------------   Adj R-squared   =    0.0269
+       Total |  2.1151e+11     2,640  80117339.3   Root MSE        =    8829.8
+
+------------------------------------------------------------------------------
+          re | Coefficient  Std. err.      t    P&gt;|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     treated |  -5786.584   673.1834    -8.60   0.000    -7106.605   -4466.564
+       _cons |   12135.73   178.1702    68.11   0.000     11786.36     12485.1
+------------------------------------------------------------------------------</code></pre>
+</div>
+</div>
+</section>
+<section id="section-3" class="slide level2 scrollable">
+<h2></h2>
+<p>Lets do some matching</p>
+<div class="cell" data-execution_count="11">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb21-1"><a href="#cb21-1"></a>teffects nnmatch (re age educ <span class="bn">black</span>   married nodegree  ) (treated)</span>
+<span id="cb21-2"><a href="#cb21-2"></a>tebalance <span class="kw">summarize</span></span>
+<span id="cb21-3"><a href="#cb21-3"></a>teffects nnmatch (re age educ <span class="bn">black</span>   married nodegree  ) (treated), nn(2)</span>
+<span id="cb21-4"><a href="#cb21-4"></a>tebalance <span class="kw">summarize</span></span>
+<span id="cb21-5"><a href="#cb21-5"></a>teffects psmatch (re) (treated age educ <span class="bn">black</span>   married nodegree  )</span>
+<span id="cb21-6"><a href="#cb21-6"></a>tebalance <span class="kw">summarize</span></span>
+<span id="cb21-7"><a href="#cb21-7"></a>teffects psmatch (re) (treated age educ <span class="bn">black</span>   married nodegree  ) ,  nn(2)</span>
+<span id="cb21-8"><a href="#cb21-8"></a>tebalance <span class="kw">summarize</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Treatment-effects estimation                   Number of obs      =      2,641
+Estimator      : nearest-neighbor matching     Matches: requested =          1
+Outcome model  : matching                                     min =          1
+Distance metric: Mahalanobis                                  max =        138
+------------------------------------------------------------------------------
+             |              AI robust
+          re | Coefficient  std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ATE          |
+     treated |
+   (1 vs 0)  |  -3685.665   1188.666    -3.10   0.002    -6015.407   -1355.923
+------------------------------------------------------------------------------
+(refitting the model using the generate() option)
+
+Covariate balance summary
+
+                         Raw      Matched
+-----------------------------------------
+Number of obs =        2,641        5,282
+Treated obs   =          185        2,641
+Control obs   =        2,456        2,641
+-----------------------------------------
+
+-----------------------------------------------------------------
+                |Standardized differences          Variance ratio
+                |        Raw     Matched           Raw    Matched
+----------------+------------------------------------------------
+            age |   .2342346    -.015417      1.305844   .8410946
+           educ |  -.7684118   -.0812288      1.881909   .8598207
+          black |   1.473105           0      .7039609          1
+        married |  -.3351313   -.0008087      .6923501    .999393
+       nodegree |   1.010393           0      1.088086          1
+-----------------------------------------------------------------
+
+Treatment-effects estimation                   Number of obs      =      2,641
+Estimator      : nearest-neighbor matching     Matches: requested =          2
+Outcome model  : matching                                     min =          2
+Distance metric: Mahalanobis                                  max =        138
+------------------------------------------------------------------------------
+             |              AI robust
+          re | Coefficient  std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ATE          |
+     treated |
+   (1 vs 0)  |  -5166.888   1107.653    -4.66   0.000    -7337.848   -2995.929
+------------------------------------------------------------------------------
+(refitting the model using the generate() option)
+
+Covariate balance summary
+
+                         Raw      Matched
+-----------------------------------------
+Number of obs =        2,641        5,282
+Treated obs   =          185        2,641
+Control obs   =        2,456        2,641
+-----------------------------------------
+
+-----------------------------------------------------------------
+                |Standardized differences          Variance ratio
+                |        Raw     Matched           Raw    Matched
+----------------+------------------------------------------------
+            age |   .2342346   -.0209048      1.305844   .7345997
+           educ |  -.7684118   -.0385284      1.881909   .8978301
+          black |   1.473105    .0074673      .7039609   1.006716
+        married |  -.3351313    -.004586      .6923501   .9965432
+       nodegree |   1.010393    .0016705      1.088086   1.001557
+-----------------------------------------------------------------
+
+Treatment-effects estimation                   Number of obs      =      2,641
+Estimator      : propensity-score matching     Matches: requested =          1
+Outcome model  : matching                                     min =          1
+Treatment model: logit                                        max =        138
+------------------------------------------------------------------------------
+             |              AI robust
+          re | Coefficient  std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ATE          |
+     treated |
+   (1 vs 0)  |  -4278.549   1135.847    -3.77   0.000    -6504.768   -2052.331
+------------------------------------------------------------------------------
+(refitting the model using the generate() option)
+
+Covariate balance summary
+
+                         Raw      Matched
+-----------------------------------------
+Number of obs =        2,641        5,282
+Treated obs   =          185        2,641
+Control obs   =        2,456        2,641
+-----------------------------------------
+
+-----------------------------------------------------------------
+                |Standardized differences          Variance ratio
+                |        Raw     Matched           Raw    Matched
+----------------+------------------------------------------------
+            age |   .2342346    .0014058      1.305844   .9313458
+           educ |  -.7684118   -.1308249      1.881909   .9665937
+          black |   1.473105   -.0926638      .7039609     .90999
+        married |  -.3351313   -.0973289      .6923501   .9197524
+       nodegree |   1.010393    .0821105      1.088086    1.07103
+-----------------------------------------------------------------
+
+Treatment-effects estimation                   Number of obs      =      2,641
+Estimator      : propensity-score matching     Matches: requested =          2
+Outcome model  : matching                                     min =          2
+Treatment model: logit                                        max =        138
+------------------------------------------------------------------------------
+             |              AI robust
+          re | Coefficient  std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ATE          |
+     treated |
+   (1 vs 0)  |  -4380.078   1158.019    -3.78   0.000    -6649.754   -2110.403
+------------------------------------------------------------------------------
+(refitting the model using the generate() option)
+
+Covariate balance summary
+
+                         Raw      Matched
+-----------------------------------------
+Number of obs =        2,641        5,282
+Treated obs   =          185        2,641
+Control obs   =        2,456        2,641
+-----------------------------------------
+
+-----------------------------------------------------------------
+                |Standardized differences          Variance ratio
+                |        Raw     Matched           Raw    Matched
+----------------+------------------------------------------------
+            age |   .2342346     -.06133      1.305844   .8834346
+           educ |  -.7684118   -.1321518      1.881909   1.021302
+          black |   1.473105   -.0698339      .7039609    .933348
+        married |  -.3351313   -.0414439      .6923501   .9674741
+       nodegree |   1.010393    .0939209      1.088086   1.080951
+-----------------------------------------------------------------</code></pre>
+</div>
+</div>
+</section>
+<section id="section-4" class="slide level2 scrollable">
+<h2></h2>
+<p>A missing variable? Earnings in previous year. May capture information of Need to do treatment (selection)</p>
+<div class="cell" data-execution_count="12">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb23-1"><a href="#cb23-1"></a><span class="kw">tabstat</span> age educ <span class="bn">black</span> hisp married nodegree re74, <span class="kw">by</span>(treated)</span>
+<span id="cb23-2"><a href="#cb23-2"></a><span class="kw">gen</span> dre = re-re74</span>
+<span id="cb23-3"><a href="#cb23-3"></a>teffects nnmatch (dre age educ <span class="bn">black</span>   married nodegree  ) (treated)</span>
+<span id="cb23-4"><a href="#cb23-4"></a></span>
+<span id="cb23-5"><a href="#cb23-5"></a>teffects nnmatch (dre age educ <span class="bn">black</span>   married nodegree  ) (treated), nn(2)</span>
+<span id="cb23-6"><a href="#cb23-6"></a></span>
+<span id="cb23-7"><a href="#cb23-7"></a>teffects psmatch (dre) (treated age educ <span class="bn">black</span>   married nodegree  )</span>
+<span id="cb23-8"><a href="#cb23-8"></a></span>
+<span id="cb23-9"><a href="#cb23-9"></a>teffects psmatch (dre) (treated age educ <span class="bn">black</span>   married nodegree  ) ,  nn(2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Summary statistics: Mean
+Group variable: treated 
+
+ treated |       age      educ     black      hisp   married  nodegree
+---------+------------------------------------------------------------
+       0 |  24.24145  11.69788   .252443  .0260586  .3346906  .2569218
+       1 |  25.81622  10.34595  .8432432  .0594595  .1891892  .7081081
+---------+------------------------------------------------------------
+   Total |  24.35176  11.60318  .2938281  .0283983  .3244983  .2885271
+----------------------------------------------------------------------
+
+ treated |      re74
+---------+----------
+       0 |  9347.406
+       1 |  2095.574
+---------+----------
+   Total |  8839.421
+--------------------
+
+Treatment-effects estimation                   Number of obs      =      2,641
+Estimator      : nearest-neighbor matching     Matches: requested =          1
+Outcome model  : matching                                     min =          1
+Distance metric: Mahalanobis                                  max =        138
+------------------------------------------------------------------------------
+             |              AI robust
+         dre | Coefficient  std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ATE          |
+     treated |
+   (1 vs 0)  |   2616.653   1803.172     1.45   0.147    -917.4997    6150.806
+------------------------------------------------------------------------------
+
+Treatment-effects estimation                   Number of obs      =      2,641
+Estimator      : nearest-neighbor matching     Matches: requested =          2
+Outcome model  : matching                                     min =          2
+Distance metric: Mahalanobis                                  max =        138
+------------------------------------------------------------------------------
+             |              AI robust
+         dre | Coefficient  std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ATE          |
+     treated |
+   (1 vs 0)  |   730.2925    1674.91     0.44   0.663     -2552.47    4013.055
+------------------------------------------------------------------------------
+
+Treatment-effects estimation                   Number of obs      =      2,641
+Estimator      : propensity-score matching     Matches: requested =          1
+Outcome model  : matching                                     min =          1
+Treatment model: logit                                        max =        138
+------------------------------------------------------------------------------
+             |              AI robust
+         dre | Coefficient  std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ATE          |
+     treated |
+   (1 vs 0)  |   2162.311    1740.12     1.24   0.214    -1248.262    5572.884
+------------------------------------------------------------------------------
+
+Treatment-effects estimation                   Number of obs      =      2,641
+Estimator      : propensity-score matching     Matches: requested =          2
+Outcome model  : matching                                     min =          2
+Treatment model: logit                                        max =        138
+------------------------------------------------------------------------------
+             |              AI robust
+         dre | Coefficient  std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+ATE          |
+     treated |
+   (1 vs 0)  |    1833.03   1739.496     1.05   0.292    -1576.318    5242.379
+------------------------------------------------------------------------------</code></pre>
+</div>
+</div>
+<p>In this case, Matching alone could not get the right answer. Who were the most likely to “go to the training?”</p>
+<p>So instead we change the question: How much the change in earnings compare across groups.</p>
+</section>
+<section id="wait-what-about-reweighting" class="slide level2">
+<h2>Wait: What about Reweighting?</h2>
+<p>An alternative method to Matching is to do Re-weighting.</p>
+<p>We have seen this!</p>
+<p>Your control group has a distribution <span class="math inline">\(g(x)\)</span> and your treatment <span class="math inline">\(f(x)\)</span>. We can use some weighting factors <span class="math inline">\(h(x)\)</span> that reshapes <span class="math inline">\(g(x)\rightarrow \hat f(x)\)</span>.</p>
+<p>How? Using Propensity scores</p>
+<p>Why does it work? Just as matching, your goal is to compare distributions of outcomes, forcing differences in observed characteristics to be the same.</p>
+<p>IPW, does this by reweighting the distribution! (rather than matching)</p>
+</section>
+<section id="inverse-probability-weightingipw" class="slide level2">
+<h2>Inverse Probability Weighting:IPW</h2>
+<p>s1: Estimate Pscore</p>
+<p><span class="math display">\[
+p(D=1|X)=F(X\beta)
+\]</span> S2: Estimate IPW</p>
+<p>For ATT: <span class="math inline">\(W(D=1,x)=1 \ \&amp; \ W(D=0,X)=\frac{\hat p(x)}{1-\hat p(x)}\)</span></p>
+<p>For ATU: <span class="math inline">\(W(D=0,x)=1 \ \&amp; \ W(D=1,X)=\frac{1-\hat p(x)}{\hat p(x)}\)</span></p>
+<p>For ATE: <span class="math inline">\(W(D=0,x)=\frac{1}{1-\hat p(x)} \ \&amp; \ W(D=1,X)=\frac{1}{\hat p(x)}\)</span></p>
+<p>s3: Estimate Treatment effect:</p>
+<p><span class="math display">\[
+TE = \sum_{i \in D=1} w_i^s(1) Y_i - \sum_{i \in D=0} w_i^s(0) Y_i
+\]</span></p>
+</section>
+<section id="even-better-go-dr" class="slide level2">
+<h2>Even Better: Go DR!</h2>
+<p>An interesting advantage of IPW approach is that you can gain efficiency using Doubly Robust Methods. Namely, instead of comparing outcomes directly, you could compare predicted outcomes!</p>
+<p><span class="math display">\[
+\begin{aligned}
+ATT &amp;= \frac{1}{N_t}\sum(Y_1-X'\hat\beta_w^0) \\
+ATU &amp;= \frac{1}{N_c}\sum(X'\hat\beta_w^1-Y_0) \\
+ATE &amp;= \frac{1}{N}\sum(X'\hat\beta_w^1-X'\hat\beta_w^0)
+\end{aligned}
+\]</span> where <span class="math inline">\(\hat \beta^k_w\)</span> can be modeled using weighted least squares</p>
+</section>
+<section id="comparing-to-matching" class="slide level2 scrollable">
+<h2>Comparing to Matching</h2>
+<div class="sourceCode" id="cb25"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb25-1"><a href="#cb25-1"></a>teffects ipw (re) (treated age educ <span class="bn">black</span>   married nodegree) , iter(3) <span class="kw">nolog</span></span>
+<span id="cb25-2"><a href="#cb25-2"></a>teffects ipwra (re age educ <span class="bn">black</span>   married nodegree) (treated age educ <span class="bn">black</span> married nodegree), iter(3) <span class="kw">nolog</span></span>
+<span id="cb25-3"><a href="#cb25-3"></a>teffects ipw (dre) (treated age educ <span class="bn">black</span>   married nodegree), iter(3) <span class="kw">nolog</span></span>
+<span id="cb25-4"><a href="#cb25-4"></a>teffects ipwra (dre age educ <span class="bn">black</span>   married nodegree) (treated age educ <span class="bn">black</span>   married nodegree), iter(3) <span class="kw">nolog</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb26-1"><a href="#cb26-1"></a></span>
+<span id="cb26-2"><a href="#cb26-2"></a>Treatment-<span class="kw">effects</span> estimation                    Number <span class="kw">of</span> <span class="kw">obs</span>     =      2,641</span>
+<span id="cb26-3"><a href="#cb26-3"></a>Estimator      : inverse-probability weights</span>
+<span id="cb26-4"><a href="#cb26-4"></a>Outcome <span class="kw">model</span>  : weighted <span class="kw">mean</span></span>
+<span id="cb26-5"><a href="#cb26-5"></a>Treatment <span class="kw">model</span>: <span class="kw">logit</span></span>
+<span id="cb26-6"><a href="#cb26-6"></a>------------------------------------------------------------------------------</span>
+<span id="cb26-7"><a href="#cb26-7"></a>             |               Robust</span>
+<span id="cb26-8"><a href="#cb26-8"></a>          re | Coefficient  <span class="fu">std</span>. err.      z    P&gt;|z|     [95% conf. interval]</span>
+<span id="cb26-9"><a href="#cb26-9"></a>-------------+----------------------------------------------------------------</span>
+<span id="cb26-10"><a href="#cb26-10"></a>ATE          |</span>
+<span id="cb26-11"><a href="#cb26-11"></a>     treated |</span>
+<span id="cb26-12"><a href="#cb26-12"></a>   (1 vs 0)  |  -4833.352   1088.667    -4.44   0.000    -6967.101   -2699.603</span>
+<span id="cb26-13"><a href="#cb26-13"></a>-------------+----------------------------------------------------------------</span>
+<span id="cb26-14"><a href="#cb26-14"></a>POmean       |</span>
+<span id="cb26-15"><a href="#cb26-15"></a>     treated |</span>
+<span id="cb26-16"><a href="#cb26-16"></a>          0  |   11979.19   179.1903    66.85   0.000     11627.99     12330.4</span>
+<span id="cb26-17"><a href="#cb26-17"></a>------------------------------------------------------------------------------</span>
+<span id="cb26-18"><a href="#cb26-18"></a></span>
+<span id="cb26-19"><a href="#cb26-19"></a>Treatment-<span class="kw">effects</span> estimation                    Number <span class="kw">of</span> <span class="kw">obs</span>     =      2,641</span>
+<span id="cb26-20"><a href="#cb26-20"></a>Estimator      : IPW regression adjustment</span>
+<span id="cb26-21"><a href="#cb26-21"></a>Outcome <span class="kw">model</span>  : linear</span>
+<span id="cb26-22"><a href="#cb26-22"></a>Treatment <span class="kw">model</span>: <span class="kw">logit</span></span>
+<span id="cb26-23"><a href="#cb26-23"></a>------------------------------------------------------------------------------</span>
+<span id="cb26-24"><a href="#cb26-24"></a>             |               Robust</span>
+<span id="cb26-25"><a href="#cb26-25"></a>          re | Coefficient  <span class="fu">std</span>. err.      z    P&gt;|z|     [95% conf. interval]</span>
+<span id="cb26-26"><a href="#cb26-26"></a>-------------+----------------------------------------------------------------</span>
+<span id="cb26-27"><a href="#cb26-27"></a>ATE          |</span>
+<span id="cb26-28"><a href="#cb26-28"></a>     treated |</span>
+<span id="cb26-29"><a href="#cb26-29"></a>   (1 vs 0)  |   -4835.38   1012.598    -4.78   0.000    -6820.036   -2850.724</span>
+<span id="cb26-30"><a href="#cb26-30"></a>-------------+----------------------------------------------------------------</span>
+<span id="cb26-31"><a href="#cb26-31"></a>POmean       |</span>
+<span id="cb26-32"><a href="#cb26-32"></a>     treated |</span>
+<span id="cb26-33"><a href="#cb26-33"></a>          0  |   11976.52   179.0958    66.87   0.000     11625.49    12327.54</span>
+<span id="cb26-34"><a href="#cb26-34"></a>------------------------------------------------------------------------------</span>
+<span id="cb26-35"><a href="#cb26-35"></a>Warning: Convergence <span class="kw">not</span> achieved.</span>
+<span id="cb26-36"><a href="#cb26-36"></a></span>
+<span id="cb26-37"><a href="#cb26-37"></a>Treatment-<span class="kw">effects</span> estimation                    Number <span class="kw">of</span> <span class="kw">obs</span>     =      2,641</span>
+<span id="cb26-38"><a href="#cb26-38"></a>Estimator      : inverse-probability weights</span>
+<span id="cb26-39"><a href="#cb26-39"></a>Outcome <span class="kw">model</span>  : weighted <span class="kw">mean</span></span>
+<span id="cb26-40"><a href="#cb26-40"></a>Treatment <span class="kw">model</span>: <span class="kw">logit</span></span>
+<span id="cb26-41"><a href="#cb26-41"></a>------------------------------------------------------------------------------</span>
+<span id="cb26-42"><a href="#cb26-42"></a>             |               Robust</span>
+<span id="cb26-43"><a href="#cb26-43"></a>         dre | Coefficient  <span class="fu">std</span>. err.      z    P&gt;|z|     [95% conf. interval]</span>
+<span id="cb26-44"><a href="#cb26-44"></a>-------------+----------------------------------------------------------------</span>
+<span id="cb26-45"><a href="#cb26-45"></a>ATE          |</span>
+<span id="cb26-46"><a href="#cb26-46"></a>     treated |</span>
+<span id="cb26-47"><a href="#cb26-47"></a>   (1 vs 0)  |    1475.71   1792.427     0.82   0.410    -2037.382    4988.802</span>
+<span id="cb26-48"><a href="#cb26-48"></a>-------------+----------------------------------------------------------------</span>
+<span id="cb26-49"><a href="#cb26-49"></a>POmean       |</span>
+<span id="cb26-50"><a href="#cb26-50"></a>     treated |</span>
+<span id="cb26-51"><a href="#cb26-51"></a>          0  |   2746.475   161.2845    17.03   0.000     2430.363    3062.587</span>
+<span id="cb26-52"><a href="#cb26-52"></a>------------------------------------------------------------------------------</span>
+<span id="cb26-53"><a href="#cb26-53"></a>Warning: Convergence <span class="kw">not</span> achieved.</span>
+<span id="cb26-54"><a href="#cb26-54"></a></span>
+<span id="cb26-55"><a href="#cb26-55"></a>Treatment-<span class="kw">effects</span> estimation                    Number <span class="kw">of</span> <span class="kw">obs</span>     =      2,641</span>
+<span id="cb26-56"><a href="#cb26-56"></a>Estimator      : IPW regression adjustment</span>
+<span id="cb26-57"><a href="#cb26-57"></a>Outcome <span class="kw">model</span>  : linear</span>
+<span id="cb26-58"><a href="#cb26-58"></a>Treatment <span class="kw">model</span>: <span class="kw">logit</span></span>
+<span id="cb26-59"><a href="#cb26-59"></a>------------------------------------------------------------------------------</span>
+<span id="cb26-60"><a href="#cb26-60"></a>             |               Robust</span>
+<span id="cb26-61"><a href="#cb26-61"></a>         dre | Coefficient  <span class="fu">std</span>. err.      z    P&gt;|z|     [95% conf. interval]</span>
+<span id="cb26-62"><a href="#cb26-62"></a>-------------+----------------------------------------------------------------</span>
+<span id="cb26-63"><a href="#cb26-63"></a>ATE          |</span>
+<span id="cb26-64"><a href="#cb26-64"></a>     treated |</span>
+<span id="cb26-65"><a href="#cb26-65"></a>   (1 vs 0)  |   1286.605   1516.493     0.85   0.396    -1685.666    4258.875</span>
+<span id="cb26-66"><a href="#cb26-66"></a>-------------+----------------------------------------------------------------</span>
+<span id="cb26-67"><a href="#cb26-67"></a>POmean       |</span>
+<span id="cb26-68"><a href="#cb26-68"></a>     treated |</span>
+<span id="cb26-69"><a href="#cb26-69"></a>          0  |   2754.756   161.4406    17.06   0.000     2438.338    3071.173</span>
+<span id="cb26-70"><a href="#cb26-70"></a>------------------------------------------------------------------------------</span>
+<span id="cb26-71"><a href="#cb26-71"></a>Warning: Convergence <span class="kw">not</span> achieved.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section></section>
+<section id="next-regression-discontinuity" class="title-slide slide level1 center">
+<h1>Next: Regression Discontinuity</h1>
+
+<div class="footer footer-default">
+
+</div>
+</section>
+    </div>
+  </div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'smaller': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1500,
+
+        height: 900,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+      const toggleBodyColorMode = (bsSheetEl) => {
+        const mode = bsSheetEl.getAttribute("data-mode");
+        const bodyEl = window.document.querySelector("body");
+        if (mode === "dark") {
+          bodyEl.classList.add("quarto-dark");
+          bodyEl.classList.remove("quarto-light");
+        } else {
+          bodyEl.classList.add("quarto-light");
+          bodyEl.classList.remove("quarto-dark");
+        }
+      }
+      const toggleBodyColorPrimary = () => {
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
+      }
+      toggleBodyColorPrimary();  
+      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+      tabsets.forEach(function(tabset) {
+        const tabby = new Tabby('#' + tabset.id);
+      });
+      const isCodeAnnotation = (el) => {
+        for (const clz of el.classList) {
+          if (clz.startsWith('code-annotation-')) {                     
+            return true;
+          }
+        }
+        return false;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button', {
+        text: function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+      });
+      clipboard.on('success', function(e) {
+        // button target
+        const button = e.trigger;
+        // don't keep focus
+        button.blur();
+        // flash "checked"
+        button.classList.add('code-copy-button-checked');
+        var currentTitle = button.getAttribute("title");
+        button.setAttribute("title", "Copied!");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copied!");
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();    
+        }
+        setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
+          button.setAttribute("title", currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        // clear code selection
+        e.clearSelection();
+      });
+      function tippyHover(el, contentFn) {
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          maxWidth: 500,
+          delay: 100,
+          arrow: false,
+          appendTo: function(el) {
+              return el.closest('section.slide') || el.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'light-border',
+          placement: 'bottom-start'
+        };
+          config['offset'] = [0,0];
+          config['maxWidth'] = 700;
+        window.tippy(el, config); 
+      }
+      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+      for (var i=0; i<noterefs.length; i++) {
+        const ref = noterefs[i];
+        tippyHover(ref, function() {
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+          try { href = new URL(href).hash; } catch {}
+          const id = href.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          return note.innerHTML;
+        });
+      }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
+      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+      for (var i=0; i<bibliorefs.length; i++) {
+        const ref = bibliorefs[i];
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
+          });
+        }
+      }
+    });
+    </script>
+    
+
+</body></html>

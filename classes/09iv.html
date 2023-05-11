@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/tabby.min.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.3.313">
+
+  <meta name="author" content="Fernando Rios-Avila">
+  <title>Econometrics MSC Levy - Instrumental Variables</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto.css" id="theme">
+  <link rel="stylesheet" href="styles.css">
+  <link href="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+
+  .callout {
+    margin-top: 1em;
+    margin-bottom: 1em;  
+    border-radius: .25rem;
+  }
+
+  .callout.callout-style-simple { 
+    padding: 0em 0.5em;
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+    display: flex;
+  }
+
+  .callout.callout-style-default {
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+  }
+
+  .callout .callout-body-container {
+    flex-grow: 1;
+  }
+
+  .callout.callout-style-simple .callout-body {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-style-default .callout-body {
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-titled.callout-style-simple .callout-body {
+    margin-top: 0.2em;
+  }
+
+  .callout:not(.callout-titled) .callout-body {
+      display: flex;
+  }
+
+  .callout:not(.no-icon).callout-titled.callout-style-simple .callout-content {
+    padding-left: 1.6em;
+  }
+
+  .callout.callout-titled .callout-header {
+    padding-top: 0.2em;
+    margin-bottom: -0.2em;
+  }
+
+  .callout.callout-titled .callout-title  p {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+    
+  .callout.callout-titled.callout-style-simple .callout-content  p {
+    margin-top: 0;
+  }
+
+  .callout.callout-titled.callout-style-default .callout-content  p {
+    margin-top: 0.7em;
+  }
+
+  .callout.callout-style-simple div.callout-title {
+    border-bottom: none;
+    font-size: .9rem;
+    font-weight: 600;
+    opacity: 75%;
+  }
+
+  .callout.callout-style-default  div.callout-title {
+    border-bottom: none;
+    font-weight: 600;
+    opacity: 85%;
+    font-size: 0.9rem;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-default div.callout-content {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-simple .callout-icon::before {
+    height: 1rem;
+    width: 1rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 1rem 1rem;
+  }
+
+  .callout.callout-style-default .callout-icon::before {
+    height: 0.9rem;
+    width: 0.9rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 0.9rem 0.9rem;
+  }
+
+  .callout-title {
+    display: flex
+  }
+    
+  .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  .callout.no-icon::before {
+    display: none !important;
+  }
+
+  .callout.callout-titled .callout-body > .callout-content > :last-child {
+    margin-bottom: 0.5rem;
+  }
+
+  .callout.callout-titled .callout-icon::before {
+    margin-top: .5rem;
+    padding-right: .5rem;
+  }
+
+  .callout:not(.callout-titled) .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  /* Callout Types */
+
+  div.callout-note {
+    border-left-color: #4582ec !important;
+  }
+
+  div.callout-note .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEU0lEQVRYCcVXTWhcVRQ+586kSUMMxkyaElstCto2SIhitS5Ek8xUKV2poatCcVHtUlFQk8mbaaziwpWgglJwVaquitBOfhQXFlqlzSJpFSpIYyXNjBNiTCck7x2/8/LeNDOZxDuEkgOXe++553zfefee+/OYLOXFk3+1LLrRdiO81yNqZ6K9cG0P3MeFaMIQjXssE8Z1JzLO9ls20MBZX7oG8w9GxB0goaPrW5aNMp1yOZIa7Wv6o2ykpLtmAPs/vrG14Z+6d4jpbSKuhdcSyq9wGMPXjonwmESXrriLzFGOdDBLB8Y6MNYBu0dRokSygMA/mrun8MGFN3behm6VVAwg4WR3i6FvYK1T7MHo9BK7ydH+1uurECoouk5MPRyVSBrBHMYwVobG2aOXM07sWrn5qgB60rc6mcwIDJtQrnrEr44kmy+UO9r0u9O5/YbkS9juQckLed3DyW2XV/qWBBB3ptvI8EUY3I9p/67OW+g967TNr3Sotn3IuVlfMLVnsBwH4fsnebJvyGm5GeIUA3jljERmrv49SizPYuq+z7c2H/jlGC+Ghhupn/hcapqmcudB9jwJ/3jvnvu6vu5lVzF1fXyZuZZ7U8nRmVzytvT+H3kilYvH09mLWrQdwFSsFEsxFVs5fK7A0g8gMZjbif4ACpKbjv7gNGaD8bUrlk8x+KRflttr22JEMRUbTUwwDQScyzPgedQHZT0xnx7ujw2jfVfExwYHwOsDTjLdJ2ebmeQIlJ7neo41s/DrsL3kl+W2lWvAga0tR3zueGr6GL78M3ifH0rGXrBC2aAR8uYcIA5gwV8zIE8onoh8u0Fca/ciF7j1uOzEnqcIm59sEXoGc0+z6+H45V1CvAvHcD7THztu669cnp+L0okAeIc6zjbM/24LgGM1gZk7jnRu1aQWoU9sfUOuhrmtaPIO3YY1KLLWZaEO5TKUbMY5zx8W9UJ6elpLwKXbsaZ4EFl7B4bMtDv0iRipKoDQT2sNQI9b1utXFdYisi+wzZ/ri/1m7QfDgEuvgUUEIJPq3DhX/5DWNqIXDOweC2wvIR90Oq3lDpdMIgD2r0dXvGdsEW5H6x6HLRJYU7C69VefO1x8Gde1ZFSJLfWS1jbCnhtOPxmpfv2LXOA2Xk2tvnwKKPFuZ/oRmwBwqRQDcKNeVQkYcOjtWVBuM/JuYw5b6isojIkYxyYAFn5K7ZBF10fea52y8QltAg6jnMqNHFBmGkQ1j+U43HMi2xMar1Nv0zGsf1s8nUsmUtPOOrbFIR8bHFDMB5zL13Gmr/kGlCkUzedTzzmzsaJXhYawnA3UmARpiYj5ooJZiUoxFRtK3X6pgNPv+IZVPcnwbOl6f+aBaO1CNvPW9n9LmCp01nuSaTRF2YxHqZ8DYQT6WsXT+RD6eUztwYLZ8rM+rcPxamv1VQzFUkzFXvkiVrySGQgJNvXHJAxiU3/NwiC03rSf05VBaPtu/Z7/B8Yn/w7eguloAAAAAElFTkSuQmCC');
+  }
+
+  div.callout-note.callout-style-default .callout-title {
+    background-color: #dae6fb
+  }
+
+  div.callout-important {
+    border-left-color: #d9534f !important;
+  }
+
+  div.callout-important .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEKklEQVRYCcVXTWhcVRS+575MJym48A+hSRFr00ySRQhURRfd2HYjk2SSTokuBCkU2o0LoSKKraKIBTcuFCoidGFD08nkBzdREbpQ1EDNIv8qSGMFUboImMSZd4/f9zJv8ibJMC8xJQfO3HPPPef7zrvvvnvviIkpC9nsw0UttFunbUhpFzFtarSd6WJkStVMw5xyVqYTvkwfzuf/5FgtkVoB0729j1rjXwThS7Vio+Mo6DNnvLfahoZ+i/o32lULuJ3NNiz7q6+pyAUkJaFF6JwaM2lUJlV0MlnQn5aTRbEu0SEqHUa0A4AdiGuB1kFXRfVyg5d87+Dg4DL6m2TLAub60ilj7A1Ec4odSAc8X95sHh7+ZRPCFo6Fnp7HfU/fBng/hi10CjCnWnJjsxvDNxWw0NfV6Rv5GgP3I3jGWXumdTD/3cbEOP2ZbOZp69yniG3FQ9z1jD7bnBu9Fc2tKGC2q+uAJOQHBDRiZX1x36o7fWBs7J9ownbtO+n0/qWkvW7UPIfc37WgT6ZGR++EOJyeQDSb9UB+DZ1G6DdLDzyS+b/kBCYGsYgJbSQHuThGKRcw5xdeQf8YdNHsc6ePXrlSYMBuSIAFTGAtQo+VuALo4BX83N190NWZWbynBjhOHsmNfFWLeL6v+ynsA58zDvvAC8j5PkbOcXCMg2PZFk3q8MjI7WAG/Dp9AwP7jdGBOOQkAvlFUB+irtm16I1Zw9YBcpGTGXYmk3kQIC/Cds55l+iMI3jqhjAuaoe+am2Jw5GT3Nbz3CkE12NavmzN5+erJW7046n/CH1RO/RVa8lBLozXk9uqykkGAyRXLWlLv5jyp4RFsG5vGVzpDLnIjTWgnRy2Rr+tDKvRc7Y8AyZq10jj8DqXdnIRNtFZb+t/ZRtXcDiVnzpqx8mPcDWxgARUqx0W1QB9MeUZiNrV4qP+Ehc+BpNgATsTX8ozYKL2NtFYAHc84fG7ndxUPr+AR/iQSns7uSUufAymwDOb2+NjK27lEFocm/EE2WpyIy/Hi66MWuMKJn8RvxIcj87IM5Vh9663ziW36kR0HNenXuxmfaD8JC7tfKbrhFr7LiZCrMjrzTeGx+PmkosrkNzW94ObzwocJ7A1HokLolY+AvkTiD/q1H0cN48c5EL8Crkttsa/AXQVDmutfyku0E7jShx49XqV3MFK8IryDhYVbj7Sj2P2eBxwcXoe8T8idsKKPRcnZw1b+slFTubwUwhktrfnAt7J++jwQtLZcm3sr9LQrjRzz6cfMv9aLvgmnAGvpoaGLxM4mAEaLV7iAzQ3oU0IvD5x9ix3yF2RAAuYAOO2f7PEFWCXZ4C9Pb2UsgDeVnFSpbFK7/IWu7TPTvBqzbGdCHOJQSxiEjt6IyZmxQyEJHv6xyQsYk//moVFsN2zP6fRImjfq7/n/wFDguUQFNEwugAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-important.callout-style-default .callout-title {
+    background-color: #f7dddc
+  }
+
+  div.callout-warning {
+    border-left-color: #f0ad4e !important;
+  }
+
+  div.callout-warning .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAETklEQVRYCeVWW2gcVRg+58yaTUnizqbipZeX4uWhBEniBaoUX1Ioze52t7sRq6APio9V9MEaoWlVsFasRq0gltaAPuxms8lu0gcviE/FFOstVbSIxgcv6SU7EZqmdc7v9+9mJtNks51NTUH84ed889/PP+cmxP+d5FIbMJmNbpREu4WUkiTtCicKny0l1pIKmBzovF2S+hIJHX8iEu3hZJ5lNZGqyRrGSIQpq15AzF28jgpeY6yk6GVdrfFqdrD6Iw+QlB8g0YS2g7dyQmXM/IDhBhT0UCiRf59lfqmmDvzRt6kByV/m4JjtzuaujMUM2c5Z2d6JdKrRb3K2q6mA+oYVz8JnDdKPmmNthzkAk/lN63sYPgevrguc72aZX/L9C6x09GYyxBgCX4NlvyGUHOKELlm5rXeR1kchuChJt4SSwyddZRXgvwMGvYo4QSlk3/zkHD8UHxwVJA6zjZZqP8v8kK8OWLnIZtLyCAJagYC4rTGW/9Pqj92N/c+LUaAj27movwbi19tk/whRCIE7Q9vyI6yvRpftAKVTdUjOW40X3h5OXsKCdmFcx0xlLJoSuQngnrJe7Kcjm4OMq9FlC7CMmScQANuNvjfP3PjGXDBaUQmbp296S5L4DrpbrHN1T87ZVEZVCzg1FF0Ft+dKrlLukI+/c9ENo+TvlTDbYFvuKPtQ9+l052rXrgKoWkDAFnvh0wTOmYn8R5f4k/jN/fZiCM1tQx9jQQ4ANhqG4hiL0qIFTGViG9DKB7GYzgubnpofgYRwO+DFjh0Zin2m4b/97EDkXkc+f6xYAPX0KK2I/7fUQuwzuwo/L3AkcjugPNixC8cHf0FyPjWlItmLxWw4Ou9YsQCr5fijMGoD/zpdRy95HRysyXA74MWOnscpO4j2y3HAVisw85hX5+AFBRSHt4ShfLFkIMXTqyKFc46xdzQM6XbAi702a7sy04J0+feReMFKp5q9esYLCqAZYw/k14E/xcLLsFElaornTuJB0svMuJINy8xkIYuL+xPAlWRceH6+HX7THJ0djLUom46zREu7tTkxwmf/FdOZ/sh6Q8qvEAiHpm4PJ4a/doJe0gH1t+aHRgCzOvBvJedEK5OFE5jpm4AGP2a8Dxe3gGJ/pAutug9Gp6he92CsSsWBaEcxGx0FHytmIpuqGkOpldqNYQK8cSoXvd+xLxXADw0kf6UkJNFtdo5MOgaLjiQOQHcn+A6h5NuL2s0qsC2LOM75PcF3yr5STuBSAcGG+meA14K/CI21HcS4LBT6tv0QAh8Dr5l93AhZzG5ZJ4VxAqdZUEl9z7WJ4aN+svMvwHHL21UKTd1mqvChH7/Za5xzXBBKrUcB0TQ+Ulgkfbi/H/YT5EptrGzsEK7tR1B7ln9BBwckYfMiuSqklSznIuoIIOM42MQO+QnduCoFCI0bpkzjCjddHPN/F+2Yu+sd9bKNpVwHhbS3LluK/0zgfwD0xYI5dXuzlQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-warning.callout-style-default .callout-title {
+    background-color: #fcefdc
+  }
+
+  div.callout-tip {
+    border-left-color: #02b875 !important;
+  }
+
+  div.callout-tip .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAADr0lEQVRYCe1XTWgTQRj9ZjZV8a9SPIkKgj8I1bMHsUWrqYLVg4Ue6v9BwZOxSYsIerFao7UiUryIqJcqgtpimhbBXoSCVxUFe9CTiogUrUp2Pt+3aUI2u5vdNh4dmMzOzHvvezuz8xNFM0mjnbXaNu1MvFWRXkXEyE6aYOYJpdW4IXuA4r0fo8qqSMDBU0v1HJUgVieAXxzCsdE/YJTdFcVIZQNMyhruOMJKXYFoLfIfIvVIMWdsrd+Rpd86ZmyzzjJmLStqRn0v8lzkb4rVIXvnpScOJuAn2ACC65FkPzEdEy4TPWRLJ2h7z4cArXzzaOdKlbOvKKX25Wl00jSnrwVxAg3o4dRxhO13RBSdNvH0xSARv3adTXbBdTf64IWO2vH0LT+cv4GR1DJt+DUItaQogeBX/chhbTBxEiZ6gftlDNXTrvT7co4ub5A6gp9HIcHvzTa46OS5fBeP87Qm0fQkr4FsYgVQ7Qg+ZayaDg9jhg1GkWj8RG6lkeSacrrHgDaxdoBiZPg+NXV/KifMuB6//JmYH4CntVEHy/keA6x4h4CU5oFy8GzrBS18cLJMXcljAKB6INjWsRcuZBWVaS3GDrqB7rdapVIeA+isQ57Eev9eCqzqOa81CY05VLd6SamW2wA2H3SiTbnbSxmzfp7WtKZkqy4mdyAlGx7ennghYf8voqp9cLSgKdqNfa6RdRsAAkPwRuJZNbpByn+RrJi1RXTwdi8RQF6ymDwGMAtZ6TVE+4uoKh+MYkcLsT0Hk8eAienbiGdjJHZTpmNjlbFJNKDVAp2fJlYju6IreQxQ08UJDNYdoLSl6AadO+fFuCQqVMB1NJwPm69T04Wv5WhfcWyfXQB+wXRs1pt+nCknRa0LVzSA/2B+a9+zQJadb7IyyV24YAxKp2Jqs3emZTuNnKxsah+uabKbMk7CbTgJx/zIgQYErIeTKRQ9yD9wxVof5YolPHqaWo7TD6tJlh7jQnK5z2n3+fGdggIOx2kaa2YI9QWarc5Ce1ipNWMKeSG4DysFF52KBmTNMmn5HqCFkwy34rDg05gDwgH3bBi+sgFhN/e8QvRn8kbamCOhgrZ9GJhFDgfcMHzFb6BAtjKpFhzTjwv1KCVuxHvCbsSiEz4CANnj84cwHdFXAbAOJ4LTSAawGWFn5tDhLMYz6nWeU2wJfIhmIJBefcd/A5FWQWGgrWzyORZ3Q6HuV+Jf0Bj+BTX69fm1zWgK7By1YTXchFDORywnfQ7GpzOo6S+qECrsx2ifVQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-tip.callout-style-default .callout-title {
+    background-color: #ccf1e3
+  }
+
+  div.callout-caution {
+    border-left-color: #fd7e14 !important;
+  }
+
+  div.callout-caution .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAACV0lEQVRYCdVWzWoUQRCuqp2ICBLJXgITZL1EfQDBW/bkzUMUD7klD+ATSHBEfAIfQO+iXsWDxJsHL96EHAwhgzlkg8nBg25XWb0zIb0zs9muYYWkoKeru+vn664fBqElyZNuyh167NXJ8Ut8McjbmEraKHkd7uAnAFku+VWdb3reSmRV8PKSLfZ0Gjn3a6Xlcq9YGb6tADjn+lUfTXtVmaZ1KwBIvFI11rRXlWlatwIAAv2asaa9mlB9wwygiDX26qaw1yYPzFXg2N1GgG0FMF8Oj+VIx7E/03lHx8UhvYyNZLN7BwSPgekXXLribw7w5/c8EF+DBK5idvDVYtEEwMeYefjjLAdEyQ3M9nfOkgnPTEkYU+sxMq0BxNR6jExrAI31H1rzvLEfRIdgcv1XEdj6QTQAS2wtstEALLG1yEZ3QhH6oDX7ExBSFEkFINXH98NTrme5IOaaA7kIfiu2L8A3qhH9zRbukdCqdsA98TdElyeMe5BI8Rs2xHRIsoTSSVFfCFCWGPn9XHb4cdobRIWABNf0add9jakDjQJpJ1bTXOJXnnRXHRf+dNL1ZV1MBRCXhMbaHqGI1JkKIL7+i8uffuP6wVQAzO7+qVEbF6NbS0LJureYcWXUUhH66nLR5rYmva+2tjRFtojkM2aD76HEGAD3tPtKM309FJg5j/K682ywcWJ3PASCcycH/22u+Bh7Aa0ehM2Fu4z0SAE81HF9RkB21c5bEn4Dzw+/qNOyXr3DCTQDMBOdhi4nAgiFDGCinIa2owCEChUwD8qzd03PG+qdW/4fDzjUMcE1ZpIAAAAASUVORK5CYII=');
+  }
+
+  div.callout-caution.callout-style-default .callout-title {
+    background-color: #ffe5d0
+  }
+
+  </style>
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+  <meta name="mermaid-theme" content="forest">
+  <script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+  <script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+  <link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Instrumental Variables</h1>
+  <p class="subtitle">Many are called, only few answer</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Fernando Rios-Avila 
+</div>
+</div>
+</div>
+
+</section>
+<section id="recap-pos-and-rcts" class="slide level2">
+<h2>Recap: PO’s and RCT’s</h2>
+<ul>
+<li><p>Quick Recap. The goal of the methodologies we are covering is to identify treatment effects.</p></li>
+<li><p>In the PO framework, that is done by simply comparing a group with itself, in two different States (treated vs untreated)</p></li>
+<li><p>Since this is <strong>impossible</strong>, the next best solution is using RCT. Individuals are randomized, and <em>assuming</em> every body follows directions, we can identify treatment effects of the experiments.</p></li>
+<li><p>But only if the RCT is well executed! Sometimes even that may fail</p></li>
+</ul>
+</section>
+<section id="instrumental-variables" class="slide level2">
+<h2>Instrumental Variables</h2>
+<ul>
+<li><p>While here discussed 3rd, the second best approach to identify Treatment effects is by using Instrumental variables.</p></li>
+<li><p>In fact with a <strong>Good-Enough</strong> instrument, one should be able to identify <strong>ANY</strong> causal effect. Assuming such IV exists.</p></li>
+</ul>
+<p>but how?</p>
+<ul>
+<li><p>If the instrument is good, it may create an exogenous variation, which will allow us to identify Treatment effects by looking ONLY at those affected by the treatment!</p></li>
+<li><p>Using the external variation, we can Estimate TE comparing two groups who are identical in every aspect, except being expose to the Instrument, because they were exposed to the instrument. The randomization comes Because of the IV!</p></li>
+</ul>
+</section>
+<section id="cannonical-iv" class="slide level2">
+<h2>Cannonical IV</h2>
+<p>As we have mentioned, the estimation of TE require that we identify two groups of individuals with mostly similar (if not identical) characteristics. This include unobserved characteristics.</p>
+<p>If the latter is not true, we have a problem of confunders or Endogeneity. But why?</p>
+<p>Consider the following diagram</p>
+<div class="quarto-layout-panel">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p>Here the effect of <span class="math inline">\(D\)</span> on <span class="math inline">\(Y\)</span> is direct, because there is nothing else that would get people confuse why treatment affects outcome</p>
+</div>
+<div class="cell quarto-layout-cell" data-reveal="true" data-fig-width="8.5" style="flex-basis: 50.0%;justify-content: center;">
+<div class="cell-output-display">
+<div>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  e(error) --&gt; Y(Outcome)  
+  D(Treatment) --&gt; Y(Outcome)  
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="quarto-layout-panel">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p>Here the effect of <span class="math inline">\(D\)</span> on <span class="math inline">\(Y\)</span> is not as clear, because there is an additional factor <span class="math inline">\(v\)</span> that affects <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span> (is in the way)</p>
+</div>
+<div class="cell quarto-layout-cell" data-reveal="true" data-fig-responsive="false" style="flex-basis: 50.0%;justify-content: center;">
+<div class="cell-output-display">
+<div>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  e( error ) --&gt; Y(Outcome)  
+  D( Treatment ) --&gt; Y(Outcome)
+  v(unobserved) -.-&gt; D(Treatment)  
+  v(unobserved) -.-&gt; Y(Outcome)  
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="cannonical-iv-1" class="slide level2">
+<h2>Cannonical IV</h2>
+<p>Here is where a good instrument comes into play.</p>
+<ul>
+<li>Not everything in <span class="math inline">\(D\)</span> is affected by <span class="math inline">\(v\)</span>. Some may, but some may be trully exogenous. What if we have an instrument that helps you ID this:</li>
+</ul>
+<div class="cell" data-reveal="true" data-fig-responsive="false">
+<div class="cell-output-display">
+<div>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+e( error ) --&gt; Y(Outcome)  
+  subgraph Treatment
+    D1(Exog) 
+    D2(Endog)
+  end
+  
+  D1( Exog ) --&gt; Y(Outcome)
+  D2( Endog ) --&gt; Y(Outcome)
+  Z(Instrument) --&gt; D1  
+  v(unobserved) -.-&gt; D2
+  
+  v(unobserved) -.-&gt; Y(Outcome)  
+</pre>
+</div>
+</div>
+</div>
+</div>
+<ul>
+<li>By Isolating those affected by the Instrument Alone, we do not need to worry about endogeneity anymore.</li>
+</ul>
+</section>
+<section id="properties" class="slide level2">
+<h2>Properties</h2>
+<p>Instrumental variables should have at the very list 2 Properties</p>
+<ol type="1">
+<li>The instrumental variable <span class="math inline">\(Z\)</span> should not be correlated with the model error (Validity).</li>
+<li>But, it should explain the treatment Itself <span class="math inline">\(D\)</span> (Relevance).</li>
+</ol>
+<p>Failure of (1) may reintroduce problems of endogeneity. Faiture of (2) will make the instrument Irrelevant.</p>
+</section>
+<section id="how-does-it-work" class="slide level2">
+<h2>How does it work</h2>
+<p>Consider the following.</p>
+<ul>
+<li>People who study more, tend to earn higher wages</li>
+<li>People with high ability tend to study more.</li>
+<li>People with high ability, also earn higher wages.</li>
+</ul>
+<p>Does Studying more generate higher wages?</p>
+<p><strong>Instrument</strong>. We create a lottery that provides some people resources to pay for their education. This gives them a chance to study more (regardless of ability). <span class="math display">\[Z \rightarrow D\]</span></p>
+</section>
+<section id="section" class="slide level2">
+<h2></h2>
+<p>So, we know the instrument was <strong>Random</strong>. We can analyze how much outcome increases among those benefited by the Lottery.</p>
+<p><span class="math display">\[E(W|Z=1)-E(W|Z=0)\]</span></p>
+<ul>
+<li><p>This is often called the <strong>reduced form</strong> effect.</p></li>
+<li><p>In principle, <span class="math inline">\(Z\)</span> only affects wages because of education. So looking at this differences should be similar to a treatment effect of Lotteries.</p></li>
+<li><p>These are also known as Intention to treatment effect. Which will bias towards zero, because not everyone will effectively make use of the opporunities</p></li>
+</ul>
+</section>
+<section id="section-1" class="slide level2">
+<h2></h2>
+<p>In othe words, not everyone will Study more…So we can see if the lotery had that effect.</p>
+<p><span class="math display">\[E(S|Z=1)-E(S|Z=0)\]</span></p>
+<p>This is the equivalent to the first stage. Where we measure the impact of the “instrument/lottery” on Education (to see, say, relevance)</p>
+<p>Finally, the TE is given by the Ratio of thes two</p>
+<p><span class="math display">\[TE=\frac{E(W|Z=1)-E(W|Z=0)}{E(S|Z=1)-E(S|Z=0)}
+\]</span></p>
+<p>This is also known as the Wald Estimator. How much of the changes in wages is due to changes in the “# treated”</p>
+</section>
+<section id="some-commnents" class="slide level2">
+<h2>Some commnents</h2>
+<ul>
+<li>This was an example of a binary instrument, which was assigned at random.</li>
+<li>In fact, this particular scenario is typical byproduct of “failed” RCTs!
+<ul>
+<li>Partially failed RCTs: Not every body selected WAS treated</li>
+</ul></li>
+</ul>
+<p>Consider the following:</p>
+<ul>
+<li>We make the RCT above giving bouchers to People so they Study more.</li>
+<li>But, not everybody uses the bouchers:
+<ul>
+<li>Some use them and study more.</li>
+<li>Some decide to not use them.</li>
+</ul></li>
+</ul>
+<p>Comparing Wages among those who receive will only provide you the “intention to treat” effect. (<strong>Reduced form</strong>)</p>
+<p>Because of imperfect compliance we need to “readjust/inflate” our TE estimate.</p>
+</section>
+<section id="more-comments" class="slide level2">
+<h2>More Comments</h2>
+<ul>
+<li><p>In this scenario the Reduced form and second stage can be estimated by just comparing means, because the treatment was randonmized.</p>
+<ul>
+<li>In other words, something you really want is an instrument that is as good as random.</li>
+</ul></li>
+<li><p>The effect we capture is a LOCAL treatment effect (LATE).</p></li>
+<li></li>
+<li><p>However, it could be an ATE if:</p>
+<ul>
+<li>The effect is homogenous for everyone.</li>
+<li>The people affected by the treatment is a representative of the population</li>
+</ul></li>
+<li><p>It all boils down to identifying who is or might be affected by the treatment.</p></li>
+<li><p>For now, lets assume effects are Homogenous (So we get ATEs)</p></li>
+</ul>
+</section>
+<section id="who-are-affected-and-who-are-not" class="slide level2">
+<h2>Who Are Affected and who are not?</h2>
+<p>Even if we are able to identify ATEs, its important to understand who can be affected by the instrument, because the population is generally selected in 3 groups</p>
+<ul>
+<li><strong>never takers</strong> &amp; <strong>always takers</strong>: These are the individuals who would have never done anything different than their normal.
+<ul>
+<li>Perhaps their likelihood was already too low (or high) to be affected.</li>
+</ul></li>
+<li><strong>Compliers</strong>: These are the ones who, given they receive “instrument”, they comply and follow up. We use their variation for analysis.</li>
+<li><strong>Defiers</strong>: These are the ones who, given Z, will do the oposite. We cannot differentiate them from Compliers, so they will affect how treatment is estimated.</li>
+</ul>
+<p>We do not want to have defiers!</p>
+</section>
+<section id="extension-1-continuous-instrument" class="slide level2">
+<h2>Extension 1: Continuous Instrument</h2>
+<p>The Wald estimator is for the simplest case of binary treatment. However, if the treatment is continuous, one could modify the IV estimator as follows:</p>
+<p><span class="math display">\[
+\delta_{IV} = \frac{cov(y,z)}{cov(d,z)}
+\]</span></p>
+<p>The logic remains. We are trying to see how variation in the outcome related to Z reates to changes in treatment because of Z.</p>
+<p>The <em>treatment</em> here is very small (Small changes in d). The intuition is that we are averaging the variation in the outcome across all Zs to estimate the effect.</p>
+</section>
+<section id="extension-2-controls" class="slide level2">
+<h2>Extension 2: Controls</h2>
+<p>Adding controls to the model is also straight forward, and you have quite a few options for it</p>
+<ol type="1">
+<li>Adding exogenous controls may help improving model precision, even if instrument was randomized. The easiest way to do this is by applying the 2sls procedure (among others)</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+1st: d = z\gamma_z + x\gamma_x + e_1  \\
+2nd: y = x\beta_x + \delta \hat d+ e_2
+\end{aligned}
+\]</span></p>
+<ul>
+<li><p>The 1st stage “randomizes” instrument to measure the effect on treatment.</p></li>
+<li><p>The 2nd stage uses predicted values of the first to see what the impact on the outcome will be.</p></li>
+<li><p>This works because <span class="math inline">\(\hat d\)</span> is exogenous, “carrying over” exogenous changes in the treatment.</p></li>
+</ul>
+</section>
+<section id="extension-2-controls-1" class="slide level2">
+<h2>Extension 2: Controls</h2>
+<p>One can also think of the approach as a pseudo Wald Estimator, with continuous variables:</p>
+<p><span class="math display">\[
+\begin{aligned}
+1st: d &amp;= \gamma_z * z + x\gamma_x + e_1  \\
+rd:  y &amp;= \beta_z  * z+ x\beta_x + e_2 \\
+ATE &amp;=\frac{\beta_z}{\gamma_z}=\frac{cov(y,\tilde z)}{cov(d,\tilde z)}
+\end{aligned}
+\]</span></p>
+<p>This compares average changes in the outcome to average changes in the treatment.</p>
+</section>
+<section id="extension-3-multiple-endogenous-variables" class="slide level2">
+<h2>Extension 3: Multiple Endogenous Variables</h2>
+<p>Although less common in Causal Analysis perspective, in other frameworks one may to consider more than 1 instrument or using instrument interactions. In these cases one still has two alternatives</p>
+<ol type="1">
+<li><strong>2SLS</strong>: One can model more than one endogenous variable at the same time, simply substituting the predicted values in the main regression. When using interactions, or polynomials, each will need its own first stage regression.</li>
+<li><strong>Control function approach</strong>. In contrast with the “prediction subtstitution” approach, this method suggests using a “residual inclusion approach”. This controls for endogeneity directly. If there is only one endogenous variable (with interactions of polynomials) only one model is needed.</li>
+</ol>
+<p>In the first case, you need at least 1 instrument per regression. Even if its just a transformation of the original variable</p>
+<p>In the second case, you need at least 1 instrument per endogenous variable.</p>
+</section>
+<section id="instrument-validity" class="slide level2">
+<h2>Instrument Validity</h2>
+<p>As mentioned earlier, Instruments require to fullfill two conditions:</p>
+<ul>
+<li><strong>Relevant</strong>. They need to be Strongly related to the endogenous variable</li>
+<li><strong>Exogenous</strong>. instruments should not and cannot be endogenous. In fact, you want instruments that are as good as random, thus not defined by the “system” in anyway.</li>
+</ul>
+</section>
+<section id="iv-validity-exogeneity" class="slide level2">
+<h2>IV Validity: Exogeneity</h2>
+<p>Unfortunately, for most cases, this assumption is not testable, because we do not observe the model unobservables, thus dont know if <span class="math inline">\(z\)</span> is related to those unobserved components.</p>
+<p>While most efforts for these are done through model design, or argumentation, there are at least 2 options to verify the exogeneity</p>
+<ol type="1">
+<li><p>If truly exogenous, the instrument should be as good as random. Thus controls shouldnt be affected by the instrument. (Balance test)</p></li>
+<li><p>Otherwise, one could test for exogeneity only by comparing Estimates across different IV’s. Different results may suggest instruments are invalid.</p>
+<ul>
+<li>Run a regression of Residuals from the main model against all exogenous variables plus other instruments.</li>
+</ul></li>
+</ol>
+<p>Note: Unless the instrument was randomized, assumed is going to be slighly endogenous.</p>
+</section>
+<section id="iv-validity-strength" class="slide level2">
+<h2>IV Validity: Strength</h2>
+<p>The only thing we could probably do is try to analyze model strength. How much does the instrument affect treatment take up? is the effect marginal? or a large effect?</p>
+<p>Weaker instruments may create larger problems on the analysis because:</p>
+<ol type="1">
+<li>With weaker instruments, the precision of the estimator drops substantially.</li>
+<li>With weaker instruments, any “endogeneity” problem (even due to randomness) will generate a bias</li>
+</ol>
+<ul>
+<li>Stock and Yogo (2005) suggest and F~13.9 (or higher) for a 5% bias</li>
+<li>Lee, et al (2020) suggest you need even higher F’s if you want to avoid problems with CI</li>
+</ul>
+<ol start="3" type="1">
+<li>With weak instruments, distribution of beta coefficients will no longer be normal!</li>
+</ol>
+</section>
+<section id="iv-strength" class="slide level2 scrollable">
+<h2>IV Strength</h2>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">capture</span> <span class="kw">program</span> <span class="kw">drop</span> simx</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">program</span> simx, <span class="kw">eclass</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a>    <span class="kw">clear</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>    <span class="kw">set</span> <span class="kw">obs</span> 500</span>
+<span id="cb1-5"><a href="#cb1-5"></a>    <span class="kw">gen</span> z=rnormal()&gt;0</span>
+<span id="cb1-6"><a href="#cb1-6"></a>    <span class="kw">gen</span> u1=rnormal()</span>
+<span id="cb1-7"><a href="#cb1-7"></a>    <span class="kw">gen</span> u2=rnormal()</span>
+<span id="cb1-8"><a href="#cb1-8"></a>    <span class="kw">gen</span> u3=rnormal()</span>
+<span id="cb1-9"><a href="#cb1-9"></a>    <span class="kw">forvalues</span> i = 1/5 {</span>
+<span id="cb1-10"><a href="#cb1-10"></a>        <span class="kw">gen</span> d<span class="ot">`i'</span> = ((-0.5+z) + (u1 + u2)*0.5*<span class="ot">`i'</span>)&gt;0</span>
+<span id="cb1-11"><a href="#cb1-11"></a>        <span class="kw">gen</span> y<span class="ot">`i'</span> = 1 + d<span class="ot">`i'</span>+u3+u2</span>
+<span id="cb1-12"><a href="#cb1-12"></a>    }</span>
+<span id="cb1-13"><a href="#cb1-13"></a>    <span class="kw">forvalues</span> i = 1/5 {</span>
+<span id="cb1-14"><a href="#cb1-14"></a>        <span class="kw">reg</span> d<span class="ot">`i'</span> z</span>
+<span id="cb1-15"><a href="#cb1-15"></a>        <span class="fu">matrix</span> b<span class="ot">`i'</span> =(_b[z]/_se[z])^2</span>
+<span id="cb1-16"><a href="#cb1-16"></a>        ivregress  2sls y<span class="ot">`i'</span> (d<span class="ot">`i'</span>=z)</span>
+<span id="cb1-17"><a href="#cb1-17"></a>        <span class="fu">matrix</span> b<span class="ot">`i'</span> = b<span class="ot">`i'</span>,_b[d<span class="ot">`i'</span>],_se[d<span class="ot">`i'</span>],_b[d<span class="ot">`i'</span>]/_se[d<span class="ot">`i'</span>]</span>
+<span id="cb1-18"><a href="#cb1-18"></a>        <span class="fu">matrix</span> colname b<span class="ot">`i'</span>=f_stat beta beta_se beta_t</span>
+<span id="cb1-19"><a href="#cb1-19"></a>        <span class="fu">matrix</span> <span class="ot">coleq</span> b<span class="ot">`i'</span>=md<span class="ot">`i'</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a>    }</span>
+<span id="cb1-21"><a href="#cb1-21"></a>    <span class="fu">matrix</span> b=b1</span>
+<span id="cb1-22"><a href="#cb1-22"></a>    <span class="kw">forvalues</span> i = 2/5 {</span>
+<span id="cb1-23"><a href="#cb1-23"></a>        <span class="fu">matrix</span> b=b,b<span class="ot">`i'</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a>    }</span>
+<span id="cb1-25"><a href="#cb1-25"></a>    <span class="kw">ereturn</span> <span class="kw">post</span> b</span>
+<span id="cb1-26"><a href="#cb1-26"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb2-1"><a href="#cb2-1"></a></span>
+<span id="cb2-2"><a href="#cb2-2"></a>    Variable |        Obs        Mean    Std. <span class="kw">dev</span>.       Min        Max</span>
+<span id="cb2-3"><a href="#cb2-3"></a>-------------+---------------------------------------------------------</span>
+<span id="cb2-4"><a href="#cb2-4"></a>md1_b_f_stat |        494    189.9262    38.63693   101.8865   337.4117</span>
+<span id="cb2-5"><a href="#cb2-5"></a>  md1_b_beta |        494    .9912474    .2289997   .1758122    1.64053</span>
+<span id="cb2-6"><a href="#cb2-6"></a>md1_b_beta~<span class="fu">e</span> |        494    .2440663    .0235266   .1867024   .3293121</span>
+<span id="cb2-7"><a href="#cb2-7"></a>-------------+---------------------------------------------------------</span>
+<span id="cb2-8"><a href="#cb2-8"></a>md2_b_f_stat |        494    43.33591    13.76347   12.07967   101.6624</span>
+<span id="cb2-9"><a href="#cb2-9"></a>  md2_b_beta |        494    .9717824    .4421832  -.8390987   2.327243</span>
+<span id="cb2-10"><a href="#cb2-10"></a>md2_b_beta~<span class="fu">e</span> |        494    .4711093    .0945389   .3032212   .9873207</span>
+<span id="cb2-11"><a href="#cb2-11"></a>-------------+---------------------------------------------------------</span>
+<span id="cb2-12"><a href="#cb2-12"></a>md3_b_f_stat |        494    19.25043     8.81203   2.051613   61.55846</span>
+<span id="cb2-13"><a href="#cb2-13"></a>  md3_b_beta |        494    .9354647    .6820819  -1.964163   2.996998</span>
+<span id="cb2-14"><a href="#cb2-14"></a>md3_b_beta~<span class="fu">e</span> |        494    .7430147    .2493365    .383426    2.16554</span>
+<span id="cb2-15"><a href="#cb2-15"></a>-------------+---------------------------------------------------------</span>
+<span id="cb2-16"><a href="#cb2-16"></a>md4_b_f_stat |        494    11.19082    6.428525   .0483399   38.44057</span>
+<span id="cb2-17"><a href="#cb2-17"></a>  md4_b_beta |        494    .8711808    .9987467  -4.383311   5.634943</span>
+<span id="cb2-18"><a href="#cb2-18"></a>md4_b_beta~<span class="fu">e</span> |        494    1.135114    1.244907   .4609722   25.16503</span>
+<span id="cb2-19"><a href="#cb2-19"></a>-------------+---------------------------------------------------------</span>
+<span id="cb2-20"><a href="#cb2-20"></a>md5_b_f_stat |        494    7.522731    5.144063   .0544148   28.23535</span>
+<span id="cb2-21"><a href="#cb2-21"></a>  md5_b_beta |        494    .7696057    1.443986  -6.293723   8.951643</span>
+<span id="cb2-22"><a href="#cb2-22"></a>md5_b_beta~<span class="fu">e</span> |        494     1.69479    1.866909    .530196    18.3837</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="iv-strength-bias-distribution" class="slide level2">
+<h2>IV Strength: Bias distribution</h2>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">use</span> resources/simiv.dta, <span class="kw">clear</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">forvalues</span> i = 1/5 {</span>
+<span id="cb3-3"><a href="#cb3-3"></a>  <span class="kw">qui</span>:<span class="kw">sum</span> md<span class="ot">`i'</span>_b_beta</span>
+<span id="cb3-4"><a href="#cb3-4"></a>  <span class="kw">gen</span> new<span class="ot">`i'</span>=(md<span class="ot">`i'</span>_b_beta-1)/<span class="fu">r</span>(<span class="fu">sd</span>)</span>
+<span id="cb3-5"><a href="#cb3-5"></a>}</span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="kw">set</span> <span class="dv">scheme</span> white2</span>
+<span id="cb3-7"><a href="#cb3-7"></a>color_style tableau</span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="kw">two</span> <span class="kw">function</span> <span class="fu">y</span>=<span class="fu">normalden</span>(x), <span class="kw">range</span>(-5 5) lwidth(1) pstyle(p2) || <span class="kw">histogram</span> new1, <span class="bn">name</span>(m1, <span class="kw">replace</span>) , <span class="bn">legend</span>(<span class="kw">off</span>)</span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="kw">two</span> <span class="kw">function</span> <span class="fu">y</span>=<span class="fu">normalden</span>(x), <span class="kw">range</span>(-5 5) lwidth(1) pstyle(p2) || <span class="kw">histogram</span> new2, <span class="bn">name</span>(m2, <span class="kw">replace</span>) , <span class="bn">legend</span>(<span class="kw">off</span>)</span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="kw">two</span> <span class="kw">function</span> <span class="fu">y</span>=<span class="fu">normalden</span>(x), <span class="kw">range</span>(-5 5) lwidth(1) pstyle(p2) || <span class="kw">histogram</span> new3, <span class="bn">name</span>(m3, <span class="kw">replace</span>) , <span class="bn">legend</span>(<span class="kw">off</span>)</span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="kw">two</span> <span class="kw">function</span> <span class="fu">y</span>=<span class="fu">normalden</span>(x), <span class="kw">range</span>(-5 5) lwidth(1) pstyle(p2) || <span class="kw">histogram</span> new4, <span class="bn">name</span>(m4, <span class="kw">replace</span>) , <span class="bn">legend</span>(<span class="kw">off</span>)</span>
+<span id="cb3-12"><a href="#cb3-12"></a><span class="kw">two</span> <span class="kw">function</span> <span class="fu">y</span>=<span class="fu">normalden</span>(x), <span class="kw">range</span>(-5 5) lwidth(1) pstyle(p2) || <span class="kw">histogram</span> new5, <span class="bn">name</span>(m5, <span class="kw">replace</span>) , <span class="bn">legend</span>(<span class="kw">off</span>)</span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="kw">graph</span> <span class="bn">combine</span> m1 m2 m3 m4 m5, col(3) <span class="bn">xcommon</span> <span class="bn">ycommon</span></span>
+<span id="cb3-14"><a href="#cb3-14"></a><span class="kw">graph</span> <span class="kw">export</span> resources/cmb.png, <span class="kw">width</span>(1500)  <span class="kw">replace</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+
+<img data-src="resources/cmb.png" class="r-stretch"></section>
+<section id="iv-strength-solution-weakiv" class="slide level2">
+<h2>IV Strength Solution: <code>weakiv</code></h2>
+<ul>
+<li><p>Weak IV’s are a problem in the sense that it may induce bias on the estimated coefficients, but also that it may affect how Standard Errors are estimated.</p>
+<ul>
+<li>The distribution of the Statistic is no longer normal</li>
+</ul></li>
+<li><p>One solution, in this case, is at least adjusting SE and CI So they better reflect the problem.</p></li>
+<li><p>In Stata, this can be done with <code>weakiv</code> (ssc install weakiv)</p></li>
+<li><p>At the end, however, if you weak instruments, you may be able to correct of potential biases, but you may need to get more data, or better instruments</p></li>
+</ul>
+</section>
+<section id="late-local-average-treatement-effect" class="slide level2">
+<h2>LATE: Local Average Treatement Effect</h2>
+<p>Up to this point, we imposed the assumption that TE were homogenous. Thus, IV could identify Treatment effects for everyone. (Average Treatment effect)</p>
+<p>However, not everyone may be affected by the instrument, only by the compliers.</p>
+<p>Two ways of thinking about it:</p>
+<ol type="1">
+<li>Not everybody is affected by the instrument. (you have the always and never takers)</li>
+<li>the instrument was never suppoused to affect certain groups!</li>
+</ol>
+<p>So, IV will identify TE for the compliers only.</p>
+<p>Because of this, using different instruments may actually identify different effects, based on which population was affected.</p>
+<p>Overid tests may fail in this case.</p>
+</section>
+<section id="simulation-example" class="slide level2 scrollable">
+<h2>Simulation Example:</h2>
+<div class="cell" data-execution_count="3">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">clear</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">set</span> <span class="kw">obs</span> 10000</span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="kw">gen</span> sex = rnormal()&gt;0</span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="kw">gen</span> z1 = rnormal()&gt;0</span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="kw">gen</span> z2 = rnormal()&gt;0</span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="kw">gen</span> e_1 =rnormal()</span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="kw">gen</span> e_2 =rnormal()</span>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="kw">gen</span> e_3 =rnormal()</span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="kw">gen</span> D =(z1*(sex==0) + z2*(sex==1) + (e_1 + e_2)*.5)&gt;0</span>
+<span id="cb4-10"><a href="#cb4-10"></a><span class="kw">gen</span> Ds =(  (e_1 + e_2)*.5)&gt;0</span>
+<span id="cb4-11"><a href="#cb4-11"></a><span class="kw">gen</span> <span class="fu">y</span> = 1 + D*(sex==0) +2*D*(sex==1)+e_3+e_2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of observations (_N) was 0, now 10,000.</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="4">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource stata number-lines code-with-copy"><code class="sourceCode stata"><span id="cb6-1"><a href="#cb6-1"></a>%%echo</span>
+<span id="cb6-2"><a href="#cb6-2"></a>ivregress 2sls <span class="fu">y</span> (D=z1)</span>
+<span id="cb6-3"><a href="#cb6-3"></a>ivregress 2sls <span class="fu">y</span> (D=z2)</span>
+<span id="cb6-4"><a href="#cb6-4"></a>ivregress 2sls <span class="fu">y</span> (D=z1 z2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+. ivregress 2sls y (D=z1)
+
+Instrumental variables 2SLS regression            Number of obs   =     10,000
+                                                  Wald chi2(1)    =      18.40
+                                                  Prob &gt; chi2     =     0.0000
+                                                  R-squared       =     0.1857
+                                                  Root MSE        =     1.6184
+
+------------------------------------------------------------------------------
+           y | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+           D |   .6942855   .1618412     4.29   0.000     .3770826    1.011488
+       _cons |   1.584322    .115817    13.68   0.000     1.357325     1.81132
+------------------------------------------------------------------------------
+Endogenous: D
+Exogenous:  z1
+
+. ivregress 2sls y (D=z2)
+
+Instrumental variables 2SLS regression            Number of obs   =     10,000
+                                                  Wald chi2(1)    =     180.01
+                                                  Prob &gt; chi2     =     0.0000
+                                                  R-squared       =     0.3621
+                                                  Root MSE        =     1.4325
+
+------------------------------------------------------------------------------
+           y | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+           D |   1.914025   .1426572    13.42   0.000     1.634422    2.193628
+       _cons |   .7200152   .1020968     7.05   0.000     .5199092    .9201213
+------------------------------------------------------------------------------
+Endogenous: D
+Exogenous:  z2
+
+. ivregress 2sls y (D=z1 z2)
+
+Instrumental variables 2SLS regression            Number of obs   =     10,000
+                                                  Wald chi2(1)    =     152.68
+                                                  Prob &gt; chi2     =     0.0000
+                                                  R-squared       =     0.2981
+                                                  Root MSE        =     1.5026
+
+------------------------------------------------------------------------------
+           y | Coefficient  Std. err.      z    P&gt;|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+           D |   1.306657    .105746    12.36   0.000     1.099399    1.513915
+       _cons |   1.150396   .0764232    15.05   0.000     1.000609    1.300183
+------------------------------------------------------------------------------
+Endogenous: D
+Exogenous:  z1 z2
+
+. </code></pre>
+</div>
+</div>
+</section>
+<section>
+<section id="popular-iv-designs" class="title-slide slide level1 center">
+<h1>Popular IV Designs</h1>
+
+</section>
+<section id="canonical-designs" class="slide level2">
+<h2>Canonical Designs</h2>
+<ul>
+<li><p>The general message about using IV’s is, and has always been, that they are hard to come by.</p></li>
+<li><p>Applied research spends a quite good amount of time explaining why a particular instrument <strong>IS</strong> valid. (exogenous and relevant)</p></li>
+<li><p>Relevance is generally easy to test, but exogeneity is difficult. Little can be done other than relying in other papers, and circumstances.</p></li>
+<li><p>There are also those “clever” IVs, that tend to be case specific</p>
+<ul>
+<li>Scott Cunningham talks about Instruments being “weird”, because you wouldnt expect them to be in the context of the research</li>
+</ul></li>
+<li><p>There are, however, some designs that are used quite often, because they apply to different circumstances.</p></li>
+</ul>
+</section>
+<section id="cd-lotteries" class="slide level2">
+<h2>CD: Lotteries</h2>
+<ul>
+<li><p>In RCT, Lotteries are commonly used to decide who gets or doesnt get treatment among participants. Once treatment is assigned, however, not everyone will effectively taking up the treatment.</p>
+<ul>
+<li>Furthermore, some people may still end up being effectively treated because of other factors.</li>
+</ul></li>
+<li><p>This is a case of imperfect compliance.</p></li>
+<li><p>In cases like this, the lottery itself (which is randomized) can be used as instrument to identify the effect of being effectively treated.</p></li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li>Vietnam Draft Lottery</li>
+<li>Oregon Medicaid Expansion Lottery</li>
+</ul>
+</section>
+<section id="cd-judge-fixed-effects" class="slide level2">
+<h2>CD: Judge Fixed Effects</h2>
+<p>This design is also partially based on a kind of randomized assigment.</p>
+<ol type="1">
+<li>Individuals are “allocated” to work, or be judge, under different officers “judges”, at random.</li>
+<li>Judges are consistent among each other, with only difference being the severity of the judgment.</li>
+<li>Then Judge fixed effect can be used as an instrument on the judgment (treatment), and the final impact on the outcome of interest.</li>
+</ol>
+<p>The idea here is that “judgment-severity” varies by judge. This difference in taste creates exogenous variation on some treatment, which is analyzed on some treatment.</p>
+<p>Example:</p>
+<ul>
+<li>Teachers Grading? Driving test officers? Performance tests?</li>
+</ul>
+</section>
+<section id="cd-shift-share-bartik-instrument" class="slide level2">
+<h2>CD: Shift-Share Bartik Instrument</h2>
+<p>Originally used in a study of regional labor market effects, this kind of instruments have also been used widely in other areas, such as imigration and trade.</p>
+<p>The instrument was developed to analyze how changes in economic growth would affect market outcomes. (reverse Causality)</p>
+<p>To do this, Bartik (1991) suggests, that it could be possible to create an instrument, making use of only exogenous variations, to first predict Potential local growth.</p>
+<ol type="1">
+<li>Estimate <strong>industry</strong> shares by local region, based on some Ex ante information.</li>
+<li>Estimate national growth by industry (which should be exogenous to local growth)</li>
+<li>Estimate Potential Local growth using Shares x growth</li>
+</ol>
+<p>This last one should represent the instrument to be used on actual local growth</p>
+<p>This instrument depends strongly on the assumption that <strong>Shares</strong> are exogenous, and states are small compare to the national experience.</p>
+</section></section>
+<section id="til-next-time-matching-and-reweithing" class="title-slide slide level1 center">
+<h1>Til Next time: Matching and Reweithing</h1>
+
+<div class="footer footer-default">
+
+</div>
+</section>
+    </div>
+  </div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'smaller': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1500,
+
+        height: 900,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+      const toggleBodyColorMode = (bsSheetEl) => {
+        const mode = bsSheetEl.getAttribute("data-mode");
+        const bodyEl = window.document.querySelector("body");
+        if (mode === "dark") {
+          bodyEl.classList.add("quarto-dark");
+          bodyEl.classList.remove("quarto-light");
+        } else {
+          bodyEl.classList.add("quarto-light");
+          bodyEl.classList.remove("quarto-dark");
+        }
+      }
+      const toggleBodyColorPrimary = () => {
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
+      }
+      toggleBodyColorPrimary();  
+      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+      tabsets.forEach(function(tabset) {
+        const tabby = new Tabby('#' + tabset.id);
+      });
+      const isCodeAnnotation = (el) => {
+        for (const clz of el.classList) {
+          if (clz.startsWith('code-annotation-')) {                     
+            return true;
+          }
+        }
+        return false;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button', {
+        text: function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+      });
+      clipboard.on('success', function(e) {
+        // button target
+        const button = e.trigger;
+        // don't keep focus
+        button.blur();
+        // flash "checked"
+        button.classList.add('code-copy-button-checked');
+        var currentTitle = button.getAttribute("title");
+        button.setAttribute("title", "Copied!");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copied!");
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();    
+        }
+        setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
+          button.setAttribute("title", currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        // clear code selection
+        e.clearSelection();
+      });
+      function tippyHover(el, contentFn) {
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          maxWidth: 500,
+          delay: 100,
+          arrow: false,
+          appendTo: function(el) {
+              return el.closest('section.slide') || el.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'light-border',
+          placement: 'bottom-start'
+        };
+          config['offset'] = [0,0];
+          config['maxWidth'] = 700;
+        window.tippy(el, config); 
+      }
+      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+      for (var i=0; i<noterefs.length; i++) {
+        const ref = noterefs[i];
+        tippyHover(ref, function() {
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+          try { href = new URL(href).hash; } catch {}
+          const id = href.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          return note.innerHTML;
+        });
+      }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
+      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+      for (var i=0; i<bibliorefs.length; i++) {
+        const ref = bibliorefs[i];
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
+          });
+        }
+      }
+    });
+    </script>
+    
+
+</body></html>
