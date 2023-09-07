@@ -1,0 +1,39 @@
+
+  Observations:           344                  Palmer Penguins Raw
+    Variables:            17                   
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------------------------------------
+studyname       str7    %7s                   Sampling expedition from which data were collected, generated, etc.
+sample_number   double  %9.0g                 Denotes the continuous numbering sequence for each sample
+species         str41   %41s                  Denotes the penguin species
+region          str6    %6s                   Denotes the region of Palmer LTER sampling grid
+island          str9    %9s                   Denotes the island near Palmer Station where samples were collected
+stage           str18   %18s                  Denotes reproductive stage at sampling
+individual_id   str6    %6s                   Denotes the unique ID for each individual in dataset
+clutch_comple~n str3    %3s                   Denotes if the study nest observed with a full clutch, i.e., 2 eggs
+date_egg        double  %9.0g                 Denotes the date study nest observed with 1 egg (sampled)
+culmen_length   double  %9.0g                 Denotes the length of the dorsal ridge of a bird's bill (millimeters)
+culmen_depth    double  %9.0g                 Denotes the depth of the dorsal ridge of a bird's bill (millimeters)
+flipper_length  double  %9.0g                 Denotes the length penguin flipper (millimeters)
+body_mass       double  %9.0g                 Denotes the penguin body mass (grams)
+sex             str6    %6s                   Denotes the sex of an animal
+delta_15_n      double  %9.0g                 Denotes the measure of the ratio of stable isotopes 15N:14N
+delta_13_c      double  %9.0g                 Denotes the measure of the ratio of stable isotopes 13C:12C
+comments        str68   %68s                  Text providing additional relevant information for data
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+
+. 
+
+
+Source
+Adélie penguins: Palmer Station Antarctica LTER and K. Gorman. 2020. Structural size measurements and isotopic signatures of foraging among adult male and female Adélie penguins (Pygoscelis adeliae) nesting along the Palmer Archipelago near Palmer Station, 2007-2009 ver 5. Environmental Data Initiative. doi: 10.6073/pasta/98b16d7d563f265cb52372c8ca99e60f
+
+Gentoo penguins: Palmer Station Antarctica LTER and K. Gorman. 2020. Structural size measurements and isotopic signatures of foraging among adult male and female Gentoo penguin (Pygoscelis papua) nesting along the Palmer Archipelago near Palmer Station, 2007-2009 ver 5. Environmental Data Initiative. doi: 10.6073/pasta/7fca67fb28d56ee2ffa3d9370ebda689
+
+Chinstrap penguins: Palmer Station Antarctica LTER and K. Gorman. 2020. Structural size measurements and isotopic signatures of foraging among adult male and female Chinstrap penguin (Pygoscelis antarcticus) nesting along the Palmer Archipelago near Palmer Station, 2007-2009 ver 6. Environmental Data Initiative. doi: 10.6073/pasta/c14dfcfada8ea13a17536e73eb6fbe9e
+
+Originally published in: Gorman KB, Williams TD, Fraser WR (2014) Ecological Sexual Dimorphism and Environmental Variability within a Community of Antarctic Penguins (Genus Pygoscelis). PLoS ONE 9(3): e90081. doi:10.1371/journal.pone.0090081
