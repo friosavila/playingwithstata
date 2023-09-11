@@ -13,7 +13,7 @@ jupyter: nbstata
 Let us consider an example where we study the **mpg** and **weight** variables
 in **auto.dta**.  In this example, all code used to construct the desired output
 will be displayed as fenced block code, followed by the output it produces. This is done
-using the option `*|echo: fenced`. This option, however, doesnt seem to work well with jupyter notebooks.
+using the option `*|echo: fenced`. This option, however, doesn't seem to work well with jupyter notebooks.
 
 We first use the **sysuse** command to load the dataset and then describe
 the data using the **describe** command. 
@@ -25,16 +25,14 @@ describe
 ```
 
 Now, we want to check if **mpg** is always greater than 0 and less than 100.
-We use the **assert** command to perform the check.  In this case, we do not
-want to include any output in the target HTML file, so we use the **quietly**
-attribute to modify the behavior of the **dd_do** Stata dynamic tag.      
+We use the **assert** command to perform the check.      
 
 ```{stata}
 *| echo: fenced
  assert mpg > 0 & mpg < 100
 ```
 
-If the data do not satisfy the conditions, **quatro** will fail with an error
+If the data do not satisfy the conditions, **quarto** will fail with an error
 message, which will occur if we run the same **assert** command in a do-file. 
 
 Next, we want to summarize the **weight** variable:
@@ -46,7 +44,7 @@ summarize weight
 
 We want to use the minimum and maximum values of **weight** in a sentence.
 Instead of copying and pasting the numbers from the **summarize** output, we can
-use the **`display`** Stata to show **r(min)** and **r(max)** stored results. We will also use 
+use the **`display`** Stata command to show the **r(min)** and **r(max)** stored results. We will also use 
 the options `*| output: asis` to obtain text that follows markdown formatting. 
 
 ```{stata}
@@ -56,7 +54,7 @@ display "The variable weight has minimum value "  %4.2f `r(min)' " and " ///
          "has maximum value "   %4.2f `r(max)' "."
 ```
 
-In other words, if one wants to use dynamic tags, its possible to do so 
+In other words, if one wants to use dynamic tags, it's possible to do so 
 by simply using display, with the corresponding locals, so Stata evaluates the expressions
 as normal. `*| output: asis` is used so the output can still be interpreted using markdown syntax.
 
@@ -94,7 +92,7 @@ This produces a graph of 1600 pixels width.
 
 ![scatter](fig1.png)
 
-It is possible, however, to combine figure creation using quatro tags and directives. Here, however, you need to make sure all figures are named:
+It is possible, however, to combine figure creation using quarto tags and directives. Here, however, you need to make sure all figures are named:
 
 ```{stata}
 *| label: fig-cost
@@ -112,12 +110,12 @@ scatter price mpg if foreign==0, name(m2, replace) ylabel(0(4000)16000)
 qui:graph export fig2b.png, width(1600) replace
 ```
 
-And of course, we can now the figure tags to link it to the text:
+And of course, we can now use the figure tags to link them to the text:
 
 @fig-cost provides a simple scatter between prices and MPG for foreign and domestic cars. While there seems to be a strong negative relationship between these variables among foreign cars (see @fig-cost-1), 
 the relationship among domestic cars is much weaker, when looking at cars with a fuel efficiency larger than 15mpg (see @fig-cost-2).
 
-The last approach, however, may not work with PDF format, or jupyter-notebook format, unless the figures are saved. But does seem to work with HTML and docx.
+The last approach, however, may not work with PDF format, or jupyter-notebook format, unless the figures are saved. But it does seem to work with HTML and docx.
 
 Nevertheless, one could also do the following:
 
@@ -143,12 +141,12 @@ to produce
 Price vs MPG
 :::
 
-As plot in @fig-mpgprice provides a simple scatter between prices and MPG for foreign and domestic cars. While there seems to be a strong negative relationship between these variables among foreign cars (see @fig-mpgprice-1), 
+The plot in @fig-mpgprice provides a simple scatter between prices and MPG for foreign and domestic cars. While there seems to be a strong negative relationship between these variables among foreign cars (see @fig-mpgprice-1), 
 the relationship among domestic cars is much weaker, when looking at cars with a fuel efficiency larger than 15mpg (see @fig-mpgprice-2).
 
 If using VScode, to render all formats at once, you need to type `quarto render filename.qmd` in the terminal.
 
-Just for fun, I also when rendering this with quatro, i used the following formats
+Just for fun, when rendering this with quatro, I also included the following formats
 
 ```
 ---
