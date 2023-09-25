@@ -1,0 +1,25 @@
+
+pclass    name      sibsp     ticket    cabin     body      sex
+survived  age       parch     fare      boat      homedest  embarked
+
+----------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------------------------------------
+pclass          byte    %8.0g                 Passenger Class (1 = 1st; 2 = 2nd; 3 = 3rd)
+survived        byte    %8.0g                 Survival (0 = No; 1 = Yes)
+name            str82   %82s                  Name
+age             float   %8.0g                 Age
+sibsp           byte    %8.0g                 Number of Siblings/Spouses Aboard
+parch           byte    %8.0g                 Number of Parents/Children Aboard
+ticket          str18   %18s                  Ticket Number
+fare            float   %8.0g                 Passenger Fare
+cabin           str15   %15s                  Cabin
+boat            str7    %9s                   Lifeboat (if survived)
+body            int     %8.0g                 Body number (if did not survive and body was recovered)
+homedest        str50   %50s                  home.dest
+sex             long    %8.0g      sex2       Sex
+embarked        long    %11.0g     embarked   Port of Embarkation (C = Cherbourg; 
+                                              Q = Queenstown; S = Southampton)
+----------------------------------------------------------------------------------------------------------------------------
+
